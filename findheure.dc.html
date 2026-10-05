@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_photo_alternate,bookmark_add,casino,close,delete,fullscreen,fullscreen_exit,restart_alt&display=block">
+<style>
+html,body{margin:0;height:100%;background:#0b0a09;overflow:hidden}
+a{color:inherit}a:hover{opacity:.8}
+@keyframes fh-fade{from{opacity:0}to{opacity:1}}
+@keyframes fh-slide{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
+@keyframes fh-drop{from{opacity:0;transform:translateY(-.35em)}to{opacity:1;transform:none}}
+@keyframes fh-flip{from{opacity:0;transform:perspective(4em) rotateX(-85deg)}to{opacity:1;transform:none}}
+@keyframes fh-blur{from{opacity:0;filter:blur(.12em)}to{opacity:1;filter:blur(0)}}
+@keyframes fh-pop{0%{opacity:0;transform:scale(.55)}60%{opacity:1;transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes fh-breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.76;transform:scale(.985)}}
+@keyframes fh-aurora{0%{transform:translate3d(-6%,-4%,0) rotate(0deg) scale(1)}50%{transform:translate3d(5%,3%,0) rotate(10deg) scale(1.12)}100%{transform:translate3d(-2%,6%,0) rotate(-8deg) scale(1.04)}}
+</style>
+</helmet>
+<div style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
+  <div style="position: absolute; inset: 0; background: {{ bg.base }};"></div>
+  <sc-if value="{{ bg.isAurora }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.aurora }}</div>
+  </sc-if>
+  <sc-if value="{{ bg.isImage }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.layers }}</div>
+    <div style="position: absolute; inset: 0; pointer-events: none; background: {{ bg.dim }};"></div>
+  </sc-if>
+  <sc-if value="{{ fx.hasVignette }}" hint-placeholder-val="{{ true }}">
+    <div style="position: absolute; inset: 0; pointer-events: none; background: {{ fx.vignette }};"></div>
+  </sc-if>
+  <sc-if value="{{ fx.hasGrain }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; pointer-events: none; background-image: {{ fx.grainImg }}; opacity: {{ fx.grainOp }};"></div>
+  </sc-if>
+  <sc-if value="{{ fx.scan }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.3) 0px, rgba(0,0,0,.3) 1px, transparent 1px, transparent 3px);"></div>
+  </sc-if>
+
+  <div onClick="{{ onStage }}" onDoubleClick="{{ toggleFs }}" style="position: absolute; inset: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
+    <div style="display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%;">
+      <sc-if value="{{ msg.show }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ msg.style }}">{{ msg.text }}</div>
+      </sc-if>
+      <div style="order: 1; max-width: 100%;">{{ clock.el }}</div>
+      <sc-if value="{{ date.show }}" hint-placeholder-val="{{ true }}">
+        <div dir="auto" style="{{ date.style }}">
+          <sc-if value="{{ date.hasText }}" hint-placeholder-val="{{ true }}"><div>{{ date.text }}</div></sc-if>
+          <sc-if value="{{ date.hasZone }}" hint-placeholder-val="{{ false }}"><div style="font-size: .72em; opacity: .8; margin-top: .45em; letter-spacing: .06em;">{{ date.zone }}</div></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{ cities.show }}" hint-placeholder-val="{{ false }}">
+        <div style="{{ cities.style }}">
+          <sc-for list="{{ cities.list }}" as="c" hint-placeholder-count="0">
+            <div style="display: flex; flex-direction: column; gap: .4em; align-items: {{ pos.ai }};">
+              <div style="font-size: .62em; letter-spacing: .14em; text-transform: uppercase; opacity: .7;">{{ c.name }}</div>
+              <div style="font-size: 1.15em;">{{ c.time }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <sc-if value="{{ prog.show }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: {{ prog.track }}; pointer-events: none;">
+      <div style="height: 100%; width: {{ prog.width }}; background: {{ prog.fill }}; transition: width 1s linear;"></div>
+    </div>
+    <div style="position: absolute; right: 18px; bottom: 14px; font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ prog.labelColor }}; pointer-events: none;">{{ prog.label }}</div>
+  </sc-if>
+
+  <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1240px, calc(100% - 24px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: {{ chrome.pe }}; transition: opacity .5s ease;">
+    <div style="display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }};">
+      <div style="display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 10px 0 9px; flex-shrink: 0;">
+        <div style="width: 10px; height: 10px; border-radius: 50%; background: {{ s.accent }}; box-shadow: 0 0 0 3px {{ chrome.dotRing }};"></div>
+        <sc-if value="{{ chrome.brand }}" hint-placeholder-val="{{ true }}"><div style="font-weight: 600; font-size: 14.5px; letter-spacing: -.01em;">findheure</div></sc-if>
+      </div>
+      <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0;"></div>
+      <div style="display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
+          <button onClick="{{ t.pick }}" style="flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: {{ t.bg }}; color: {{ t.fg }}; transition: background .15s, color .15s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};">{{ t.label }}</button>
+        </sc-for>
+      </div>
+      <div style="display: flex; gap: 2px; flex-shrink: 0;">
+        <button title="{{ L.surpriseK }}" onClick="{{ surprise }}" style="height: 36px; min-width: 36px; padding: {{ chrome.surprisePad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif;" style-hover="background: {{ ui.hover }};">
+          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">casino</span>
+          <sc-if value="{{ chrome.wide }}" hint-placeholder-val="{{ true }}"><span>{{ L.surprise }}</span></sc-if>
+        </button>
+        <button title="{{ L.fullscreen }}" onClick="{{ toggleFs }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
+          <span style="font-family: 'Material Symbols Rounded'; font-size: 21px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">{{ chrome.fsIcon }}</span>
+        </button>
+        <button title="{{ L.reset }}" onClick="{{ reset }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
+          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">restart_alt</span>
+        </button>
+      </div>
+    </div>
+
+    <sc-if value="{{ panel.open }}" hint-placeholder-val="{{ false }}">
+      <div style="border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden;">
+        <div style="max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -8px 14px 0;">
+            <div style="font: 600 15px/1.2 Geist, system-ui, sans-serif; letter-spacing: -.01em;">{{ panel.title }}</div>
+            <button title="{{ L.close }}" onClick="{{ closePanel }}" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: {{ ui.field }}; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.active }};">
+              <span style="font-family: 'Material Symbols Rounded'; font-size: 19px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">close</span>
+            </button>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 18px 26px; align-items: end;">
+            <sc-for list="{{ controls }}" as="c" hint-placeholder-count="6">
+              <div style="grid-column: {{ c.span }}; display: flex; flex-direction: column; gap: 9px; min-width: 0; opacity: {{ c.op }}; padding-top: {{ c.padTop }};">
+                <sc-if value="{{ c.isHead }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; align-items: center; gap: 12px; font: 600 11px/1 Geist, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: {{ ui.fg3 }};"><span>{{ c.label }}</span><span style="flex: 1; height: 1px; background: {{ ui.border }};"></span></div>
+                </sc-if>
+                <sc-if value="{{ c.hasLabel }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font: 500 12.5px/1.25 Geist, system-ui, sans-serif; color: {{ ui.fg2 }};">
+                    <span>{{ c.label }}</span>
+                    <span style="font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ ui.fg }}; white-space: nowrap;">{{ c.display }}</span>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isPresets }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 10px;">
+                    <sc-for list="{{ presets }}" as="p" hint-placeholder-count="8">
+                      <button onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }};">
+                        <span style="{{ p.text }}">{{ p.sample }}</span>
+                        <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.5); color: #fff; backdrop-filter: blur(8px);">{{ p.name }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isMine }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px; max-width: 580px;">
+                    <input type="text" value="{{ mine.name }}" placeholder="{{ L.styleName }}" onChange="{{ mine.onName }}" onKeyDown="{{ mine.onKey }}" style="flex: 1 1 200px; min-width: 0; box-sizing: border-box; height: 38px; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; outline: none; user-select: text;">
+                    <button onClick="{{ mine.save }}" style="height: 38px; display: flex; align-items: center; gap: 7px; padding: 0 14px 0 11px; border: 0; border-radius: 10px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 600 13px/1 Geist, system-ui, sans-serif; cursor: pointer;">
+                      <span style="font-family: 'Material Symbols Rounded'; font-size: 18px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">bookmark_add</span>
+                      <span>{{ L.save }}</span>
+                    </button>
+                  </div>
+                  <sc-if value="{{ mine.empty }}" hint-placeholder-val="{{ true }}">
+                    <div style="font: 400 12.5px/1.45 Geist, system-ui, sans-serif; color: {{ ui.fg3 }};">{{ L.noStyles }}</div>
+                  </sc-if>
+                  <sc-if value="{{ mine.has }}" hint-placeholder-val="{{ false }}">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 10px;">
+                      <sc-for list="{{ mine.list }}" as="p" hint-placeholder-count="0">
+                        <div onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }};">
+                          <span style="{{ p.text }}">{{ p.sample }}</span>
+                          <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.5); color: #fff; backdrop-filter: blur(8px);">{{ p.name }}</span>
+                          <button onClick="{{ p.del }}" title="{{ L.remove }}" style="position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 8px; border: 0; padding: 0; background: rgba(10,10,10,.5); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
+                            <span style="font-family: 'Material Symbols Rounded'; font-size: 16px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">delete</span>
+                          </button>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-if>
+                </sc-if>
+
+                <sc-if value="{{ c.isFontGrid }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <sc-for list="{{ fontCats }}" as="k" hint-placeholder-count="9">
+                      <button onClick="{{ k.pick }}" style="height: 30px; padding: 0 12px; border-radius: 999px; cursor: pointer; font: 500 12.5px/1 Geist, system-ui, sans-serif; border: 1px solid {{ k.border }}; background: {{ k.bg }}; color: {{ k.fg }};">{{ k.label }}</button>
+                    </sc-for>
+                  </div>
+                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 136px), 1fr)); gap: 8px; margin-top: 4px;">
+                    <sc-for list="{{ fontTiles }}" as="f" hint-placeholder-count="12">
+                      <button onClick="{{ f.pick }}" title="{{ f.name }}" style="height: 92px; border-radius: 12px; cursor: pointer; padding: 8px 10px 9px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; overflow: hidden; background: {{ f.bg }}; box-shadow: {{ f.ring }}; color: {{ ui.fg }};">
+                        <span style="{{ f.style }}">{{ f.sample }}</span>
+                        <span style="font: 500 11px/1.1 Geist, system-ui, sans-serif; color: {{ ui.fg2 }}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">{{ f.name }}</span>
+                      </button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isMedia }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                    <button onClick="{{ pickFiles }}" style="width: 108px; height: 68px; border-radius: 10px; border: 1.5px dashed {{ ui.fg3 }}; background: transparent; color: {{ ui.fg }}; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font: 500 12px/1 Geist, system-ui, sans-serif;">
+                      <span style="font-family: 'Material Symbols Rounded'; font-size: 22px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">add_photo_alternate</span>
+                      <span>{{ L.addImages }}</span>
+                    </button>
+                    <sc-for list="{{ media }}" as="m" hint-placeholder-count="0">
+                      <div onClick="{{ m.pick }}" title="{{ m.name }}" style="position: relative; width: 108px; height: 68px; border-radius: 10px; overflow: hidden; cursor: pointer; background: {{ m.thumb }}; box-shadow: {{ m.ring }};">
+                        <sc-if value="{{ m.isVideo }}" hint-placeholder-val="{{ false }}">
+                          <video src="{{ m.url }}" muted="{{ true }}" preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
+                        </sc-if>
+                        <button onClick="{{ m.del }}" title="{{ L.remove }}" style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                          <span style="font-family: 'Material Symbols Rounded'; font-size: 15px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">close</span>
+                        </button>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="font: 400 12.5px/1.45 Geist, system-ui, sans-serif; color: {{ ui.fg2 }}; max-width: 560px; text-wrap: pretty;">{{ L.dropHint }}</div>
+                </sc-if>
+
+                <sc-if value="{{ c.isSeg }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 3px; padding: 3px; border-radius: 11px; background: {{ ui.field }};">
+                    <sc-for list="{{ c.options }}" as="o" hint-placeholder-count="3">
+                      <button onClick="{{ o.pick }}" style="flex: 1 0 auto; border: 0; cursor: pointer; height: 30px; padding: 0 10px; border-radius: 8px; font: 500 12.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: {{ o.bg }}; color: {{ o.fg }}; transition: background .15s, color .15s;">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isTog }}" hint-placeholder-val="{{ false }}">
+                  <button onClick="{{ c.toggle }}" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 40px; padding: 8px 10px 8px 12px; box-sizing: border-box; border: 0; border-radius: 11px; background: {{ ui.field }}; color: {{ ui.fg }}; cursor: pointer; text-align: left; font: 500 13px/1.25 Geist, system-ui, sans-serif;">
+                    <span>{{ c.label }}</span>
+                    <span style="position: relative; flex-shrink: 0; width: 34px; height: 20px; border-radius: 10px; background: {{ c.trackBg }}; transition: background .2s;">
+                      <span style="position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: {{ c.knobBg }}; transform: translateX({{ c.knobX }}); transition: transform .2s, background .2s; box-shadow: 0 1px 2px rgba(0,0,0,.25);"></span>
+                    </span>
+                  </button>
+                </sc-if>
+
+                <sc-if value="{{ c.isRange }}" hint-placeholder-val="{{ false }}">
+                  <input type="range" min="{{ c.min }}" max="{{ c.max }}" step="{{ c.step }}" value="{{ c.value }}" disabled="{{ c.disabled }}" onChange="{{ c.onInput }}" style="width: 100%; height: 22px; margin: 0; accent-color: {{ ui.fg }}; cursor: pointer;">
+                </sc-if>
+
+                <sc-if value="{{ c.isColor }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 7px; align-items: center; padding: 2px 0;">
+                    <sc-for list="{{ c.swatches }}" as="w" hint-placeholder-count="10">
+                      <button onClick="{{ w.pick }}" title="{{ w.c }}" style="width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; background: {{ w.c }}; box-shadow: {{ w.ring }};"></button>
+                    </sc-for>
+                    <label title="{{ L.custom }}" style="position: relative; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; background: conic-gradient(#ff5b5b, #ffd75b, #6bff8a, #5bd8ff, #7a6bff, #ff5bd8, #ff5b5b); box-shadow: {{ c.customRing }};">
+                      <span style="position: absolute; inset: 5px; border-radius: 50%; background: {{ c.value }}; box-shadow: 0 0 0 1.5px #fff;"></span>
+                      <input type="color" value="{{ c.value }}" onChange="{{ c.onPick }}" style="position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; opacity: 0; cursor: pointer;">
+                    </label>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isSel }}" hint-placeholder-val="{{ false }}">
+                  <div style="position: relative;">
+                    <select value="{{ c.value }}" onChange="{{ c.onSel }}" style="width: 100%; height: 38px; appearance: none; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 34px 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; cursor: pointer; outline: none;">{{ c.opts }}</select>
+                    <span style="position: absolute; right: 13px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 9px; color: {{ ui.fg2 }};">▼</span>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isText }}" hint-placeholder-val="{{ false }}">
+                  <input type="text" value="{{ c.value }}" placeholder="{{ c.ph }}" onChange="{{ c.onText }}" style="width: 100%; box-sizing: border-box; height: 38px; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; outline: none; user-select: text;">
+                </sc-if>
+
+                <sc-if value="{{ c.isPos }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: grid; grid-template-columns: repeat(3, 40px); gap: 4px; padding: 4px; width: max-content; border-radius: 11px; background: {{ ui.field }};">
+                    <sc-for list="{{ c.cells }}" as="q" hint-placeholder-count="9">
+                      <button onClick="{{ q.pick }}" style="height: 26px; border: 0; padding: 0; border-radius: 7px; cursor: pointer; display: flex; align-items: center; justify-content: center; background: {{ q.bg }};"><span style="width: 6px; height: 6px; border-radius: 50%; background: {{ q.dot }};"></span></button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+
+                <sc-if value="{{ c.isChips }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                    <sc-for list="{{ c.options }}" as="o" hint-placeholder-count="8">
+                      <button onClick="{{ o.pick }}" style="height: 30px; padding: 0 12px; border-radius: 999px; cursor: pointer; font: 500 12.5px/1 Geist, system-ui, sans-serif; border: 1px solid {{ o.border }}; background: {{ o.bg }}; color: {{ o.fg }};">{{ o.label }}</button>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+
+  <input type="file" accept="image/*,video/*" multiple="{{ true }}" ref="{{ fileRef }}" onChange="{{ onFiles }}" style="display: none;">
+
+  <sc-if value="{{ dragOver }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 12px; z-index: 30; border-radius: 22px; border: 2px dashed rgba(255,255,255,.75); background: rgba(10,10,10,.55); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font: 500 22px/1.2 Geist, system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box;">{{ L.dropHere }}</div>
+  </sc-if>
+
+  <sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 12px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25);">
+      <span>{{ toast.msg }}</span>
+      <sc-if value="{{ toast.hasUndo }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ toast.undo }}" style="border: 0; background: transparent; color: {{ ui.invFg }}; font: 600 13.5px/1 Geist, system-ui, sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 4px;">{{ L.undo }}</button>
+      </sc-if>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const LANGS = ['fr', 'en', 'es', 'de'];
+const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
+const SKEY = 'findheure:settings:v1', STKEY = 'findheure:styles:v1';
+const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
+
+const T_RAW = {
+  tPresets: "Thèmes|Themes|Temas|Themen", tFont: "Police|Font|Fuente|Schrift", tColors: "Couleurs|Colors|Colores|Farben", tBg: "Fond|Background|Fondo|Hintergrund",
+  tFx: "Effets|Effects|Efectos|Effekte", tClock: "Horloge|Clock|Reloj|Uhr", tDate: "Date & langue|Date & language|Fecha e idioma|Datum & Sprache", tLayout: "Disposition|Layout|Diseño|Layout",
+  surprise: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich", surpriseK: "Surprends-moi (S)|Surprise me (S)|Sorpréndeme (S)|Überrasch mich (S)",
+  fullscreen: "Plein écran (F)|Fullscreen (F)|Pantalla completa (F)|Vollbild (F)", reset: "Réinitialiser|Reset|Restablecer|Zurücksetzen",
+  close: "Fermer (Échap)|Close (Esc)|Cerrar (Esc)|Schließen (Esc)", undo: "Annuler|Undo|Deshacer|Rückgängig",
+  resetDone: "Réglages réinitialisés|Settings reset|Ajustes restablecidos|Einstellungen zurückgesetzt", remove: "Supprimer|Remove|Eliminar|Entfernen",
+  custom: "Couleur personnalisée|Custom color|Color personalizado|Eigene Farbe",
+  hThemes: "Thèmes prêts à l’emploi|Ready-made themes|Temas listos|Fertige Themen", hMine: "Mes styles|My styles|Mis estilos|Meine Stile",
+  save: "Enregistrer le style actuel|Save current style|Guardar el estilo actual|Aktuellen Stil speichern", styleName: "Nom du style|Style name|Nombre del estilo|Name des Stils",
+  noStyles: "Vos styles enregistrés apparaîtront ici.|Your saved styles will appear here.|Tus estilos guardados aparecerán aquí.|Deine gespeicherten Stile erscheinen hier.",
+  saved: "Style enregistré|Style saved|Estilo guardado|Stil gespeichert", style: "Style|Style|Estilo|Stil",
+  cat_all: "Toutes|All|Todas|Alle", cat_modern: "Modernes|Modern|Modernas|Modern", cat_elegant: "Élégantes|Elegant|Elegantes|Elegant", cat_poster: "Affiche|Poster|Cartel|Plakat",
+  cat_future: "Futuristes|Futuristic|Futuristas|Futuristisch", cat_retro: "Rétro|Retro|Retro|Retro", cat_pixel: "Pixel & mono|Pixel & mono|Píxel y mono|Pixel & Mono",
+  cat_fun: "Fun|Fun|Divertidas|Verspielt", cat_script: "Manuscrites|Script|Manuscritas|Handschrift",
+  weight: "Graisse|Weight|Grosor|Stärke", singleWeight: "unique|single|única|einzige", italic: "Italique|Italic|Cursiva|Kursiv",
+  size: "Taille de l’heure|Time size|Tamaño de la hora|Größe der Uhrzeit", spacing: "Espacement des lettres|Letter spacing|Espaciado|Laufweite",
+  fixedDigits: "Chiffres à chasse fixe|Fixed-width digits|Dígitos de ancho fijo|Ziffern mit fester Breite",
+  dateFont: "Police de la date|Date font|Fuente de la fecha|Schrift des Datums", sameFont: "Comme l’heure|Same as time|Igual que la hora|Wie die Uhrzeit",
+  dateSize: "Taille de la date|Date size|Tamaño de la fecha|Größe des Datums",
+  hTime: "Heure|Time|Hora|Uhrzeit", hDate: "Date|Date|Fecha|Datum", hAccent: "Accent|Accent|Acento|Akzent", hLang: "Langue|Language|Idioma|Sprache",
+  hFormat: "Format|Format|Formato|Format", hZone: "Fuseau & chiffres|Time zone & numerals|Zona y cifras|Zeitzone & Ziffern",
+  timeColor: "Couleur de l’heure|Time color|Color de la hora|Farbe der Uhrzeit", dateColor: "Couleur de la date|Date color|Color de la fecha|Farbe des Datums",
+  dateOpacity: "Opacité de la date|Date opacity|Opacidad de la fecha|Deckkraft des Datums", accent: "Couleur d’accent|Accent color|Color de acento|Akzentfarbe",
+  sepAccent: "Séparateurs en couleur d’accent|Accent-colored separators|Separadores en color de acento|Trennzeichen in Akzentfarbe",
+  gradText: "Dégradé sur l’heure|Gradient on the time|Degradado en la hora|Verlauf auf der Uhrzeit",
+  gradTop: "Dégradé · haut|Gradient · top|Degradado · arriba|Verlauf · oben", gradBottom: "Dégradé · bas|Gradient · bottom|Degradado · abajo|Verlauf · unten",
+  bgType: "Type de fond|Background type|Tipo de fondo|Hintergrundart", solid: "Uni|Solid|Liso|Einfarbig", gradient: "Dégradé|Gradient|Degradado|Verlauf",
+  animated: "Animé|Animated|Animado|Animiert", image: "Image / vidéo|Image / video|Imagen / vídeo|Bild / Video",
+  bgColor: "Couleur de fond|Background color|Color de fondo|Hintergrundfarbe", color: "Couleur|Color|Color|Farbe", angle: "Angle|Angle|Ángulo|Winkel",
+  shape: "Forme|Shape|Forma|Form", linear: "Linéaire|Linear|Lineal|Linear", radial: "Radial|Radial|Radial|Radial", speed: "Vitesse|Speed|Velocidad|Tempo",
+  gallery: "Vos fonds|Your backgrounds|Tus fondos|Deine Hintergründe", addImages: "Ajouter|Add|Añadir|Hinzufügen",
+  dropHint: "Images ou vidéos de votre ordinateur — vous pouvez aussi les glisser n’importe où sur la page. Elles restent enregistrées dans ce navigateur.|Images or videos from your computer — you can also drop them anywhere on the page. They stay saved in this browser.|Imágenes o vídeos de tu ordenador — también puedes soltarlos en cualquier parte de la página. Se guardan en este navegador.|Bilder oder Videos von deinem Computer — du kannst sie auch irgendwo auf die Seite ziehen. Sie bleiben in diesem Browser gespeichert.",
+  dropHere: "Déposez pour en faire votre fond|Drop to make it your background|Suelta para usarlo como fondo|Loslassen, um es als Hintergrund zu nutzen",
+  fit: "Cadrage|Fit|Encuadre|Anpassung", cover: "Remplir|Cover|Cubrir|Füllen", contain: "Contenir|Contain|Contener|Einpassen", tile: "Mosaïque|Tile|Mosaico|Kacheln",
+  blur: "Flou|Blur|Desenfoque|Unschärfe", dim: "Assombrir|Darken|Oscurecer|Abdunkeln", saturation: "Saturation|Saturation|Saturación|Sättigung",
+  slideshow: "Diaporama|Slideshow|Presentación|Diashow", every: "Changer toutes les|Change every|Cambiar cada|Wechseln alle", added: "Fond ajouté|Background added|Fondo añadido|Hintergrund hinzugefügt",
+  hText: "Texte|Text|Texto|Text", hMotion: "Mouvement|Motion|Movimiento|Bewegung", hAtmos: "Ambiance|Atmosphere|Ambiente|Atmosphäre",
+  glow: "Lueur|Glow|Resplandor|Leuchten", glowColor: "Couleur de la lueur|Glow color|Color del resplandor|Leuchtfarbe", shadow: "Ombre portée|Drop shadow|Sombra|Schlagschatten",
+  outline: "Contour seul|Outline only|Solo contorno|Nur Kontur", outlineW: "Épaisseur du contour|Outline width|Grosor del contorno|Konturstärke",
+  anim: "Animation des chiffres|Digit animation|Animación de los dígitos|Ziffernanimation",
+  a_none: "Aucune|None|Ninguna|Keine", a_fade: "Fondu|Fade|Fundido|Blende", a_slide: "Glisse|Slide|Deslizar|Gleiten", a_drop: "Chute|Drop|Caída|Fallen",
+  a_flip: "Bascule|Flip|Giro|Kippen", a_blur: "Flou|Blur|Desenfoque|Unschärfe", a_pop: "Pop|Pop|Pop|Pop",
+  breathe: "Respiration lente|Slow breathing|Respiración lenta|Langsames Atmen", vignette: "Vignettage|Vignette|Viñeta|Vignette", grain: "Grain|Grain|Grano|Körnung",
+  scanlines: "Lignes d’écran cathodique|CRT scanlines|Líneas de pantalla CRT|Röhren-Scanlines", tick: "Son tic-tac|Ticking sound|Sonido tic-tac|Tick-Tack-Geräusch",
+  format: "Format|Format|Formato|Format", ampm: "Afficher AM / PM|Show AM / PM|Mostrar AM / PM|AM / PM anzeigen", seconds: "Secondes|Seconds|Segundos|Sekunden",
+  secOff: "Masquées|Hidden|Ocultos|Aus", secSame: "Normales|Normal|Normales|Normal", secSmall: "Petites|Small|Pequeños|Klein",
+  leadingZero: "Zéro devant l’heure|Leading zero|Cero inicial|Führende Null", separator: "Séparateur|Separator|Separador|Trennzeichen",
+  blink: "Séparateur clignotant|Blinking separator|Separador parpadeante|Blinkendes Trennzeichen", digits: "Chiffres|Numerals|Cifras|Ziffern",
+  timezone: "Fuseau horaire|Time zone|Zona horaria|Zeitzone", localTz: "Heure locale|Local time|Hora local|Ortszeit", showZone: "Afficher le fuseau|Show time zone|Mostrar zona horaria|Zeitzone anzeigen",
+  uiLang: "Langue de l’interface|Interface language|Idioma de la interfaz|Sprache der Oberfläche", dateLang: "Langue de la date|Date language|Idioma de la fecha|Sprache des Datums",
+  sameUi: "Comme l’interface|Same as interface|Igual que la interfaz|Wie die Oberfläche", showDate: "Afficher la date|Show date|Mostrar la fecha|Datum anzeigen",
+  dateFormat: "Format de la date|Date format|Formato de la fecha|Datumsformat",
+  df_full: "Complète|Full|Completa|Vollständig", df_noyear: "Sans l’année|No year|Sin año|Ohne Jahr", df_short: "Abrégée|Short|Abreviada|Kurz",
+  df_num: "Chiffres|Numeric|Numérica|Numerisch", df_iso: "ISO|ISO|ISO|ISO", df_day: "Jour seul|Weekday|Solo el día|Wochentag",
+  calendar: "Calendrier|Calendar|Calendario|Kalender", weekNum: "Numéro de semaine|Week number|Número de semana|Kalenderwoche", week: "Semaine|Week|Semana|KW",
+  upper: "Date en majuscules|Uppercase date|Fecha en mayúsculas|Datum in Großbuchstaben",
+  hPlace: "Placement|Placement|Ubicación|Platzierung", hExtras: "Compléments|Extras|Extras|Extras", hUi: "Interface|Interface|Interfaz|Oberfläche",
+  position: "Position à l’écran|Position on screen|Posición en pantalla|Position am Bildschirm", datePos: "Place de la date|Date placement|Posición de la fecha|Platz des Datums",
+  above: "Au-dessus|Above|Encima|Oben", below: "En dessous|Below|Debajo|Unten", gap: "Espace heure – date|Time–date spacing|Espacio hora–fecha|Abstand Uhrzeit–Datum",
+  message: "Message au-dessus de l’heure|Message above the time|Mensaje sobre la hora|Nachricht über der Uhrzeit",
+  m_none: "Aucun|None|Ninguno|Keine", m_greet: "Salutation|Greeting|Saludo|Begrüßung", m_custom: "Mon texte|My text|Mi texto|Eigener Text", msgPh: "Votre texte…|Your text…|Tu texto…|Dein Text…",
+  g_morning: "Bonjour|Good morning|Buenos días|Guten Morgen", g_afternoon: "Bon après-midi|Good afternoon|Buenas tardes|Guten Tag",
+  g_evening: "Bonsoir|Good evening|Buenas noches|Guten Abend", g_night: "Bonne nuit|Good night|Buenas noches|Gute Nacht",
+  cities: "Autres villes (4 max.)|Other cities (up to 4)|Otras ciudades (máx. 4)|Weitere Städte (max. 4)", progress: "Progression de la journée|Day progress|Progreso del día|Tagesfortschritt",
+  ofDay: "de la journée|of the day|del día|des Tages", uiTheme: "Thème de l’interface|Interface theme|Tema de la interfaz|Oberflächen-Thema",
+  th_auto: "Auto|Auto|Auto|Auto", th_dark: "Sombre|Dark|Oscuro|Dunkel", th_light: "Clair|Light|Claro|Hell",
+  autoHide: "Masquer la barre au repos|Hide the bar when idle|Ocultar la barra en reposo|Leiste bei Inaktivität ausblenden",
+  hideDelay: "Délai avant masquage|Hide after|Ocultar tras|Ausblenden nach", hideCursor: "Masquer le curseur au repos|Hide cursor when idle|Ocultar el cursor en reposo|Mauszeiger bei Inaktivität ausblenden",
+};
+const T = {}; for (const k in T_RAW) T[k] = four(T_RAW[k]);
+
+const FALLBACK = { modern: 'system-ui, sans-serif', elegant: 'Georgia, serif', poster: 'Impact, sans-serif', future: 'system-ui, sans-serif', retro: 'system-ui, sans-serif', pixel: 'ui-monospace, monospace', fun: 'system-ui, sans-serif', script: 'cursive' };
+const FONTS = [
+  ['Bricolage Grotesque', 'modern', 'Bricolage+Grotesque:opsz,wght@12..96,200..800', 200, 800, 300, .58],
+  ['Unbounded', 'modern', 'Unbounded:wght@200..900', 200, 900, 300, .78],
+  ['Syne', 'modern', 'Syne:wght@400..800', 400, 800, 700, .62],
+  ['Outfit', 'modern', 'Outfit:wght@100..900', 100, 900, 200, .56],
+  ['Geist', 'modern', 'Geist:wght@100..900', 100, 900, 200, .58],
+  ['Space Grotesk', 'modern', 'Space+Grotesk:wght@300..700', 300, 700, 400, .6],
+  ['Instrument Serif', 'elegant', 'Instrument+Serif:ital@0;1', 400, 400, 400, .5],
+  ['Playfair Display', 'elegant', 'Playfair+Display:ital,wght@0,400..900;1,400..900', 400, 900, 500, .58],
+  ['Bodoni Moda', 'elegant', 'Bodoni+Moda:ital,wght@0,400..900;1,400..900', 400, 900, 500, .58],
+  ['Cormorant Garamond', 'elegant', 'Cormorant+Garamond:ital,wght@0,300;0,500;0,700;1,300;1,500;1,700', 300, 700, 300, .5],
+  ['Italiana', 'elegant', 'Italiana', 400, 400, 400, .55],
+  ['Gloock', 'elegant', 'Gloock', 400, 400, 400, .6],
+  ['Bebas Neue', 'poster', 'Bebas+Neue', 400, 400, 400, .4],
+  ['Anton', 'poster', 'Anton', 400, 400, 400, .45],
+  ['Six Caps', 'poster', 'Six+Caps', 400, 400, 400, .25],
+  ['Abril Fatface', 'poster', 'Abril+Fatface', 400, 400, 400, .6],
+  ['Archivo Black', 'poster', 'Archivo+Black', 400, 400, 400, .68],
+  ['Shrikhand', 'poster', 'Shrikhand', 400, 400, 400, .7],
+  ['Orbitron', 'future', 'Orbitron:wght@400..900', 400, 900, 500, .8],
+  ['Audiowide', 'future', 'Audiowide', 400, 400, 400, .72],
+  ['Michroma', 'future', 'Michroma', 400, 400, 400, .9],
+  ['Zen Dots', 'future', 'Zen+Dots', 400, 400, 400, .85],
+  ['Tektur', 'future', 'Tektur:wght@400..900', 400, 900, 500, .6],
+  ['Monoton', 'retro', 'Monoton', 400, 400, 400, .8],
+  ['Righteous', 'retro', 'Righteous', 400, 400, 400, .6],
+  ['Limelight', 'retro', 'Limelight', 400, 400, 400, .62],
+  ['Poiret One', 'retro', 'Poiret+One', 400, 400, 400, .55],
+  ['Bungee Shade', 'retro', 'Bungee+Shade', 400, 400, 400, .8],
+  ['Rampart One', 'retro', 'Rampart+One', 400, 400, 400, .7],
+  ['Press Start 2P', 'pixel', 'Press+Start+2P', 400, 400, 400, 1],
+  ['VT323', 'pixel', 'VT323', 400, 400, 400, .45],
+  ['Silkscreen', 'pixel', 'Silkscreen:wght@400;700', 400, 700, 400, .7],
+  ['Doto', 'pixel', 'Doto:wght@100..900', 100, 900, 700, .62],
+  ['Sixtyfour', 'pixel', 'Sixtyfour', 400, 400, 400, 1],
+  ['Major Mono Display', 'pixel', 'Major+Mono+Display', 400, 400, 400, .75],
+  ['JetBrains Mono', 'pixel', 'JetBrains+Mono:ital,wght@0,100..800;1,100..800', 100, 800, 200, .6],
+  ['Fredoka', 'fun', 'Fredoka:wght@300..700', 300, 700, 600, .6],
+  ['Rubik Glitch', 'fun', 'Rubik+Glitch', 400, 400, 400, .65],
+  ['Rubik Moonrocks', 'fun', 'Rubik+Moonrocks', 400, 400, 400, .75],
+  ['Nabla', 'fun', 'Nabla', 400, 400, 400, .8],
+  ['Bungee Spice', 'fun', 'Bungee+Spice', 400, 400, 400, .75],
+  ['Honk', 'fun', 'Honk', 400, 400, 400, .8],
+  ['Tilt Prism', 'fun', 'Tilt+Prism', 400, 400, 400, .7],
+  ['Pacifico', 'script', 'Pacifico', 400, 400, 400, .6],
+  ['Lobster', 'script', 'Lobster', 400, 400, 400, .5],
+  ['Caveat', 'script', 'Caveat:wght@400..700', 400, 700, 600, .45],
+  ['UnifrakturMaguntia', 'script', 'UnifrakturMaguntia', 400, 400, 400, .55],
+].map(([name, cat, spec, wmin, wmax, dw, w]) => ({ name, cat, spec, wmin, wmax, dw, w }));
+const FONT_BY = {}; FONTS.forEach(f => { FONT_BY[f.name] = f; });
+const NODATE = new Set(['Monoton', 'Bungee Shade', 'Rubik Glitch', 'Rubik Moonrocks', 'Nabla', 'Honk', 'Tilt Prism', 'Six Caps', 'UnifrakturMaguntia', 'Sixtyfour', 'Major Mono Display', 'Rampart One', 'Bungee Spice']);
+const CATS = ['all', 'modern', 'elegant', 'poster', 'future', 'retro', 'pixel', 'fun', 'script'];
+const stack = (f) => `'${f.name}', ${FALLBACK[f.cat]}`;
+const clampW = (f, w) => Math.min(f.wmax, Math.max(f.wmin, w));
+
+const LOCALES = [['fr-FR', 'Français'], ['en-US', 'English (US)'], ['en-GB', 'English (UK)'], ['es-ES', 'Español'], ['de-DE', 'Deutsch'], ['it-IT', 'Italiano'], ['pt-BR', 'Português (Brasil)'], ['nl-NL', 'Nederlands'], ['ca-ES', 'Català'], ['br-FR', 'Brezhoneg'], ['pl-PL', 'Polski'], ['sv-SE', 'Svenska'], ['tr-TR', 'Türkçe'], ['el-GR', 'Ελληνικά'], ['ru-RU', 'Русский'], ['uk-UA', 'Українська'], ['ar-EG', 'العربية'], ['he-IL', 'עברית'], ['fa-IR', 'فارسی'], ['hi-IN', 'हिन्दी'], ['th-TH', 'ไทย'], ['vi-VN', 'Tiếng Việt'], ['id-ID', 'Bahasa Indonesia'], ['sw-KE', 'Kiswahili'], ['zh-CN', '中文（简体）'], ['ja-JP', '日本語'], ['ko-KR', '한국어']];
+const NUMS = [['auto', 'Selon la langue|Follow the language|Según el idioma|Je nach Sprache'], ['latn', 'Occidentaux · 0123|Western · 0123|Occidentales · 0123|Westlich · 0123'], ['arab', 'Arabes · ٠١٢٣|Arabic · ٠١٢٣|Árabes · ٠١٢٣|Arabisch · ٠١٢٣'], ['arabext', 'Persans · ۰۱۲۳|Persian · ۰۱۲۳|Persas · ۰۱۲۳|Persisch · ۰۱۲۳'], ['deva', 'Devanagari · ०१२३'], ['beng', 'Bengalis · ০১২৩|Bengali · ০১২৩|Bengalíes · ০১২৩|Bengalisch · ০১২৩'], ['thai', 'Thaïs · ๐๑๒๓|Thai · ๐๑๒๓|Tailandeses · ๐๑๒๓|Thailändisch · ๐๑๒๓'], ['tibt', 'Tibétains · ༠༡༢༣|Tibetan · ༠༡༢༣|Tibetanos · ༠༡༢༣|Tibetisch · ༠༡༢༣'], ['hanidec', 'Chinois · 〇一二三|Chinese · 〇一二三|Chinos · 〇一二三|Chinesisch · 〇一二三'], ['fullwide', 'Pleine chasse · ０１２３|Full-width · ０１２３|Ancho completo · ０１２３|Vollbreite · ０１２３'], ['roman', 'Romains · XIV|Roman · XIV|Romanos · XIV|Römisch · XIV']].map(([v, n]) => [v, four(n)]);
+const CALS = [['gregory', 'Grégorien|Gregorian|Gregoriano|Gregorianisch'], ['islamic', 'Hégirien|Islamic (Hijri)|Islámico|Islamisch'], ['hebrew', 'Hébraïque|Hebrew|Hebreo|Hebräisch'], ['chinese', 'Chinois|Chinese|Chino|Chinesisch'], ['japanese', 'Japonais|Japanese|Japonés|Japanisch'], ['persian', 'Persan|Persian|Persa|Persisch'], ['buddhist', 'Bouddhiste|Buddhist|Budista|Buddhistisch'], ['indian', 'Indien|Indian|Indio|Indisch'], ['ethiopic', 'Éthiopien|Ethiopian|Etíope|Äthiopisch'], ['coptic', 'Copte|Coptic|Copto|Koptisch']].map(([v, n]) => [v, four(n)]);
+const ZONES = [['Europe/Paris', 'Paris'], ['Europe/London', 'Londres|London|Londres|London'], ['Europe/Berlin', 'Berlin|Berlin|Berlín|Berlin'], ['Europe/Madrid', 'Madrid'], ['Europe/Rome', 'Rome|Rome|Roma|Rom'], ['Europe/Moscow', 'Moscou|Moscow|Moscú|Moskau'], ['Africa/Casablanca', 'Casablanca'], ['Africa/Dakar', 'Dakar'], ['Africa/Cairo', 'Le Caire|Cairo|El Cairo|Kairo'], ['Asia/Dubai', 'Dubaï|Dubai|Dubái|Dubai'], ['Asia/Kolkata', 'Mumbai|Mumbai|Bombay|Mumbai'], ['Asia/Bangkok', 'Bangkok'], ['Asia/Shanghai', 'Pékin|Beijing|Pekín|Peking'], ['Asia/Tokyo', 'Tokyo|Tokyo|Tokio|Tokio'], ['Asia/Seoul', 'Séoul|Seoul|Seúl|Seoul'], ['Australia/Sydney', 'Sydney|Sydney|Sídney|Sydney'], ['Pacific/Auckland', 'Auckland'], ['Pacific/Tahiti', 'Tahiti'], ['Indian/Reunion', 'La Réunion|Réunion|Reunión|Réunion'], ['America/Martinique', 'Martinique|Martinique|Martinica|Martinique'], ['America/Sao_Paulo', 'São Paulo'], ['America/Mexico_City', 'Mexico|Mexico City|Ciudad de México|Mexiko-Stadt'], ['America/New_York', 'New York|New York|Nueva York|New York'], ['America/Toronto', 'Montréal|Montreal|Montreal|Montreal'], ['America/Los_Angeles', 'Los Angeles']].map(([z, n]) => [z, four(n)]);
+const DF = { full: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }, noyear: { weekday: 'long', day: 'numeric', month: 'long' }, short: { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }, num: { day: '2-digit', month: '2-digit', year: 'numeric' }, day: { weekday: 'long' } };
+const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
+const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop'];
+const POSK = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
+const POS = { tl: ['flex-start', 'flex-start', 'left'], t: ['flex-start', 'center', 'center'], tr: ['flex-start', 'flex-end', 'right'], l: ['center', 'flex-start', 'left'], c: ['center', 'center', 'center'], r: ['center', 'flex-end', 'right'], bl: ['flex-end', 'flex-start', 'left'], b: ['flex-end', 'center', 'center'], br: ['flex-end', 'flex-end', 'right'] };
+const SW_INK = ['#f4efe6', '#ffffff', '#111111', '#ff6a3d', '#ffc53d', '#d4f25a', '#41e0b0', '#4ea8ff', '#9d8cff', '#ff6fb5'];
+const SW_BG = ['#0b0a09', '#111111', '#0f1626', '#0f1f19', '#24101b', '#1a0f3d', '#efe9df', '#ffe14d', '#ffd6ea', '#dff1ff'];
+
+const DEFAULTS = {
+  font: 'Bricolage Grotesque', dateFont: 'same', weight: 300, italic: false, size: 100, letterSpacing: 0, fixedDigits: true, dateSize: 100, dateUpper: false,
+  color: '#f4efe6', dateColor: '#f4efe6', dateOpacity: 62, accent: '#ff6a3d', sepAccent: false, gradText: false, grad1: '#ffffff', grad2: '#ff6a3d',
+  glow: 0, glowColor: '#ff6a3d', shadow: 0, outline: false, outlineW: 2, anim: 'slide', breathe: false,
+  bgType: 'gradient', bgColor: '#0b0a09', bg1: '#2a211b', bg2: '#0b0a09', bg3: '#3b1f17', bgAngle: 180, bgShape: 'radial', bgSpeed: 50,
+  bgImage: null, bgFit: 'cover', bgBlur: 0, bgDim: 25, bgSat: 100, slideshow: false, slideEvery: 60,
+  vignette: 35, grain: 0, scanlines: false, tick: false,
+  hour12: false, ampm: true, seconds: 'small', leadingZero: true, sep: ':', blink: false, digits: 'auto', tz: 'local', showZone: false,
+  showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
+  pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
+};
+const VKEYS = ['font', 'dateFont', 'weight', 'italic', 'letterSpacing', 'fixedDigits', 'dateUpper', 'color', 'dateColor', 'dateOpacity', 'accent', 'sepAccent', 'gradText', 'grad1', 'grad2', 'glow', 'glowColor', 'shadow', 'outline', 'outlineW', 'anim', 'breathe', 'bgType', 'bgColor', 'bg1', 'bg2', 'bg3', 'bgAngle', 'bgShape', 'bgSpeed', 'vignette', 'grain', 'scanlines'];
+const IKEYS = ['bgImage', 'bgFit', 'bgBlur', 'bgDim', 'bgSat'];
+const VDEF = {}; VKEYS.forEach(k => { VDEF[k] = DEFAULTS[k]; });
+const PRESETS = [
+  { n: 'Minuit|Midnight|Medianoche|Mitternacht', s: {} },
+  { n: 'Papier|Paper|Papel|Papier', s: { font: 'Instrument Serif', weight: 400, color: '#1c1a17', dateColor: '#1c1a17', dateOpacity: 65, accent: '#c2410c', glowColor: '#c2410c', bgType: 'solid', bgColor: '#efe9df', vignette: 0, grain: 35, anim: 'fade' } },
+  { n: 'Néon|Neon|Neón|Neon', s: { font: 'Monoton', dateFont: 'Righteous', weight: 400, color: '#ff5ad8', dateColor: '#ffc2f1', dateOpacity: 85, accent: '#5af2ff', glow: 70, glowColor: '#ff2fd0', bgType: 'solid', bgColor: '#0a0610', vignette: 55, anim: 'fade', dateUpper: true } },
+  { n: 'Terminal|Terminal|Terminal|Terminal', s: { font: 'VT323', weight: 400, color: '#41ff8a', dateColor: '#41ff8a', dateOpacity: 70, accent: '#41ff8a', glow: 35, glowColor: '#1aff6a', bgType: 'solid', bgColor: '#030703', scanlines: true, vignette: 60, anim: 'none' } },
+  { n: 'Coucher de soleil|Sunset|Atardecer|Sonnenuntergang', s: { font: 'Bebas Neue', weight: 400, color: '#fff6ec', dateColor: '#fff6ec', dateOpacity: 85, accent: '#ffd166', glowColor: '#ffd166', bgType: 'gradient', bgShape: 'linear', bgAngle: 160, bg1: '#ff8a4c', bg2: '#5b2a86', shadow: 35, vignette: 20, letterSpacing: 2 } },
+  { n: 'Bonbon|Candy|Caramelo|Bonbon', s: { font: 'Fredoka', weight: 600, color: '#5b2bd9', dateColor: '#5b2bd9', dateOpacity: 70, accent: '#ff4f9a', glowColor: '#ff4f9a', bgType: 'gradient', bgShape: 'linear', bgAngle: 135, bg1: '#ffd6ea', bg2: '#dcd6ff', vignette: 0, anim: 'pop', sepAccent: true } },
+  { n: 'Brutal|Brutal|Brutal|Brutal', s: { font: 'Archivo Black', dateFont: 'Space Grotesk', weight: 400, color: '#111111', dateColor: '#111111', dateOpacity: 100, accent: '#111111', glowColor: '#111111', bgType: 'solid', bgColor: '#ffe14d', vignette: 0, dateUpper: true, letterSpacing: -4, anim: 'drop' } },
+  { n: 'Cosmos|Cosmos|Cosmos|Kosmos', s: { font: 'Orbitron', weight: 500, color: '#c8f3ff', dateColor: '#c8f3ff', dateOpacity: 65, accent: '#7c5cff', glow: 40, glowColor: '#3ab8ff', bgType: 'aurora', bg1: '#1b3a8a', bg2: '#06070f', bg3: '#0f5a6a', bgSpeed: 45, vignette: 50, dateUpper: true, letterSpacing: 4 } },
+  { n: 'Arcade|Arcade|Arcade|Arcade', s: { font: 'Press Start 2P', weight: 400, color: '#ffd23f', dateColor: '#ff7ad9', dateOpacity: 100, accent: '#ff7ad9', glowColor: '#ff7ad9', shadow: 60, bgType: 'solid', bgColor: '#1a0f3d', scanlines: true, vignette: 40, anim: 'none', dateUpper: true } },
+  { n: 'Luxe|Luxury|Lujo|Luxus', s: { font: 'Italiana', dateFont: 'Cormorant Garamond', weight: 400, color: '#e8c77c', dateColor: '#e8c77c', dateOpacity: 75, accent: '#e8c77c', glowColor: '#e8c77c', gradText: true, grad1: '#fbe9bd', grad2: '#a87a2f', bgType: 'gradient', bgShape: 'radial', bg1: '#221d14', bg2: '#070605', letterSpacing: 6, dateUpper: true, vignette: 45, anim: 'blur' } },
+  { n: 'Matrice|Dot matrix|Matriz|Punktmatrix', s: { font: 'Doto', dateFont: 'Geist', weight: 800, color: '#ff5a36', dateColor: '#f0ece6', dateOpacity: 55, accent: '#ff5a36', glowColor: '#ff5a36', bgType: 'solid', bgColor: '#111111', vignette: 30, anim: 'flip' } },
+  { n: 'Glacier|Glacier|Glaciar|Gletscher', s: { font: 'Unbounded', weight: 200, color: '#0d2c4d', dateColor: '#0d2c4d', dateOpacity: 65, accent: '#2b7fff', glowColor: '#2b7fff', bgType: 'gradient', bgShape: 'linear', bgAngle: 180, bg1: '#eef8ff', bg2: '#b9dcff', vignette: 0, grain: 15 } },
+  { n: 'Iso 3D|Iso 3D|Iso 3D|Iso 3D', s: { font: 'Nabla', dateFont: 'Fredoka', weight: 400, color: '#ffffff', dateColor: '#ffe8b3', dateOpacity: 85, accent: '#ffb84d', glowColor: '#ffb84d', bgType: 'gradient', bgShape: 'radial', bg1: '#2b1a4a', bg2: '#0e0a1a', vignette: 40, anim: 'pop' } },
+  { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'solid', bgColor: '#120d0b', grain: 30, vignette: 65, anim: 'fade', sepAccent: true } },
+].map(p => ({ n: four(p.n), s: p.s }));
+const GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
+
+function hexA(hex, a) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); h = h.padEnd(6, '0'); return `rgba(${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)},${a})`; }
+function lum(hex) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const v = [0, 2, 4].map(i => { const c = parseInt(h.slice(i, i + 2), 16) / 255; return c <= .03928 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); }); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }
+function hsl(h, s, l) { h = ((h % 360) + 360) % 360; s /= 100; l /= 100; const a = s * Math.min(l, 1 - l); const f = (n) => { const k = (n + h / 30) % 12; return Math.round(255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)))).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); }
+const FMT = new Map();
+function fmt(loc, o) { const k = loc + '|' + JSON.stringify(o); let f = FMT.get(k); if (!f) { try { f = new Intl.DateTimeFormat(loc, o); } catch (e) { try { f = new Intl.DateTimeFormat('en-US', o); } catch (e2) { f = new Intl.DateTimeFormat('en-US'); } } FMT.set(k, f); } return f; }
+function zp(now, tz) { const o = {}; for (const p of fmt('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' }).formatToParts(now)) o[p.type] = p.value; return { y: +o.year, mo: +o.month, d: +o.day, h: (+o.hour) % 24, m: +o.minute, s: +o.second }; }
+function dayPeriod(loc, now, tz, h) { try { const x = fmt(loc, { hour: 'numeric', hour12: true, timeZone: tz }).formatToParts(now).find(q => q.type === 'dayPeriod'); if (x) return x.value; } catch (e) {} return h < 12 ? 'AM' : 'PM'; }
+const DM = {};
+function dmap(nu) { if (!nu || nu === 'latn' || nu === 'roman') return null; if (!(nu in DM)) { try { const f = new Intl.NumberFormat('en-u-nu-' + nu, { useGrouping: false }); const a = Array.from({ length: 10 }, (_, i) => f.format(i)); DM[nu] = a[1] === '1' ? null : a; } catch (e) { DM[nu] = null; } } return DM[nu]; }
+const conv = (str, m) => (m ? str.replace(/[0-9]/g, d => m[d]) : str);
+function roman(n) { if (!n) return 'N'; let r = ''; for (const [v, c] of [[50, 'L'], [40, 'XL'], [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']]) while (n >= v) { r += c; n -= v; } return r; }
+function autoNu(loc) { try { return new Intl.NumberFormat(loc).resolvedOptions().numberingSystem || 'latn'; } catch (e) { return 'latn'; } }
+function isoWeek(y, m, d) { const dt = new Date(Date.UTC(y, m - 1, d)); const day = dt.getUTCDay() || 7; dt.setUTCDate(dt.getUTCDate() + 4 - day); const y0 = new Date(Date.UTC(dt.getUTCFullYear(), 0, 1)); return Math.ceil(((dt - y0) / 86400000 + 1) / 7); }
+function loadJSON(k, d) { try { const v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
+const DB = {
+  p: null,
+  open() { if (!this.p) this.p = new Promise((res, rej) => { const r = indexedDB.open('findheure', 1); r.onupgradeneeded = () => r.result.createObjectStore('media', { keyPath: 'id' }); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); }); return this.p; },
+  async run(mode, fn) { const db = await this.open(); return new Promise((res, rej) => { const tx = db.transaction('media', mode); const rq = fn(tx.objectStore('media')); tx.oncomplete = () => res(rq && rq.result); tx.onerror = () => rej(tx.error); tx.onabort = () => rej(tx.error); }); },
+  all() { return this.run('readonly', st => st.getAll()); },
+  put(r) { return this.run('readwrite', st => st.put(r)); },
+  del(id) { return this.run('readwrite', st => st.delete(id)); },
+};
+
+class Component extends DCLogic {
+  state = (() => {
+    const s = { ...DEFAULTS, ...(loadJSON(SKEY, {}) || {}) };
+    if (!FONT_BY[s.font]) s.font = DEFAULTS.font;
+    if (s.dateFont !== 'same' && !FONT_BY[s.dateFont]) s.dateFont = 'same';
+    if (!Array.isArray(s.cities)) s.cities = [];
+    if (!LANGS.includes(s.uiLang)) s.uiLang = 'fr';
+    const styles = loadJSON(STKEY, []);
+    return { s, styles: Array.isArray(styles) ? styles : [], now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+  })();
+  timeRef = React.createRef();
+  fileRef = React.createRef();
+  loaded = new Set(['Geist', 'Bricolage Grotesque']);
+  offs = [];
+
+  componentDidMount() {
+    const s = this.state.s;
+    this.ensureFont(s.font); if (s.dateFont !== 'same') this.ensureFont(s.dateFont);
+    const loop = () => { this.tick(); this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10); };
+    this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10);
+    const on = (t, ev, fn, o) => { t.addEventListener(ev, fn, o); this.offs.push(() => t.removeEventListener(ev, fn, o)); };
+    on(window, 'resize', () => this.setState({ vw: window.innerWidth, vh: window.innerHeight }));
+    ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => on(window, ev, this.activity, { passive: true }));
+    on(window, 'keydown', this.onKey);
+    on(document, 'fullscreenchange', () => this.setState({ fs: !!document.fullscreenElement }));
+    on(window, 'dragenter', this.onDragEnter); on(window, 'dragover', this.onDragOver); on(window, 'dragleave', this.onDragLeave); on(window, 'drop', this.onDrop);
+    if (document.fonts) { on(document.fonts, 'loadingdone', this.bumpFonts); document.fonts.ready.then(() => this.bumpFonts()); }
+    this.activity();
+    DB.all().then(list => {
+      const media = (list || []).filter(r => r && r.blob).sort((a, b) => a.t - b.t).map(r => ({ id: r.id, type: r.type, name: r.name, url: URL.createObjectURL(r.blob) }));
+      if (media.length) this.setState({ media });
+    }).catch(() => {});
+    this.measure();
+  }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT].forEach(clearTimeout); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentDidUpdate() {
+    const s = this.state.s, st = this.state;
+    const key = [s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
+    if (key !== this.mKey) { this.mKey = key; this.measure(); }
+    if (this.titleStr && this.titleStr !== this.lastTitle) { this.lastTitle = this.titleStr; document.title = this.titleStr; }
+  }
+  measure = () => {
+    const el = this.timeRef.current; if (!el) return;
+    const fs = parseFloat(getComputedStyle(el).fontSize), w = el.offsetWidth;
+    if (!fs || !w) return;
+    const r = w / fs;
+    if (Math.abs(r - this.state.ratio) / this.state.ratio > 0.01) this.setState({ ratio: r });
+  };
+  bumpFonts = () => this.setState(st => ({ fontsTick: st.fontsTick + 1 }));
+  tick = () => {
+    const now = new Date(), s = this.state.s;
+    if (s.tick) this.playTick(now.getSeconds() % 2);
+    if (s.bgType === 'image' && s.slideshow && this.state.media.length > 1) { this.slideN = (this.slideN || 0) + 1; if (this.slideN >= s.slideEvery) { this.slideN = 0; this.nextBg(); } }
+    this.setState({ now });
+  };
+  nextBg = () => { const m = this.state.media; if (m.length < 2) return; const i = m.findIndex(x => x.id === this.state.s.bgImage); this.setS({ bgImage: m[(i + 1) % m.length].id }); };
+  playTick = (alt) => {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+      const ac = this.ac || (this.ac = new AC()); if (ac.state === 'suspended') ac.resume();
+      const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
+      o.type = 'triangle'; o.frequency.value = alt ? 1850 : 1350;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.08, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.06);
+    } catch (e) {}
+  };
+  setS = (patch) => {
+    this.setState(st => {
+      const s = { ...st.s, ...patch };
+      try { localStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {}
+      const out = { s };
+      if (s.bgImage !== st.s.bgImage && st.s.bgImage && st.s.bgType === 'image') out.prevBg = st.s.bgImage;
+      return out;
+    });
+    if (patch.bgImage !== undefined) { clearTimeout(this.prevT); this.prevT = setTimeout(() => this.setState({ prevBg: null }), 1500); }
+    if (patch.font) this.ensureFont(patch.font);
+    if (patch.dateFont && patch.dateFont !== 'same') this.ensureFont(patch.dateFont);
+  };
+  ensureFont = (name) => {
+    const f = FONT_BY[name]; if (!f || this.loaded.has(name)) return; this.loaded.add(name);
+    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = `https://fonts.googleapis.com/css2?family=${f.spec}&display=swap`; document.head.appendChild(l);
+  };
+  activity = () => {
+    if (this.state.idle) this.setState({ idle: false });
+    clearTimeout(this.idleT);
+    this.idleT = setTimeout(() => { if (!this.state.tab && !this.overBar) this.setState({ idle: true }); }, (this.state.s.hideDelay || 4) * 1000);
+  };
+  barEnter = () => { this.overBar = true; };
+  barLeave = () => { this.overBar = false; this.activity(); };
+  onKey = (e) => {
+    const tg = e.target, tn = tg && tg.tagName;
+    if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable) || e.metaKey || e.ctrlKey || e.altKey) return;
+    if (e.key === 'Escape') this.closePanel();
+    else if (e.key === 'f' || e.key === 'F') this.toggleFs();
+    else if (e.key === 's' || e.key === 'S') this.surprise();
+  };
+  toggleFs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else { const r = document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } } catch (e) {} };
+  hasFiles = (e) => { const t = e.dataTransfer && e.dataTransfer.types; return !!t && Array.from(t).includes('Files'); };
+  onDragEnter = (e) => { if (!this.hasFiles(e)) return; e.preventDefault(); this.dragN = (this.dragN || 0) + 1; if (!this.state.dragOver) this.setState({ dragOver: true }); };
+  onDragOver = (e) => { if (this.hasFiles(e)) e.preventDefault(); };
+  onDragLeave = (e) => { if (!this.hasFiles(e)) return; this.dragN = Math.max(0, (this.dragN || 0) - 1); if (!this.dragN) this.setState({ dragOver: false }); };
+  onDrop = (e) => { if (!this.hasFiles(e)) return; e.preventDefault(); this.dragN = 0; this.setState({ dragOver: false }); this.addFiles(Array.from(e.dataTransfer.files || [])); };
+  pickFiles = () => { if (this.fileRef.current) this.fileRef.current.click(); };
+  onFiles = (e) => { const f = Array.from(e.target.files || []); e.target.value = ''; this.addFiles(f); };
+  addFiles = async (files) => {
+    const ok = files.filter(f => /^(image|video)\//.test(f.type)); if (!ok.length) return;
+    const added = [];
+    for (const f of ok) {
+      const id = 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), type = f.type.startsWith('video') ? 'video' : 'image';
+      try { await DB.put({ id, blob: f, type, name: f.name, t: Date.now() }); } catch (err) {}
+      added.push({ id, type, name: f.name, url: URL.createObjectURL(f) });
+    }
+    this.setState(st => ({ media: [...st.media, ...added] }));
+    this.setS({ bgType: 'image', bgImage: added[0].id });
+    this.toast(this.L().added);
+  };
+  delMedia = (id) => {
+    const m = this.state.media.find(x => x.id === id); if (m) URL.revokeObjectURL(m.url);
+    DB.del(id).catch(() => {});
+    const media = this.state.media.filter(x => x.id !== id);
+    this.setState({ media });
+    if (this.state.s.bgImage === id) this.setS({ bgImage: media.length ? media[0].id : null });
+  };
+  toast = (msg, undo) => { clearTimeout(this.toastT); this.setState({ toast: { msg, undo } }); this.toastT = setTimeout(() => this.setState({ toast: null }), undo ? 6000 : 2400); };
+  reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
+  surprise = () => {
+    const rnd = (a, b) => a + Math.random() * (b - a), pick = (a) => a[Math.floor(Math.random() * a.length)];
+    const f = pick(FONTS), h = Math.floor(rnd(0, 360)), light = Math.random() < 0.28;
+    const x = { ...VDEF, font: f.name, weight: f.dw, dateFont: NODATE.has(f.name) ? 'Geist' : 'same' };
+    if (light) { const ink = hsl(h + 200, 55, 18); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 160, 80, 46), bgColor: hsl(h, 70, 90), bg1: hsl(h, 75, 91), bg2: hsl(h + 35, 65, 80), bg3: hsl(h - 30, 70, 85), vignette: 0 }); }
+    else { const ink = hsl(h + 30, 45, 94); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 170, 90, 62), bgColor: hsl(h, 40, 8), bg1: hsl(h, 50, 22), bg2: hsl(h + 40, 50, 6), bg3: hsl(h - 40, 60, 24), vignette: Math.round(rnd(20, 60)) }); }
+    x.bgType = pick(light ? ['solid', 'gradient', 'gradient'] : ['solid', 'gradient', 'gradient', 'aurora']);
+    x.bgShape = pick(['linear', 'radial']); x.bgAngle = pick([90, 135, 160, 180, 210]);
+    x.glowColor = x.accent; x.glow = !light && Math.random() < 0.3 ? Math.round(rnd(20, 60)) : 0;
+    x.anim = pick(['fade', 'slide', 'drop', 'flip', 'blur', 'pop']); x.sepAccent = Math.random() < 0.35;
+    if (f.cat === 'pixel' && !light && Math.random() < 0.4) x.scanlines = true;
+    if (this.state.media.length && Math.random() < 0.25) { x.bgType = 'image'; x.bgImage = pick(this.state.media).id; }
+    this.setS(x);
+  };
+  saveStyle = () => {
+    const st = this.state, name = (st.saveName || '').trim() || `${this.L().style} ${st.styles.length + 1}`, snap = {};
+    [...VKEYS, ...IKEYS].forEach(k => { snap[k] = st.s[k]; });
+    const styles = [...st.styles, { id: 'st' + Date.now().toString(36), name, s: snap }];
+    this.setState({ styles, saveName: '' }); try { localStorage.setItem(STKEY, JSON.stringify(styles)); } catch (e) {}
+    this.toast(this.L().saved);
+  };
+  delStyle = (id) => { const styles = this.state.styles.filter(x => x.id !== id); this.setState({ styles }); try { localStorage.setItem(STKEY, JSON.stringify(styles)); } catch (e) {} };
+  applyStyle = (x) => { const p = { ...VDEF, ...x.s }; if (p.bgType === 'image' && !this.state.media.some(m => m.id === p.bgImage)) p.bgImage = this.state.media[0] ? this.state.media[0].id : null; this.setS(p); };
+  openTab = (id) => { const tab = this.state.tab === id ? null : id; this.setState({ tab }); if (tab === 'font' || tab === 'presets') FONTS.forEach(f => this.ensureFont(f.name)); if (!tab) this.activity(); };
+  closePanel = () => { if (this.state.tab) this.setState({ tab: null }); this.activity(); };
+  onStage = () => { if (this.state.tab) this.closePanel(); };
+  L() { const li = Math.max(0, LANGS.indexOf(this.state.s.uiLang)); if (this._li !== li) { this._li = li; const o = {}; for (const k in T) o[k] = T[k][li]; this._L = o; } return this._L; }
+  cardText(ps) {
+    const pf = FONT_BY[ps.font] || FONTS[0], g = ps.glow / 100, sh = [];
+    if (g > 0) sh.push(`0 0 ${(0.04 + g * 0.06).toFixed(3)}em ${hexA(ps.glowColor, 0.9)}`, `0 0 ${(0.15 + g * 0.3).toFixed(3)}em ${hexA(ps.glowColor, (0.3 + g * 0.4).toFixed(2))}`);
+    if (ps.shadow > 0) sh.push(`0 .05em .1em rgba(0,0,0,${(0.2 + ps.shadow / 200).toFixed(2)})`);
+    const o = { fontFamily: stack(pf), fontWeight: clampW(pf, ps.weight), fontStyle: ps.italic ? 'italic' : 'normal', fontSize: Math.round(Math.min(40, 128 / (4 * pf.w + 0.4))) + 'px', lineHeight: 1, color: ps.color, letterSpacing: ps.letterSpacing / 100 + 'em', whiteSpace: 'nowrap', textShadow: sh.length ? sh.join(', ') : undefined };
+    if (ps.outline) Object.assign(o, { WebkitTextStroke: '1px ' + ps.color, WebkitTextFillColor: 'transparent' });
+    else if (ps.gradText) Object.assign(o, { backgroundImage: `linear-gradient(180deg, ${ps.grad1}, ${ps.grad2})`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent', textShadow: undefined });
+    return o;
+  }
+
+  renderVals() {
+    const st = this.state, s = st.s, L = this.L(), li = this._li, E = React.createElement;
+    const uiLoc = UI_LOC[s.uiLang] || 'fr-FR', locale = s.locale === 'auto' ? uiLoc : s.locale;
+    const tz = s.tz === 'local' ? undefined : s.tz, now = st.now, p = zp(now, tz);
+    const nuEff = s.digits === 'auto' ? autoNu(locale) : s.digits;
+    const isRoman = nuEff === 'roman', dm = dmap(nuEff), latin = !dm && !isRoman;
+    const num = (n, pad) => (isRoman ? roman(n) : conv(pad ? String(n).padStart(2, '0') : String(n), dm));
+    const h12 = s.hour12 ? (p.h % 12 || 12) : p.h;
+    const hStr = num(h12, s.leadingZero), mStr = num(p.m, true), sStr = num(p.s, true);
+    const sep1 = s.sep, sep2 = s.sep === 'h' ? ' ' : s.sep;
+    const ap = s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
+    this.timeLen = hStr.length + mStr.length + (s.seconds !== 'off' ? sStr.length : 0) + ap.length;
+    this.titleStr = `${hStr}${sep1 === ' ' ? ':' : sep1}${mStr} · findheure`;
+
+    // clock
+    const f = FONT_BY[s.font] || FONTS[0], wt = clampW(f, s.weight), ls = s.letterSpacing / 100;
+    const avail = st.vw * (['c', 't', 'b'].includes(s.pos) ? 0.84 : 0.74);
+    let fontPx = Math.min(avail / st.ratio, st.vh * 0.46) * s.size / 100;
+    fontPx = Math.max(20, Math.min(fontPx, (st.vw * 0.96) / st.ratio));
+    const anim = s.anim !== 'none' ? `fh-${s.anim} .6s cubic-bezier(.2,.75,.2,1) both` : undefined;
+    const fill = s.outline ? null : s.gradText ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : null;
+    const sepFill = s.sepAccent ? (s.outline ? { WebkitTextStroke: `${s.outlineW}px ${s.accent}` } : { color: s.accent, WebkitTextFillColor: s.accent }) : fill;
+    const blinkOff = s.blink && p.s % 2 === 1;
+    const chars = (txt, kind, kb) => Array.from(txt).map((ch, i) => E('span', { key: kb + i + ch, style: { display: 'inline-block', whiteSpace: 'pre', textAlign: 'center', width: kind === 'd' && s.fixedDigits && latin ? `calc(1ch + ${ls}em)` : undefined, animation: kind === 'd' ? anim : undefined, ...(kind === 's' ? { ...sepFill, opacity: blinkOff ? 0.15 : 1, transition: 'opacity .3s ease' } : fill) } }, ch));
+    const trail = [];
+    if (s.seconds === 'small') trail.push(E('div', { key: 'ts', style: { display: 'flex' } }, chars(sStr, 'd', 'S')));
+    if (ap) trail.push(E('div', { key: 'ta', style: { fontSize: s.seconds === 'small' ? '.62em' : '.8em', letterSpacing: '.06em', marginTop: trail.length ? '.4em' : 0, opacity: 0.85, ...(s.sepAccent && !s.outline ? { color: s.accent, WebkitTextFillColor: s.accent } : fill) } }, ap));
+    const kids = [...chars(hStr, 'd', 'H'), ...chars(sep1, 's', 'A'), ...chars(mStr, 'd', 'M')];
+    if (s.seconds === 'same') kids.push(...chars(sep2, 's', 'B'), ...chars(sStr, 'd', 'S'));
+    if (trail.length) kids.push(E('div', { key: 'tr', style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '.3em', lineHeight: 1, letterSpacing: ls + 'em', marginLeft: '.22em', marginTop: '.3em' } }, trail));
+    const g = s.glow / 100, shd = s.shadow / 100, gc = s.glowColor, sh = [];
+    if (g > 0) sh.push(`0 0 ${(0.02 + g * 0.05).toFixed(3)}em ${hexA(gc, 0.9)}`, `0 0 ${(0.08 + g * 0.22).toFixed(3)}em ${hexA(gc, (0.25 + g * 0.5).toFixed(2))}`, `0 0 ${(0.25 + g * 0.6).toFixed(3)}em ${hexA(gc, (g * 0.55).toFixed(2))}`);
+    if (shd > 0) sh.push(`0 ${(0.01 + shd * 0.05).toFixed(3)}em ${(0.02 + shd * 0.12).toFixed(3)}em rgba(0,0,0,${(0.2 + shd * 0.5).toFixed(2)})`);
+    const useFilter = !!fill;
+    const timeStyle = { display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: fontPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, filter: useFilter && sh.length ? sh.map(x => `drop-shadow(${x})`).join(' ') : undefined, animation: s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: 'font-size .35s ease, color .4s ease' };
+    const clockEl = E('div', { ref: this.timeRef, style: timeStyle, role: 'timer', 'aria-label': `${hStr}:${mStr}` }, kids);
+
+    // date, message, zone, cities
+    const df = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f);
+    const dPx = Math.round(Math.max(14, Math.min(fontPx * 0.085, 64)) * s.dateSize / 100);
+    const u = ['ca-' + (s.calendar || 'gregory')]; if (s.digits !== 'auto') u.push('nu-' + (isRoman ? 'latn' : s.digits));
+    const dloc = `${locale}-u-${u.join('-')}`;
+    let dateText = '';
+    if (s.showDate) {
+      if (s.dateFmt === 'iso') dateText = conv(`${p.y}-${String(p.mo).padStart(2, '0')}-${String(p.d).padStart(2, '0')}`, dm);
+      else { try { dateText = fmt(dloc, { ...(DF[s.dateFmt] || DF.full), timeZone: tz }).format(now); } catch (e) { dateText = now.toDateString(); } }
+      if (s.weekNum) dateText += ` · ${L.week} ${num(isoWeek(p.y, p.mo, p.d), false)}`;
+    }
+    let localTz = ''; try { localTz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+    const tzLabel = (z) => { const r = ZONES.find(q => q[0] === z); return r ? r[1][li] : String(z || '').split('/').pop().replace(/_/g, ' '); };
+    const offOf = (z) => { try { const x = fmt('en-US', { timeZone: z, timeZoneName: 'shortOffset' }).formatToParts(now).find(q => q.type === 'timeZoneName'); return x ? x.value.replace('GMT', 'UTC') : ''; } catch (e) { return ''; } };
+    let zoneText = '';
+    if (s.showZone) { const off = offOf(tz); zoneText = `${tzLabel(tz || localTz)}${off ? ' · ' + off : ''}`; }
+    const dateColor = hexA(s.dateColor, s.dateOpacity / 100);
+    const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : undefined, transition: 'color .4s ease' };
+    const greet = p.h < 5 ? L.g_night : p.h < 12 ? L.g_morning : p.h < 18 ? L.g_afternoon : p.h < 22 ? L.g_evening : L.g_night;
+    const msgText = s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : '';
+    const citiesList = (s.cities || []).slice(0, 4).map(z => { const q = zp(now, z); const hh = s.hour12 ? (q.h % 12 || 12) : q.h; return { name: tzLabel(z), time: `${num(hh, s.leadingZero)}${sep1}${num(q.m, true)}${s.hour12 ? ' ' + dayPeriod(locale, now, z, q.h) : ''}` }; });
+    const P = POS[s.pos] || POS.c;
+
+    // background
+    const grad = (o) => (o.bgShape === 'radial' ? `radial-gradient(130% 110% at 50% 0%, ${o.bg1} 0%, ${o.bg2} 72%)` : `linear-gradient(${o.bgAngle}deg, ${o.bg1}, ${o.bg2})`);
+    const base = s.bgType === 'solid' ? s.bgColor : s.bgType === 'gradient' ? grad(s) : s.bgType === 'aurora' ? s.bg2 : '#000';
+    let aurora = null, layers = null;
+    if (s.bgType === 'aurora') {
+      const spd = 70 - s.bgSpeed * 0.6;
+      aurora = [
+        E('div', { key: 'a1', style: { position: 'absolute', inset: '-25%', background: `radial-gradient(35% 45% at 25% 35%, ${s.bg1} 0%, transparent 70%), radial-gradient(40% 50% at 75% 30%, ${s.bg3} 0%, transparent 70%)`, filter: 'blur(30px)', animation: `fh-aurora ${spd.toFixed(1)}s ease-in-out infinite alternate` } }),
+        E('div', { key: 'a2', style: { position: 'absolute', inset: '-25%', background: `radial-gradient(40% 45% at 60% 75%, ${hexA(s.accent, 0.28)} 0%, transparent 70%), radial-gradient(30% 40% at 20% 80%, ${s.bg1} 0%, transparent 70%)`, filter: 'blur(40px)', animation: `fh-aurora ${(spd * 1.4).toFixed(1)}s ease-in-out infinite alternate-reverse` } }),
+      ];
+    }
+    if (s.bgType === 'image') {
+      const cur = st.media.find(m => m.id === s.bgImage) || st.media[0];
+      const prev = st.prevBg && (!cur || st.prevBg !== cur.id) ? st.media.find(m => m.id === st.prevBg) : null;
+      const b = s.bgBlur, bs = { position: 'absolute', left: -b * 2 + 'px', top: -b * 2 + 'px', width: `calc(100% + ${b * 4}px)`, height: `calc(100% + ${b * 4}px)`, filter: `blur(${b}px) saturate(${s.bgSat}%)` };
+      const mk = (m, fade) => (m.type === 'video'
+        ? E('video', { key: m.id, src: m.url, autoPlay: true, muted: true, loop: true, playsInline: true, onCanPlay: (e) => { e.target.muted = true; const r = e.target.play(); if (r && r.catch) r.catch(() => {}); }, style: { ...bs, objectFit: s.bgFit === 'contain' ? 'contain' : 'cover', animation: fade ? 'fh-fade 1.2s ease both' : undefined } })
+        : E('div', { key: m.id, style: { ...bs, backgroundImage: `url("${m.url}")`, backgroundSize: s.bgFit === 'tile' ? 'auto' : s.bgFit, backgroundRepeat: s.bgFit === 'tile' ? 'repeat' : 'no-repeat', backgroundPosition: 'center', animation: fade ? 'fh-fade 1.2s ease both' : undefined } }));
+      layers = [prev && mk(prev, false), cur && mk(cur, true)].filter(Boolean);
+    }
+
+    // chrome
+    const bgL = s.bgType === 'image' ? 0.05 : s.bgType === 'solid' ? lum(s.bgColor) : (lum(s.bg1) + lum(s.bg2)) / 2;
+    const dark = s.uiTheme === 'dark' || (s.uiTheme === 'auto' && bgL < 0.4);
+    const ui = dark
+      ? { scheme: 'dark', bar: 'rgba(22,21,20,.62)', panel: 'rgba(22,21,20,.8)', border: 'rgba(255,255,255,.1)', fg: '#f6f4f0', fg2: 'rgba(246,244,240,.64)', fg3: 'rgba(246,244,240,.4)', hover: 'rgba(255,255,255,.07)', active: 'rgba(255,255,255,.14)', field: 'rgba(255,255,255,.06)', tile: 'rgba(255,255,255,.04)', invBg: '#f6f4f0', invFg: '#151413', track: 'rgba(255,255,255,.2)', ringGap: '#1c1b1a', shadow: '0 18px 50px rgba(0,0,0,.35)' }
+      : { scheme: 'light', bar: 'rgba(252,251,249,.72)', panel: 'rgba(252,251,249,.88)', border: 'rgba(20,18,16,.1)', fg: '#191817', fg2: 'rgba(25,24,23,.64)', fg3: 'rgba(25,24,23,.42)', hover: 'rgba(0,0,0,.05)', active: 'rgba(0,0,0,.08)', field: 'rgba(0,0,0,.045)', tile: 'rgba(0,0,0,.03)', invBg: '#191817', invFg: '#fbfaf8', track: 'rgba(0,0,0,.18)', ringGap: '#fbfaf8', shadow: '0 18px 50px rgba(0,0,0,.12)' };
+    const hidden = st.idle && s.autoHide && !st.tab;
+    const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`;
+    const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
+    const tabs = TABS.map(([id, label]) => ({ label, pick: () => this.openTab(id), bg: st.tab === id ? ui.active : 'transparent', fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? ui.active : ui.hover }));
+    const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
+    const preview = (ps) => {
+      let b;
+      if (ps.bgType === 'solid') b = ps.bgColor;
+      else if (ps.bgType === 'gradient') b = grad(ps);
+      else if (ps.bgType === 'aurora') b = `radial-gradient(60% 80% at 25% 30%, ${ps.bg1}, transparent), radial-gradient(60% 80% at 80% 70%, ${ps.bg3}, transparent), ${ps.bg2}`;
+      else { const m = st.media.find(x => x.id === ps.bgImage) || st.media[0]; b = m && m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #111` : '#111'; }
+      return ps.vignette ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,${(ps.vignette * 0.006).toFixed(2)}) 100%), ${b}` : b;
+    };
+
+    // panel controls
+    const controls = [];
+    let presets = [], fontTiles = [], fontCats = [], media = [];
+    if (st.tab) {
+      const add = (o) => controls.push({ span: 'auto', op: 1, display: '', padTop: '0px', hasLabel: !o.isHead && !o.isTog, ...o });
+      const H = (label) => add({ isHead: true, label, span: '1 / -1', padTop: controls.length ? '10px' : '0px' });
+      const on2 = (on) => ({ bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2 });
+      const seg = (k, label, opts, x) => add({ isSeg: true, label, options: opts.map(([v, l]) => ({ label: l, pick: () => this.setS({ [k]: v }), ...on2(s[k] === v) })), ...x });
+      const tog = (k, label) => add({ isTog: true, label, toggle: () => this.setS({ [k]: !s[k] }), trackBg: s[k] ? ui.invBg : ui.track, knobBg: s[k] ? ui.invFg : '#ffffff', knobX: s[k] ? '14px' : '0px' });
+      const rng = (k, label, min, max, step, show, x) => add({ isRange: true, label, min, max, step, value: s[k], display: show(s[k]), disabled: false, onInput: (e) => this.setS({ [k]: +e.target.value }), ...x });
+      const col = (k, label, sw) => { const cur = String(s[k] || '').toLowerCase(); add({ isColor: true, label, value: cur, swatches: sw.map(c => ({ c, pick: () => this.setS({ [k]: c }), ring: cur === c ? ringOn : ringOff })), customRing: sw.includes(cur) ? ringOff : ringOn, onPick: (e) => this.setS({ [k]: e.target.value }) }); };
+      const sel = (k, label, opts, isNum) => add({ isSel: true, label, value: String(s[k]), opts: opts.map(([v, l]) => E('option', { key: String(v), value: String(v) }, l)), onSel: (e) => this.setS({ [k]: isNum ? +e.target.value : e.target.value }) });
+      const pctF = new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }), pct = (v) => pctF.format(v / 100), raw = (v) => String(v);
+      const t = st.tab;
+      if (t === 'presets') {
+        H(L.hThemes);
+        add({ isPresets: true, span: '1 / -1', hasLabel: false });
+        H(L.hMine);
+        add({ isMine: true, span: '1 / -1', hasLabel: false });
+        presets = PRESETS.map(pr => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { name: pr.n[li], sample, bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.setS(ps) }; });
+      }
+      if (t === 'font') {
+        add({ isFontGrid: true, span: '1 / -1', hasLabel: false });
+        fontCats = CATS.map(c => ({ label: L['cat_' + c], pick: () => this.setState({ fontCat: c }), bg: st.fontCat === c ? ui.invBg : 'transparent', fg: st.fontCat === c ? ui.invFg : ui.fg2, border: st.fontCat === c ? ui.invBg : ui.border }));
+        fontTiles = FONTS.filter(x => st.fontCat === 'all' || x.cat === st.fontCat).map(x => ({ name: x.name, sample, pick: () => this.setS({ font: x.name, weight: x.dw }), bg: s.font === x.name ? ui.active : ui.tile, ring: s.font === x.name ? `inset 0 0 0 1.5px ${ui.fg}` : ringOff, style: { fontFamily: stack(x), fontWeight: x.dw, fontSize: Math.round(Math.min(34, 112 / (4 * x.w + 0.4))) + 'px', lineHeight: 1.1, whiteSpace: 'nowrap', flex: 1, display: 'flex', alignItems: 'center' } }));
+        H(L.hTime);
+        const single = f.wmin === f.wmax;
+        rng('weight', L.weight, f.wmin, f.wmax, 10, () => (single ? `${f.wmin} · ${L.singleWeight}` : String(wt)), { value: wt, disabled: single, op: single ? 0.5 : 1 });
+        rng('size', L.size, 30, 130, 1, pct);
+        rng('letterSpacing', L.spacing, -10, 30, 1, v => (v > 0 ? '+' : '') + v);
+        tog('italic', L.italic); tog('fixedDigits', L.fixedDigits);
+        H(L.hDate);
+        sel('dateFont', L.dateFont, [['same', L.sameFont], ...FONTS.map(x => [x.name, x.name])]);
+        rng('dateSize', L.dateSize, 50, 220, 1, pct);
+      }
+      if (t === 'colors') {
+        H(L.hTime); col('color', L.timeColor, SW_INK); tog('gradText', L.gradText);
+        if (s.gradText) { col('grad1', L.gradTop, SW_INK); col('grad2', L.gradBottom, SW_INK); }
+        H(L.hDate); col('dateColor', L.dateColor, SW_INK); rng('dateOpacity', L.dateOpacity, 10, 100, 1, pct);
+        H(L.hAccent); col('accent', L.accent, SW_INK); tog('sepAccent', L.sepAccent);
+      }
+      if (t === 'bg') {
+        seg('bgType', L.bgType, [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['image', L.image]], { span: '1 / -1' });
+        if (s.bgType === 'solid') col('bgColor', L.bgColor, SW_BG);
+        if (s.bgType === 'gradient') { col('bg1', L.color + ' 1', SW_BG); col('bg2', L.color + ' 2', SW_BG); seg('bgShape', L.shape, [['linear', L.linear], ['radial', L.radial]]); if (s.bgShape === 'linear') rng('bgAngle', L.angle, 0, 360, 5, v => v + '°'); }
+        if (s.bgType === 'aurora') { col('bg1', L.color + ' 1', SW_BG); col('bg2', L.color + ' 2', SW_BG); col('bg3', L.color + ' 3', SW_BG); rng('bgSpeed', L.speed, 0, 100, 1, raw); }
+        if (s.bgType === 'image') {
+          add({ isMedia: true, label: L.gallery, span: '1 / -1' });
+          media = st.media.map(m => ({ name: m.name, url: m.url, isVideo: m.type === 'video', thumb: m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #222` : '#111', ring: s.bgImage === m.id ? ringOn : ringOff, pick: () => this.setS({ bgType: 'image', bgImage: m.id }), del: (e) => { e.stopPropagation(); this.delMedia(m.id); } }));
+          seg('bgFit', L.fit, [['cover', L.cover], ['contain', L.contain], ['tile', L.tile]]);
+          rng('bgBlur', L.blur, 0, 40, 1, v => v + ' px'); rng('bgDim', L.dim, 0, 85, 1, pct); rng('bgSat', L.saturation, 0, 200, 1, pct);
+          tog('slideshow', L.slideshow);
+          if (s.slideshow) sel('slideEvery', L.every, [[10, '10 s'], [30, '30 s'], [60, '1 min'], [300, '5 min'], [900, '15 min'], [3600, '1 h']], true);
+        }
+      }
+      if (t === 'fx') {
+        H(L.hText); rng('glow', L.glow, 0, 100, 1, raw); col('glowColor', L.glowColor, SW_INK); rng('shadow', L.shadow, 0, 100, 1, raw); tog('outline', L.outline);
+        if (s.outline) rng('outlineW', L.outlineW, 1, 12, 0.5, v => v + ' px');
+        H(L.hMotion); seg('anim', L.anim, ANIMS.map(a => [a, L['a_' + a]]), { span: '1 / -1' }); tog('breathe', L.breathe);
+        H(L.hAtmos); rng('vignette', L.vignette, 0, 100, 1, raw); rng('grain', L.grain, 0, 100, 1, raw); tog('scanlines', L.scanlines); tog('tick', L.tick);
+      }
+      if (t === 'clock') {
+        H(L.hFormat);
+        seg('hour12', L.format, [[false, '24 h'], [true, '12 h']]);
+        if (s.hour12) tog('ampm', L.ampm);
+        seg('seconds', L.seconds, [['off', L.secOff], ['same', L.secSame], ['small', L.secSmall]]);
+        seg('sep', L.separator, [[':', ':'], ['.', '.'], ['·', '·'], ['h', 'h'], [' ', '␣']]);
+        tog('leadingZero', L.leadingZero); tog('blink', L.blink);
+        H(L.hZone);
+        sel('tz', L.timezone, [['local', `${L.localTz} · ${tzLabel(localTz)}`], ...ZONES.map(([z, n]) => { const o = offOf(z); return [z, `${n[li]}${o ? ' · ' + o : ''}`]; })]);
+        sel('digits', L.digits, NUMS.map(([v, n]) => [v, n[li]]));
+        tog('showZone', L.showZone);
+      }
+      if (t === 'date') {
+        H(L.hLang);
+        seg('uiLang', L.uiLang, [['fr', 'Français'], ['en', 'English'], ['es', 'Español'], ['de', 'Deutsch']]);
+        sel('locale', L.dateLang, [['auto', L.sameUi], ...LOCALES]);
+        H(L.hDate);
+        tog('showDate', L.showDate);
+        seg('dateFmt', L.dateFormat, DFS.map(k => [k, L['df_' + k]]), { span: '1 / -1' });
+        sel('calendar', L.calendar, CALS.map(([v, n]) => [v, n[li]]));
+        tog('weekNum', L.weekNum); tog('dateUpper', L.upper);
+      }
+      if (t === 'layout') {
+        H(L.hPlace);
+        add({ isPos: true, label: L.position, cells: POSK.map(k => ({ pick: () => this.setS({ pos: k }), bg: s.pos === k ? ui.invBg : 'transparent', dot: s.pos === k ? ui.invFg : ui.fg3 })) });
+        seg('datePos', L.datePos, [['above', L.above], ['below', L.below]]);
+        rng('gap', L.gap, 0, 300, 5, pct);
+        H(L.hExtras);
+        seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['custom', L.m_custom]]);
+        if (s.msg === 'custom') add({ isText: true, label: L.m_custom, value: s.msgText, ph: L.msgPh, onText: (e) => this.setS({ msgText: e.target.value.slice(0, 80) }) });
+        tog('progress', L.progress);
+        add({ isChips: true, label: L.cities, span: '1 / -1', options: ZONES.map(([z, n]) => { const on = s.cities.includes(z); return { label: n[li], pick: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) });
+        H(L.hUi);
+        seg('uiTheme', L.uiTheme, [['auto', L.th_auto], ['dark', L.th_dark], ['light', L.th_light]]);
+        tog('autoHide', L.autoHide);
+        if (s.autoHide) rng('hideDelay', L.hideDelay, 2, 20, 1, v => v + ' s');
+        tog('hideCursor', L.hideCursor);
+      }
+    }
+    const mine = {
+      name: st.saveName, empty: !st.styles.length, has: !!st.styles.length, save: this.saveStyle,
+      onName: (e) => this.setState({ saveName: e.target.value.slice(0, 40) }), onKey: (e) => { if (e.key === 'Enter') this.saveStyle(); },
+      list: st.tab === 'presets' ? st.styles.map(x => { const ps = { ...VDEF, ...x.s }; return { name: x.name, sample, bg: preview(ps), text: this.cardText(ps), ring: ringOff, pick: () => this.applyStyle(x), del: (e) => { e.stopPropagation(); this.delStyle(x.id); } }; }) : [],
+    };
+    const dayPct = (p.h * 3600 + p.m * 60 + p.s) / 86400;
+    const tabLabel = (TABS.find(x => x[0] === st.tab) || [])[1] || '';
+
+    return {
+      s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
+      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})` },
+      fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
+      pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
+      clock: { el: clockEl, gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
+      msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: hexA(s.dateColor, Math.min(1, s.dateOpacity / 100 + 0.15)) } },
+      date: { show: !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
+      cities: { show: citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor } },
+      prog: { show: !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
+      chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1180, surprisePad: st.vw > 1180 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22) },
+      tabs, panel: { open: !!st.tab, title: tabLabel }, controls, presets, mine, fontCats, fontTiles, media,
+      toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
+      dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
+      surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
+    };
+  }
+}
+</script>
+</body>
+</html>
