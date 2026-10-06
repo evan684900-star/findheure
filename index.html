@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>findheure</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%83%3C/text%3E%3C/svg%3E">
+<!-- React servi depuis le site lui-même : marche même si le réseau de l’établissement bloque unpkg.com -->
+<script src="./vendor/react.production.min.js"></script>
+<script src="./vendor/react-dom.production.min.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -16,7 +19,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,hourglass_top,pause,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,pause,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -67,6 +70,18 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-ember{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--dx,0px),-78vh,0);opacity:0}}
 @keyframes fh-flicker{0%,100%{opacity:1}8%{opacity:.7}12%{opacity:.95}40%{opacity:.82}44%{opacity:1}70%{opacity:.65}74%{opacity:.95}}
 @keyframes fh-wobble{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
+@keyframes fh-fall{from{transform:translate3d(0,-14vh,0) rotate(0deg)}to{transform:translate3d(var(--dx,0px),118vh,0) rotate(var(--rot,0deg))}}
+@keyframes fh-up{0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0}10%{opacity:1}85%{opacity:1}100%{transform:translate3d(var(--dx,0px),-118vh,0) rotate(var(--rot,0deg));opacity:0}}
+@keyframes fh-sway{0%,100%{transform:translateX(-16px)}50%{transform:translateX(16px)}}
+@keyframes fh-spinslow{to{transform:rotate(360deg)}}
+@keyframes fh-waves{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
+@keyframes fh-burst{0%{transform:scale(.05);opacity:0}4%{opacity:1}45%{opacity:1}62%{transform:scale(1) translateY(14px);opacity:0}100%{transform:scale(1) translateY(14px);opacity:0}}
+@keyframes fh-bulb{0%,100%{opacity:1}50%{opacity:.28}}
+@keyframes fh-eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
+@keyframes fh-tour-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fh-nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@keyframes fh-nudge-up{0%,100%{transform:translateY(0) scaleY(-1)}50%{transform:translateY(-7px) scaleY(-1)}}
+@keyframes fh-ring{0%,100%{opacity:1}50%{opacity:.55}}
 @keyframes fh-fade{from{opacity:0}to{opacity:1}}
 @keyframes fh-slide{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
 @keyframes fh-drop{from{opacity:0;transform:translateY(-.35em)}to{opacity:1;transform:none}}
@@ -88,6 +103,9 @@ a{color:inherit}a:hover{opacity:.8}
   </sc-if>
   <sc-if value="{{ bg.isGrid }}" hint-placeholder-val="{{ false }}">
     <canvas ref="{{ gridRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
+  </sc-if>
+  <sc-if value="{{ bg.isScene }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.scene }}</div>
   </sc-if>
   <sc-if value="{{ bg.isSpooky }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.spooky }}</div>
@@ -153,29 +171,34 @@ a{color:inherit}a:hover{opacity:.8}
       <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;">
         <div style="position: absolute; top: 0; left: 0; height: 36px; width: {{ ind.w }}; transform: translateX({{ ind.x }}); border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.ring }}; opacity: {{ ind.op }}; transition: {{ ind.tr }}; pointer-events: none;"></div>
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
-          <button ref="{{ t.ref }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
+          <button ref="{{ t.ref }}" data-tour="{{ t.tour }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
         </sc-for>
       </div>
       <div style="display: flex; gap: 2px; flex-shrink: 0; padding-right: 6px; margin-right: 2px; border-right: 1px solid {{ ui.border }};">
+        <div data-tour="modes" style="display: flex; gap: 2px;">
         <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
           <button title="{{ m.title }}" onClick="{{ m.pick }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; transition: background .25s, color .25s, box-shadow .25s;" style-hover="background: {{ m.hover }}; color: {{ ui.fg }};">
             <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; animation: {{ m.anim }};">{{ m.icon }}</span>
           </button>
         </sc-for>
-        <button title="{{ L.noteNew }}" onClick="{{ addNote }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
+        </div>
+        <button data-tour="note" title="{{ L.noteNew }}" onClick="{{ addNote }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
           <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">sticky_note_2</span>
         </button>
       </div>
       <div style="display: flex; gap: 2px; flex-shrink: 0;">
-        <button title="{{ L.surpriseK }}" onClick="{{ surprise }}" style="height: 36px; min-width: 36px; padding: {{ chrome.surprisePad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif;" style-hover="background: {{ ui.hover }};">
+        <button data-tour="surprise" title="{{ L.surpriseK }}" onClick="{{ surprise }}" style="height: 36px; min-width: 36px; padding: {{ chrome.surprisePad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif;" style-hover="background: {{ ui.hover }};">
           <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">casino</span>
           <sc-if value="{{ chrome.wide }}" hint-placeholder-val="{{ true }}"><span>{{ L.surprise }}</span></sc-if>
         </button>
-        <button title="{{ L.fullscreen }}" onClick="{{ toggleFs }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
+        <button data-tour="fs" title="{{ L.fullscreen }}" onClick="{{ toggleFs }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
           <span style="font-family: 'Material Symbols Rounded'; font-size: 21px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">{{ chrome.fsIcon }}</span>
         </button>
         <button title="{{ L.reset }}" onClick="{{ reset }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
           <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">restart_alt</span>
+        </button>
+        <button data-tour="help" title="{{ L.help }}" onClick="{{ startTour }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
+          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">help</span>
         </button>
       </div>
     </div>
@@ -204,10 +227,11 @@ a{color:inherit}a:hover{opacity:.8}
 
                 <sc-if value="{{ c.isPresets }}" hint-placeholder-val="{{ false }}">
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 10px;">
-                    <sc-for list="{{ presets }}" as="p" hint-placeholder-count="8">
+                    <sc-for list="{{ c.list }}" as="p" hint-placeholder-count="8">
                       <button onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }}; animation: fh-rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: {{ p.delay }};">
                         <span style="{{ p.text }}">{{ p.sample }}</span>
                         <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.5); color: #fff; backdrop-filter: blur(8px);">{{ p.name }}</span>
+                        <span style="position: absolute; right: 9px; top: 7px; font-size: 20px; line-height: 1;">{{ p.deco }}</span>
                       </button>
                     </sc-for>
                   </div>
@@ -348,6 +372,8 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; inset: 12px; z-index: 30; border-radius: 22px; border: 2px dashed rgba(255,255,255,.75); background: rgba(10,10,10,.55); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font: 500 22px/1.2 Geist, system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box;">{{ L.dropHere }}</div>
   </sc-if>
 
+  <sc-if value="{{ tour.show }}" hint-placeholder-val="{{ false }}">{{ tour.el }}</sc-if>
+
   <sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 12px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25);">
       <span>{{ toast.msg }}</span>
@@ -361,7 +387,7 @@ a{color:inherit}a:hover{opacity:.8}
 <script type="text/x-dc" data-dc-script>
 const LANGS = ['fr', 'en', 'es', 'de'];
 const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
-const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1';
+const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1', TOURKEY = 'findheure:tour:v1';
 const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
 
 const T_RAW = {
@@ -452,6 +478,38 @@ const T_RAW = {
   endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
+  m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
+  g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
+  g_summer: "Bel été ☀️|Happy summer ☀️|Feliz verano ☀️|Schönen Sommer ☀️", g_autumn: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂",
+  g_xmas: "Joyeux Noël 🎄|Merry Christmas 🎄|Feliz Navidad 🎄|Frohe Weihnachten 🎄", g_newyear: "Bonne année ! 🎆|Happy New Year! 🎆|¡Feliz año nuevo! 🎆|Frohes neues Jahr! 🎆",
+  g_valentine: "Joyeuse Saint-Valentin 💘|Happy Valentine’s Day 💘|Feliz San Valentín 💘|Alles Liebe zum Valentinstag 💘", g_april: "Poisson d’avril ! 🐟|April Fools! 🐟|¡Inocente! 🐟|April, April! 🐟",
+  g_easter: "Joyeuses Pâques 🐣|Happy Easter 🐣|Felices Pascuas 🐣|Frohe Ostern 🐣", g_music: "Fête de la musique 🎶|Happy Music Day 🎶|Feliz Día de la música 🎶|Fête de la Musique 🎶",
+  g_bastille: "Bon 14 Juillet ! 🎆|Happy Bastille Day! 🎆|¡Feliz 14 de julio! 🎆|Schönen 14. Juli! 🎆", g_rentree: "Bonne rentrée ! ✏️|Happy back to school! ✏️|¡Feliz vuelta al cole! ✏️|Guten Schulstart! ✏️",
+  scene: "Saisons & fêtes|Seasons & holidays|Estaciones y fiestas|Jahreszeiten & Feste", sceneDecor: "Décor|Scenery|Decorado|Kulisse",
+  hSeasons: "Saisons & fêtes|Seasons & holidays|Estaciones y fiestas|Jahreszeiten & Feste", hStyles: "Autres thèmes|Other themes|Otros temas|Weitere Themen",
+  autoTheme: "Changer de thème tout seul selon la date|Change theme automatically by date|Cambiar de tema solo según la fecha|Thema automatisch nach Datum wechseln",
+  today: "aujourd’hui|today|hoy|heute", autoOff: "Thème automatique désactivé|Automatic theme turned off|Tema automático desactivado|Automatisches Thema ausgeschaltet",
+  autoOn: "Thème du jour :|Today’s theme:|Tema del día:|Thema des Tages:", tmVisual: "Disque visuel|Visual disc|Disco visual|Visuelle Scheibe",
+  help: "Revoir le tuto|Show the tour again|Ver el tutorial|Tour erneut ansehen",
+  tourNext: "Suivant|Next|Siguiente|Weiter", tourPrev: "Précédent|Back|Anterior|Zurück", tourSkip: "Passer le tuto|Skip the tour|Saltar el tutorial|Tour überspringen", tourEnd: "C’est parti !|Let’s go!|¡Vamos!|Los geht’s!",
+  tour1t: "Votre horloge|Your clock|Tu reloj|Deine Uhr",
+  tour1: "Elle s’adapte à l’écran et au vidéoprojecteur. Double-cliquez dessus pour passer en plein écran.|It fits any screen or projector. Double-click it to go fullscreen.|Se adapta a la pantalla y al proyector. Haz doble clic para verla en pantalla completa.|Sie passt sich Bildschirm und Beamer an. Doppelklick für Vollbild.",
+  tour2t: "Thèmes|Themes|Temas|Themen",
+  tour2: "Des thèmes tout prêts : saisons, fêtes, Halloween… et un bouton pour changer de thème tout seul selon la date.|Ready-made themes: seasons, holidays, Halloween… plus a switch to change theme automatically by date.|Temas listos: estaciones, fiestas, Halloween… y un botón para cambiar de tema solo según la fecha.|Fertige Themen: Jahreszeiten, Feste, Halloween … und ein Schalter, der das Thema automatisch nach Datum wechselt.",
+  tour3t: "Personnaliser|Customize|Personalizar|Anpassen",
+  tour3: "Police, couleurs, fond (images, décors animés…) et effets : tout se règle dans ces onglets.|Font, colors, background (images, animated scenery…) and effects: it’s all in these tabs.|Fuente, colores, fondo (imágenes, decorados animados…) y efectos: todo está en estas pestañas.|Schrift, Farben, Hintergrund (Bilder, animierte Kulissen …) und Effekte: alles in diesen Tabs.",
+  tour4t: "Réglages|Settings|Ajustes|Einstellungen",
+  tour4: "Format 12 h ou 24 h, secondes, langue et format de la date, position à l’écran, message au-dessus de l’heure…|12 or 24 h, seconds, date language and format, position on screen, message above the time…|12 o 24 h, segundos, idioma y formato de la fecha, posición en pantalla, mensaje sobre la hora…|12 oder 24 h, Sekunden, Sprache und Format des Datums, Position, Nachricht über der Uhrzeit …",
+  tour5t: "Horloge, minuteur, chrono|Clock, timer, stopwatch|Reloj, temporizador, cronómetro|Uhr, Timer, Stoppuhr",
+  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Touche Espace : démarrer ou mettre en pause.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. Space: start or pause.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. Espacio: iniciar o pausar.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Leertaste: Start oder Pause.",
+  tour6t: "Notes|Notes|Notas|Notizen",
+  tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, recolor it: it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color: se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe ändern: Sie bleibt gespeichert.",
+  tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
+  tour7: "Un style au hasard à chaque clic (touche S).|A random style with every click (S key).|Un estilo al azar con cada clic (tecla S).|Bei jedem Klick ein zufälliger Stil (Taste S).",
+  tour8t: "Plein écran|Fullscreen|Pantalla completa|Vollbild",
+  tour8: "Pour projeter au tableau (touche F, ou double-clic sur l’heure).|To project on the board (F key, or double-click the time).|Para proyectar en la pizarra (tecla F o doble clic en la hora).|Zum Projizieren an die Tafel (Taste F oder Doppelklick auf die Uhrzeit).",
+  tour9t: "Besoin d’aide ?|Need help?|¿Necesitas ayuda?|Hilfe gebraucht?",
+  tour9: "Ce bouton relance ce tuto à tout moment. Bonne classe !|This button replays the tour anytime. Have a great class!|Este botón vuelve a mostrar el tutorial cuando quieras. ¡Buena clase!|Dieser Knopf zeigt die Tour jederzeit erneut. Viel Spaß im Unterricht!",
 };
 const T = {}; for (const k in T_RAW) T[k] = four(T_RAW[k]);
 
@@ -494,6 +552,7 @@ const FONTS = [
   ['Major Mono Display', 'pixel', 'Major+Mono+Display', 400, 400, 400, .75],
   ['JetBrains Mono', 'pixel', 'JetBrains+Mono:ital,wght@0,100..800;1,100..800', 100, 800, 200, .6],
   ['Fredoka', 'fun', 'Fredoka:wght@300..700', 300, 700, 600, .6],
+  ['Mountains of Christmas', 'fun', 'Mountains+of+Christmas:wght@400;700', 400, 700, 700, .55],
   ['Rubik Glitch', 'fun', 'Rubik+Glitch', 400, 400, 400, .65],
   ['Rubik Moonrocks', 'fun', 'Rubik+Moonrocks', 400, 400, 400, .75],
   ['Nabla', 'fun', 'Nabla', 400, 400, 400, .8],
@@ -501,6 +560,7 @@ const FONTS = [
   ['Honk', 'fun', 'Honk', 400, 400, 400, .8],
   ['Tilt Prism', 'fun', 'Tilt+Prism', 400, 400, 400, .7],
   ['Pacifico', 'script', 'Pacifico', 400, 400, 400, .6],
+  ['Great Vibes', 'script', 'Great+Vibes', 400, 400, 400, .45],
   ['Lobster', 'script', 'Lobster', 400, 400, 400, .5],
   ['Caveat', 'script', 'Caveat:wght@400..700', 400, 700, 600, .45],
   ['UnifrakturMaguntia', 'script', 'UnifrakturMaguntia', 400, 400, 400, .55],
@@ -530,7 +590,11 @@ const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .
 const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
 const MODES = ['clock', 'timer', 'stopwatch'];
 const TAB_IDS = ['presets', 'font', 'colors', 'bg', 'fx', 'clock', 'date', 'layout'];
-const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'image'];
+const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
+// décors « saisons & fêtes », dans l'ordre de l'année scolaire
+const SCENE_IDS = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
+const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇' };
+const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note'], ['surprise'], ['fs'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 const NOTE_C = ['#ffb35c', '#ffe066', '#ffadc8', '#a0e7ff', '#b8f2a6', '#d4b8ff'];
 const ICON = { fontFamily: "'Material Symbols Rounded'", fontWeight: 'normal', fontStyle: 'normal', lineHeight: 1, display: 'inline-block', whiteSpace: 'nowrap', letterSpacing: 'normal', textTransform: 'none', direction: 'ltr', fontFeatureSettings: "'liga'" };
@@ -550,15 +614,15 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
+  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true,
 };
 // Thème par défaut : Halloween
 const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
-const DEFAULTS = { ...BASE, ...HALLOWEEN, msg: 'spooky' };
-const VKEYS = ['font', 'dateFont', 'weight', 'italic', 'letterSpacing', 'fixedDigits', 'dateUpper', 'color', 'dateColor', 'dateOpacity', 'accent', 'sepAccent', 'gradText', 'grad1', 'grad2', 'glow', 'glowColor', 'shadow', 'outline', 'outlineW', 'anim', 'breathe', 'weird', 'weirdSpeed', 'bgType', 'bgColor', 'bg1', 'bg2', 'bg3', 'bgAngle', 'bgShape', 'bgSpeed', 'gridLit', 'gridLine', 'gridSize', 'gridTilt', 'gridTurn', 'gridTrail', 'gridIdle', 'vignette', 'grain', 'scanlines'];
+const DEFAULTS = { ...BASE, ...HALLOWEEN, msg: 'theme' };
+const VKEYS = ['font', 'dateFont', 'weight', 'italic', 'letterSpacing', 'fixedDigits', 'dateUpper', 'color', 'dateColor', 'dateOpacity', 'accent', 'sepAccent', 'gradText', 'grad1', 'grad2', 'glow', 'glowColor', 'shadow', 'outline', 'outlineW', 'anim', 'breathe', 'weird', 'weirdSpeed', 'bgType', 'bgColor', 'bg1', 'bg2', 'bg3', 'bgAngle', 'bgShape', 'bgSpeed', 'gridLit', 'gridLine', 'gridSize', 'gridTilt', 'gridTurn', 'gridTrail', 'gridIdle', 'vignette', 'grain', 'scanlines', 'scene'];
 const IKEYS = ['bgImage', 'bgFit', 'bgBlur', 'bgDim', 'bgSat'];
 const VDEF = {}; VKEYS.forEach(k => { VDEF[k] = BASE[k]; });
 const PRESETS = [
-  { n: 'Halloween|Halloween|Halloween|Halloween', s: HALLOWEEN },
   { n: 'Papier|Paper|Papel|Papier', s: { font: 'Instrument Serif', weight: 400, color: '#1c1a17', dateColor: '#1c1a17', dateOpacity: 65, accent: '#c2410c', glowColor: '#c2410c', bgType: 'solid', bgColor: '#efe9df', vignette: 0, grain: 35, anim: 'fade' } },
   { n: 'Néon|Neon|Neón|Neon', s: { font: 'Monoton', dateFont: 'Righteous', weight: 400, color: '#ff5ad8', dateColor: '#ffc2f1', dateOpacity: 85, accent: '#5af2ff', glow: 70, glowColor: '#ff2fd0', bgType: 'solid', bgColor: '#0a0610', vignette: 55, anim: 'fade', dateUpper: true } },
   { n: 'Terminal|Terminal|Terminal|Terminal', s: { font: 'VT323', weight: 400, color: '#41ff8a', dateColor: '#41ff8a', dateOpacity: 70, accent: '#41ff8a', glow: 35, glowColor: '#1aff6a', bgType: 'solid', bgColor: '#030703', scanlines: true, vignette: 60, anim: 'none' } },
@@ -572,10 +636,25 @@ const PRESETS = [
   { n: 'Glacier|Glacier|Glaciar|Gletscher', s: { font: 'Unbounded', weight: 200, color: '#0d2c4d', dateColor: '#0d2c4d', dateOpacity: 65, accent: '#2b7fff', glowColor: '#2b7fff', bgType: 'gradient', bgShape: 'linear', bgAngle: 180, bg1: '#eef8ff', bg2: '#b9dcff', vignette: 0, grain: 15 } },
   { n: 'Iso 3D|Iso 3D|Iso 3D|Iso 3D', s: { font: 'Nabla', dateFont: 'Fredoka', weight: 400, color: '#ffffff', dateColor: '#ffe8b3', dateOpacity: 85, accent: '#ffb84d', glowColor: '#ffb84d', bgType: 'gradient', bgShape: 'radial', bg1: '#2b1a4a', bg2: '#0e0a1a', vignette: 40, anim: 'pop' } },
   { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'solid', bgColor: '#120d0b', grain: 30, vignette: 65, anim: 'fade', sepAccent: true } },
+  // saisons & fêtes
+  { id: 'rentree', n: 'Rentrée|Back to school|Vuelta al cole|Schulstart', s: { font: 'Caveat', weight: 600, color: '#f6f6ef', dateColor: '#ecece2', dateOpacity: 80, accent: '#ffe066', bgType: 'scene', scene: 'rentree', bg1: '#24452f', bg2: '#1c3a29', bg3: '#3c6b4c', vignette: 35, grain: 40, anim: 'fade' } },
+  { id: 'autumn', n: 'Automne|Autumn|Otoño|Herbst', s: { font: 'Righteous', weight: 400, color: '#ffe8cc', dateColor: '#ffd9ae', dateOpacity: 80, accent: '#ff8c42', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'autumn', bg1: '#8a3b12', bg2: '#2b160d', bg3: '#ffb347', vignette: 40, anim: 'swirl' } },
+  { id: 'halloween', n: 'Halloween|Halloween|Halloween|Halloween', s: HALLOWEEN },
+  { id: 'winter', n: 'Hiver|Winter|Invierno|Winter', s: { font: 'Unbounded', weight: 300, color: '#f4fbff', dateColor: '#dcefff', dateOpacity: 75, accent: '#7cc4ff', shadow: 25, bgType: 'scene', scene: 'winter', bg1: '#4a7fb5', bg2: '#0b1d3a', bg3: '#cfe8ff', vignette: 25, anim: 'drop' } },
+  { id: 'xmas', n: 'Noël|Christmas|Navidad|Weihnachten', s: { font: 'Mountains of Christmas', weight: 700, color: '#fff4e0', dateColor: '#ffe9c7', dateOpacity: 85, accent: '#e63946', sepAccent: true, shadow: 35, bgType: 'scene', scene: 'xmas', bg1: '#0f3d2e', bg2: '#06140f', bg3: '#ffd166', vignette: 40, anim: 'bounce' } },
+  { id: 'newyear', n: 'Nouvel An|New Year|Año Nuevo|Neujahr', s: { font: 'Bebas Neue', weight: 400, letterSpacing: 4, color: '#ffd166', gradText: true, grad1: '#fff4c2', grad2: '#d4a017', dateColor: '#ffe9a8', dateOpacity: 80, accent: '#ffd166', bgType: 'scene', scene: 'newyear', bg1: '#1b1446', bg2: '#05040f', bg3: '#ffd166', vignette: 45, anim: 'zoom' } },
+  { id: 'valentine', n: 'Saint-Valentin|Valentine’s|San Valentín|Valentinstag', s: { font: 'Great Vibes', weight: 400, color: '#ffffff', dateColor: '#ffe0ec', dateOpacity: 85, accent: '#ff4d8d', shadow: 30, bgType: 'scene', scene: 'valentine', bg1: '#c2185b', bg2: '#4a0d27', bg3: '#ffb3d1', vignette: 35, anim: 'pop' } },
+  { id: 'spring', n: 'Printemps|Spring|Primavera|Frühling', s: { font: 'Fredoka', weight: 600, color: '#2e6b3f', dateColor: '#3d5a40', dateOpacity: 80, accent: '#ff6fb5', bgType: 'scene', scene: 'spring', bg1: '#ffe3f1', bg2: '#bfe6ff', bg3: '#fff7c2', vignette: 0, anim: 'bounce' } },
+  { id: 'april', n: 'Poisson d’avril|April Fools|Inocentes|Aprilscherz', s: { font: 'Fredoka', weight: 600, color: '#e9fbff', dateColor: '#c9f1ff', dateOpacity: 80, accent: '#ffb703', sepAccent: true, shadow: 25, bgType: 'scene', scene: 'april', bg1: '#032b4f', bg2: '#0b5ea8', bg3: '#7fdcff', vignette: 35, anim: 'jelly' } },
+  { id: 'easter', n: 'Pâques|Easter|Pascua|Ostern', s: { font: 'Fredoka', weight: 600, color: '#6b3fa0', dateColor: '#7a5a9e', dateOpacity: 85, accent: '#ff8fab', bgType: 'scene', scene: 'easter', bg1: '#fff6d6', bg2: '#d9f2ff', bg3: '#ffd6e8', vignette: 0, anim: 'bounce' } },
+  { id: 'music', n: 'Fête de la musique|Music Day|Día de la música|Fête de la Musique', s: { font: 'Righteous', weight: 400, color: '#ffffff', dateColor: '#f3d9ff', dateOpacity: 80, accent: '#f72585', sepAccent: true, bgType: 'scene', scene: 'music', bg1: '#3a0ca3', bg2: '#120a2e', bg3: '#f72585', vignette: 40, anim: 'pop' } },
+  { id: 'summer', n: 'Été|Summer|Verano|Sommer', s: { font: 'Pacifico', weight: 400, color: '#ffffff', dateColor: '#ffffff', dateOpacity: 90, accent: '#ff7a59', shadow: 55, bgType: 'scene', scene: 'summer', bg1: '#ffe0a3', bg2: '#4fc3f7', bg3: '#fff3b0', vignette: 0, anim: 'slide' } },
+  { id: 'bastille', n: '14 Juillet|Bastille Day|14 de julio|14. Juli', s: { font: 'Bebas Neue', weight: 400, letterSpacing: 3, color: '#ffffff', dateColor: '#cfe0ff', dateOpacity: 80, accent: '#e63946', sepAccent: true, bgType: 'scene', scene: 'bastille', bg1: '#0b1a4a', bg2: '#030614', bg3: '#e63946', vignette: 40, anim: 'drop' } },
+  // autres thèmes
   { n: 'Grille|Grid|Cuadrícula|Raster', s: { font: 'Geist', dateFont: 'JetBrains Mono', weight: 300, letterSpacing: -2, color: '#f1fff5', dateColor: '#bdf5d0', dateOpacity: 60, accent: '#4ade80', glow: 18, glowColor: '#4ade80', bgType: 'grid', bgColor: '#000000', gridLit: '#4ade80', gridLine: '#ffffff', vignette: 40, anim: 'blur' } },
   { n: 'Hologramme|Hologram|Holograma|Hologramm', s: { font: 'Tektur', weight: 500, letterSpacing: 6, color: '#9ff8ff', dateColor: '#9ff8ff', dateOpacity: 70, accent: '#22d3ee', glow: 55, glowColor: '#22d3ee', bgType: 'gradient', bgShape: 'radial', bg1: '#06283a', bg2: '#020409', vignette: 55, anim: 'glitch', weird: 'holo', dateUpper: true } },
   { n: 'Psyché|Trippy|Psicodélico|Psychedelisch', s: { font: 'Shrikhand', weight: 400, color: '#ffffff', dateColor: '#fff3fb', dateOpacity: 85, accent: '#ffe14d', glow: 25, glowColor: '#ff4fd8', gradText: true, grad1: '#fff1a8', grad2: '#ff4fd8', bgType: 'aurora', bg1: '#7b2ff7', bg2: '#12002b', bg3: '#00c2a8', bgSpeed: 70, vignette: 30, anim: 'jelly', weird: 'liquid' } },
-].map(p => ({ n: four(p.n), s: p.s }));
+].map(p => ({ id: p.id || '', fete: !!p.id, n: four(p.n), s: p.s }));
 const GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
 // Décor Halloween : données fixes (graine déterministe) pour que le décor ne bouge pas à chaque rendu
@@ -644,6 +723,91 @@ function spookyScene(E) {
   ];
 }
 
+// Thème du jour (pour le changement automatique)
+function easterDate(y) { const a = y % 19, b = Math.floor(y / 100), c = y % 100, d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3), h = (19 * a + b - d - g + 15) % 30, i = Math.floor(c / 4), k = c % 4, l = (32 + 2 * e + 2 * i - h - k) % 7, m = Math.floor((a + 11 * h + 22 * l) / 451), n = h + l - 7 * m + 114; return new Date(y, Math.floor(n / 31) - 1, (n % 31) + 1); }
+function themeOfDay(d) {
+  const md = (d.getMonth() + 1) * 100 + d.getDate(), diff = Math.round((new Date(d.getFullYear(), d.getMonth(), d.getDate()) - easterDate(d.getFullYear())) / 86400000);
+  if (md >= 1231 || md <= 102) return 'newyear';
+  if (md >= 210 && md <= 214) return 'valentine';
+  if (md === 401) return 'april';
+  if (diff >= -3 && diff <= 1) return 'easter';
+  if (md >= 620 && md <= 621) return 'music';
+  if (md >= 713 && md <= 714) return 'bastille';
+  if (md >= 901 && md <= 907) return 'rentree';
+  if (md >= 1015 && md <= 1101) return 'halloween';
+  if (md >= 1201 && md <= 1226) return 'xmas';
+  if (md >= 321 && md < 621) return 'spring';
+  if (md >= 621 && md < 923) return 'summer';
+  if (md >= 923 && md < 1221) return 'autumn';
+  return 'winter';
+}
+
+// Décors animés des saisons & fêtes (positions tirées une fois pour toutes)
+const SEEDED = new Map();
+function seeded(key, n, mk) {
+  if (!SEEDED.has(key)) { let a = 7; for (const ch of key) a = (Math.imul(a, 31) + ch.charCodeAt(0)) | 0; const r = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; SEEDED.set(key, Array.from({ length: n }, (_, i) => mk(r, i))); }
+  return SEEDED.get(key);
+}
+const pickOf = (r, a) => a[Math.floor(r() * a.length)];
+function sceneLayer(E, s) {
+  const id = SCENE_IDS.includes(s.scene) ? s.scene : 'winter', out = [];
+  // particules qui tombent (up = qui montent)
+  const drift = (key, n, opt) => seeded(id + key, n, (r) => ({ x: r() * 100, dur: opt.dur[0] + r() * opt.dur[1], dl: -r() * 30, dx: Math.round((r() - 0.5) * (opt.dx || 120)), rot: opt.spin ? Math.round((r() - 0.5) * opt.spin) : 0, sway: opt.sway ? 2.5 + r() * 3 : 0, z: opt.size[0] + r() * opt.size[1], g: opt.glyphs ? pickOf(r, opt.glyphs) : '', c: opt.colors ? pickOf(r, opt.colors) : '', o: opt.op ? opt.op[0] + r() * opt.op[1] : 1 }))
+    .map((p, i) => E('div', { key: key + i, style: { position: 'absolute', left: p.x + '%', [opt.up ? 'bottom' : 'top']: '-10%', '--dx': p.dx + 'px', '--rot': p.rot + 'deg', animation: `${opt.up ? 'fh-up' : 'fh-fall'} ${p.dur.toFixed(1)}s linear ${p.dl.toFixed(1)}s infinite` } },
+      E('div', { style: { animation: p.sway ? `fh-sway ${p.sway.toFixed(1)}s ease-in-out ${p.dl.toFixed(1)}s infinite` : undefined, opacity: p.o, ...(opt.shape ? opt.shape(p) : { fontSize: Math.round(p.z), lineHeight: 1, color: p.c || undefined, textShadow: opt.glow && p.c ? `0 0 10px ${p.c}` : undefined }) } }, opt.shape ? null : p.g)));
+  const snow = (n) => drift('snow', n, { dur: [9, 10], size: [4, 8], op: [0.5, 0.5], sway: true, shape: (p) => ({ width: p.z, height: p.z, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,.95) 0 45%, rgba(255,255,255,0) 70%)' }) });
+  const ground = (back, front, h) => E('svg', { key: 'ground', viewBox: '0 0 1600 320', preserveAspectRatio: 'xMidYMax slice', style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: (h || 24) + 'vh', display: 'block' } },
+    E('path', { d: 'M0 320 L0 214 C220 180 420 206 640 196 C860 186 1100 170 1320 186 C1460 196 1540 188 1600 182 L1600 320 Z', fill: back }),
+    E('path', { d: 'M0 320 L0 262 C140 240 260 246 420 258 C560 268 700 236 860 232 C1020 228 1120 244 1260 238 C1400 232 1500 250 1600 244 L1600 320 Z', fill: front }));
+  const trees = (color, list) => E('svg', { key: 'trees', viewBox: '0 0 1600 320', preserveAspectRatio: 'xMidYMax slice', style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: '24vh', display: 'block' } },
+    list.map(([x, base, h], i) => E('g', { key: i, fill: color },
+      E('rect', { x: x - h * 0.05, y: base - h * 0.12, width: h * 0.1, height: h * 0.14 }),
+      E('path', { d: `M${x} ${base - h} L${x - h * 0.22} ${base - h * 0.55} L${x + h * 0.22} ${base - h * 0.55} Z M${x} ${base - h * 0.8} L${x - h * 0.3} ${base - h * 0.3} L${x + h * 0.3} ${base - h * 0.3} Z M${x} ${base - h * 0.58} L${x - h * 0.38} ${base - h * 0.08} L${x + h * 0.38} ${base - h * 0.08} Z` }))));
+  const fireworks = (colors) => seeded(id + 'fw', 6, (r, i) => ({ x: 8 + r() * 84, y: 8 + r() * 40, R: 60 + r() * 60, dur: 2.6 + r() * 1.6, dl: -(i * 0.9 + r()), c: pickOf(r, colors), c2: pickOf(r, colors) }))
+    .map((b, i) => { const dots = []; for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2; dots.push(`${(Math.cos(a) * b.R).toFixed(1)}px ${(Math.sin(a) * b.R).toFixed(1)}px 0 2px ${b.c}`, `${(Math.cos(a + 0.2) * b.R * 0.58).toFixed(1)}px ${(Math.sin(a + 0.2) * b.R * 0.58).toFixed(1)}px 0 1px ${b.c2}`); }
+      return E('div', { key: 'fw' + i, style: { position: 'absolute', left: b.x + '%', top: b.y + '%', width: 4, height: 4, borderRadius: '50%', background: b.c, boxShadow: dots.join(', '), animation: `fh-burst ${b.dur.toFixed(1)}s ease-out ${b.dl.toFixed(1)}s infinite` } }); });
+  const swim = (key, n, glyphs) => seeded(id + key, n, (r, i) => ({ top: 10 + r() * 62, z: 26 + r() * 30, dur: 16 + r() * 18, dl: -r() * 30, rev: i % 2 === 0, g: pickOf(r, glyphs) }))
+    .map((f, i) => E('div', { key: key + i, style: { position: 'absolute', left: 0, right: 0, top: f.top + '%', transform: f.rev ? 'scaleX(-1)' : undefined } },
+      E('div', { style: { display: 'inline-block', fontSize: Math.round(f.z), lineHeight: 1, animation: `fh-batfly ${f.dur.toFixed(1)}s linear ${f.dl.toFixed(1)}s infinite` } }, E('span', { style: { display: 'inline-block', transform: 'scaleX(-1)' } }, f.g))));
+
+  if (id === 'winter') out.push(ground('#cfe2f3', '#f2f8ff'), trees('#123247', [[180, 268, 120], [270, 262, 90], [1340, 252, 130], [1450, 258, 100]]), ...snow(38));
+  if (id === 'xmas') {
+    out.push(ground('#c9dbe8', '#f2f8ff'), trees('#0b2a1f', [[200, 266, 130], [300, 262, 95], [1330, 252, 140], [1440, 258, 105]]), ...snow(30));
+    out.push(E('svg', { key: 'wire', viewBox: '0 0 100 10', preserveAspectRatio: 'none', style: { position: 'absolute', left: 0, top: 0, width: '100%', height: '9vh' } }, E('path', { d: 'M0 1 Q 16.6 9 33.3 1 Q 50 9 66.6 1 Q 83.3 9 100 1', stroke: '#14301f', strokeWidth: 0.35, fill: 'none', vectorEffect: 'non-scaling-stroke' })));
+    const bulbs = ['#ff4d4d', '#ffd166', '#4ade80', '#4ea8ff'];
+    for (let i = 0; i < 27; i++) { const t = (i + 0.5) / 27, seg = (t * 3) % 1, y = 1 + Math.sin(seg * Math.PI) * 6.6; const c = bulbs[i % 4]; out.push(E('div', { key: 'b' + i, style: { position: 'absolute', left: `calc(${(t * 100).toFixed(2)}% - 5px)`, top: `calc(${(y * 0.9).toFixed(2)}vh + 2px)`, width: 10, height: 14, borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', background: c, boxShadow: `0 0 14px 4px ${hexA(c, 0.55)}`, animation: `fh-bulb 1.8s ease-in-out ${(i % 2) * -0.9}s infinite` } })); }
+  }
+  if (id === 'autumn') out.push(ground('#4a2513', '#2b160d'), ...drift('leaf', 22, { dur: [9, 9], size: [18, 18], glyphs: ['🍂', '🍁', '🍂'], spin: 900, sway: true }));
+  if (id === 'spring') out.push(ground('#9bd88a', '#6cc25a'), ...drift('petal', 22, { dur: [10, 9], size: [14, 14], glyphs: ['🌸', '🌸', '🌼', '🌷'], spin: 500, sway: true }));
+  if (id === 'easter') out.push(ground('#b5e3a1', '#8fd17a'), ...drift('egg', 16, { dur: [12, 8], size: [20, 16], glyphs: ['🥚', '🐣', '🌷', '🐰', '🍫'], spin: 240, sway: true }));
+  if (id === 'valentine') out.push(...drift('heart', 26, { up: true, dur: [10, 10], size: [16, 30], glyphs: ['♥'], colors: ['#ff4d8d', '#ff8fb3', '#ffffff', '#ff2e63', '#ffc2d6'], op: [0.55, 0.45], spin: 60, sway: true }));
+  if (id === 'music') {
+    out.push(...drift('note', 22, { up: true, dur: [9, 9], size: [22, 26], glyphs: ['♪', '♫', '♬', '♩'], colors: ['#f72585', '#4cc9f0', '#ffd166', '#b5179e', '#7cff6b'], glow: true, spin: 80, sway: true }));
+    out.push(E('div', { key: 'eq', style: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '16vh', display: 'flex', alignItems: 'flex-end', gap: '0.6vw', padding: '0 1vw', boxSizing: 'border-box', opacity: 0.55 } },
+      seeded('eqbars', 36, (r) => ({ d: 0.5 + r() * 0.9, dl: -r() })).map((b, i) => E('div', { key: i, style: { flex: 1, height: '100%', transformOrigin: '50% 100%', borderRadius: '6px 6px 0 0', background: 'linear-gradient(180deg, #f72585, #7209b7)', animation: `fh-eq ${b.d.toFixed(2)}s ease-in-out ${b.dl.toFixed(2)}s infinite` } }))));
+  }
+  if (id === 'newyear') out.push(...fireworks(['#ffd166', '#f72585', '#4cc9f0', '#7cff6b', '#ffffff', '#ff8c42']), ...drift('conf', 30, { dur: [8, 7], size: [6, 6], spin: 1400, colors: ['#ffd166', '#f72585', '#4cc9f0', '#7cff6b', '#ffffff'], sway: true, shape: (p) => ({ width: p.z, height: p.z * 1.7, borderRadius: 2, background: p.c }) }));
+  if (id === 'bastille') out.push(...fireworks(['#2b59ff', '#ffffff', '#e63946']), ground('#0a1233', '#050816', 16));
+  if (id === 'april') out.push(...swim('fish', 8, ['🐟', '🐠', '🐡', '🐟']), ...drift('bub', 20, { up: true, dur: [8, 8], size: [6, 14], op: [0.4, 0.5], sway: true, shape: (p) => ({ width: p.z, height: p.z, borderRadius: '50%', border: '1.5px solid rgba(255,255,255,.6)', background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 60%)' }) }),
+    E('div', { key: 'rays', style: { position: 'absolute', inset: 0, background: 'repeating-linear-gradient(100deg, rgba(255,255,255,.07) 0 4%, transparent 4% 11%)', WebkitMaskImage: 'linear-gradient(180deg, #000, transparent 70%)', maskImage: 'linear-gradient(180deg, #000, transparent 70%)' } }));
+  if (id === 'summer') {
+    out.push(E('div', { key: 'rays', style: { position: 'absolute', right: '-6vmin', top: '-14vmin', width: '62vmin', height: '62vmin', borderRadius: '50%', background: 'repeating-conic-gradient(rgba(255,244,190,.32) 0 7deg, transparent 7deg 20deg)', WebkitMaskImage: 'radial-gradient(circle, #000 25%, transparent 70%)', maskImage: 'radial-gradient(circle, #000 25%, transparent 70%)', animation: 'fh-spinslow 80s linear infinite' } }),
+      E('div', { key: 'sun', style: { position: 'absolute', right: '15vmin', top: '9vmin', width: '18vmin', height: '18vmin', borderRadius: '50%', background: 'radial-gradient(circle, #fffbe0 0 38%, #ffd54f 62%, #ffb300 100%)', boxShadow: '0 0 60px 20px rgba(255,213,79,.45)' } }));
+    const wave = (k, y, amp, color, dur, h) => { let d = `M0 ${y}`; for (let i = 0; i < 16; i++) d += ` Q${i * 200 + 100} ${y + (i % 2 ? amp : -amp)} ${i * 200 + 200} ${y}`; d += ' V100 H0 Z';
+      return E('div', { key: k, style: { position: 'absolute', left: 0, bottom: 0, width: '200%', height: h + 'vh', animation: `fh-waves ${dur}s linear infinite` } }, E('svg', { viewBox: '0 0 3200 100', preserveAspectRatio: 'none', style: { width: '100%', height: '100%', display: 'block' } }, E('path', { d, fill: color }))); };
+    out.push(wave('w1', 30, 14, 'rgba(129,212,250,.75)', 26, 22), wave('w2', 40, 12, 'rgba(41,182,246,.8)', 17, 16), wave('w3', 50, 10, 'rgba(2,119,189,.92)', 11, 10));
+  }
+  if (id === 'rentree') {
+    out.push(E('div', { key: 'smudge', style: { position: 'absolute', inset: 0, background: 'radial-gradient(40% 30% at 30% 40%, rgba(255,255,255,.05), transparent 70%), radial-gradient(35% 25% at 72% 62%, rgba(255,255,255,.04), transparent 70%)' } }));
+    const chalk = (k, txt, st) => E('div', { key: k, style: { position: 'absolute', fontFamily: "'Caveat', cursive", fontWeight: 600, color: 'rgba(255,255,255,.26)', lineHeight: 1, whiteSpace: 'nowrap', ...st } }, txt);
+    out.push(chalk('c1', '2 + 2 = 4', { left: '6%', top: '16%', fontSize: '5vmin', transform: 'rotate(-6deg)' }), chalk('c2', 'a² + b² = c²', { right: '7%', top: '17%', fontSize: '4.6vmin', transform: 'rotate(4deg)' }),
+      chalk('c3', 'A B C', { left: '8%', bottom: '14%', fontSize: '6vmin', transform: 'rotate(3deg)' }), chalk('c4', 'π ≈ 3,14', { right: '9%', bottom: '15%', fontSize: '5vmin', transform: 'rotate(-4deg)' }),
+      chalk('c5', '☆', { left: '44%', top: '11%', fontSize: '5vmin' }), chalk('c6', '✎', { right: '30%', bottom: '10%', fontSize: '5vmin', transform: 'rotate(-20deg)' }));
+    out.push(E('div', { key: 'frame', style: { position: 'absolute', inset: 0, boxShadow: 'inset 0 0 0 1.4vmin #8a5a33, inset 0 0 0 1.9vmin #5e3a1d, inset 0 0 80px rgba(0,0,0,.45)' } }));
+  }
+  return out;
+}
+
 function hexA(hex, a) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); h = h.padEnd(6, '0'); return `rgba(${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)},${a})`; }
 function lum(hex) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const v = [0, 2, 4].map(i => { const c = parseInt(h.slice(i, i + 2), 16) / 255; return c <= .03928 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); }); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }
 function hsl(h, s, l) { h = ((h % 360) + 360) % 360; s /= 100; l /= 100; const a = s * Math.min(l, 1 - l); const f = (n) => { const k = (n + h / 30) % 12; return Math.round(255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)))).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); }
@@ -678,11 +842,13 @@ class Component extends DCLogic {
     if (!WEIRDS.includes(s.weird)) s.weird = 'none';
     if (!MODES.includes(s.mode)) s.mode = 'clock';
     if (!BG_TYPES.includes(s.bgType)) s.bgType = DEFAULTS.bgType;
+    if (!SCENE_IDS.includes(s.scene)) s.scene = BASE.scene;
+    if (s.msg === 'spooky') s.msg = 'theme';
     const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {};
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
-    return { s, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -708,6 +874,8 @@ class Component extends DCLogic {
     on(window, 'pointermove', this.gridMove, { passive: true });
     this.activity();
     this.checkTimer();
+    this.applyAuto();
+    if (!loadJSON(TOURKEY, false)) this.tourT = setTimeout(this.startTour, 1200);
     if (this.state.notes.length) this.ensureFont('Caveat');
     this.zTop = this.state.notes.reduce((m, n) => Math.max(m, n.z || 0), 10);
     DB.all().then(list => {
@@ -716,7 +884,7 @@ class Component extends DCLogic {
     }).catch(() => {});
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -724,7 +892,27 @@ class Component extends DCLogic {
     if (this.titleStr && this.titleStr !== this.lastTitle) { this.lastTitle = this.titleStr; document.title = this.titleStr; }
     this.syncInd();
     this.syncFast();
+    this.tourMeasure();
   }
+  // Tuto de la première visite : une flèche montre chaque bouton, avec le texte dessous
+  startTour = () => { clearTimeout(this.tourT); if (this.state.tab) this.setState({ tab: null }); this.setState({ tour: 0, idle: false }); };
+  endTour = () => { this.setState({ tour: null }); try { localStorage.setItem(TOURKEY, 'true'); } catch (e) {} this.activity(); };
+  tourGo = (d) => { const n = (this.state.tour || 0) + d; if (n < 0) return; if (n >= TOUR.length) this.endTour(); else this.setState({ tour: n }); };
+  tourMeasure = () => {
+    const st = this.state; if (st.tour == null) return;
+    const rects = TOUR[st.tour].flatMap(k => Array.from(document.querySelectorAll(`[data-tour="${k}"]`))).map(el => el.getBoundingClientRect()).filter(r => r.width && r.height);
+    if (!rects.length) return;
+    const x = Math.min(...rects.map(r => r.left)), y = Math.min(...rects.map(r => r.top)), w = Math.max(...rects.map(r => r.right)) - x, h = Math.max(...rects.map(r => r.bottom)) - y;
+    const c = st.tourRect, nr = { x: Math.round(x), y: Math.round(y), w: Math.round(w), h: Math.round(h) };
+    if (!c || c.x !== nr.x || c.y !== nr.y || c.w !== nr.w || c.h !== nr.h) this.setState({ tourRect: nr });
+  };
+  // Changement automatique de thème selon la date
+  applyAuto = (force) => {
+    const s = this.state.s; if (!s.autoTheme) return;
+    const id = themeOfDay(new Date()); if (!force && id === s.autoId) return;
+    const pr = PRESETS.find(x => x.id === id); if (pr) this.setS({ ...VDEF, ...pr.s, autoTheme: true, autoId: id });
+  };
+  pickPreset = (ps) => { const was = this.state.s.autoTheme; this.setS({ ...ps, autoTheme: false }); if (was) this.toast(this.L().autoOff); };
   // Pastille animée sous l'onglet actif de la barre du haut
   syncInd = () => {
     const st = this.state, el = st.tab && this.tabEls[st.tab], cur = st.ind;
@@ -753,6 +941,7 @@ class Component extends DCLogic {
   tick = () => {
     const now = new Date(), s = this.state.s;
     this.checkTimer();
+    if (this.lastDay !== now.getDate()) { if (this.lastDay != null) this.applyAuto(); this.lastDay = now.getDate(); }
     if (s.tick) this.playTick(now.getSeconds() % 2);
     if (s.bgType === 'image' && s.slideshow && this.state.media.length > 1) { this.slideN = (this.slideN || 0) + 1; if (this.slideN >= s.slideEvery) { this.slideN = 0; this.nextBg(); } }
     this.setState({ now });
@@ -932,7 +1121,6 @@ class Component extends DCLogic {
   setS = (patch) => {
     this.setState(st => {
       const s = { ...st.s, ...patch };
-      if (patch.msg === undefined && patch.bgType && patch.bgType !== st.s.bgType) { if (st.s.msg === 'spooky' && patch.bgType !== 'spooky') s.msg = 'none'; else if (patch.bgType === 'spooky' && st.s.msg === 'none') s.msg = 'spooky'; }
       try { localStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {}
       const out = { s };
       if (s.bgImage !== st.s.bgImage && st.s.bgImage && st.s.bgType === 'image') out.prevBg = st.s.bgImage;
@@ -949,7 +1137,7 @@ class Component extends DCLogic {
   activity = () => {
     if (this.state.idle) this.setState({ idle: false });
     clearTimeout(this.idleT);
-    this.idleT = setTimeout(() => { if (!this.state.tab && !this.overBar) this.setState({ idle: true }); }, (this.state.s.hideDelay || 4) * 1000);
+    this.idleT = setTimeout(() => { if (!this.state.tab && !this.overBar && this.state.tour == null) this.setState({ idle: true }); }, (this.state.s.hideDelay || 4) * 1000);
   };
   barEnter = () => { this.overBar = true; };
   barLeave = () => { this.overBar = false; this.activity(); };
@@ -957,6 +1145,12 @@ class Component extends DCLogic {
     const tg = e.target, tn = tg && tg.tagName;
     if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable) || e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key.toLowerCase(), mode = this.state.s.mode;
+    if (this.state.tour != null) {
+      if (e.key === 'Escape') this.endTour();
+      else if (e.key === 'ArrowRight' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.tourGo(1); }
+      else if (e.key === 'ArrowLeft') this.tourGo(-1);
+      return;
+    }
     if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); }
     else if (k === 'f') this.toggleFs();
     else if (k === 's') this.surprise();
@@ -996,12 +1190,13 @@ class Component extends DCLogic {
   toast = (msg, undo) => { clearTimeout(this.toastT); this.setState({ toast: { msg, undo } }); this.toastT = setTimeout(() => this.setState({ toast: null }), undo ? 6000 : 2400); };
   reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang, mode: prev.mode }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
   surprise = () => {
+    if (this.state.s.autoTheme) this.setS({ autoTheme: false });
     const rnd = (a, b) => a + Math.random() * (b - a), pick = (a) => a[Math.floor(Math.random() * a.length)];
     const f = pick(FONTS), h = Math.floor(rnd(0, 360)), light = Math.random() < 0.28;
     const x = { ...VDEF, font: f.name, weight: f.dw, dateFont: NODATE.has(f.name) ? 'Geist' : 'same' };
     if (light) { const ink = hsl(h + 200, 55, 18); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 160, 80, 46), bgColor: hsl(h, 70, 90), bg1: hsl(h, 75, 91), bg2: hsl(h + 35, 65, 80), bg3: hsl(h - 30, 70, 85), vignette: 0 }); }
     else { const ink = hsl(h + 30, 45, 94); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 170, 90, 62), bgColor: hsl(h, 40, 8), bg1: hsl(h, 50, 22), bg2: hsl(h + 40, 50, 6), bg3: hsl(h - 40, 60, 24), vignette: Math.round(rnd(20, 60)) }); }
-    x.bgType = pick(light ? ['solid', 'gradient', 'gradient', 'grid'] : ['solid', 'gradient', 'gradient', 'aurora', 'grid', 'spooky']);
+    x.bgType = pick(light ? ['solid', 'gradient', 'gradient', 'grid'] : ['solid', 'gradient', 'gradient', 'aurora', 'grid', 'spooky', 'scene']); x.scene = pick(SCENE_IDS);
     x.bgShape = pick(['linear', 'radial']); x.bgAngle = pick([90, 135, 160, 180, 210]);
     x.gridLit = x.accent; x.gridLine = light ? '#000000' : '#ffffff'; x.gridTurn = Math.round(rnd(-30, 30)); x.gridTilt = Math.round(rnd(35, 62));
     if (x.bgType === 'spooky') { x.bg1 = hsl(h, 60, 16); x.bg2 = hsl(h, 50, 3); x.bg3 = hsl(h + 180, 95, 52); }
@@ -1081,6 +1276,8 @@ class Component extends DCLogic {
     const avail = st.vw * (['c', 't', 'b'].includes(s.pos) ? 0.84 : 0.74);
     let fontPx = Math.min(avail / st.ratio, st.vh * (mode === 'clock' ? 0.46 : 0.4)) * s.size / 100;
     fontPx = Math.max(20, Math.min(fontPx, (st.vw * 0.96) / st.ratio));
+    const P = POS[s.pos] || POS.c;
+    const visual = mode === 'timer' && s.tmVisual !== false, clockPx = visual ? fontPx * 0.34 : fontPx;
     const anim = s.anim !== 'none' ? `fh-${s.anim} ${ANIM_DUR[s.anim] || 0.6}s cubic-bezier(.2,.75,.2,1) both` : undefined;
     const rb = s.weird === 'rainbow', wk = Math.max(0.2, (s.weirdSpeed || 50) / 50), sec = (x) => (x / wk).toFixed(2) + 's';
     const fill = s.outline || rb ? null : s.gradText ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : null;
@@ -1114,20 +1311,38 @@ class Component extends DCLogic {
     if (shd > 0) sh.push(`0 ${(0.01 + shd * 0.05).toFixed(3)}em ${(0.02 + shd * 0.12).toFixed(3)}em rgba(0,0,0,${(0.2 + shd * 0.5).toFixed(2)})`);
     const useFilter = !!fill || rb;
     const ring = mode === 'timer' && tm.done;
-    const timeStyle = { position: 'relative', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: fontPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, animation: ring ? 'fh-blinkfast 1s steps(1) infinite' : s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: 'font-size .35s ease, color .4s ease' };
+    const timeStyle = { position: 'relative', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: clockPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, animation: ring ? 'fh-blinkfast 1s steps(1) infinite' : s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: 'font-size .35s ease, color .4s ease' };
     const glowEl = useFilter && sh.length ? E('div', { key: 'glow', 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: sh.join(', '), pointerEvents: 'none' } }, buildKids(true)) : null;
-    const timeEl = E('div', { key: 'time', ref: this.timeRef, style: timeStyle, role: 'timer', 'aria-label': display }, buildKids(false));
+    const timeEl = E('div', { key: 'time', ref: this.timeRef, 'data-tour': 'clock', style: timeStyle, role: 'timer', 'aria-label': display }, buildKids(false));
     // effets bizarres appliqués à tout le bloc
     const wrapFx = { rainbow: `fhx-hue ${sec(5)} linear infinite`, float: `fhx-float ${sec(5)} ease-in-out infinite`, drunk: `fhx-drunk ${sec(3.4)} ease-in-out infinite`, glitch: `fhx-glitch ${sec(3)} linear infinite`, holo: `fhx-holo ${sec(4.5)} linear infinite, fhx-holoscan ${sec(1.6)} linear infinite`, spin: `fhx-spin ${sec(12)} linear infinite` }[s.weird];
-    const wStyle = { position: 'relative', fontSize: fontPx.toFixed(1) + 'px', lineHeight: 1, animation: wrapFx, willChange: 'transform' };
+    const wStyle = { position: 'relative', fontSize: clockPx.toFixed(1) + 'px', lineHeight: 1, animation: wrapFx, willChange: 'transform' };
     if (s.weird === 'holo') { const m = 'repeating-linear-gradient(0deg, #000 0 .1em, rgba(0,0,0,.4) .1em .24em)'; Object.assign(wStyle, { WebkitMaskImage: m, maskImage: m, filter: `drop-shadow(0 0 .04em ${hexA('#5ef2ff', 0.75)})` }); }
     if (s.weird === 'mirror') wStyle.WebkitBoxReflect = 'below -.04em linear-gradient(transparent 35%, rgba(0,0,0,.5))';
     if (s.weird === 'liquid') wStyle.filter = 'url(#fh-liquid)';
-    const bf = (1.1 / fontPx).toFixed(4), bf2 = (1.9 / fontPx).toFixed(4);
+    const bf = (1.1 / clockPx).toFixed(4), bf2 = (1.9 / clockPx).toFixed(4);
     const liquid = s.weird === 'liquid' ? E('svg', { key: 'lq', width: 0, height: 0, 'aria-hidden': true, style: { position: 'absolute' } }, E('filter', { id: 'fh-liquid', x: '-20%', y: '-25%', width: '140%', height: '150%' },
       E('feTurbulence', { type: 'fractalNoise', baseFrequency: `${bf} ${bf2}`, numOctaves: 1, seed: 7, result: 'n' }, E('animate', { attributeName: 'baseFrequency', dur: sec(9), values: `${bf} ${bf2};${(bf * 1.7).toFixed(4)} ${(bf2 * 1.4).toFixed(4)};${bf} ${bf2}`, repeatCount: 'indefinite' })),
-      E('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: (fontPx * 0.09).toFixed(1), xChannelSelector: 'R', yChannelSelector: 'G' }))) : null;
-    const clockEl = E('div', { key: 'mode-' + mode, style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both' } }, E('div', { style: wStyle }, liquid, glowEl, timeEl));
+      E('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: (clockPx * 0.09).toFixed(1), xChannelSelector: 'R', yChannelSelector: 'G' }))) : null;
+    // minuteur visuel : un disque qui se vide, vert → orange → rouge
+    let disc = null;
+    if (visual) {
+      const size = Math.round(Math.max(160, Math.min(st.vh * 0.46, st.vw * 0.62))), fl = tm.dur > 0 ? Math.min(1, Math.max(0, tmLeft / tm.dur)) : 0;
+      const zone = tm.done || fl <= 0.2 ? '#ef4444' : fl <= 0.5 ? '#f59e0b' : '#22c55e', ang = fl * 360, R = 86;
+      const px = (a, r) => [(Math.sin(a * Math.PI / 180) * r).toFixed(2), (-Math.cos(a * Math.PI / 180) * r).toFixed(2)];
+      const [ex, ey] = px(ang, R), ticks = [];
+      for (let i = 0; i < 60; i++) { const big = i % 5 === 0, [x1, y1] = px(i * 6, 95), [x2, y2] = px(i * 6, big ? 84 : 89); ticks.push(E('line', { key: i, x1, y1, x2, y2, stroke: hexA(s.color, big ? 0.65 : 0.3), strokeWidth: big ? 2.6 : 1.3, strokeLinecap: 'round' })); }
+      const sector = fl >= 0.9995 ? E('circle', { key: 'full', r: R, fill: zone, style: { transition: 'fill .8s ease' } })
+        : fl > 0 ? E('path', { key: 'sec', d: `M0 0 L0 ${-R} A${R} ${R} 0 ${ang > 180 ? 1 : 0} 1 ${ex} ${ey} Z`, fill: zone, style: { transition: 'fill .8s ease' } }) : null;
+      disc = E('div', { key: 'disc', style: { width: size, height: size, borderRadius: '50%', boxShadow: `0 20px 60px rgba(0,0,0,.28), 0 0 0 1px ${hexA(s.color, 0.12)}`, opacity: paused ? 0.75 : 1, transition: 'opacity .3s ease', animation: tm.done && st.ringing ? 'fh-ring .8s ease-in-out infinite' : undefined } },
+        E('svg', { viewBox: '-110 -110 220 220', width: size, height: size, style: { display: 'block' } },
+          E('circle', { r: 104, fill: hexA(s.color, 0.07), stroke: tm.done ? '#ef4444' : hexA(s.color, 0.25), strokeWidth: 3 }),
+          sector, ...ticks,
+          fl > 0 && fl < 0.9995 ? E('line', { x1: 0, y1: 0, x2: ex, y2: ey, stroke: '#ffffff', strokeOpacity: 0.85, strokeWidth: 2.4, strokeLinecap: 'round' }) : null,
+          E('circle', { r: 10, fill: hexA(s.color, 0.9) }), E('circle', { r: 4, fill: zone, style: { transition: 'fill .8s ease' } })));
+    }
+    const inner = E('div', { key: 'w', style: wStyle }, liquid, glowEl, timeEl);
+    const clockEl = E('div', { key: 'mode-' + mode + (visual ? '-v' : ''), style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both', ...(visual ? { display: 'flex', flexDirection: 'column', alignItems: P[1], gap: Math.round(clockPx * 0.28) + 'px' } : null) } }, disc, inner);
 
     // date, message, zone, cities
     const df = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f);
@@ -1151,14 +1366,14 @@ class Component extends DCLogic {
     const endStr = tmRun ? fmt(locale, { hour: '2-digit', minute: '2-digit', hour12: !!s.hour12, timeZone: tz }).format(new Date(tm.endAt)) : '';
     const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
       : mode === 'stopwatch' ? (sw.laps.length ? `${L.lap} ${sw.laps.length + 1}` : L.md_sw)
-      : s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : s.msg === 'spooky' ? L.happyHalloween : '';
+      : s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : s.msg === 'theme' ? (s.bgType === 'spooky' ? L.happyHalloween : s.bgType === 'scene' ? L['g_' + s.scene] || '' : '') : '';
     const citiesList = (s.cities || []).slice(0, 4).map(z => { const q = zp(now, z); const hh = s.hour12 ? (q.h % 12 || 12) : q.h; return { name: tzLabel(z), time: `${num(hh, s.leadingZero)}${sep1}${num(q.m, true)}${s.hour12 ? ' ' + dayPeriod(locale, now, z, q.h) : ''}` }; });
-    const P = POS[s.pos] || POS.c;
 
     // background
     const grad = (o) => (o.bgShape === 'radial' ? `radial-gradient(130% 110% at 50% 0%, ${o.bg1} 0%, ${o.bg2} 72%)` : `linear-gradient(${o.bgAngle}deg, ${o.bg1}, ${o.bg2})`);
     const spookyBase = (o) => `radial-gradient(120% 65% at 50% 112%, ${hexA(o.bg3, 0.5)} 0%, transparent 62%), linear-gradient(180deg, ${o.bg2} 0%, ${o.bg1} 78%)`;
-    const base = s.bgType === 'solid' || s.bgType === 'grid' ? s.bgColor : s.bgType === 'gradient' ? grad(s) : s.bgType === 'aurora' ? s.bg2 : s.bgType === 'spooky' ? spookyBase(s) : '#000';
+    const sceneBase = (o) => (o.scene === 'rentree' ? `radial-gradient(120% 90% at 50% 40%, ${o.bg1} 0%, ${o.bg2} 100%)` : `radial-gradient(110% 60% at 50% 110%, ${hexA(o.bg3, 0.45)} 0%, transparent 62%), linear-gradient(180deg, ${o.bg2} 0%, ${o.bg1} 100%)`);
+    const base = s.bgType === 'solid' || s.bgType === 'grid' ? s.bgColor : s.bgType === 'gradient' ? grad(s) : s.bgType === 'aurora' ? s.bg2 : s.bgType === 'spooky' ? spookyBase(s) : s.bgType === 'scene' ? sceneBase(s) : '#000';
     let aurora = null, layers = null;
     if (s.bgType === 'aurora') {
       const spd = 70 - s.bgSpeed * 0.6;
@@ -1186,10 +1401,10 @@ class Component extends DCLogic {
       : { scheme: 'light', bar: 'rgba(252,251,249,.72)', panel: 'rgba(252,251,249,.88)', border: 'rgba(20,18,16,.1)', fg: '#191817', fg2: 'rgba(25,24,23,.64)', fg3: 'rgba(25,24,23,.42)', hover: 'rgba(0,0,0,.05)', active: 'rgba(0,0,0,.08)', field: 'rgba(0,0,0,.045)', tile: 'rgba(0,0,0,.03)', invBg: '#191817', invFg: '#fbfaf8', track: 'rgba(0,0,0,.18)', ringGap: '#fbfaf8', shadow: '0 18px 50px rgba(0,0,0,.12)' };
     // interface teintée Halloween quand le décor citrouilles est actif
     const ui = spooky && dark ? { ...ui0, bar: 'rgba(30,12,44,.66)', panel: 'rgba(24,9,36,.86)', border: 'rgba(255,140,60,.2)', hover: 'rgba(255,140,60,.1)', active: 'rgba(255,140,60,.18)', field: 'rgba(255,255,255,.06)', ringGap: '#1d0b2b', shadow: '0 18px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,106,0,.08)' } : ui0;
-    const hidden = st.idle && s.autoHide && !st.tab;
+    const hidden = st.idle && s.autoHide && !st.tab && st.tour == null;
     const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`;
     const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
-    const tabs = TABS.map(([id, label]) => ({ label, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const tabs = TABS.map(([id, label]) => ({ label, tour: 'tab-' + id, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const iv = st.ind || { x: 0, w: 0, on: false, slide: false };
     const ind = { x: iv.x + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}`, tr: iv.slide ? 'transform .5s cubic-bezier(.3,1.3,.45,1), width .5s cubic-bezier(.3,1.3,.45,1), opacity .2s ease' : 'opacity .25s ease' };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
@@ -1202,6 +1417,7 @@ class Component extends DCLogic {
       else if (ps.bgType === 'aurora') b = `radial-gradient(60% 80% at 25% 30%, ${ps.bg1}, transparent), radial-gradient(60% 80% at 80% 70%, ${ps.bg3}, transparent), ${ps.bg2}`;
       else if (ps.bgType === 'grid') b = `radial-gradient(38% 46% at 30% 64%, ${hexA(ps.gridLit, 0.38)}, transparent 70%), repeating-linear-gradient(0deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), ${ps.bgColor}`;
       else if (ps.bgType === 'spooky') b = `radial-gradient(circle at 80% 24%, #fff6d5 0 8%, rgba(255,214,140,.35) 9%, transparent 19%), ${spookyBase(ps)}`;
+      else if (ps.bgType === 'scene') b = sceneBase(ps);
       else { const m = st.media.find(x => x.id === ps.bgImage) || st.media[0]; b = m && m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #111` : '#111'; }
       return ps.vignette ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,${(ps.vignette * 0.006).toFixed(2)}) 100%), ${b}` : b;
     };
@@ -1221,11 +1437,15 @@ class Component extends DCLogic {
       const pctF = new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }), pct = (v) => pctF.format(v / 100), raw = (v) => String(v);
       const t = st.tab;
       if (t === 'presets') {
-        H(L.hThemes);
-        add({ isPresets: true, span: '1 / -1', hasLabel: false });
+        const card = (pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { name: pr.n[li], sample, deco: DECO[pr.id] || '', bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.pickPreset(ps), delay: 60 + Math.min(i, 18) * 30 + 'ms' }; };
+        const todayPr = PRESETS.find(x => x.id === themeOfDay(now));
+        H(L.hSeasons);
+        add({ isTog: true, label: `${L.autoTheme} · ${L.today} : ${todayPr ? todayPr.n[li] : ''} ${DECO[todayPr && todayPr.id] || ''}`, span: '1 / -1', toggle: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.setS({ autoTheme: true, autoId: '' }); setTimeout(() => this.applyAuto(true), 0); } }, trackBg: s.autoTheme ? ui.invBg : ui.track, knobBg: s.autoTheme ? ui.invFg : '#ffffff', knobX: s.autoTheme ? '14px' : '0px' });
+        add({ isPresets: true, span: '1 / -1', hasLabel: false, list: PRESETS.filter(x => x.fete).map(card) });
+        H(L.hStyles);
+        add({ isPresets: true, span: '1 / -1', hasLabel: false, list: PRESETS.filter(x => !x.fete).map(card) });
         H(L.hMine);
         add({ isMine: true, span: '1 / -1', hasLabel: false });
-        presets = PRESETS.map((pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { name: pr.n[li], sample, bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.setS(ps), delay: 60 + Math.min(i, 18) * 30 + 'ms' }; });
       }
       if (t === 'font') {
         add({ isFontGrid: true, span: '1 / -1', hasLabel: false });
@@ -1248,7 +1468,8 @@ class Component extends DCLogic {
         H(L.hAccent); col('accent', L.accent, SW_INK); tog('sepAccent', L.sepAccent);
       }
       if (t === 'bg') {
-        seg('bgType', L.bgType, [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['spooky', L.spooky], ['image', L.image]], { span: '1 / -1' });
+        seg('bgType', L.bgType, [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['scene', L.scene], ['spooky', L.spooky], ['image', L.image]], { span: '1 / -1' });
+        if (s.bgType === 'scene') { add({ isChips: true, label: L.sceneDecor, span: '1 / -1', options: SCENE_IDS.map(id => { const pr = PRESETS.find(x => x.id === id), on = s.scene === id; return { label: `${DECO[id]} ${pr ? pr.n[li] : id}`, pick: () => this.setS({ scene: id }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) }); col('bg2', L.sky, SW_BG); col('bg1', L.color + ' 2', SW_BG); col('bg3', L.horizon, SW_BG); }
         if (s.bgType === 'grid') { col('bgColor', L.bgColor, SW_BG); col('gridLit', L.gridLit, SW_INK); col('gridLine', L.gridLine, SW_INK); rng('gridSize', L.gridSize, 24, 120, 1, v => v + ' px'); rng('gridTilt', L.gridTilt, 0, 68, 1, v => v + '°'); rng('gridTurn', L.gridTurn, -45, 45, 1, v => v + '°'); rng('gridTrail', L.gridTrail, 0, 100, 1, raw); tog('gridIdle', L.gridIdle); }
         if (s.bgType === 'spooky') { col('bg1', L.sky, SW_BG); col('bg2', L.deep, SW_BG); col('bg3', L.horizon, SW_BG); }
         if (s.bgType === 'solid') col('bgColor', L.bgColor, SW_BG);
@@ -1300,7 +1521,7 @@ class Component extends DCLogic {
         seg('datePos', L.datePos, [['above', L.above], ['below', L.below]]);
         rng('gap', L.gap, 0, 300, 5, pct);
         H(L.hExtras);
-        seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['spooky', L.m_spooky], ['custom', L.m_custom]]);
+        seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['theme', L.m_theme], ['custom', L.m_custom]]);
         if (s.msg === 'custom') add({ isText: true, label: L.m_custom, value: s.msgText, ph: L.msgPh, onText: (e) => this.setS({ msgText: e.target.value.slice(0, 80) }) });
         tog('progress', L.progress);
         add({ isChips: true, label: L.cities, span: '1 / -1', options: ZONES.map(([z, n]) => { const on = s.cities.includes(z); return { label: n[li], pick: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) });
@@ -1326,14 +1547,14 @@ class Component extends DCLogic {
     if (mode !== 'clock') {
       const bfs = Math.round(Math.max(13, Math.min(dPx * 0.8, 19)));
       const ink = s.dateColor, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', font = `600 ${bfs}px/1 ${stack(df)}`;
-      const btn = (key, icon, label, onClick, o = {}) => E('button', { key, type: 'button', className: 'fh-btn', title: o.title || label, disabled: !!o.disabled, onClick, style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.45em', height: '2.7em', minWidth: '2.7em', padding: label ? '0 1.2em 0 .95em' : 0, boxSizing: 'border-box', borderRadius: 999, border: `1px solid ${o.primary ? acc : hexA(ink, 0.26)}`, background: o.primary ? acc : hexA(ink, 0.08), color: o.primary ? accInk : ink, font, cursor: 'pointer', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: o.primary ? `0 8px 28px ${hexA(acc, 0.4)}` : 'none', whiteSpace: 'nowrap' } },
+      const btn = (key, icon, label, onClick, o = {}) => E('button', { key, type: 'button', className: 'fh-btn', title: o.title || label, disabled: !!o.disabled, onClick, style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.45em', height: '2.7em', minWidth: '2.7em', padding: label ? '0 1.2em 0 .95em' : 0, boxSizing: 'border-box', borderRadius: 999, border: `1px solid ${o.primary || o.on ? acc : hexA(ink, 0.26)}`, background: o.primary ? acc : o.on ? hexA(acc, 0.22) : hexA(ink, 0.08), color: o.primary ? accInk : ink, font, cursor: 'pointer', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: o.primary ? `0 8px 28px ${hexA(acc, 0.4)}` : 'none', whiteSpace: 'nowrap' } },
         icon ? E('span', { style: { ...ICON, fontSize: '1.35em' } }, icon) : null, label ? E('span', null, label) : null);
       const row = (key, kids, extra) => E('div', { key, style: { display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '.6em', ...extra } }, kids);
       const parts = [];
       if (mode === 'timer') {
         const go = tm.done ? (st.ringing ? btn('go', 'stop', L.stopAlarm, this.stopAlarm, { primary: true }) : btn('go', 'replay', L.again, this.tmAgain, { primary: true }))
           : btn('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : paused ? L.resume : L.start, this.tmToggle, { primary: true, disabled: !tmRun && tm.left <= 0 && tm.dur <= 0 });
-        parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur })]));
+        parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur }), btn('vis', 'pie_chart', '', () => this.setS({ tmVisual: !visual }), { title: L.tmVisual, on: visual })]));
         if (!tmRun) parts.push(row('r2', TIMER_PRESETS.map(m => { const on = tm.dur === m * 60000; return E('button', { key: 'p' + m, type: 'button', className: 'fh-btn', onClick: () => this.tmSet(m), style: { height: '2.1em', padding: '0 .9em', borderRadius: 999, border: `1px solid ${on ? acc : hexA(ink, 0.2)}`, background: on ? hexA(acc, 0.22) : 'transparent', color: ink, font: `500 ${Math.round(bfs * 0.86)}px/1 ${stack(df)}`, cursor: 'pointer', fontVariantNumeric: 'tabular-nums' } }, `${num(m, false)} min`); }), { marginTop: '.8em', gap: '.45em', maxWidth: '36em' }));
       } else {
         parts.push(row('r1', sw.start
@@ -1351,6 +1572,36 @@ class Component extends DCLogic {
       toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px' } }, parts);
     }
 
+    // tuto : projecteur sur l'élément, flèche dessinée à la main et texte juste dessous
+    let tourEl = null;
+    if (st.tour != null && st.tourRect) {
+      const r = st.tourRect, step = st.tour, n = TOUR.length, pad = 8, last = step === n - 1;
+      const below = r.y + r.h / 2 < st.vh * 0.55, cx = Math.max(30, Math.min(st.vw - 30, r.x + r.w / 2));
+      const arrowH = 78, need = arrowH + 200, textW = Math.min(380, st.vw - 32);
+      // si la place manque (grosse horloge), la flèche remonte un peu sur l'élément
+      const tipY = below ? Math.max(r.y + 24, Math.min(r.y + r.h + pad + 6, st.vh - need)) : Math.min(r.y + r.h - 24, Math.max(r.y - pad - 6, need));
+      const tx = Math.max(16, Math.min(st.vw - 16 - textW, cx - textW / 2)), gold = '#ffcf5c';
+      const curve = step % 2 ? 'M22 74 C 50 56, 10 32, 30 8' : 'M38 74 C 10 56, 50 32, 30 8';
+      const sp = (e) => e.stopPropagation();
+      const tbtn = (key, label, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', onClick: (e) => { sp(e); onClick(); }, style: { height: 38, padding: '0 16px', borderRadius: 999, border: primary ? 0 : '1px solid rgba(255,255,255,.35)', background: primary ? '#ffffff' : 'transparent', color: primary ? '#141210' : '#ffffff', font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, label);
+      const text = E('div', { key: 'txt' + step, onClick: sp, style: { position: 'absolute', left: tx, width: textW, [below ? 'top' : 'bottom']: below ? tipY + arrowH + 4 : st.vh - (tipY - arrowH - 4), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
+        E('div', { style: { font: "700 34px/1.05 'Caveat', cursive", color: gold, marginBottom: 6 } }, L['tour' + (step + 1) + 't']),
+        E('div', { style: { font: '400 15.5px/1.5 Geist, system-ui, sans-serif', textWrap: 'pretty', textShadow: '0 1px 8px rgba(0,0,0,.5)' } }, L['tour' + (step + 1)]),
+        E('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: 10, marginTop: 16 } },
+          step > 0 ? tbtn('prev', L.tourPrev, () => this.tourGo(-1), false) : null,
+          tbtn('next', last ? L.tourEnd : L.tourNext + ' →', () => this.tourGo(1), true)),
+        E('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginTop: 12, font: '500 12.5px/1 Geist, system-ui, sans-serif', color: 'rgba(255,255,255,.6)' } },
+          E('span', null, `${step + 1} / ${n}`),
+          last ? null : E('button', { type: 'button', onClick: (e) => { sp(e); this.endTour(); }, style: { border: 0, padding: 4, background: 'transparent', color: 'rgba(255,255,255,.75)', font: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' } }, L.tourSkip)));
+      tourEl = E('div', { onClick: () => this.tourGo(1), style: { position: 'absolute', inset: 0, zIndex: 60, cursor: 'pointer' } },
+        E('div', { style: { position: 'absolute', left: r.x - pad, top: r.y - pad, width: r.w + pad * 2, height: r.h + pad * 2, borderRadius: 16, pointerEvents: 'none', boxShadow: `0 0 0 3000px rgba(6,3,12,.68), 0 0 0 2px ${gold}, 0 0 26px 6px ${hexA(gold, 0.45)}`, transition: 'left .5s cubic-bezier(.3,1.2,.4,1), top .5s cubic-bezier(.3,1.2,.4,1), width .5s cubic-bezier(.3,1.2,.4,1), height .5s cubic-bezier(.3,1.2,.4,1)' } }),
+        E('div', { key: 'arrow' + step, style: { position: 'absolute', left: cx - 30, top: below ? tipY : tipY - arrowH, width: 60, height: arrowH, pointerEvents: 'none', animation: 'fh-tour-in .4s ease both' } },
+          E('svg', { viewBox: '0 0 60 78', width: 60, height: arrowH, style: { display: 'block', overflow: 'visible', animation: below ? 'fh-nudge 1.3s ease-in-out infinite' : 'fh-nudge-up 1.3s ease-in-out infinite' } },
+            E('path', { d: curve, stroke: gold, strokeWidth: 3.5, fill: 'none', strokeLinecap: 'round' }),
+            E('path', { d: 'M18 20 L30 6 L43 18', stroke: gold, strokeWidth: 3.5, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }))),
+        text);
+    }
+
     // notes autocollantes (déplaçables, redimensionnables, enregistrées dans le navigateur)
     const notesEl = st.notes.map(n => {
       const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y));
@@ -1364,7 +1615,7 @@ class Component extends DCLogic {
 
     return {
       s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
-      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid', isSpooky: spooky, spooky: spooky ? spookyScene(E) : null },
+      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid', isSpooky: spooky, spooky: spooky ? spookyScene(E) : null, isScene: s.bgType === 'scene', scene: s.bgType === 'scene' ? sceneLayer(E, s) : null },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
@@ -1375,7 +1626,7 @@ class Component extends DCLogic {
       prog: mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
       chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1180, surprisePad: st.vw > 1180 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
-      tools: { show: mode !== 'clock', el: toolsEl }, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
+      tools: { show: mode !== 'clock', el: toolsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
