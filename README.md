@@ -9,6 +9,7 @@ Horloge plein écran personnalisable, en une seule page (`index.html` + `support
 - **Minuteur visuel** (disque qui se vide et passe du vert à l’orange puis au rouge) et **chrono** (avec tours), dessinés dans le style choisi.
 - **Sonomètre** : un cadran montre le bruit de la classe (vert → rouge), avec seuil d’alerte, sensibilité, compteur de dépassements et bip en option. Le son est analysé dans le navigateur, rien n’est enregistré ni envoyé.
 - **Afficher sur l’horloge** : le minuteur, le chrono et le sonomètre peuvent rester en petit dans un coin de l’écran de l’heure.
+- **Site ou image** : afficher un site (YouTube, Google Slides, Canva…) ou un fichier de l’ordinateur (image, vidéo, PDF) en plein écran, avec l’heure dans une carte qu’on déplace et qu’on agrandit. Certains sites (Pronote, ENT, Google) refusent d’être affichés dans un autre site.
 - **Tuto** à la première visite : une flèche montre chaque bouton avec son explication (bouton « ? » pour le revoir).
 - **Notes autocollantes** déplaçables et redimensionnables.
 - **Icône du site** (onglet, favoris, écran d’accueil) : on peut aussi « installer » le site comme une appli depuis le navigateur.

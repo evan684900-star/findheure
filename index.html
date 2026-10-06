@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,mic,mic_off,notifications,notifications_off,open_in_full,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,link,mic,mic_off,notifications,notifications_off,open_in_full,open_in_new,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,swap_horiz,timer,upload_file,web&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -36,6 +36,8 @@ a{color:inherit}a:hover{opacity:.8}
 .fh-note textarea:focus{outline:none}
 .fh-note textarea::-webkit-resizer{background:transparent}
 .fh-dot{transition:transform .15s ease}.fh-dot:hover{transform:scale(1.25)}
+.fh-card .fh-card-tools{opacity:0;transition:opacity .2s ease}.fh-card:hover .fh-card-tools{opacity:1}
+.fh-input::placeholder{color:currentColor;opacity:.45}
 @keyframes fh-zoom{from{opacity:0;transform:perspective(2em) translateZ(-6em)}to{opacity:1;transform:none}}
 @keyframes fh-spin{from{opacity:0;transform:perspective(4em) rotateY(-280deg)}to{opacity:1;transform:none}}
 @keyframes fh-swirl{from{opacity:0;transform:rotate(-220deg) scale(.1)}to{opacity:1;transform:none}}
@@ -130,7 +132,7 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ alarm.bg }}; animation: fh-alarm 1.2s ease-in-out infinite;"></div>
   </sc-if>
 
-  <div onClick="{{ onStage }}" onDoubleClick="{{ toggleFs }}" style="position: absolute; inset: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
+  <div onClick="{{ onStage }}" onDoubleClick="{{ toggleFs }}" style="position: absolute; inset: 0; box-sizing: border-box; display: {{ stageDisplay }}; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
     <div style="display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%;">
       <sc-if value="{{ msg.show }}" hint-placeholder-val="{{ false }}">
         <div style="{{ msg.style }}">{{ msg.text }}</div>
@@ -158,6 +160,7 @@ a{color:inherit}a:hover{opacity:.8}
     </div>
   </div>
 
+  <sc-if value="{{ show.on }}" hint-placeholder-val="{{ false }}">{{ show.el }}</sc-if>
   <div style="position: absolute; inset: 0; z-index: 5; pointer-events: none;">{{ notesEl }}</div>
   <sc-if value="{{ pins.show }}" hint-placeholder-val="{{ false }}">{{ pins.el }}</sc-if>
 
@@ -486,6 +489,17 @@ const T_RAW = {
   endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
+  md_show: "Site ou image|Website or image|Sitio o imagen|Website oder Bild",
+  showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
+  showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
+  showUrlPh: "Adresse du site (lien YouTube, Google Slides, Canva…)|Website address (YouTube, Google Slides, Canva link…)|Dirección del sitio (enlace de YouTube, Google Slides, Canva…)|Adresse der Website (YouTube-, Google-Slides-, Canva-Link …)",
+  showGo: "Afficher|Show|Mostrar|Anzeigen", showOr: "ou|or|o|oder",
+  showFile: "Choisir une image, une vidéo ou un PDF|Choose an image, a video or a PDF|Elegir una imagen, un vídeo o un PDF|Bild, Video oder PDF auswählen",
+  showRecent: "Fichiers déjà ajoutés|Files already added|Archivos ya añadidos|Bereits hinzugefügte Dateien",
+  showHelp: "Marchent bien : YouTube, Google Slides et Docs (lien de partage), Canva, Genially, Padlet… Pronote, l’ENT ou Google refusent d’être affichés dans un autre site : ouvrez-les plutôt dans un onglet. Les fichiers restent dans ce navigateur.|Work well: YouTube, Google Slides and Docs (share link), Canva, Genially, Padlet… School portals or Google search refuse to be shown inside another site: open them in a tab instead. Files stay in this browser.|Funcionan bien: YouTube, Google Slides y Docs (enlace para compartir), Canva, Genially, Padlet… Los portales escolares o Google no se dejan mostrar dentro de otro sitio: ábrelos en una pestaña. Los archivos se quedan en este navegador.|Gut geeignet: YouTube, Google Slides und Docs (Freigabelink), Canva, Genially, Padlet … Schulportale oder die Google-Suche lassen sich nicht in einer anderen Seite anzeigen: Öffne sie lieber in einem Tab. Dateien bleiben in diesem Browser.",
+  showBlank: "Page blanche ? Ce site refuse peut-être d’être affiché ici.|Blank page? This site may refuse to be shown here.|¿Página en blanco? Puede que este sitio no permita mostrarse aquí.|Leere Seite? Diese Website lässt sich hier vielleicht nicht anzeigen.",
+  showTab: "Ouvrir dans un onglet|Open in a tab|Abrir en una pestaña|In einem Tab öffnen", showChange: "Changer de site ou d’image|Change website or image|Cambiar de sitio o imagen|Website oder Bild wechseln",
+  showBad: "Adresse invalide|Invalid address|Dirección no válida|Ungültige Adresse", clkSmaller: "Heure plus petite|Smaller clock|Hora más pequeña|Kleinere Uhr", clkBigger: "Heure plus grande|Bigger clock|Hora más grande|Größere Uhr",
   md_snd: "Sonomètre|Sound meter|Sonómetro|Lärmampel", sndOn: "Activer le micro|Turn on the mic|Activar el micro|Mikrofon einschalten", sndOff: "Couper le micro|Turn off the mic|Apagar el micro|Mikrofon ausschalten",
   sndThr: "Seuil d’alerte|Alert level|Umbral de alerta|Alarmschwelle", sndSens: "Sensibilité|Sensitivity|Sensibilidad|Empfindlichkeit",
   sndBeep: "Bip quand c’est trop fort|Beep when too loud|Pitido si hay demasiado ruido|Piepton bei zu viel Lärm", sndCount: "Dépassements|Times over|Veces superado|Überschreitungen",
@@ -521,7 +535,7 @@ const T_RAW = {
   tour4t: "Réglages|Settings|Ajustes|Einstellungen",
   tour4: "Format 12 h ou 24 h, secondes, langue et format de la date, position à l’écran, message au-dessus de l’heure…|12 or 24 h, seconds, date language and format, position on screen, message above the time…|12 o 24 h, segundos, idioma y formato de la fecha, posición en pantalla, mensaje sobre la hora…|12 oder 24 h, Sekunden, Sprache und Format des Datums, Position, Nachricht über der Uhrzeit …",
   tour5t: "Horloge, minuteur, chrono, sonomètre|Clock, timer, stopwatch, sound meter|Reloj, temporizador, cronómetro, sonómetro|Uhr, Timer, Stoppuhr, Lärmampel",
-  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le sonomètre montre le bruit de la classe. « Afficher sur l’horloge » les garde en petit à côté de l’heure.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. The sound meter shows how noisy the class is. “Show on the clock” keeps them small next to the time.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. El sonómetro muestra el ruido de la clase. «Mostrar en el reloj» los deja en pequeño junto a la hora.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Die Lärmampel zeigt, wie laut die Klasse ist. „Auf der Uhr anzeigen“ zeigt sie klein neben der Uhrzeit.",
+  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le sonomètre montre le bruit de la classe. Le dernier bouton affiche un site ou une image avec l’heure par-dessus.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. The sound meter shows how noisy the class is. The last button shows a website or an image with the time on top.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. El sonómetro muestra el ruido de la clase. El último botón muestra un sitio o una imagen con la hora encima.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Die Lärmampel zeigt, wie laut die Klasse ist. Der letzte Knopf zeigt eine Website oder ein Bild mit der Uhrzeit darüber.",
   tour6t: "Notes|Notes|Notas|Notizen",
   tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur ou la taille du texte (A− / A+) : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, change its color or text size (A− / A+): it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color o el tamaño del texto (A− / A+): se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe oder Schriftgröße ändern (A− / A+): Sie bleibt gespeichert.",
   tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
@@ -608,7 +622,26 @@ const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
 const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop', 'zoom', 'spin', 'swirl', 'melt', 'bounce', 'jelly', 'glitch', 'slot'];
 const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .85, glitch: .55, slot: .7 };
 const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
-const MODES = ['clock', 'timer', 'stopwatch', 'sound'];
+const MODES = ['clock', 'timer', 'stopwatch', 'sound', 'show'];
+const pinView = (m) => m === 'clock' || m === 'show';
+// adresse tapée → adresse affichable (YouTube et Google Docs/Slides convertis en liens « intégrables »)
+function showUrl(u, forTab) {
+  let x = String(u || '').trim(); if (!x) return '';
+  if (/^(javascript|data|vbscript|file|blob|about):/i.test(x)) return '';
+  if (!/^[a-z][a-z0-9+.-]*:\/\//i.test(x)) x = 'https://' + x;
+  let url; try { url = new URL(x); } catch (e) { return ''; }
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return '';
+  if (forTab) return url.toString();
+  const h = url.hostname.replace(/^(www|m)\./, '');
+  let yt = '';
+  if (h === 'youtu.be') yt = url.pathname.slice(1).split('/')[0];
+  else if (h === 'youtube.com' && url.pathname === '/watch') yt = url.searchParams.get('v') || '';
+  else if (h === 'youtube.com' && /^\/(shorts|live)\//.test(url.pathname)) yt = url.pathname.split('/')[2] || '';
+  if (yt) return `https://www.youtube.com/embed/${encodeURIComponent(yt)}`;
+  const g = url.pathname.match(/^\/(document|presentation|spreadsheets)\/d\/([^/]+)/);
+  if (h === 'docs.google.com' && g) return `https://docs.google.com/${g[1]}/d/${g[2]}/${g[1] === 'presentation' ? 'embed' : 'preview'}`;
+  return url.toString();
+}
 // sonomètre : couleur et mot selon le niveau (0–100) et le seuil
 const sndColor = (lv, thr) => (lv >= thr ? '#ef4444' : lv >= thr * 0.85 ? '#f59e0b' : lv >= thr * 0.6 ? '#eab308' : '#22c55e');
 const sndZone = (lv, thr) => (lv >= thr ? ['z_loud', '🙉'] : lv >= thr * 0.85 ? ['z_up', '😬'] : lv >= thr * 0.6 ? ['z_ok', '🙂'] : ['z_calm', '😌']);
@@ -638,7 +671,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, sndThr: 65, sndSens: 50, sndBeep: false,
+  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false,
 };
 // Thème par défaut : Halloween
 const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
@@ -872,7 +905,7 @@ class Component extends DCLogic {
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
-    return { s, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -904,8 +937,8 @@ class Component extends DCLogic {
     this.zTop = this.state.notes.reduce((m, n) => Math.max(m, n.z || 0), 10);
     DB.all().then(list => {
       const media = (list || []).filter(r => r && r.blob).sort((a, b) => a.t - b.t).map(r => ({ id: r.id, type: r.type, name: r.name, url: URL.createObjectURL(r.blob) }));
-      if (media.length) this.setState({ media });
-    }).catch(() => {});
+      this.setState(media.length ? { media, mediaReady: true } : { mediaReady: true });
+    }).catch(() => this.setState({ mediaReady: true }));
     this.measure();
   }
   componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
@@ -950,7 +983,7 @@ class Component extends DCLogic {
   // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
   syncFast = () => {
     const st = this.state, m = st.s.mode;
-    const rate = m === 'stopwatch' && st.sw.start ? 47 : m === 'clock' && st.s.pinSw && st.sw.start ? 100 : st.tm.endAt && (m === 'timer' || (m === 'clock' && st.s.pinTimer)) ? 200 : 0;
+    const rate = m === 'stopwatch' && st.sw.start ? 47 : pinView(m) && st.s.pinSw && st.sw.start ? 100 : st.tm.endAt && (m === 'timer' || (pinView(m) && st.s.pinTimer)) ? 200 : 0;
     if (rate === this.fastRate) return;
     clearInterval(this.fastT); this.fastRate = rate; this.fastT = rate ? setInterval(this.fastTick, rate) : null;
   };
@@ -971,7 +1004,7 @@ class Component extends DCLogic {
     if (s.bgType === 'image' && s.slideshow && this.state.media.length > 1) { this.slideN = (this.slideN || 0) + 1; if (this.slideN >= s.slideEvery) { this.slideN = 0; this.nextBg(); } }
     this.setState({ now });
   };
-  nextBg = () => { const m = this.state.media; if (m.length < 2) return; const i = m.findIndex(x => x.id === this.state.s.bgImage); this.setS({ bgImage: m[(i + 1) % m.length].id }); };
+  nextBg = () => { const m = this.state.media.filter(x => x.type !== 'pdf'); if (m.length < 2) return; const i = m.findIndex(x => x.id === this.state.s.bgImage); this.setS({ bgImage: m[(i + 1) % m.length].id }); };
   audio = () => {
     try {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
@@ -1007,7 +1040,7 @@ class Component extends DCLogic {
     if (!tm.endAt || Date.now() < tm.endAt) return;
     this.setTools({ tm: { ...tm, endAt: null, left: 0, done: true } });
     this.startAlarm();
-    if (this.state.s.mode !== 'timer' && !(this.state.s.mode === 'clock' && this.state.s.pinTimer)) this.setS({ mode: 'timer' });
+    if (this.state.s.mode !== 'timer' && !(pinView(this.state.s.mode) && this.state.s.pinTimer)) this.setS({ mode: 'timer' });
     this.toast(this.L().timerDone);
   };
   startAlarm = () => { clearInterval(this.alarmT); let n = 0; const ring = () => { this.beep(); if (++n >= 30) this.stopAlarm(); }; this.setState({ ringing: true }); ring(); this.alarmT = setInterval(ring, 1300); };
@@ -1030,6 +1063,20 @@ class Component extends DCLogic {
   swToggle = () => { const sw = this.state.sw, now = Date.now(); this.setTools({ sw: sw.start ? { ...sw, start: null, acc: sw.acc + now - sw.start } : { ...sw, start: now } }); };
   swLap = () => { const sw = this.state.sw; if (!sw.start) return; this.setTools({ sw: { ...sw, laps: [...sw.laps, sw.acc + Date.now() - sw.start].slice(-99) } }); };
   swReset = () => this.setTools({ sw: { start: null, acc: 0, laps: [] } });
+  // Mode « site ou image » : contenu en plein écran, l'heure dans une carte déplaçable
+  showFileRef = React.createRef();
+  showPick = () => { if (this.showFileRef.current) this.showFileRef.current.click(); };
+  showFiles = (e) => { const f = Array.from(e.target.files || []); e.target.value = ''; this.addFiles(f); };
+  showGo = () => { const u = showUrl(this.state.showDraft); if (!u) { this.toast(this.L().showBad); return; } this.showHintUntil = Date.now() + 12000; this.setS({ showType: 'url', showUrl: this.state.showDraft.trim(), showMedia: '' }); };
+  showClear = () => { this.setState({ showDraft: this.state.s.showType === 'url' ? this.state.s.showUrl : '' }); this.setS({ showType: '' }); };
+  cardDown = (e) => {
+    if (e.button !== 0 || (e.target.closest && e.target.closest('button, a'))) return;
+    const r = e.currentTarget.getBoundingClientRect(); e.preventDefault();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
+    this.cardDrag = { dx: e.clientX - r.left, dy: e.clientY - r.top, w: r.width, h: r.height };
+  };
+  cardMove = (e) => { const d = this.cardDrag; if (!d) return; const st = this.state; this.setState({ showDrag: { x: Math.max(0, Math.min(st.vw - d.w, e.clientX - d.dx)), y: Math.max(0, Math.min(st.vh - d.h, e.clientY - d.dy)) } }); };
+  cardUp = () => { if (!this.cardDrag) return; this.cardDrag = null; const st = this.state, p = st.showDrag; if (p) this.setS({ showPos: { x: p.x / st.vw, y: p.y / st.vh } }); this.setState({ showDrag: null }); };
   setMode = (m) => { if (this.state.s.mode !== m) this.setS({ mode: m }); if (m === 'sound') this.sndStart(); };
   // Sonomètre : le micro est analysé en direct dans le navigateur, rien n'est enregistré
   sndRefs = { arc: (el) => { this.sndArc = el; }, needle: (el) => { this.sndNeedle = el; }, bar: (el) => { this.sndBar = el; } };
@@ -1237,7 +1284,7 @@ class Component extends DCLogic {
     else if (k === 'f') this.toggleFs();
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
-    else if (e.key === ' ' && (mode !== 'clock' || this.state.s.pinTimer || this.state.s.pinSw)) { e.preventDefault(); const t = mode === 'timer' || (mode === 'clock' && this.state.s.pinTimer); if (t) { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
+    else if (e.key === ' ' && ((mode !== 'clock' && mode !== 'show') || this.state.s.pinTimer || this.state.s.pinSw)) { e.preventDefault(); const t = mode === 'timer' || (pinView(mode) && this.state.s.pinTimer); if (t) { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
     else if (k === 'r' && mode === 'timer') this.tmReset();
     else if (k === 'r' && mode === 'stopwatch') this.swReset();
     else if (k === 'l' && mode === 'stopwatch') this.swLap();
@@ -1251,15 +1298,18 @@ class Component extends DCLogic {
   pickFiles = () => { if (this.fileRef.current) this.fileRef.current.click(); };
   onFiles = (e) => { const f = Array.from(e.target.files || []); e.target.value = ''; this.addFiles(f); };
   addFiles = async (files) => {
-    const ok = files.filter(f => /^(image|video)\//.test(f.type)); if (!ok.length) return;
+    const show = this.state.s.mode === 'show';
+    const ok = files.filter(f => /^(image|video)\//.test(f.type) || (show && f.type === 'application/pdf')); if (!ok.length) return;
     const added = [];
     for (const f of ok) {
-      const id = 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), type = f.type.startsWith('video') ? 'video' : 'image';
+      const id = 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), type = f.type === 'application/pdf' ? 'pdf' : f.type.startsWith('video') ? 'video' : 'image';
       try { await DB.put({ id, blob: f, type, name: f.name, t: Date.now() }); } catch (err) {}
       added.push({ id, type, name: f.name, url: URL.createObjectURL(f) });
     }
     this.setState(st => ({ media: [...st.media, ...added] }));
-    this.setS({ bgType: 'image', bgImage: added[0].id });
+    if (show) { this.setS({ showType: 'media', showMedia: added[0].id }); return; }
+    const bgOk = added.find(m => m.type !== 'pdf'); if (!bgOk) return;
+    this.setS({ bgType: 'image', bgImage: bgOk.id });
     this.toast(this.L().added);
   };
   delMedia = (id) => {
@@ -1267,7 +1317,9 @@ class Component extends DCLogic {
     DB.del(id).catch(() => {});
     const media = this.state.media.filter(x => x.id !== id);
     this.setState({ media });
-    if (this.state.s.bgImage === id) this.setS({ bgImage: media.length ? media[0].id : null });
+    const bgs = media.filter(x => x.type !== 'pdf');
+    if (this.state.s.bgImage === id) this.setS({ bgImage: bgs.length ? bgs[0].id : null });
+    if (this.state.s.showMedia === id) this.setS({ showType: '', showMedia: '' });
   };
   toast = (msg, undo) => { clearTimeout(this.toastT); this.setState({ toast: { msg, undo } }); this.toastT = setTimeout(() => this.setState({ toast: null }), undo ? 6000 : 2400); };
   reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang, mode: prev.mode }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
@@ -1487,7 +1539,7 @@ class Component extends DCLogic {
       ];
     }
     if (s.bgType === 'image') {
-      const cur = st.media.find(m => m.id === s.bgImage) || st.media[0];
+      const cur = st.media.find(m => m.id === s.bgImage && m.type !== 'pdf') || st.media.find(m => m.type !== 'pdf');
       const prev = st.prevBg && (!cur || st.prevBg !== cur.id) ? st.media.find(m => m.id === st.prevBg) : null;
       const b = s.bgBlur, bs = { position: 'absolute', left: -b * 2 + 'px', top: -b * 2 + 'px', width: `calc(100% + ${b * 4}px)`, height: `calc(100% + ${b * 4}px)`, filter: `blur(${b}px) saturate(${s.bgSat}%)` };
       const mk = (m, fade) => (m.type === 'video'
@@ -1512,7 +1564,7 @@ class Component extends DCLogic {
     const iv = st.ind || { x: 0, w: 0, on: false, slide: false };
     const ind = { x: iv.x + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}`, tr: iv.slide ? 'transform .5s cubic-bezier(.3,1.3,.45,1), width .5s cubic-bezier(.3,1.3,.45,1), opacity .2s ease' : 'opacity .25s ease' };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? s.accent : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? s.accent : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -1581,7 +1633,7 @@ class Component extends DCLogic {
         if (s.bgType === 'aurora') { col('bg1', L.color + ' 1', SW_BG); col('bg2', L.color + ' 2', SW_BG); col('bg3', L.color + ' 3', SW_BG); rng('bgSpeed', L.speed, 0, 100, 1, raw); }
         if (s.bgType === 'image') {
           add({ isMedia: true, label: L.gallery, span: '1 / -1' });
-          media = st.media.map(m => ({ name: m.name, url: m.url, isVideo: m.type === 'video', thumb: m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #222` : '#111', ring: s.bgImage === m.id ? ringOn : ringOff, pick: () => this.setS({ bgType: 'image', bgImage: m.id }), del: (e) => { e.stopPropagation(); this.delMedia(m.id); } }));
+          media = st.media.filter(m => m.type !== 'pdf').map(m => ({ name: m.name, url: m.url, isVideo: m.type === 'video', thumb: m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #222` : '#111', ring: s.bgImage === m.id ? ringOn : ringOff, pick: () => this.setS({ bgType: 'image', bgImage: m.id }), del: (e) => { e.stopPropagation(); this.delMedia(m.id); } }));
           seg('bgFit', L.fit, [['cover', L.cover], ['contain', L.contain], ['tile', L.tile]]);
           rng('bgBlur', L.blur, 0, 40, 1, v => v + ' px'); rng('bgDim', L.dim, 0, 85, 1, pct); rng('bgSat', L.saturation, 0, 200, 1, pct);
           tog('slideshow', L.slideshow);
@@ -1685,7 +1737,7 @@ class Component extends DCLogic {
 
     // minuteur / chrono épinglés : petite carte dans un coin de l'écran de l'heure
     let pinsEl = null;
-    if (mode === 'clock' && (s.pinTimer || s.pinSw || s.pinSnd)) {
+    if (pinView(mode) && (s.pinTimer || s.pinSw || s.pinSnd)) {
       const ink = ui.fg, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', ff = stack(f);
       const ib = (key, icon, title, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 34, height: 34, padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: primary ? 0 : `1px solid ${ui.border}`, background: primary ? acc : 'transparent', color: primary ? accInk : ui.fg2, cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: 19 } }, icon));
       const card = (key, lead, big, label, btns, alarm) => E('div', { key, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px 10px 12px', borderRadius: 18, background: ui.bar, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
@@ -1762,10 +1814,65 @@ class Component extends DCLogic {
         E('textarea', { value: n.t || '', placeholder: L.notePh, autoFocus: n.id === this.newNoteId, spellCheck: false, onChange: (e) => this.patchNote(n.id, { t: e.target.value.slice(0, 2000) }, true), onMouseUp: (e) => this.noteSize(n.id, e), onPointerUp: (e) => this.noteSize(n.id, e), style: { display: 'block', width: w, height: h, minWidth: 150, minHeight: 80, maxWidth: '80vw', maxHeight: '70vh', boxSizing: 'border-box', resize: 'both', border: 0, margin: 0, background: 'transparent', color: 'inherit', padding: '0 14px 14px', font: `600 ${nfs}px/1.2 'Caveat', 'Comic Sans MS', cursive`, userSelect: 'text', overflow: 'auto' } }));
     });
 
+    // mode « site ou image »
+    let showEl = null, showing = false;
+    if (mode === 'show') {
+      const sm = s.showType === 'media' ? st.media.find(m => m.id === s.showMedia) : null;
+      const src = s.showType === 'url' && showUrl(s.showUrl) ? { kind: 'url', url: showUrl(s.showUrl), tab: showUrl(s.showUrl, true) } : sm ? { kind: sm.type, url: sm.url, name: sm.name } : null;
+      const waiting = s.showType === 'media' && !sm && !st.mediaReady;
+      showing = !!src;
+      const ib = (key, icon, title, onClick, extra) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 30, height: 30, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: `1px solid ${ui.border}`, background: ui.panel, color: ui.fg, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.25)', ...extra } }, E('span', { style: { ...ICON, fontSize: 17 } }, icon));
+      if (src) {
+        const bgc = dark ? '#0b0b0c' : '#f2f2f2', fill = { position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, display: 'block' };
+        const content = src.kind === 'url' ? E('iframe', { key: 'f' + src.url, src: src.url, title: L.md_show, allow: 'autoplay; fullscreen; picture-in-picture; clipboard-write; encrypted-media', referrerPolicy: 'strict-origin-when-cross-origin', style: { ...fill, background: '#ffffff' } })
+          : src.kind === 'image' ? E('img', { key: 'i' + src.url, src: src.url, alt: src.name || '', draggable: false, style: { ...fill, objectFit: 'contain', background: bgc } })
+          : src.kind === 'video' ? E('video', { key: 'v' + src.url, src: src.url, controls: true, playsInline: true, style: { ...fill, objectFit: 'contain', background: '#000' } })
+          : E('iframe', { key: 'p' + src.url, src: src.url + '#view=FitH', title: src.name || 'PDF', style: { ...fill, background: '#525659' } });
+        // carte de l'heure, déplaçable
+        const size = Math.max(28, Math.min(220, +s.showSize || 64)), apC = s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
+        const cw = size * 3.4, ch = size * 1.6, pos = st.showDrag || (s.showPos ? { x: s.showPos.x * st.vw, y: s.showPos.y * st.vh } : { x: st.vw - cw - 28, y: st.vh - ch - 28 });
+        const cx = Math.max(0, Math.min(st.vw - 90, pos.x)), cy = Math.max(0, Math.min(st.vh - 50, pos.y));
+        const tfill = s.gradText && !s.outline ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : { color: s.color };
+        const card = E('div', { key: 'card', className: 'fh-card', onPointerDown: this.cardDown, onPointerMove: this.cardMove, onPointerUp: this.cardUp, onPointerCancel: this.cardUp, title: '', style: { position: 'absolute', left: cx, top: cy, zIndex: 2, padding: `${Math.round(size * 0.16)}px ${Math.round(size * 0.3)}px ${Math.round(size * 0.2)}px`, borderRadius: Math.round(14 + size * 0.12), background: ui.bar, border: `1px solid ${ui.border}`, backdropFilter: 'blur(18px) saturate(1.4)', WebkitBackdropFilter: 'blur(18px) saturate(1.4)', boxShadow: ui.shadow, cursor: this.cardDrag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+          E('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '.08em', font: `${s.italic ? 'italic ' : ''}${wt} ${size}px/1 ${stack(f)}`, letterSpacing: ls + 'em', fontFeatureSettings: s.fixedDigits ? '"tnum" 1' : undefined, whiteSpace: 'nowrap', direction: 'ltr' } },
+            E('span', { style: tfill }, `${hStr}${sep1 === ' ' ? ':' : sep1}${mStr}`),
+            s.seconds !== 'off' ? E('span', { style: { ...tfill, fontSize: '.42em', marginTop: '.12em', opacity: 0.85 } }, sStr) : null,
+            apC ? E('span', { style: { ...tfill, fontSize: '.32em', marginTop: '.15em', opacity: 0.85 } }, apC) : null),
+          s.showDate && dateText ? E('div', { style: { marginTop: Math.round(size * 0.1), font: `${clampW(df, 400)} ${Math.max(11, Math.round(size * 0.2))}px/1.2 ${stack(df)}`, color: ui.fg2, whiteSpace: 'nowrap', textTransform: s.dateUpper ? 'uppercase' : 'none' } }, dateText) : null,
+          E('div', { className: 'fh-card-tools', style: { position: 'absolute', top: -14, right: -8, display: 'flex', gap: 4 } },
+            ib('sm', 'remove', L.clkSmaller, () => this.setS({ showSize: Math.max(28, size - 12) })),
+            ib('bg', 'add', L.clkBigger, () => this.setS({ showSize: Math.min(220, size + 12) })),
+            ib('ch', 'swap_horiz', L.showChange, this.showClear)));
+        const hint = src.kind === 'url' && Date.now() < (this.showHintUntil || 0) ? E('div', { key: 'hint', style: { position: 'absolute', left: 16, bottom: 16, zIndex: 2, display: 'flex', alignItems: 'center', gap: 12, padding: '9px 10px 9px 14px', borderRadius: 12, background: ui.invBg, color: ui.invFg, font: '500 13px/1.3 Geist, system-ui, sans-serif', boxShadow: '0 10px 30px rgba(0,0,0,.3)', animation: 'fh-tour-in .4s ease both' } },
+          E('span', null, L.showBlank), E('a', { href: src.tab, target: '_blank', rel: 'noopener noreferrer', style: { color: ui.invFg, fontWeight: 600, textDecoration: 'underline', textUnderlineOffset: 3, whiteSpace: 'nowrap' } }, L.showTab)) : null;
+        const tabBtn = src.kind === 'url' ? E('a', { key: 'tab', href: src.tab, target: '_blank', rel: 'noopener noreferrer', title: L.showTab, className: 'fh-btn', style: { position: 'absolute', left: 16, top: 76, zIndex: 2, width: 34, height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, background: ui.panel, border: `1px solid ${ui.border}`, color: ui.fg, opacity: hidden ? 0 : 0.92, transition: 'opacity .5s ease', pointerEvents: hidden ? 'none' : 'auto', boxShadow: '0 4px 14px rgba(0,0,0,.25)' } }, E('span', { style: { ...ICON, fontSize: 18 } }, 'open_in_new')) : null;
+        showEl = E('div', { style: { position: 'absolute', inset: 0, zIndex: 3, background: bgc } }, content,
+          // bande invisible en haut : fait réapparaître la barre même quand la souris est sur le site affiché
+          E('div', { key: 'hot', onPointerMove: this.activity, onPointerEnter: this.activity, style: { position: 'absolute', left: 0, right: 0, top: 0, height: 16, zIndex: 1 } }),
+          tabBtn, hint, card);
+      } else if (!waiting) {
+        const files = st.media.slice(-8).reverse();
+        showEl = E('div', { style: { position: 'absolute', inset: 0, zIndex: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '84px 16px 24px', boxSizing: 'border-box', overflowY: 'auto' } },
+          E('div', { style: { width: 'min(580px, 100%)', padding: '26px 26px 22px', boxSizing: 'border-box', borderRadius: 22, background: ui.panel, border: `1px solid ${ui.border}`, backdropFilter: 'blur(26px) saturate(1.5)', WebkitBackdropFilter: 'blur(26px) saturate(1.5)', boxShadow: ui.shadow, color: ui.fg, animation: 'fh-panel-open .4s cubic-bezier(.2,.9,.25,1.1) both' } },
+            E('div', { style: { display: 'flex', alignItems: 'center', gap: 10, font: '600 20px/1.2 Geist, system-ui, sans-serif' } }, E('span', { style: { ...ICON, fontSize: 24 } }, 'web'), L.showTitle),
+            E('div', { style: { marginTop: 6, font: '400 14px/1.45 Geist, system-ui, sans-serif', color: ui.fg2 } }, L.showSub),
+            E('div', { style: { display: 'flex', gap: 8, marginTop: 18 } },
+              E('input', { type: 'url', className: 'fh-input', value: st.showDraft, placeholder: L.showUrlPh, onChange: (e) => this.setState({ showDraft: e.target.value.slice(0, 2000) }), onKeyDown: (e) => { if (e.key === 'Enter') this.showGo(); }, style: { flex: 1, minWidth: 0, height: 42, boxSizing: 'border-box', padding: '0 14px', borderRadius: 12, border: `1px solid ${ui.border}`, background: ui.field, color: ui.fg, font: '500 14px/1 Geist, system-ui, sans-serif', outline: 'none', userSelect: 'text' } }),
+              E('button', { type: 'button', className: 'fh-btn', onClick: this.showGo, style: { height: 42, padding: '0 18px', borderRadius: 12, border: 0, background: ui.invBg, color: ui.invFg, font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, L.showGo)),
+            E('div', { style: { display: 'flex', alignItems: 'center', gap: 12, margin: '16px 0', color: ui.fg3, font: '500 12px/1 Geist, system-ui, sans-serif', textTransform: 'uppercase', letterSpacing: '.1em' } }, E('span', { style: { flex: 1, height: 1, background: ui.border } }), L.showOr, E('span', { style: { flex: 1, height: 1, background: ui.border } })),
+            E('button', { type: 'button', className: 'fh-btn', onClick: this.showPick, style: { width: '100%', height: 46, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 12, border: `1.5px dashed ${ui.fg3}`, background: 'transparent', color: ui.fg, font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: 20 } }, 'upload_file'), L.showFile),
+            E('input', { type: 'file', ref: this.showFileRef, accept: 'image/*,video/*,application/pdf', onChange: this.showFiles, style: { display: 'none' } }),
+            files.length ? E('div', { style: { marginTop: 16 } },
+              E('div', { style: { font: '600 11px/1 Geist, system-ui, sans-serif', letterSpacing: '.1em', textTransform: 'uppercase', color: ui.fg3, marginBottom: 8 } }, L.showRecent),
+              E('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } }, files.map(m => E('button', { key: m.id, type: 'button', className: 'fh-btn', title: m.name, onClick: () => this.setS({ showType: 'media', showMedia: m.id }), style: { width: 96, height: 62, padding: 0, borderRadius: 10, overflow: 'hidden', border: `1px solid ${ui.border}`, cursor: 'pointer', background: m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #222` : '#1b1b1d', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', font: '700 13px/1 Geist, system-ui, sans-serif' } }, m.type === 'pdf' ? 'PDF' : m.type === 'video' ? E('span', { style: { ...ICON, fontSize: 24 } }, 'play_arrow') : null)))) : null,
+            E('div', { style: { marginTop: 16, font: '400 12.5px/1.5 Geist, system-ui, sans-serif', color: ui.fg3 } }, L.showHelp)));
+      }
+    }
+
     return {
       s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
-      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid', isSpooky: spooky, spooky: spooky ? spookyScene(E) : null, isScene: s.bgType === 'scene', scene: s.bgType === 'scene' ? sceneLayer(E, s) : null },
-      sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (mode === 'clock' && !!s.pinSnd)) },
+      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !showing, isSpooky: spooky && !showing, spooky: spooky && !showing ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !showing, scene: s.bgType === 'scene' && !showing ? sceneLayer(E, s) : null },
+      sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (pinView(mode) && !!s.pinSnd)) },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
@@ -1774,9 +1881,9 @@ class Component extends DCLogic {
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor } },
       prog: mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
-      chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1180, surprisePad: st.vw > 1180 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
+      chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
-      tools: { show: mode !== 'clock', el: toolsEl }, pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
+      tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
