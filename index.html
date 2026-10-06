@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>findheure</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%83%3C/text%3E%3C/svg%3E">
+<meta name="description" content="Horloge plein écran pour la classe : minuteur visuel, chrono, notes et thèmes de saison.">
+<link rel="icon" href="./favicon.ico" sizes="any">
+<link rel="icon" href="./favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<link rel="manifest" href="./site.webmanifest">
 <!-- React servi depuis le site lui-même : marche même si le réseau de l’établissement bloque unpkg.com -->
 <script src="./vendor/react.production.min.js"></script>
 <script src="./vendor/react-dom.production.min.js"></script>
@@ -164,7 +168,7 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }};">
       <div style="display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 10px 0 9px; flex-shrink: 0;">
         <sc-if value="{{ chrome.pumpkin }}" hint-placeholder-val="{{ false }}"><div style="font-size: 17px; line-height: 1; animation: fh-wobble 3.2s ease-in-out infinite;">🎃</div></sc-if>
-        <sc-if value="{{ !chrome.pumpkin }}" hint-placeholder-val="{{ true }}"><div style="width: 10px; height: 10px; border-radius: 50%; background: {{ s.accent }}; box-shadow: 0 0 0 3px {{ chrome.dotRing }};"></div></sc-if>
+        <sc-if value="{{ !chrome.pumpkin }}" hint-placeholder-val="{{ true }}"><img src="./favicon.svg" alt="" width="20" height="20" style="display: block; border-radius: 5px;"></sc-if>
         <sc-if value="{{ chrome.brand }}" hint-placeholder-val="{{ true }}"><div style="font-weight: 600; font-size: 14.5px; letter-spacing: -.01em;">findheure</div></sc-if>
       </div>
       <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0;"></div>

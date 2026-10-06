@@ -9,6 +9,7 @@ Horloge plein écran personnalisable, en une seule page (`index.html` + `support
 - **Minuteur visuel** (disque qui se vide et passe du vert à l’orange puis au rouge) et **chrono** (avec tours), dessinés dans le style choisi.
 - **Tuto** à la première visite : une flèche montre chaque bouton avec son explication (bouton « ? » pour le revoir).
 - **Notes autocollantes** déplaçables et redimensionnables.
+- **Icône du site** (onglet, favoris, écran d’accueil) : on peut aussi « installer » le site comme une appli depuis le navigateur.
 
 Raccourcis : `F` plein écran · `S` surprise · `N` nouvelle note · `Espace` démarrer/pause · `R` remettre à zéro · `L` tour (chrono) · `Échap` fermer.
 
