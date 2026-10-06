@@ -7,6 +7,7 @@ Horloge plein écran personnalisable, en une seule page (`index.html` + `support
 - **Autres thèmes** : Papier, Néon, Terminal, Grille (cases qui s’allument derrière la souris), Hologramme, Psyché…
 - **Animations des chiffres** (fondu, chute, toupie, fonte, rebond, glitch, machine à sous…) et **effets bizarres** permanents (vague, gelée, tremblote, lévitation, arc-en-ciel, liquide, hologramme, reflet…).
 - **Minuteur visuel** (disque qui se vide et passe du vert à l’orange puis au rouge) et **chrono** (avec tours), dessinés dans le style choisi.
+- **Afficher sur l’horloge** : le minuteur et le chrono peuvent rester en petit dans un coin de l’écran de l’heure (pause, ouvrir en grand, retirer).
 - **Tuto** à la première visite : une flèche montre chaque bouton avec son explication (bouton « ? » pour le revoir).
 - **Notes autocollantes** déplaçables et redimensionnables.
 - **Icône du site** (onglet, favoris, écran d’accueil) : on peut aussi « installer » le site comme une appli depuis le navigateur.

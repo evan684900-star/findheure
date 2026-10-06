@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,pause,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,open_in_full,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -156,6 +156,7 @@ a{color:inherit}a:hover{opacity:.8}
   </div>
 
   <div style="position: absolute; inset: 0; z-index: 5; pointer-events: none;">{{ notesEl }}</div>
+  <sc-if value="{{ pins.show }}" hint-placeholder-val="{{ false }}">{{ pins.el }}</sc-if>
 
   <sc-if value="{{ prog.show }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: {{ prog.track }}; pointer-events: none;">
@@ -482,6 +483,8 @@ const T_RAW = {
   endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
+  pinClock: "Afficher sur l’horloge|Show on the clock|Mostrar en el reloj|Auf der Uhr anzeigen", unpin: "Retirer de l’horloge|Remove from the clock|Quitar del reloj|Von der Uhr entfernen",
+  openFull: "Ouvrir en grand|Open full size|Abrir en grande|Groß öffnen", pinnedT: "Minuteur affiché sur l’horloge|Timer shown on the clock|Temporizador mostrado en el reloj|Timer auf der Uhr angezeigt", pinnedS: "Chrono affiché sur l’horloge|Stopwatch shown on the clock|Cronómetro mostrado en el reloj|Stoppuhr auf der Uhr angezeigt",
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
   m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
   g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
@@ -506,7 +509,7 @@ const T_RAW = {
   tour4t: "Réglages|Settings|Ajustes|Einstellungen",
   tour4: "Format 12 h ou 24 h, secondes, langue et format de la date, position à l’écran, message au-dessus de l’heure…|12 or 24 h, seconds, date language and format, position on screen, message above the time…|12 o 24 h, segundos, idioma y formato de la fecha, posición en pantalla, mensaje sobre la hora…|12 oder 24 h, Sekunden, Sprache und Format des Datums, Position, Nachricht über der Uhrzeit …",
   tour5t: "Horloge, minuteur, chrono|Clock, timer, stopwatch|Reloj, temporizador, cronómetro|Uhr, Timer, Stoppuhr",
-  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Touche Espace : démarrer ou mettre en pause.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. Space: start or pause.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. Espacio: iniciar o pausar.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Leertaste: Start oder Pause.",
+  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le bouton « Afficher sur l’horloge » les garde en petit à côté de l’heure.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. “Show on the clock” keeps them small next to the time.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. «Mostrar en el reloj» los deja en pequeño junto a la hora.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. „Auf der Uhr anzeigen“ zeigt sie klein neben der Uhrzeit.",
   tour6t: "Notes|Notes|Notas|Notizen",
   tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur ou la taille du texte (A− / A+) : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, change its color or text size (A− / A+): it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color o el tamaño del texto (A− / A+): se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe oder Schriftgröße ändern (A− / A+): Sie bleibt gespeichert.",
   tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
@@ -620,7 +623,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true,
+  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false,
 };
 // Thème par défaut : Halloween
 const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
@@ -931,7 +934,7 @@ class Component extends DCLogic {
   // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
   syncFast = () => {
     const st = this.state, m = st.s.mode;
-    const rate = m === 'stopwatch' && st.sw.start ? 47 : m === 'timer' && st.tm.endAt ? 200 : 0;
+    const rate = m === 'stopwatch' && st.sw.start ? 47 : m === 'clock' && st.s.pinSw && st.sw.start ? 100 : st.tm.endAt && (m === 'timer' || (m === 'clock' && st.s.pinTimer)) ? 200 : 0;
     if (rate === this.fastRate) return;
     clearInterval(this.fastT); this.fastRate = rate; this.fastT = rate ? setInterval(this.fastTick, rate) : null;
   };
@@ -988,7 +991,7 @@ class Component extends DCLogic {
     if (!tm.endAt || Date.now() < tm.endAt) return;
     this.setTools({ tm: { ...tm, endAt: null, left: 0, done: true } });
     this.startAlarm();
-    if (this.state.s.mode !== 'timer') this.setS({ mode: 'timer' });
+    if (this.state.s.mode !== 'timer' && !(this.state.s.mode === 'clock' && this.state.s.pinTimer)) this.setS({ mode: 'timer' });
     this.toast(this.L().timerDone);
   };
   startAlarm = () => { clearInterval(this.alarmT); let n = 0; const ring = () => { this.beep(); if (++n >= 30) this.stopAlarm(); }; this.setState({ ringing: true }); ring(); this.alarmT = setInterval(ring, 1300); };
@@ -1012,6 +1015,12 @@ class Component extends DCLogic {
   swLap = () => { const sw = this.state.sw; if (!sw.start) return; this.setTools({ sw: { ...sw, laps: [...sw.laps, sw.acc + Date.now() - sw.start].slice(-99) } }); };
   swReset = () => this.setTools({ sw: { start: null, acc: 0, laps: [] } });
   setMode = (m) => { if (this.state.s.mode !== m) this.setS({ mode: m }); };
+  // épingle le minuteur ou le chrono sur l'écran de l'heure (ou l'enlève)
+  pinTool = (which) => {
+    const k = which === 'timer' ? 'pinTimer' : 'pinSw', L = this.L();
+    if (this.state.s[k]) { this.setS({ [k]: false }); return; }
+    this.setS({ [k]: true, mode: 'clock' }); this.toast(which === 'timer' ? L.pinnedT : L.pinnedS);
+  };
   stopEv = (e) => { e.stopPropagation(); };
 
   // Notes autocollantes
@@ -1161,7 +1170,7 @@ class Component extends DCLogic {
     else if (k === 'f') this.toggleFs();
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
-    else if (e.key === ' ' && mode !== 'clock') { e.preventDefault(); if (mode === 'timer') { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
+    else if (e.key === ' ' && (mode !== 'clock' || this.state.s.pinTimer || this.state.s.pinSw)) { e.preventDefault(); const t = mode === 'timer' || (mode === 'clock' && this.state.s.pinTimer); if (t) { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
     else if (k === 'r' && mode === 'timer') this.tmReset();
     else if (k === 'r' && mode === 'stopwatch') this.swReset();
     else if (k === 'l' && mode === 'stopwatch') this.swLap();
@@ -1331,21 +1340,23 @@ class Component extends DCLogic {
       E('feTurbulence', { type: 'fractalNoise', baseFrequency: `${bf} ${bf2}`, numOctaves: 1, seed: 7, result: 'n' }, E('animate', { attributeName: 'baseFrequency', dur: sec(9), values: `${bf} ${bf2};${(bf * 1.7).toFixed(4)} ${(bf2 * 1.4).toFixed(4)};${bf} ${bf2}`, repeatCount: 'indefinite' })),
       E('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: (clockPx * 0.09).toFixed(1), xChannelSelector: 'R', yChannelSelector: 'G' }))) : null;
     // minuteur visuel : un disque qui se vide, vert → orange → rouge
-    let disc = null;
-    if (visual) {
-      const size = Math.round(Math.max(160, Math.min(st.vh * 0.46, st.vw * 0.62))), fl = tm.dur > 0 ? Math.min(1, Math.max(0, tmLeft / tm.dur)) : 0;
-      const zone = tm.done || fl <= 0.2 ? '#ef4444' : fl <= 0.5 ? '#f59e0b' : '#22c55e', ang = fl * 360, R = 86;
-      const px = (a, r) => [(Math.sin(a * Math.PI / 180) * r).toFixed(2), (-Math.cos(a * Math.PI / 180) * r).toFixed(2)];
-      const [ex, ey] = px(ang, R), ticks = [];
-      for (let i = 0; i < 60; i++) { const big = i % 5 === 0, [x1, y1] = px(i * 6, 95), [x2, y2] = px(i * 6, big ? 84 : 89); ticks.push(E('line', { key: i, x1, y1, x2, y2, stroke: hexA(s.color, big ? 0.65 : 0.3), strokeWidth: big ? 2.6 : 1.3, strokeLinecap: 'round' })); }
+    const fl = tm.dur > 0 ? Math.min(1, Math.max(0, tmLeft / tm.dur)) : 0;
+    const zone = tm.done || fl <= 0.2 ? '#ef4444' : fl <= 0.5 ? '#f59e0b' : '#22c55e';
+    const discSvg = (size, ink, detail) => {
+      const ang = fl * 360, R = 86, px = (a, r) => [(Math.sin(a * Math.PI / 180) * r).toFixed(2), (-Math.cos(a * Math.PI / 180) * r).toFixed(2)], [ex, ey] = px(ang, R), ticks = [];
+      if (detail) for (let i = 0; i < 60; i++) { const big = i % 5 === 0, [x1, y1] = px(i * 6, 95), [x2, y2] = px(i * 6, big ? 84 : 89); ticks.push(E('line', { key: i, x1, y1, x2, y2, stroke: hexA(ink, big ? 0.65 : 0.3), strokeWidth: big ? 2.6 : 1.3, strokeLinecap: 'round' })); }
       const sector = fl >= 0.9995 ? E('circle', { key: 'full', r: R, fill: zone, style: { transition: 'fill .8s ease' } })
         : fl > 0 ? E('path', { key: 'sec', d: `M0 0 L0 ${-R} A${R} ${R} 0 ${ang > 180 ? 1 : 0} 1 ${ex} ${ey} Z`, fill: zone, style: { transition: 'fill .8s ease' } }) : null;
-      disc = E('div', { key: 'disc', style: { width: size, height: size, borderRadius: '50%', boxShadow: `0 20px 60px rgba(0,0,0,.28), 0 0 0 1px ${hexA(s.color, 0.12)}`, opacity: paused ? 0.75 : 1, transition: 'opacity .3s ease', animation: tm.done && st.ringing ? 'fh-ring .8s ease-in-out infinite' : undefined } },
-        E('svg', { viewBox: '-110 -110 220 220', width: size, height: size, style: { display: 'block' } },
-          E('circle', { r: 104, fill: hexA(s.color, 0.07), stroke: tm.done ? '#ef4444' : hexA(s.color, 0.25), strokeWidth: 3 }),
-          sector, ...ticks,
-          fl > 0 && fl < 0.9995 ? E('line', { x1: 0, y1: 0, x2: ex, y2: ey, stroke: '#ffffff', strokeOpacity: 0.85, strokeWidth: 2.4, strokeLinecap: 'round' }) : null,
-          E('circle', { r: 10, fill: hexA(s.color, 0.9) }), E('circle', { r: 4, fill: zone, style: { transition: 'fill .8s ease' } })));
+      return E('svg', { viewBox: '-110 -110 220 220', width: size, height: size, style: { display: 'block' } },
+        E('circle', { r: 104, fill: hexA(ink, 0.07), stroke: tm.done ? '#ef4444' : hexA(ink, 0.25), strokeWidth: detail ? 3 : 8 }),
+        sector, ...ticks,
+        detail && fl > 0 && fl < 0.9995 ? E('line', { x1: 0, y1: 0, x2: ex, y2: ey, stroke: '#ffffff', strokeOpacity: 0.85, strokeWidth: 2.4, strokeLinecap: 'round' }) : null,
+        E('circle', { r: detail ? 10 : 16, fill: hexA(ink, 0.9) }), E('circle', { r: detail ? 4 : 7, fill: zone, style: { transition: 'fill .8s ease' } }));
+    };
+    let disc = null;
+    if (visual) {
+      const size = Math.round(Math.max(160, Math.min(st.vh * 0.46, st.vw * 0.62)));
+      disc = E('div', { key: 'disc', style: { width: size, height: size, borderRadius: '50%', boxShadow: `0 20px 60px rgba(0,0,0,.28), 0 0 0 1px ${hexA(s.color, 0.12)}`, opacity: paused ? 0.75 : 1, transition: 'opacity .3s ease', animation: tm.done && st.ringing ? 'fh-ring .8s ease-in-out infinite' : undefined } }, discSvg(size, s.color, true));
     }
     const inner = E('div', { key: 'w', style: wStyle }, liquid, glowEl, timeEl);
     const clockEl = E('div', { key: 'mode-' + mode + (visual ? '-v' : ''), style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both', ...(visual ? { display: 'flex', flexDirection: 'column', alignItems: P[1], gap: Math.round(clockPx * 0.28) + 'px' } : null) } }, disc, inner);
@@ -1560,12 +1571,12 @@ class Component extends DCLogic {
       if (mode === 'timer') {
         const go = tm.done ? (st.ringing ? btn('go', 'stop', L.stopAlarm, this.stopAlarm, { primary: true }) : btn('go', 'replay', L.again, this.tmAgain, { primary: true }))
           : btn('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : paused ? L.resume : L.start, this.tmToggle, { primary: true, disabled: !tmRun && tm.left <= 0 && tm.dur <= 0 });
-        parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur }), btn('vis', 'pie_chart', '', () => this.setS({ tmVisual: !visual }), { title: L.tmVisual, on: visual })]));
+        parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur }), btn('vis', 'pie_chart', '', () => this.setS({ tmVisual: !visual }), { title: L.tmVisual, on: visual }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('timer'), { title: s.pinTimer ? L.unpin : L.pinClock, on: s.pinTimer })]));
         if (!tmRun) parts.push(row('r2', TIMER_PRESETS.map(m => { const on = tm.dur === m * 60000; return E('button', { key: 'p' + m, type: 'button', className: 'fh-btn', onClick: () => this.tmSet(m), style: { height: '2.1em', padding: '0 .9em', borderRadius: 999, border: `1px solid ${on ? acc : hexA(ink, 0.2)}`, background: on ? hexA(acc, 0.22) : 'transparent', color: ink, font: `500 ${Math.round(bfs * 0.86)}px/1 ${stack(df)}`, cursor: 'pointer', fontVariantNumeric: 'tabular-nums' } }, `${num(m, false)} min`); }), { marginTop: '.8em', gap: '.45em', maxWidth: '36em' }));
       } else {
         parts.push(row('r1', sw.start
-          ? [btn('lap', 'flag', L.lap, this.swLap, { title: L.lap + ' (L)' }), btn('go', 'pause', L.pause, this.swToggle, { primary: true })]
-          : [btn('rs', 'replay', L.reset, this.swReset, { title: L.reset + ' (R)', disabled: swEl === 0 }), btn('go', 'play_arrow', paused ? L.resume : L.start, this.swToggle, { primary: true })]));
+          ? [btn('lap', 'flag', L.lap, this.swLap, { title: L.lap + ' (L)' }), btn('go', 'pause', L.pause, this.swToggle, { primary: true }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('stopwatch'), { title: s.pinSw ? L.unpin : L.pinClock, on: s.pinSw })]
+          : [btn('rs', 'replay', L.reset, this.swReset, { title: L.reset + ' (R)', disabled: swEl === 0 }), btn('go', 'play_arrow', paused ? L.resume : L.start, this.swToggle, { primary: true }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('stopwatch'), { title: s.pinSw ? L.unpin : L.pinClock, on: s.pinSw })]));
         if (sw.laps.length) {
           const fmtT = (ms) => `${hms(ms, false, false).join(tsep)}.${num(Math.floor(ms / 10) % 100, true)}`;
           const splits = sw.laps.map((t, i) => t - (i ? sw.laps[i - 1] : 0));
@@ -1576,6 +1587,35 @@ class Component extends DCLogic {
         }
       }
       toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px' } }, parts);
+    }
+
+    // minuteur / chrono épinglés : petite carte dans un coin de l'écran de l'heure
+    let pinsEl = null;
+    if (mode === 'clock' && (s.pinTimer || s.pinSw)) {
+      const ink = ui.fg, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', ff = stack(f);
+      const ib = (key, icon, title, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 34, height: 34, padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: primary ? 0 : `1px solid ${ui.border}`, background: primary ? acc : 'transparent', color: primary ? accInk : ui.fg2, cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: 19 } }, icon));
+      const card = (key, lead, big, label, btns, alarm) => E('div', { key, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px 10px 12px', borderRadius: 18, background: ui.bar, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+        lead,
+        E('div', { style: { display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 } },
+          E('div', { style: { font: `${clampW(f, Math.max(400, wt))} 32px/1 ${ff}`, fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap', direction: 'ltr' } }, big),
+          E('div', { style: { font: '500 12px/1.1 Geist, system-ui, sans-serif', color: alarm ? '#ef4444' : ui.fg2, whiteSpace: 'nowrap' } }, label)),
+        E('div', { style: { display: 'flex', gap: 4, marginLeft: 4 } }, btns));
+      const cards = [], tmPaused = !tmRun && !tm.done && tm.left !== tm.dur && tm.left > 0;
+      if (s.pinTimer) {
+        const go = tm.done ? (st.ringing ? ib('go', 'stop', L.stopAlarm, this.stopAlarm, true) : ib('go', 'replay', L.again, this.tmAgain, true))
+          : ib('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : tmPaused ? L.resume : L.start, this.tmToggle, true);
+        cards.push(card('pt', E('div', { style: { flexShrink: 0, opacity: tmPaused ? 0.75 : 1 } }, discSvg(52, ink, false)), hms(tmLeft, true, tm.dur >= 3600000).join(tsep),
+          tm.done ? L.done : tmRun ? `${L.md_timer} · ${L.endsAt} ${endStr}` : L.md_timer,
+          [go, ib('open', 'open_in_full', L.openFull, () => this.setMode('timer')), ib('x', 'close', L.unpin, () => this.setS({ pinTimer: false }))], tm.done && st.ringing));
+      }
+      if (s.pinSw) {
+        cards.push(card('ps', E('div', { style: { width: 52, height: 52, flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: hexA(acc, 0.18), color: acc } }, E('span', { style: { ...ICON, fontSize: 28 } }, 'timer')),
+          `${hms(swEl, false, false).join(tsep)}.${num(Math.floor(swEl / 100) % 10, false)}`,
+          sw.laps.length ? `${L.md_sw} · ${L.lap} ${sw.laps.length + 1}` : L.md_sw,
+          [ib('go', sw.start ? 'pause' : 'play_arrow', sw.start ? L.pause : swEl ? L.resume : L.start, this.swToggle, true), sw.start ? ib('lap', 'flag', L.lap, this.swLap) : null, ib('open', 'open_in_full', L.openFull, () => this.setMode('stopwatch')), ib('x', 'close', L.unpin, () => this.setS({ pinSw: false }))], false));
+      }
+      const right = !/r$/.test(s.pos), top = s.pos[0] === 'b';
+      pinsEl = E('div', { style: { position: 'absolute', zIndex: 6, display: 'flex', flexDirection: 'column', alignItems: right ? 'flex-end' : 'flex-start', gap: 10, pointerEvents: 'none', [right ? 'right' : 'left']: 18, [top ? 'top' : 'bottom']: top ? 72 : 34, maxWidth: 'calc(100vw - 36px)' } }, cards);
     }
 
     // tuto : projecteur sur l'élément, flèche dessinée à la main et texte juste dessous
@@ -1633,7 +1673,7 @@ class Component extends DCLogic {
       prog: mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
       chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1180, surprisePad: st.vw > 1180 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
-      tools: { show: mode !== 'clock', el: toolsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
+      tools: { show: mode !== 'clock', el: toolsEl }, pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
