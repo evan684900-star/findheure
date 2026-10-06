@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>findheure</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8E%83%3C/text%3E%3C/svg%3E">
 <script src="./support.js"></script>
 </head>
 <body>
@@ -13,10 +15,58 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add_photo_alternate,bookmark_add,casino,close,delete,fullscreen,fullscreen_exit,restart_alt&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,hourglass_top,pause,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
 <style>
-html,body{margin:0;height:100%;background:#0b0a09;overflow:hidden}
+html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
+.fh-tabs::-webkit-scrollbar{display:none}
+.fh-btn{transition:transform .15s ease,filter .15s ease,background .2s ease,box-shadow .2s ease}
+.fh-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.fh-btn:active{transform:translateY(0) scale(.96)}
+.fh-btn:disabled{opacity:.32;cursor:default;transform:none;filter:none}
+.fh-note textarea::placeholder{color:currentColor;opacity:.45}
+.fh-note textarea:focus{outline:none}
+.fh-note textarea::-webkit-resizer{background:transparent}
+.fh-dot{transition:transform .15s ease}.fh-dot:hover{transform:scale(1.25)}
+@keyframes fh-zoom{from{opacity:0;transform:perspective(2em) translateZ(-6em)}to{opacity:1;transform:none}}
+@keyframes fh-spin{from{opacity:0;transform:perspective(4em) rotateY(-280deg)}to{opacity:1;transform:none}}
+@keyframes fh-swirl{from{opacity:0;transform:rotate(-220deg) scale(.1)}to{opacity:1;transform:none}}
+@keyframes fh-melt{0%{opacity:0;transform:translateY(-.42em) scale(.86,1.05)}45%{opacity:1;transform:translateY(.04em) scale(1.08,.88)}70%{transform:translateY(-.01em) scale(.98,1.04)}100%{transform:none}}
+@keyframes fh-bounce{0%{opacity:0;transform:translateY(-1.1em)}42%{opacity:1;transform:translateY(0) scale(1.08,.9)}60%{transform:translateY(-.24em) scale(.97,1.04)}76%{transform:translateY(0) scale(1.03,.97)}88%{transform:translateY(-.06em)}100%{transform:none}}
+@keyframes fh-jelly{0%{opacity:0;transform:scale(.45,1.08)}30%{opacity:1;transform:scale(1.1,.72)}45%{transform:scale(.84,1.08)}60%{transform:scale(1.06,.9)}75%{transform:scale(.97,1.03)}100%{transform:none}}
+@keyframes fh-glitch{0%{opacity:0;transform:translate(.14em,0) skewX(30deg);clip-path:inset(40% 0 30% 0);text-shadow:.07em 0 #ff2a6d,-.07em 0 #05d9e8}15%{opacity:1;transform:translate(-.1em,0) skewX(-20deg);clip-path:inset(0 0 60% 0)}30%{transform:translate(.06em,0);clip-path:inset(70% 0 0 0);text-shadow:-.05em 0 #ff2a6d,.05em 0 #05d9e8}45%{transform:translate(-.04em,0) skewX(10deg);clip-path:inset(20% 0 40% 0)}60%{transform:translate(.02em,0);clip-path:inset(0 0 0 0);text-shadow:.02em 0 #ff2a6d,-.02em 0 #05d9e8}100%{transform:none;clip-path:inset(0 0 0 0)}}
+@keyframes fh-slot{0%{opacity:0;transform:translateY(-1.6em) scaleY(1.05)}55%{opacity:1;transform:translateY(.14em) scaleY(.95)}75%{transform:translateY(-.05em)}100%{transform:none}}
+@keyframes fhx-wave{0%,100%{transform:translateY(-.07em)}50%{transform:translateY(.07em)}}
+@keyframes fhx-jelly{0%,100%{transform:scale(1,1)}25%{transform:scale(1.08,.92)}50%{transform:scale(.93,1.07)}75%{transform:scale(1.03,.97)}}
+@keyframes fhx-shake{0%,100%{transform:translate(0,0) rotate(0)}20%{transform:translate(.014em,-.012em) rotate(-1.5deg)}40%{transform:translate(-.012em,.014em) rotate(1.5deg)}60%{transform:translate(.01em,.012em) rotate(-.5deg)}80%{transform:translate(-.014em,-.01em) rotate(1deg)}}
+@keyframes fhx-hue{from{filter:hue-rotate(0deg)}to{filter:hue-rotate(360deg)}}
+@keyframes fhx-float{0%,100%{transform:translateY(-.045em) rotate(-1.2deg)}50%{transform:translateY(.045em) rotate(1.2deg)}}
+@keyframes fhx-drunk{0%,100%{transform:rotate(-3deg) scale(1,1) translateX(-.03em)}25%{transform:rotate(2deg) scale(.97,1.02) translateX(.04em)}50%{transform:rotate(4deg) scale(1,1) translateX(.02em)}75%{transform:rotate(-2deg) scale(.98,1.01) translateX(-.04em)}}
+@keyframes fhx-glitch{0%,84%,100%{transform:none;clip-path:inset(0 0 0 0);filter:none}86%{transform:translate(-.03em,.01em) skewX(-8deg);clip-path:inset(10% 0 55% 0);filter:drop-shadow(.04em 0 #ff2a6d) drop-shadow(-.04em 0 #05d9e8)}88%{transform:translate(.04em,-.01em);clip-path:inset(58% 0 6% 0);filter:drop-shadow(-.05em 0 #ff2a6d) drop-shadow(.05em 0 #05d9e8)}90%{transform:translate(-.02em,0) skewX(14deg);clip-path:inset(30% 0 30% 0);filter:drop-shadow(.03em 0 #ff2a6d) drop-shadow(-.03em 0 #05d9e8)}92%{transform:translate(.012em,0);clip-path:inset(0 0 0 0);filter:drop-shadow(.02em 0 #ff2a6d) drop-shadow(-.02em 0 #05d9e8)}94%{transform:none;filter:none}}
+@keyframes fhx-holo{0%,100%{opacity:.92;transform:none}4%{opacity:.55}5%{opacity:.95}38%{opacity:.85;transform:none}39%{opacity:.45;transform:skewX(-7deg) translateX(.025em)}40%{opacity:.92;transform:none}68%{opacity:.8}69%{opacity:.35}70%{opacity:.9}}
+@keyframes fhx-holoscan{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:0 .24em;mask-position:0 .24em}}
+@keyframes fhx-spin{from{transform:perspective(14em) rotateY(0)}to{transform:perspective(14em) rotateY(360deg)}}
+@keyframes fh-tabpop{0%{transform:scale(1)}35%{transform:scale(1.14) translateY(-1px)}65%{transform:scale(.96)}100%{transform:scale(1)}}
+@keyframes fh-panel-open{from{opacity:0;transform:translateY(-12px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes fh-pin-r{from{opacity:0;transform:translateX(34px)}}
+@keyframes fh-pin-l{from{opacity:0;transform:translateX(-34px)}}
+@keyframes fh-pin-d{from{opacity:0;transform:translateY(-8px)}}
+@keyframes fh-rise{from{opacity:0;transform:translateY(12px) scale(.98)}}
+@keyframes fh-mode-in{from{opacity:0;transform:scale(.86);filter:blur(14px)}to{opacity:1;transform:none;filter:none}}
+@keyframes fh-alarm{0%,100%{opacity:0}50%{opacity:1}}
+@keyframes fh-blinkfast{0%,49%{opacity:1}50%,100%{opacity:.22}}
+@keyframes fh-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.88)}}
+@keyframes fh-note-in{from{opacity:0;transform:translateY(-22px) rotate(-10deg) scale(.8)}}
+@keyframes fh-twinkle{0%,100%{opacity:.2}50%{opacity:1}}
+@keyframes fh-batfly{0%{transform:translate3d(-14vw,0,0)}20%{transform:translate3d(14vw,-5vh,0)}40%{transform:translate3d(40vw,2vh,0)}60%{transform:translate3d(66vw,-4vh,0)}80%{transform:translate3d(92vw,3vh,0)}100%{transform:translate3d(118vw,-2vh,0)}}
+@keyframes fh-flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.2)}}
+@keyframes fh-ghost{0%{transform:translate3d(-14vw,0,0)}100%{transform:translate3d(118vw,-8vh,0)}}
+@keyframes fh-bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-16px) rotate(5deg)}}
+@keyframes fh-fog{0%{transform:translate3d(-7%,0,0)}100%{transform:translate3d(7%,-3%,0)}}
+@keyframes fh-ember{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--dx,0px),-78vh,0);opacity:0}}
+@keyframes fh-flicker{0%,100%{opacity:1}8%{opacity:.7}12%{opacity:.95}40%{opacity:.82}44%{opacity:1}70%{opacity:.65}74%{opacity:.95}}
+@keyframes fh-wobble{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
 @keyframes fh-fade{from{opacity:0}to{opacity:1}}
 @keyframes fh-slide{from{opacity:0;transform:translateY(.3em)}to{opacity:1;transform:none}}
 @keyframes fh-drop{from{opacity:0;transform:translateY(-.35em)}to{opacity:1;transform:none}}
@@ -36,6 +86,12 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.layers }}</div>
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ bg.dim }};"></div>
   </sc-if>
+  <sc-if value="{{ bg.isGrid }}" hint-placeholder-val="{{ false }}">
+    <canvas ref="{{ gridRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
+  </sc-if>
+  <sc-if value="{{ bg.isSpooky }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.spooky }}</div>
+  </sc-if>
   <sc-if value="{{ fx.hasVignette }}" hint-placeholder-val="{{ true }}">
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ fx.vignette }};"></div>
   </sc-if>
@@ -44,6 +100,9 @@ a{color:inherit}a:hover{opacity:.8}
   </sc-if>
   <sc-if value="{{ fx.scan }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.3) 0px, rgba(0,0,0,.3) 1px, transparent 1px, transparent 3px);"></div>
+  </sc-if>
+  <sc-if value="{{ alarm.on }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; pointer-events: none; background: {{ alarm.bg }}; animation: fh-alarm 1.2s ease-in-out infinite;"></div>
   </sc-if>
 
   <div onClick="{{ onStage }}" onDoubleClick="{{ toggleFs }}" style="position: absolute; inset: 0; box-sizing: border-box; display: flex; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
@@ -68,8 +127,13 @@ a{color:inherit}a:hover{opacity:.8}
           </sc-for>
         </div>
       </sc-if>
+      <sc-if value="{{ tools.show }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ stopEv }}" onDoubleClick="{{ stopEv }}" style="order: 2; max-width: 94vw;">{{ tools.el }}</div>
+      </sc-if>
     </div>
   </div>
+
+  <div style="position: absolute; inset: 0; z-index: 5; pointer-events: none;">{{ notesEl }}</div>
 
   <sc-if value="{{ prog.show }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: {{ prog.track }}; pointer-events: none;">
@@ -81,14 +145,26 @@ a{color:inherit}a:hover{opacity:.8}
   <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1240px, calc(100% - 24px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: {{ chrome.pe }}; transition: opacity .5s ease;">
     <div style="display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }};">
       <div style="display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 10px 0 9px; flex-shrink: 0;">
-        <div style="width: 10px; height: 10px; border-radius: 50%; background: {{ s.accent }}; box-shadow: 0 0 0 3px {{ chrome.dotRing }};"></div>
+        <sc-if value="{{ chrome.pumpkin }}" hint-placeholder-val="{{ false }}"><div style="font-size: 17px; line-height: 1; animation: fh-wobble 3.2s ease-in-out infinite;">🎃</div></sc-if>
+        <sc-if value="{{ !chrome.pumpkin }}" hint-placeholder-val="{{ true }}"><div style="width: 10px; height: 10px; border-radius: 50%; background: {{ s.accent }}; box-shadow: 0 0 0 3px {{ chrome.dotRing }};"></div></sc-if>
         <sc-if value="{{ chrome.brand }}" hint-placeholder-val="{{ true }}"><div style="font-weight: 600; font-size: 14.5px; letter-spacing: -.01em;">findheure</div></sc-if>
       </div>
       <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0;"></div>
-      <div style="display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;">
+      <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;">
+        <div style="position: absolute; top: 0; left: 0; height: 36px; width: {{ ind.w }}; transform: translateX({{ ind.x }}); border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.ring }}; opacity: {{ ind.op }}; transition: {{ ind.tr }}; pointer-events: none;"></div>
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
-          <button onClick="{{ t.pick }}" style="flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: {{ t.bg }}; color: {{ t.fg }}; transition: background .15s, color .15s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};">{{ t.label }}</button>
+          <button ref="{{ t.ref }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
         </sc-for>
+      </div>
+      <div style="display: flex; gap: 2px; flex-shrink: 0; padding-right: 6px; margin-right: 2px; border-right: 1px solid {{ ui.border }};">
+        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+          <button title="{{ m.title }}" onClick="{{ m.pick }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; transition: background .25s, color .25s, box-shadow .25s;" style-hover="background: {{ m.hover }}; color: {{ ui.fg }};">
+            <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; animation: {{ m.anim }};">{{ m.icon }}</span>
+          </button>
+        </sc-for>
+        <button title="{{ L.noteNew }}" onClick="{{ addNote }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
+          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">sticky_note_2</span>
+        </button>
       </div>
       <div style="display: flex; gap: 2px; flex-shrink: 0;">
         <button title="{{ L.surpriseK }}" onClick="{{ surprise }}" style="height: 36px; min-width: 36px; padding: {{ chrome.surprisePad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif;" style-hover="background: {{ ui.hover }};">
@@ -105,8 +181,8 @@ a{color:inherit}a:hover{opacity:.8}
     </div>
 
     <sc-if value="{{ panel.open }}" hint-placeholder-val="{{ false }}">
-      <div style="border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden;">
-        <div style="max-height: calc(100vh - 96px); overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin;">
+      <div style="border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden; transform-origin: 50% 0; animation: fh-panel-open .38s cubic-bezier(.2,.9,.25,1.1) both;">
+        <div key="{{ panel.key }}" style="max-height: calc(100vh - 96px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin; animation: {{ panel.anim }};">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -8px 14px 0;">
             <div style="font: 600 15px/1.2 Geist, system-ui, sans-serif; letter-spacing: -.01em;">{{ panel.title }}</div>
             <button title="{{ L.close }}" onClick="{{ closePanel }}" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: {{ ui.field }}; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.active }};">
@@ -115,7 +191,7 @@ a{color:inherit}a:hover{opacity:.8}
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 18px 26px; align-items: end;">
             <sc-for list="{{ controls }}" as="c" hint-placeholder-count="6">
-              <div style="grid-column: {{ c.span }}; display: flex; flex-direction: column; gap: 9px; min-width: 0; opacity: {{ c.op }}; padding-top: {{ c.padTop }};">
+              <div style="grid-column: {{ c.span }}; display: flex; flex-direction: column; gap: 9px; min-width: 0; opacity: {{ c.op }}; padding-top: {{ c.padTop }}; animation: fh-rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: {{ c.delay }};">
                 <sc-if value="{{ c.isHead }}" hint-placeholder-val="{{ false }}">
                   <div style="display: flex; align-items: center; gap: 12px; font: 600 11px/1 Geist, system-ui, sans-serif; letter-spacing: .12em; text-transform: uppercase; color: {{ ui.fg3 }};"><span>{{ c.label }}</span><span style="flex: 1; height: 1px; background: {{ ui.border }};"></span></div>
                 </sc-if>
@@ -129,7 +205,7 @@ a{color:inherit}a:hover{opacity:.8}
                 <sc-if value="{{ c.isPresets }}" hint-placeholder-val="{{ false }}">
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 10px;">
                     <sc-for list="{{ presets }}" as="p" hint-placeholder-count="8">
-                      <button onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }};">
+                      <button onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }}; animation: fh-rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: {{ p.delay }};">
                         <span style="{{ p.text }}">{{ p.sample }}</span>
                         <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.5); color: #fff; backdrop-filter: blur(8px);">{{ p.name }}</span>
                       </button>
@@ -166,12 +242,12 @@ a{color:inherit}a:hover{opacity:.8}
                 <sc-if value="{{ c.isFontGrid }}" hint-placeholder-val="{{ false }}">
                   <div style="display: flex; flex-wrap: wrap; gap: 6px;">
                     <sc-for list="{{ fontCats }}" as="k" hint-placeholder-count="9">
-                      <button onClick="{{ k.pick }}" style="height: 30px; padding: 0 12px; border-radius: 999px; cursor: pointer; font: 500 12.5px/1 Geist, system-ui, sans-serif; border: 1px solid {{ k.border }}; background: {{ k.bg }}; color: {{ k.fg }};">{{ k.label }}</button>
+                      <button onClick="{{ k.pick }}" style="height: 30px; padding: 0 12px; border-radius: 999px; cursor: pointer; font: 500 12.5px/1 Geist, system-ui, sans-serif; border: 1px solid {{ k.border }}; background: {{ k.bg }}; color: {{ k.fg }}; transition: background .25s, color .25s, border-color .25s;">{{ k.label }}</button>
                     </sc-for>
                   </div>
-                  <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 136px), 1fr)); gap: 8px; margin-top: 4px;">
+                  <div key="{{ fontGridKey }}" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 136px), 1fr)); gap: 8px; margin-top: 4px;">
                     <sc-for list="{{ fontTiles }}" as="f" hint-placeholder-count="12">
-                      <button onClick="{{ f.pick }}" title="{{ f.name }}" style="height: 92px; border-radius: 12px; cursor: pointer; padding: 8px 10px 9px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; overflow: hidden; background: {{ f.bg }}; box-shadow: {{ f.ring }}; color: {{ ui.fg }};">
+                      <button onClick="{{ f.pick }}" title="{{ f.name }}" style="height: 92px; border-radius: 12px; cursor: pointer; padding: 8px 10px 9px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 4px; border: 0; overflow: hidden; background: {{ f.bg }}; box-shadow: {{ f.ring }}; color: {{ ui.fg }}; animation: fh-rise .45s cubic-bezier(.2,.8,.2,1) both; animation-delay: {{ f.delay }};">
                         <span style="{{ f.style }}">{{ f.sample }}</span>
                         <span style="font: 500 11px/1.1 Geist, system-ui, sans-serif; color: {{ ui.fg2 }}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;">{{ f.name }}</span>
                       </button>
@@ -285,7 +361,7 @@ a{color:inherit}a:hover{opacity:.8}
 <script type="text/x-dc" data-dc-script>
 const LANGS = ['fr', 'en', 'es', 'de'];
 const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
-const SKEY = 'findheure:settings:v1', STKEY = 'findheure:styles:v1';
+const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1';
 const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
 
 const T_RAW = {
@@ -357,10 +433,29 @@ const T_RAW = {
   th_auto: "Auto|Auto|Auto|Auto", th_dark: "Sombre|Dark|Oscuro|Dunkel", th_light: "Clair|Light|Claro|Hell",
   autoHide: "Masquer la barre au repos|Hide the bar when idle|Ocultar la barra en reposo|Leiste bei Inaktivität ausblenden",
   hideDelay: "Délai avant masquage|Hide after|Ocultar tras|Ausblenden nach", hideCursor: "Masquer le curseur au repos|Hide cursor when idle|Ocultar el cursor en reposo|Mauszeiger bei Inaktivität ausblenden",
+  cat_spooky: "Halloween|Halloween|Halloween|Halloween", spooky: "Halloween|Halloween|Halloween|Halloween", grid: "Grille|Grid|Cuadrícula|Raster",
+  m_spooky: "Halloween|Halloween|Halloween|Halloween", happyHalloween: "Joyeux Halloween 🎃|Happy Halloween 🎃|¡Feliz Halloween! 🎃|Fröhliches Halloween 🎃",
+  gridLit: "Couleur des cases|Cell color|Color de las casillas|Zellenfarbe", gridLine: "Couleur des lignes|Line color|Color de las líneas|Linienfarbe",
+  gridSize: "Taille des cases|Cell size|Tamaño de las casillas|Zellengröße", gridTilt: "Inclinaison|Tilt|Inclinación|Neigung", gridTurn: "Rotation|Rotation|Rotación|Drehung",
+  gridTrail: "Longueur de la traînée|Trail length|Longitud de la estela|Spurlänge", gridIdle: "Étincelles au repos|Idle sparkles|Destellos en reposo|Funkeln im Ruhezustand",
+  sky: "Ciel|Sky|Cielo|Himmel", deep: "Nuit profonde|Deep night|Noche profunda|Tiefe Nacht", horizon: "Lueur de l’horizon|Horizon glow|Brillo del horizonte|Horizontglühen",
+  hWeird: "Effets bizarres|Weird effects|Efectos raros|Schräge Effekte", weird: "Effet permanent sur l’heure|Permanent effect on the time|Efecto permanente en la hora|Dauereffekt auf der Uhrzeit",
+  weirdSpeed: "Vitesse de l’effet|Effect speed|Velocidad del efecto|Effekttempo",
+  w_none: "Aucun|None|Ninguno|Keiner", w_wave: "Vague|Wave|Ola|Welle", w_jelly: "Gelée|Jelly|Gelatina|Wackelpudding", w_shake: "Tremblote|Shiver|Temblor|Zittern",
+  w_float: "Lévitation|Levitate|Levitación|Schweben", w_drunk: "Pompette|Tipsy|Mareo|Beschwipst", w_glitch: "Glitch|Glitch|Glitch|Glitch", w_rainbow: "Arc-en-ciel|Rainbow|Arcoíris|Regenbogen",
+  w_liquid: "Liquide|Liquid|Líquido|Flüssig", w_holo: "Hologramme|Hologram|Holograma|Hologramm", w_spin: "Toupie 3D|3D spin|Peonza 3D|3D-Kreisel", w_mirror: "Reflet|Mirror|Reflejo|Spiegelung",
+  a_zoom: "Zoom|Zoom|Zoom|Zoom", a_spin: "Toupie|Spin|Peonza|Drehen", a_swirl: "Tourbillon|Swirl|Remolino|Strudel", a_melt: "Fonte|Melt|Derretir|Schmelzen",
+  a_bounce: "Rebond|Bounce|Rebote|Hüpfen", a_jelly: "Gelée|Jelly|Gelatina|Wackeln", a_glitch: "Glitch|Glitch|Glitch|Glitch", a_slot: "Machine à sous|Slot machine|Tragaperras|Spielautomat",
+  md_clock: "Horloge|Clock|Reloj|Uhr", md_timer: "Minuteur|Timer|Temporizador|Timer", md_sw: "Chrono|Stopwatch|Cronómetro|Stoppuhr",
+  start: "Démarrer|Start|Iniciar|Start", pause: "Pause|Pause|Pausa|Pause", resume: "Reprendre|Resume|Reanudar|Weiter", lap: "Tour|Lap|Vuelta|Runde",
+  stopAlarm: "Arrêter|Stop|Detener|Stopp", again: "Recommencer|Restart|Reiniciar|Neu starten", done: "Terminé !|Time’s up!|¡Se acabó el tiempo!|Zeit ist um!",
+  endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
+  noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
+  noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
 };
 const T = {}; for (const k in T_RAW) T[k] = four(T_RAW[k]);
 
-const FALLBACK = { modern: 'system-ui, sans-serif', elegant: 'Georgia, serif', poster: 'Impact, sans-serif', future: 'system-ui, sans-serif', retro: 'system-ui, sans-serif', pixel: 'ui-monospace, monospace', fun: 'system-ui, sans-serif', script: 'cursive' };
+const FALLBACK = { modern: 'system-ui, sans-serif', elegant: 'Georgia, serif', poster: 'Impact, sans-serif', future: 'system-ui, sans-serif', retro: 'system-ui, sans-serif', pixel: 'ui-monospace, monospace', fun: 'system-ui, sans-serif', script: 'cursive', spooky: 'fantasy, cursive' };
 const FONTS = [
   ['Bricolage Grotesque', 'modern', 'Bricolage+Grotesque:opsz,wght@12..96,200..800', 200, 800, 300, .58],
   ['Unbounded', 'modern', 'Unbounded:wght@200..900', 200, 900, 300, .78],
@@ -409,10 +504,18 @@ const FONTS = [
   ['Lobster', 'script', 'Lobster', 400, 400, 400, .5],
   ['Caveat', 'script', 'Caveat:wght@400..700', 400, 700, 600, .45],
   ['UnifrakturMaguntia', 'script', 'UnifrakturMaguntia', 400, 400, 400, .55],
+  ['Creepster', 'spooky', 'Creepster', 400, 400, 400, .55],
+  ['Nosifer', 'spooky', 'Nosifer', 400, 400, 400, 1.05],
+  ['Eater', 'spooky', 'Eater', 400, 400, 400, .85],
+  ['Butcherman', 'spooky', 'Butcherman', 400, 400, 400, .7],
+  ['Griffy', 'spooky', 'Griffy', 400, 400, 400, .5],
+  ['Jolly Lodger', 'spooky', 'Jolly+Lodger', 400, 400, 400, .4],
+  ['New Rocker', 'spooky', 'New+Rocker', 400, 400, 400, .55],
+  ['Metal Mania', 'spooky', 'Metal+Mania', 400, 400, 400, .55],
 ].map(([name, cat, spec, wmin, wmax, dw, w]) => ({ name, cat, spec, wmin, wmax, dw, w }));
 const FONT_BY = {}; FONTS.forEach(f => { FONT_BY[f.name] = f; });
-const NODATE = new Set(['Monoton', 'Bungee Shade', 'Rubik Glitch', 'Rubik Moonrocks', 'Nabla', 'Honk', 'Tilt Prism', 'Six Caps', 'UnifrakturMaguntia', 'Sixtyfour', 'Major Mono Display', 'Rampart One', 'Bungee Spice']);
-const CATS = ['all', 'modern', 'elegant', 'poster', 'future', 'retro', 'pixel', 'fun', 'script'];
+const NODATE = new Set(['Monoton', 'Bungee Shade', 'Rubik Glitch', 'Rubik Moonrocks', 'Nabla', 'Honk', 'Tilt Prism', 'Six Caps', 'UnifrakturMaguntia', 'Sixtyfour', 'Major Mono Display', 'Rampart One', 'Bungee Spice', 'Creepster', 'Nosifer', 'Eater', 'Butcherman', 'Metal Mania']);
+const CATS = ['all', 'spooky', 'modern', 'elegant', 'poster', 'future', 'retro', 'pixel', 'fun', 'script'];
 const stack = (f) => `'${f.name}', ${FALLBACK[f.cat]}`;
 const clampW = (f, w) => Math.min(f.wmax, Math.max(f.wmin, w));
 
@@ -422,13 +525,21 @@ const CALS = [['gregory', 'Grégorien|Gregorian|Gregoriano|Gregorianisch'], ['is
 const ZONES = [['Europe/Paris', 'Paris'], ['Europe/London', 'Londres|London|Londres|London'], ['Europe/Berlin', 'Berlin|Berlin|Berlín|Berlin'], ['Europe/Madrid', 'Madrid'], ['Europe/Rome', 'Rome|Rome|Roma|Rom'], ['Europe/Moscow', 'Moscou|Moscow|Moscú|Moskau'], ['Africa/Casablanca', 'Casablanca'], ['Africa/Dakar', 'Dakar'], ['Africa/Cairo', 'Le Caire|Cairo|El Cairo|Kairo'], ['Asia/Dubai', 'Dubaï|Dubai|Dubái|Dubai'], ['Asia/Kolkata', 'Mumbai|Mumbai|Bombay|Mumbai'], ['Asia/Bangkok', 'Bangkok'], ['Asia/Shanghai', 'Pékin|Beijing|Pekín|Peking'], ['Asia/Tokyo', 'Tokyo|Tokyo|Tokio|Tokio'], ['Asia/Seoul', 'Séoul|Seoul|Seúl|Seoul'], ['Australia/Sydney', 'Sydney|Sydney|Sídney|Sydney'], ['Pacific/Auckland', 'Auckland'], ['Pacific/Tahiti', 'Tahiti'], ['Indian/Reunion', 'La Réunion|Réunion|Reunión|Réunion'], ['America/Martinique', 'Martinique|Martinique|Martinica|Martinique'], ['America/Sao_Paulo', 'São Paulo'], ['America/Mexico_City', 'Mexico|Mexico City|Ciudad de México|Mexiko-Stadt'], ['America/New_York', 'New York|New York|Nueva York|New York'], ['America/Toronto', 'Montréal|Montreal|Montreal|Montreal'], ['America/Los_Angeles', 'Los Angeles']].map(([z, n]) => [z, four(n)]);
 const DF = { full: { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }, noyear: { weekday: 'long', day: 'numeric', month: 'long' }, short: { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' }, num: { day: '2-digit', month: '2-digit', year: 'numeric' }, day: { weekday: 'long' } };
 const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
-const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop'];
+const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop', 'zoom', 'spin', 'swirl', 'melt', 'bounce', 'jelly', 'glitch', 'slot'];
+const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .85, glitch: .55, slot: .7 };
+const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
+const MODES = ['clock', 'timer', 'stopwatch'];
+const TAB_IDS = ['presets', 'font', 'colors', 'bg', 'fx', 'clock', 'date', 'layout'];
+const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'image'];
+const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
+const NOTE_C = ['#ffb35c', '#ffe066', '#ffadc8', '#a0e7ff', '#b8f2a6', '#d4b8ff'];
+const ICON = { fontFamily: "'Material Symbols Rounded'", fontWeight: 'normal', fontStyle: 'normal', lineHeight: 1, display: 'inline-block', whiteSpace: 'nowrap', letterSpacing: 'normal', textTransform: 'none', direction: 'ltr', fontFeatureSettings: "'liga'" };
 const POSK = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
 const POS = { tl: ['flex-start', 'flex-start', 'left'], t: ['flex-start', 'center', 'center'], tr: ['flex-start', 'flex-end', 'right'], l: ['center', 'flex-start', 'left'], c: ['center', 'center', 'center'], r: ['center', 'flex-end', 'right'], bl: ['flex-end', 'flex-start', 'left'], b: ['flex-end', 'center', 'center'], br: ['flex-end', 'flex-end', 'right'] };
-const SW_INK = ['#f4efe6', '#ffffff', '#111111', '#ff6a3d', '#ffc53d', '#d4f25a', '#41e0b0', '#4ea8ff', '#9d8cff', '#ff6fb5'];
-const SW_BG = ['#0b0a09', '#111111', '#0f1626', '#0f1f19', '#24101b', '#1a0f3d', '#efe9df', '#ffe14d', '#ffd6ea', '#dff1ff'];
+const SW_INK = ['#f4efe6', '#ffffff', '#111111', '#ff7a18', '#ff6a3d', '#ffc53d', '#d4f25a', '#4ade80', '#41e0b0', '#4ea8ff', '#9d8cff', '#a855f7', '#ff6fb5'];
+const SW_BG = ['#000000', '#0b0a09', '#111111', '#05020a', '#2a0e45', '#0f1626', '#0f1f19', '#24101b', '#1a0f3d', '#ff6a00', '#efe9df', '#ffe14d', '#ffd6ea', '#dff1ff'];
 
-const DEFAULTS = {
+const BASE = {
   font: 'Bricolage Grotesque', dateFont: 'same', weight: 300, italic: false, size: 100, letterSpacing: 0, fixedDigits: true, dateSize: 100, dateUpper: false,
   color: '#f4efe6', dateColor: '#f4efe6', dateOpacity: 62, accent: '#ff6a3d', sepAccent: false, gradText: false, grad1: '#ffffff', grad2: '#ff6a3d',
   glow: 0, glowColor: '#ff6a3d', shadow: 0, outline: false, outlineW: 2, anim: 'slide', breathe: false,
@@ -438,12 +549,16 @@ const DEFAULTS = {
   hour12: false, ampm: true, seconds: 'small', leadingZero: true, sep: ':', blink: false, digits: 'auto', tz: 'local', showZone: false,
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
+  weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
 };
-const VKEYS = ['font', 'dateFont', 'weight', 'italic', 'letterSpacing', 'fixedDigits', 'dateUpper', 'color', 'dateColor', 'dateOpacity', 'accent', 'sepAccent', 'gradText', 'grad1', 'grad2', 'glow', 'glowColor', 'shadow', 'outline', 'outlineW', 'anim', 'breathe', 'bgType', 'bgColor', 'bg1', 'bg2', 'bg3', 'bgAngle', 'bgShape', 'bgSpeed', 'vignette', 'grain', 'scanlines'];
+// Thème par défaut : Halloween
+const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
+const DEFAULTS = { ...BASE, ...HALLOWEEN, msg: 'spooky' };
+const VKEYS = ['font', 'dateFont', 'weight', 'italic', 'letterSpacing', 'fixedDigits', 'dateUpper', 'color', 'dateColor', 'dateOpacity', 'accent', 'sepAccent', 'gradText', 'grad1', 'grad2', 'glow', 'glowColor', 'shadow', 'outline', 'outlineW', 'anim', 'breathe', 'weird', 'weirdSpeed', 'bgType', 'bgColor', 'bg1', 'bg2', 'bg3', 'bgAngle', 'bgShape', 'bgSpeed', 'gridLit', 'gridLine', 'gridSize', 'gridTilt', 'gridTurn', 'gridTrail', 'gridIdle', 'vignette', 'grain', 'scanlines'];
 const IKEYS = ['bgImage', 'bgFit', 'bgBlur', 'bgDim', 'bgSat'];
-const VDEF = {}; VKEYS.forEach(k => { VDEF[k] = DEFAULTS[k]; });
+const VDEF = {}; VKEYS.forEach(k => { VDEF[k] = BASE[k]; });
 const PRESETS = [
-  { n: 'Minuit|Midnight|Medianoche|Mitternacht', s: {} },
+  { n: 'Halloween|Halloween|Halloween|Halloween', s: HALLOWEEN },
   { n: 'Papier|Paper|Papel|Papier', s: { font: 'Instrument Serif', weight: 400, color: '#1c1a17', dateColor: '#1c1a17', dateOpacity: 65, accent: '#c2410c', glowColor: '#c2410c', bgType: 'solid', bgColor: '#efe9df', vignette: 0, grain: 35, anim: 'fade' } },
   { n: 'Néon|Neon|Neón|Neon', s: { font: 'Monoton', dateFont: 'Righteous', weight: 400, color: '#ff5ad8', dateColor: '#ffc2f1', dateOpacity: 85, accent: '#5af2ff', glow: 70, glowColor: '#ff2fd0', bgType: 'solid', bgColor: '#0a0610', vignette: 55, anim: 'fade', dateUpper: true } },
   { n: 'Terminal|Terminal|Terminal|Terminal', s: { font: 'VT323', weight: 400, color: '#41ff8a', dateColor: '#41ff8a', dateOpacity: 70, accent: '#41ff8a', glow: 35, glowColor: '#1aff6a', bgType: 'solid', bgColor: '#030703', scanlines: true, vignette: 60, anim: 'none' } },
@@ -457,8 +572,77 @@ const PRESETS = [
   { n: 'Glacier|Glacier|Glaciar|Gletscher', s: { font: 'Unbounded', weight: 200, color: '#0d2c4d', dateColor: '#0d2c4d', dateOpacity: 65, accent: '#2b7fff', glowColor: '#2b7fff', bgType: 'gradient', bgShape: 'linear', bgAngle: 180, bg1: '#eef8ff', bg2: '#b9dcff', vignette: 0, grain: 15 } },
   { n: 'Iso 3D|Iso 3D|Iso 3D|Iso 3D', s: { font: 'Nabla', dateFont: 'Fredoka', weight: 400, color: '#ffffff', dateColor: '#ffe8b3', dateOpacity: 85, accent: '#ffb84d', glowColor: '#ffb84d', bgType: 'gradient', bgShape: 'radial', bg1: '#2b1a4a', bg2: '#0e0a1a', vignette: 40, anim: 'pop' } },
   { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'solid', bgColor: '#120d0b', grain: 30, vignette: 65, anim: 'fade', sepAccent: true } },
+  { n: 'Grille|Grid|Cuadrícula|Raster', s: { font: 'Geist', dateFont: 'JetBrains Mono', weight: 300, letterSpacing: -2, color: '#f1fff5', dateColor: '#bdf5d0', dateOpacity: 60, accent: '#4ade80', glow: 18, glowColor: '#4ade80', bgType: 'grid', bgColor: '#000000', gridLit: '#4ade80', gridLine: '#ffffff', vignette: 40, anim: 'blur' } },
+  { n: 'Hologramme|Hologram|Holograma|Hologramm', s: { font: 'Tektur', weight: 500, letterSpacing: 6, color: '#9ff8ff', dateColor: '#9ff8ff', dateOpacity: 70, accent: '#22d3ee', glow: 55, glowColor: '#22d3ee', bgType: 'gradient', bgShape: 'radial', bg1: '#06283a', bg2: '#020409', vignette: 55, anim: 'glitch', weird: 'holo', dateUpper: true } },
+  { n: 'Psyché|Trippy|Psicodélico|Psychedelisch', s: { font: 'Shrikhand', weight: 400, color: '#ffffff', dateColor: '#fff3fb', dateOpacity: 85, accent: '#ffe14d', glow: 25, glowColor: '#ff4fd8', gradText: true, grad1: '#fff1a8', grad2: '#ff4fd8', bgType: 'aurora', bg1: '#7b2ff7', bg2: '#12002b', bg3: '#00c2a8', bgSpeed: 70, vignette: 30, anim: 'jelly', weird: 'liquid' } },
 ].map(p => ({ n: four(p.n), s: p.s }));
 const GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
+
+// Décor Halloween : données fixes (graine déterministe) pour que le décor ne bouge pas à chaque rendu
+const SPOOK = (() => {
+  let a = 31102026;
+  const r = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  return {
+    stars: Array.from({ length: 32 }, () => ({ x: r() * 100, y: r() * 58, z: r() < 0.85 ? 1.5 : 2.5, d: 2 + r() * 4, dl: -r() * 6 })),
+    bats: Array.from({ length: 7 }, (_, i) => ({ top: 5 + r() * 40, size: 22 + r() * 34, dur: 15 + r() * 16, dl: -r() * 30, flap: 0.16 + r() * 0.14, rev: i % 3 === 1 })),
+    embers: Array.from({ length: 20 }, () => ({ x: r() * 100, z: 2 + r() * 4, dur: 9 + r() * 12, dl: -r() * 20, dx: Math.round((r() - 0.5) * 140), green: r() < 0.25 })),
+  };
+})();
+const BAT_D = 'M54 20 L56 11 L59 17 L61 17 L64 11 L66 20 C74 14 90 8 116 16 C106 20 102 26 104 34 C96 28 88 30 84 38 C78 32 72 34 68 40 L60 47 L52 40 C48 34 42 32 36 38 C32 30 24 28 16 34 C18 26 14 20 4 16 C30 8 46 14 54 20 Z';
+function spookyScene(E) {
+  const ink = '#040108', svg = (p, ...k) => E('svg', p, ...k);
+  // citrouille : le corps est dans le décor fixe, la lueur et le visage dans un calque à part qui scintille
+  const pumpkin = (key, cx, cy, r) => E('g', { key },
+    E('path', { d: `M${cx - 2} ${cy - r * 0.82} C${cx - 1} ${cy - r * 1.15} ${cx + 4} ${cy - r * 1.25} ${cx + 8} ${cy - r * 1.3}`, stroke: '#3f5a1e', strokeWidth: r * 0.22, fill: 'none', strokeLinecap: 'round' }),
+    E('ellipse', { cx: cx - r * 0.42, cy, rx: r * 0.62, ry: r * 0.84, fill: '#e8590c', stroke: '#9a3412', strokeWidth: 1.5 }),
+    E('ellipse', { cx: cx + r * 0.42, cy, rx: r * 0.62, ry: r * 0.84, fill: '#e8590c', stroke: '#9a3412', strokeWidth: 1.5 }),
+    E('ellipse', { cx, cy, rx: r * 0.6, ry: r * 0.9, fill: '#ff7518', stroke: '#9a3412', strokeWidth: 1.5 }));
+  const pumpkinLight = (key, cx, cy, r) => E('g', { key },
+    E('circle', { cx, cy, r: r * 2.8, fill: 'url(#fh-pglow)' }),
+    E('g', { fill: '#ffd36e' },
+      E('path', { d: `M${cx - r * 0.55} ${cy - r * 0.1} L${cx - r * 0.3} ${cy - r * 0.45} L${cx - r * 0.12} ${cy - r * 0.1} Z` }),
+      E('path', { d: `M${cx + r * 0.55} ${cy - r * 0.1} L${cx + r * 0.3} ${cy - r * 0.45} L${cx + r * 0.12} ${cy - r * 0.1} Z` }),
+      E('path', { d: `M${cx - r * 0.6} ${cy + r * 0.18} L${cx - r * 0.4} ${cy + r * 0.32} L${cx - r * 0.25} ${cy + r * 0.2} L${cx - r * 0.08} ${cy + r * 0.38} L${cx + r * 0.08} ${cy + r * 0.2} L${cx + r * 0.25} ${cy + r * 0.38} L${cx + r * 0.4} ${cy + r * 0.2} L${cx + r * 0.6} ${cy + r * 0.18} C${cx + r * 0.45} ${cy + r * 0.6} ${cx - r * 0.45} ${cy + r * 0.6} ${cx - r * 0.6} ${cy + r * 0.18} Z` })));
+  const stone = (key, x, y, w, h) => E('rect', { key, x, y, width: w, height: h, rx: w / 2, fill: ink });
+  const cross = (key, x, y, h) => E('g', { key, fill: ink }, E('rect', { x, y, width: 10, height: h }), E('rect', { x: x - 13, y: y + h * 0.22, width: 36, height: 9 }));
+  const fence = [];
+  for (let x = 860; x <= 1060; x += 22) fence.push(E('path', { key: 'f' + x, d: `M${x} 252 V214 L${x + 3} 205 L${x + 6} 214 V252 Z` }));
+  return [
+    E('div', { key: 'stars', style: { position: 'absolute', inset: 0 } }, SPOOK.stars.map((t, i) => E('div', { key: i, style: { position: 'absolute', left: t.x + '%', top: t.y + '%', width: t.z, height: t.z, borderRadius: '50%', background: '#fff8e7', animation: `fh-twinkle ${t.d.toFixed(1)}s ease-in-out ${t.dl.toFixed(1)}s infinite` } }))),
+    E('div', { key: 'moon', style: { position: 'absolute', right: '11%', top: '9%', width: '15vmin', height: '15vmin', borderRadius: '50%', background: 'radial-gradient(circle at 63% 58%, rgba(176,128,52,.38) 0 9%, transparent 10%), radial-gradient(circle at 38% 70%, rgba(176,128,52,.3) 0 6%, transparent 7%), radial-gradient(circle at 70% 30%, rgba(176,128,52,.25) 0 5%, transparent 6%), radial-gradient(circle at 30% 35%, rgba(176,128,52,.22) 0 7%, transparent 8%), radial-gradient(circle at 40% 36%, #fffbe8 0%, #fbe6a6 58%, #e8bf62 100%)', boxShadow: '0 0 5vmin rgba(255,214,140,.5), 0 0 18vmin rgba(255,150,60,.28)' } }),
+    E('div', { key: 'fog1', style: { position: 'absolute', left: '-20%', width: '140%', top: '22%', height: '30%', background: 'radial-gradient(45% 50% at 30% 50%, rgba(200,180,255,.08), transparent 70%), radial-gradient(40% 45% at 75% 55%, rgba(200,180,255,.06), transparent 70%)', animation: 'fh-fog 34s ease-in-out infinite alternate' } }),
+    ...SPOOK.bats.map((b, i) => E('div', { key: 'bat' + i, style: { position: 'absolute', left: 0, right: 0, top: b.top + '%', transform: b.rev ? 'scaleX(-1)' : undefined } },
+      E('div', { style: { width: b.size, animation: `fh-batfly ${b.dur.toFixed(1)}s linear ${b.dl.toFixed(1)}s infinite` } },
+        svg({ viewBox: '0 0 120 50', width: b.size, height: b.size * 0.42, style: { display: 'block', overflow: 'visible', animation: `fh-flap ${b.flap.toFixed(2)}s ease-in-out infinite` } }, E('path', { d: BAT_D, fill: '#0b0412' }))))),
+    E('div', { key: 'ghost', style: { position: 'absolute', left: 0, top: '30%', opacity: 0.5, animation: 'fh-ghost 46s linear -14s infinite' } },
+      E('div', { style: { animation: 'fh-bob 3.4s ease-in-out infinite' } },
+        svg({ viewBox: '0 0 60 70', width: '7vmin', height: '8.2vmin', style: { display: 'block', filter: 'drop-shadow(0 0 10px rgba(230,220,255,.6))' } },
+          E('path', { d: 'M10 66 V30 A20 20 0 0 1 50 30 V66 L43 59 L37 66 L30 59 L23 66 L17 59 Z', fill: 'rgba(244,240,255,.92)' }),
+          E('ellipse', { cx: 23, cy: 31, rx: 3.6, ry: 5.2, fill: '#1a0b2e' }), E('ellipse', { cx: 37, cy: 31, rx: 3.6, ry: 5.2, fill: '#1a0b2e' }), E('ellipse', { cx: 30, cy: 44, rx: 3, ry: 4.2, fill: '#1a0b2e' })))),
+    svg({ key: 'yard', viewBox: '0 0 1600 320', preserveAspectRatio: 'xMidYMax slice', style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: '34vh', display: 'block' } },
+      E('path', { d: 'M0 320 L0 214 C220 180 420 206 640 196 C860 186 1100 170 1320 186 C1460 196 1540 188 1600 182 L1600 320 Z', fill: '#13081f' }),
+      E('g', { stroke: ink, fill: 'none', strokeLinecap: 'round' },
+        E('path', { d: 'M1212 246 C1208 200 1206 170 1198 140', strokeWidth: 16 }),
+        E('path', { d: 'M1200 150 C1188 130 1172 118 1150 112', strokeWidth: 9 }),
+        E('path', { d: 'M1202 146 C1214 120 1230 104 1250 96', strokeWidth: 9 }),
+        E('path', { d: 'M1150 112 C1140 108 1132 98 1128 86', strokeWidth: 5 }),
+        E('path', { d: 'M1250 96 C1264 90 1272 80 1278 66', strokeWidth: 5 }),
+        E('path', { d: 'M1224 112 C1238 112 1252 118 1264 126', strokeWidth: 5 }),
+        E('path', { d: 'M1172 120 C1170 106 1172 96 1178 86', strokeWidth: 4 }),
+        E('path', { d: 'M1199 142 C1196 120 1198 104 1204 90', strokeWidth: 6 })),
+      E('g', { fill: ink }, fence, E('rect', { x: 860, y: 222, width: 206, height: 4 }), E('rect', { x: 860, y: 238, width: 206, height: 4 })),
+      stone('s1', 520, 214, 40, 64), stone('s2', 598, 226, 32, 50), stone('s3', 676, 210, 44, 70), stone('s4', 1390, 214, 38, 60),
+      cross('c1', 770, 196, 60), cross('c2', 1490, 204, 54),
+      E('path', { d: 'M0 320 L0 262 C140 240 260 246 420 258 C560 268 700 236 860 232 C1020 228 1120 244 1260 238 C1400 232 1500 250 1600 244 L1600 320 Z', fill: ink }),
+      pumpkin('p1', 300, 266, 26), pumpkin('p2', 378, 276, 18), pumpkin('p3', 1320, 258, 22)),
+    E('div', { key: 'yardlight', style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: '34vh', animation: 'fh-flicker 2.2s linear infinite' } },
+      svg({ viewBox: '0 0 1600 320', preserveAspectRatio: 'xMidYMax slice', style: { width: '100%', height: '100%', display: 'block' } },
+        E('defs', null, E('radialGradient', { id: 'fh-pglow' }, E('stop', { offset: '0%', stopColor: '#ff9a3c', stopOpacity: 0.55 }), E('stop', { offset: '100%', stopColor: '#ff6a00', stopOpacity: 0 }))),
+        pumpkinLight('l1', 300, 266, 26), pumpkinLight('l2', 378, 276, 18), pumpkinLight('l3', 1320, 258, 22))),
+    E('div', { key: 'fog2', style: { position: 'absolute', left: '-20%', width: '140%', bottom: '-6%', height: '34%', background: 'radial-gradient(50% 60% at 30% 70%, rgba(190,170,255,.14), transparent 70%), radial-gradient(45% 55% at 75% 75%, rgba(190,170,255,.11), transparent 70%)', animation: 'fh-fog 26s ease-in-out -8s infinite alternate-reverse' } }),
+    ...SPOOK.embers.map((m, i) => E('div', { key: 'em' + i, style: { position: 'absolute', left: m.x + '%', bottom: '-12px', width: m.z, height: m.z, borderRadius: '50%', background: m.green ? '#a3ff6a' : '#ffb347', boxShadow: `0 0 ${m.z * 3}px ${m.green ? '#7cff3c' : '#ff7a18'}`, '--dx': m.dx + 'px', animation: `fh-ember ${m.dur.toFixed(1)}s linear ${m.dl.toFixed(1)}s infinite` } })),
+  ];
+}
 
 function hexA(hex, a) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); h = h.padEnd(6, '0'); return `rgba(${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)},${a})`; }
 function lum(hex) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const v = [0, 2, 4].map(i => { const c = parseInt(h.slice(i, i + 2), 16) / 255; return c <= .03928 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); }); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }
@@ -490,13 +674,24 @@ class Component extends DCLogic {
     if (s.dateFont !== 'same' && !FONT_BY[s.dateFont]) s.dateFont = 'same';
     if (!Array.isArray(s.cities)) s.cities = [];
     if (!LANGS.includes(s.uiLang)) s.uiLang = 'fr';
-    const styles = loadJSON(STKEY, []);
-    return { s, styles: Array.isArray(styles) ? styles : [], now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    if (!ANIMS.includes(s.anim)) s.anim = DEFAULTS.anim;
+    if (!WEIRDS.includes(s.weird)) s.weird = 'none';
+    if (!MODES.includes(s.mode)) s.mode = 'clock';
+    if (!BG_TYPES.includes(s.bgType)) s.bgType = DEFAULTS.bgType;
+    const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {};
+    const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
+    const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
+    if (!Array.isArray(sw.laps)) sw.laps = [];
+    return { s, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
-  loaded = new Set(['Geist', 'Bricolage Grotesque']);
+  loaded = new Set(['Geist', 'Bricolage Grotesque', 'Creepster', 'Griffy', 'Caveat']);
   offs = [];
+  tabEls = {};
+  tabRefs = {};
+  cells = new Map();
+  zTop = 10;
 
   componentDidMount() {
     const s = this.state.s;
@@ -510,20 +705,43 @@ class Component extends DCLogic {
     on(document, 'fullscreenchange', () => this.setState({ fs: !!document.fullscreenElement }));
     on(window, 'dragenter', this.onDragEnter); on(window, 'dragover', this.onDragOver); on(window, 'dragleave', this.onDragLeave); on(window, 'drop', this.onDrop);
     if (document.fonts) { on(document.fonts, 'loadingdone', this.bumpFonts); document.fonts.ready.then(() => this.bumpFonts()); }
+    on(window, 'pointermove', this.gridMove, { passive: true });
     this.activity();
+    this.checkTimer();
+    if (this.state.notes.length) this.ensureFont('Caveat');
+    this.zTop = this.state.notes.reduce((m, n) => Math.max(m, n.z || 0), 10);
     DB.all().then(list => {
       const media = (list || []).filter(r => r && r.blob).sort((a, b) => a.t - b.t).map(r => ({ id: r.id, type: r.type, name: r.name, url: URL.createObjectURL(r.blob) }));
       if (media.length) this.setState({ media });
     }).catch(() => {});
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT].forEach(clearTimeout); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
-    const key = [s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
+    const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
     if (key !== this.mKey) { this.mKey = key; this.measure(); }
     if (this.titleStr && this.titleStr !== this.lastTitle) { this.lastTitle = this.titleStr; document.title = this.titleStr; }
+    this.syncInd();
+    this.syncFast();
   }
+  // Pastille animée sous l'onglet actif de la barre du haut
+  syncInd = () => {
+    const st = this.state, el = st.tab && this.tabEls[st.tab], cur = st.ind;
+    if (!el) { if (cur && cur.on) this.setState({ ind: { ...cur, on: false, slide: false } }); return; }
+    const x = el.offsetLeft, w = el.offsetWidth;
+    if (!cur || !cur.on) this.setState({ ind: { x, w, on: true, slide: false } });
+    else if (cur.x !== x || cur.w !== w) this.setState({ ind: { x, w, on: true, slide: true } });
+  };
+  tabRef = (id) => this.tabRefs[id] || (this.tabRefs[id] = (el) => { this.tabEls[id] = el; });
+  // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
+  syncFast = () => {
+    const st = this.state, m = st.s.mode;
+    const rate = m === 'stopwatch' && st.sw.start ? 47 : m === 'timer' && st.tm.endAt ? 200 : 0;
+    if (rate === this.fastRate) return;
+    clearInterval(this.fastT); this.fastRate = rate; this.fastT = rate ? setInterval(this.fastTick, rate) : null;
+  };
+  fastTick = () => { this.checkTimer(); this.setState({ now: new Date() }); };
   measure = () => {
     const el = this.timeRef.current; if (!el) return;
     const fs = parseFloat(getComputedStyle(el).fontSize), w = el.offsetWidth;
@@ -534,24 +752,187 @@ class Component extends DCLogic {
   bumpFonts = () => this.setState(st => ({ fontsTick: st.fontsTick + 1 }));
   tick = () => {
     const now = new Date(), s = this.state.s;
+    this.checkTimer();
     if (s.tick) this.playTick(now.getSeconds() % 2);
     if (s.bgType === 'image' && s.slideshow && this.state.media.length > 1) { this.slideN = (this.slideN || 0) + 1; if (this.slideN >= s.slideEvery) { this.slideN = 0; this.nextBg(); } }
     this.setState({ now });
   };
   nextBg = () => { const m = this.state.media; if (m.length < 2) return; const i = m.findIndex(x => x.id === this.state.s.bgImage); this.setS({ bgImage: m[(i + 1) % m.length].id }); };
+  audio = () => {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
+      const ac = this.ac || (this.ac = new AC()); if (ac.state === 'suspended') ac.resume();
+      return ac;
+    } catch (e) { return null; }
+  };
+  beep = () => {
+    const ac = this.audio(); if (!ac) return;
+    try {
+      const t0 = ac.currentTime;
+      [0, 0.18, 0.36].forEach((d, i) => {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'square'; o.frequency.value = i === 2 ? 1320 : 880;
+        g.gain.setValueAtTime(0.0001, t0 + d); g.gain.exponentialRampToValueAtTime(0.1, t0 + d + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.14);
+        o.connect(g); g.connect(ac.destination); o.start(t0 + d); o.stop(t0 + d + 0.16);
+      });
+    } catch (e) {}
+  };
   playTick = (alt) => {
     try {
-      const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
-      const ac = this.ac || (this.ac = new AC()); if (ac.state === 'suspended') ac.resume();
+      const ac = this.audio(); if (!ac) return;
       const t = ac.currentTime, o = ac.createOscillator(), g = ac.createGain();
       o.type = 'triangle'; o.frequency.value = alt ? 1850 : 1350;
       g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.08, t + 0.003); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.045);
       o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t + 0.06);
     } catch (e) {}
   };
+  // Minuteur & chrono
+  setTools = (patch) => { this.setState(patch, () => { try { localStorage.setItem(TKEY, JSON.stringify({ tm: this.state.tm, sw: this.state.sw })); } catch (e) {} }); };
+  checkTimer = () => {
+    const tm = this.state.tm;
+    if (!tm.endAt || Date.now() < tm.endAt) return;
+    this.setTools({ tm: { ...tm, endAt: null, left: 0, done: true } });
+    this.startAlarm();
+    if (this.state.s.mode !== 'timer') this.setS({ mode: 'timer' });
+    this.toast(this.L().timerDone);
+  };
+  startAlarm = () => { clearInterval(this.alarmT); let n = 0; const ring = () => { this.beep(); if (++n >= 30) this.stopAlarm(); }; this.setState({ ringing: true }); ring(); this.alarmT = setInterval(ring, 1300); };
+  stopAlarm = () => { clearInterval(this.alarmT); this.alarmT = null; if (this.state.ringing) this.setState({ ringing: false }); };
+  tmToggle = () => {
+    const tm = this.state.tm, now = Date.now(); this.audio(); this.stopAlarm();
+    if (tm.endAt) { this.setTools({ tm: { ...tm, endAt: null, left: Math.max(0, tm.endAt - now) } }); return; }
+    const left = tm.left > 0 ? tm.left : tm.dur; if (left <= 0) return;
+    this.setTools({ tm: { ...tm, left, endAt: now + left, done: false } });
+  };
+  tmReset = () => { this.stopAlarm(); const tm = this.state.tm; this.setTools({ tm: { ...tm, endAt: null, left: tm.dur, done: false } }); };
+  tmAgain = () => { this.stopAlarm(); const tm = this.state.tm; this.audio(); this.setTools({ tm: { ...tm, left: tm.dur, endAt: Date.now() + tm.dur, done: false } }); };
+  tmSet = (min) => { this.stopAlarm(); const d = min * 60000; this.setTools({ tm: { dur: d, left: d, endAt: null, done: false } }); };
+  tmAdd = (ms) => {
+    const tm = this.state.tm, now = Date.now(), MAX = 24 * 3600000; this.stopAlarm();
+    if (tm.endAt) { const endAt = Math.min(now + MAX, Math.max(now + 1000, tm.endAt + ms)); this.setTools({ tm: { ...tm, endAt, dur: Math.min(MAX, Math.max(endAt - now, tm.dur + ms)) } }); return; }
+    const left = Math.min(MAX, Math.max(0, tm.left + ms)), fresh = tm.done || tm.left === tm.dur;
+    this.setTools({ tm: { ...tm, left, dur: fresh ? left : Math.min(MAX, Math.max(left, tm.dur + ms)), done: false } });
+  };
+  swToggle = () => { const sw = this.state.sw, now = Date.now(); this.setTools({ sw: sw.start ? { ...sw, start: null, acc: sw.acc + now - sw.start } : { ...sw, start: now } }); };
+  swLap = () => { const sw = this.state.sw; if (!sw.start) return; this.setTools({ sw: { ...sw, laps: [...sw.laps, sw.acc + Date.now() - sw.start].slice(-99) } }); };
+  swReset = () => this.setTools({ sw: { start: null, acc: 0, laps: [] } });
+  setMode = (m) => { if (this.state.s.mode !== m) this.setS({ mode: m }); };
+  stopEv = (e) => { e.stopPropagation(); };
+
+  // Notes autocollantes
+  saveNotes = () => { try { localStorage.setItem(NKEY, JSON.stringify(this.state.notes)); } catch (e) {} };
+  saveNotesSoon = () => { clearTimeout(this.noteT); this.noteT = setTimeout(this.saveNotes, 300); };
+  patchNote = (id, patch, soon) => { this.setState(st => ({ notes: st.notes.map(n => (n.id === id ? { ...n, ...patch } : n)) }), soon ? this.saveNotesSoon : this.saveNotes); };
+  addNote = () => {
+    const st = this.state; if (st.notes.length >= 12) return;
+    const w = 240, h = 170, id = 'n' + Date.now().toString(36), i = st.notes.length;
+    const x = Math.round(st.vw / 2 - w / 2 + (Math.random() - 0.5) * Math.min(420, st.vw * 0.5));
+    const y = Math.round(st.vh / 2 - h / 2 + (Math.random() - 0.5) * Math.min(300, st.vh * 0.4));
+    this.ensureFont('Caveat'); this.newNoteId = id;
+    this.setState({ notes: [...st.notes, { id, x, y, w, h, c: NOTE_C[i % NOTE_C.length], r: +((Math.random() - 0.5) * 6).toFixed(1), z: ++this.zTop, t: '' }] }, this.saveNotes);
+  };
+  delNote = (id) => { this.setState(st => ({ notes: st.notes.filter(n => n.id !== id) }), this.saveNotes); };
+  raiseNote = (id) => { const n = this.state.notes.find(x => x.id === id); if (n && n.z !== this.zTop) this.patchNote(id, { z: ++this.zTop }, true); };
+  noteDown = (e, id) => {
+    if (e.button !== 0 || (e.target.closest && e.target.closest('button'))) return;
+    const n = this.state.notes.find(x => x.id === id); if (!n) return;
+    e.preventDefault();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
+    this.drag = { id, dx: e.clientX - n.x, dy: e.clientY - n.y };
+  };
+  noteMove = (e) => {
+    const d = this.drag; if (!d) return;
+    const st = this.state, x = Math.max(-120, Math.min(st.vw - 80, e.clientX - d.dx)), y = Math.max(0, Math.min(st.vh - 40, e.clientY - d.dy));
+    this.setState({ notes: st.notes.map(n => (n.id === d.id ? { ...n, x, y } : n)) });
+  };
+  noteUp = () => { if (!this.drag) return; this.drag = null; this.saveNotes(); };
+  noteSize = (id, e) => { const el = e.currentTarget, n = this.state.notes.find(x => x.id === id); if (n && el && (el.offsetWidth !== n.w || el.offsetHeight !== n.h)) this.patchNote(id, { w: el.offsetWidth, h: el.offsetHeight }); };
+
+  // Fond « grille » : plan en perspective dont les cases s'allument derrière la souris
+  gridRef = (el) => { this.gridEl = el; if (el) this.gridStart(); else this.gridStop(); };
+  gridStart = () => { if (this.gridRaf) return; this.cells.clear(); this.gKey = ''; this.gT = 0; const frame = (t) => { this.gridRaf = requestAnimationFrame(frame); this.gridDraw(t); }; this.gridRaf = requestAnimationFrame(frame); };
+  gridStop = () => { if (this.gridRaf) cancelAnimationFrame(this.gridRaf); this.gridRaf = 0; this.gLast = null; };
+  gridView = () => {
+    const el = this.gridEl; if (!el) return null;
+    const s = this.state.s, W = el.clientWidth, H = el.clientHeight; if (!W || !H) return null;
+    const phi = Math.min(68, Math.max(0, +s.gridTilt || 0)) * Math.PI / 180, th = (+s.gridTurn || 0) * Math.PI / 180, f = Math.max(W, H) * 1.05;
+    return { W, H, f, D: f, cx: W / 2, cy: H * 0.42, c: Math.max(12, +s.gridSize || 56), cos: Math.cos(phi), sin: Math.sin(phi), tan: Math.tan(phi), ct: Math.cos(th), st: Math.sin(th), zFar: f * 4.5 };
+  };
+  gProj = (v, u, w) => { const a = v.ct * u - v.st * w, b = v.st * u + v.ct * w, Z = v.D + b * v.sin; return [v.cx + v.f * a / Z, v.cy - v.f * b * v.cos / Z]; };
+  gUnproj = (v, x, y) => {
+    const px = (x - v.cx) / v.f, py = (y - v.cy) / v.f, den = 1 + py * v.tan;
+    if (den <= 0.05) return null;
+    const Z = v.D / den, a = px * Z, b = -py * Z / v.cos;
+    return [v.ct * a + v.st * b, -v.st * a + v.ct * b, Z, b];
+  };
+  lightCell = (i, j, val) => { const k = i + ',' + j, c = this.cells.get(k); if (!c || c.v < val) this.cells.set(k, { i, j, v: val }); };
+  gridMove = (e) => {
+    if (!this.gridEl) return;
+    const v = this.gridView(); if (!v) return;
+    const p = this.gUnproj(v, e.clientX, e.clientY), t = performance.now();
+    if (!p || p[2] > v.zFar) { this.gLast = null; return; }
+    const last = this.gLast && t - this.gLastT < 250 ? this.gLast : null;
+    this.gLast = p; this.gLastT = t;
+    if (!last) { this.lightCell(Math.floor(p[0] / v.c), Math.floor(p[1] / v.c), 1); return; }
+    const du = p[0] - last[0], dw = p[1] - last[1], n = Math.min(240, Math.ceil(Math.hypot(du, dw) / (v.c * 0.3)) || 1);
+    for (let k = 1; k <= n; k++) this.lightCell(Math.floor((last[0] + du * k / n) / v.c), Math.floor((last[1] + dw * k / n) / v.c), 1);
+  };
+  gridDraw = (t) => {
+    const el = this.gridEl, s = this.state.s, v = this.gridView(); if (!el || !v) return;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(v.W * dpr), ch = Math.round(v.H * dpr);
+    if (el.width !== cw || el.height !== ch) { el.width = cw; el.height = ch; this.gKey = ''; }
+    const dt = this.gT ? Math.min(0.1, (t - this.gT) / 1000) : 0; this.gT = t;
+    const life = 0.35 + (+s.gridTrail || 0) / 100 * 3.2;
+    for (const [k, c] of this.cells) { c.v -= dt / life; if (c.v <= 0) this.cells.delete(k); }
+    if (s.gridIdle && t > (this.gSpark || 0)) {
+      this.gSpark = t + 160 + Math.random() * 320;
+      const q = this.gUnproj(v, Math.random() * v.W, v.H * (0.1 + Math.random() * 0.9));
+      if (q && q[2] < v.zFar) this.lightCell(Math.floor(q[0] / v.c), Math.floor(q[1] / v.c), 0.18 + Math.random() * 0.22);
+    }
+    const key = [cw, ch, s.gridTilt, s.gridTurn, s.gridSize, s.bgColor, s.gridLine, s.gridLit].join('|');
+    if (!this.cells.size && key === this.gKey) return;
+    this.gKey = key;
+    const ctx = el.getContext('2d'); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalAlpha = 1; ctx.fillStyle = s.bgColor; ctx.fillRect(0, 0, v.W, v.H);
+    // limites visibles sur le plan
+    const yTop = v.tan > 1e-3 ? Math.max(-2, v.cy + v.f * (v.D / v.zFar - 1) / v.tan) : -2;
+    const corners = [[0, yTop], [v.W, yTop], [0, v.H + 2], [v.W, v.H + 2]].map(([x, y]) => this.gUnproj(v, x, y)).filter(Boolean);
+    if (corners.length < 4) return;
+    const us = corners.map(q => q[0]), ws = corners.map(q => q[1]), bs = corners.map(q => q[3]);
+    const bmin = Math.min(...bs), bmax = Math.max(...bs), umin = Math.min(...us), umax = Math.max(...us), wmin = Math.min(...ws), wmax = Math.max(...ws);
+    // cases allumées
+    ctx.fillStyle = s.gridLit;
+    for (const c of this.cells.values()) {
+      const pts = [[c.i, c.j], [c.i + 1, c.j], [c.i + 1, c.j + 1], [c.i, c.j + 1]].map(([i, j]) => [i * v.c, j * v.c]);
+      if (pts.some(([u, w]) => v.st * u + v.ct * w < bmin - v.c)) continue;
+      ctx.globalAlpha = Math.pow(Math.max(0, c.v), 1.35) * 0.95;
+      ctx.beginPath(); pts.forEach(([u, w], k) => { const q = this.gProj(v, u, w); if (k) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]); }); ctx.closePath(); ctx.fill();
+    }
+    // lignes de la grille
+    ctx.globalAlpha = 1; ctx.beginPath();
+    const seg = (u0, w0, u1, w1) => {
+      const b0 = v.st * u0 + v.ct * w0, b1 = v.st * u1 + v.ct * w1;
+      let t0 = 0, t1 = 1;
+      if (Math.abs(b1 - b0) < 1e-9) { if (b0 < bmin || b0 > bmax) return; }
+      else { let ta = (bmin - b0) / (b1 - b0), tb = (bmax - b0) / (b1 - b0); if (ta > tb) [ta, tb] = [tb, ta]; t0 = Math.max(0, ta); t1 = Math.min(1, tb); if (t0 >= t1) return; }
+      const A = this.gProj(v, u0 + (u1 - u0) * t0, w0 + (w1 - w0) * t0), B = this.gProj(v, u0 + (u1 - u0) * t1, w0 + (w1 - w0) * t1);
+      ctx.moveTo(A[0], A[1]); ctx.lineTo(B[0], B[1]);
+    };
+    const k0 = Math.floor(umin / v.c), k1 = Math.min(k0 + 600, Math.ceil(umax / v.c)), j0 = Math.floor(wmin / v.c), j1 = Math.min(j0 + 600, Math.ceil(wmax / v.c));
+    for (let k = k0; k <= k1; k++) seg(k * v.c, wmin, k * v.c, wmax);
+    for (let j = j0; j <= j1; j++) seg(umin, j * v.c, umax, j * v.c);
+    ctx.strokeStyle = hexA(s.gridLine, lum(s.bgColor) > 0.4 ? 0.22 : 0.15); ctx.lineWidth = 1.2; ctx.stroke();
+    // brume au loin
+    if (v.tan > 1e-3) {
+      const yFog = v.cy + v.f * (1 / 1.7 - 1) / v.tan, y0 = Math.max(0, yTop);
+      if (yFog > 0) { const g = ctx.createLinearGradient(0, y0, 0, yFog); g.addColorStop(0, hexA(s.bgColor, 1)); g.addColorStop(1, hexA(s.bgColor, 0)); ctx.fillStyle = s.bgColor; ctx.fillRect(0, 0, v.W, y0); ctx.fillStyle = g; ctx.fillRect(0, y0, v.W, yFog - y0); }
+    }
+  };
+
   setS = (patch) => {
     this.setState(st => {
       const s = { ...st.s, ...patch };
+      if (patch.msg === undefined && patch.bgType && patch.bgType !== st.s.bgType) { if (st.s.msg === 'spooky' && patch.bgType !== 'spooky') s.msg = 'none'; else if (patch.bgType === 'spooky' && st.s.msg === 'none') s.msg = 'spooky'; }
       try { localStorage.setItem(SKEY, JSON.stringify(s)); } catch (e) {}
       const out = { s };
       if (s.bgImage !== st.s.bgImage && st.s.bgImage && st.s.bgType === 'image') out.prevBg = st.s.bgImage;
@@ -575,9 +956,15 @@ class Component extends DCLogic {
   onKey = (e) => {
     const tg = e.target, tn = tg && tg.tagName;
     if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable) || e.metaKey || e.ctrlKey || e.altKey) return;
-    if (e.key === 'Escape') this.closePanel();
-    else if (e.key === 'f' || e.key === 'F') this.toggleFs();
-    else if (e.key === 's' || e.key === 'S') this.surprise();
+    const k = e.key.toLowerCase(), mode = this.state.s.mode;
+    if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); }
+    else if (k === 'f') this.toggleFs();
+    else if (k === 's') this.surprise();
+    else if (k === 'n') { e.preventDefault(); this.addNote(); }
+    else if (e.key === ' ' && mode !== 'clock') { e.preventDefault(); if (mode === 'timer') { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
+    else if (k === 'r' && mode === 'timer') this.tmReset();
+    else if (k === 'r' && mode === 'stopwatch') this.swReset();
+    else if (k === 'l' && mode === 'stopwatch') this.swLap();
   };
   toggleFs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else { const r = document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } } catch (e) {} };
   hasFiles = (e) => { const t = e.dataTransfer && e.dataTransfer.types; return !!t && Array.from(t).includes('Files'); };
@@ -607,17 +994,20 @@ class Component extends DCLogic {
     if (this.state.s.bgImage === id) this.setS({ bgImage: media.length ? media[0].id : null });
   };
   toast = (msg, undo) => { clearTimeout(this.toastT); this.setState({ toast: { msg, undo } }); this.toastT = setTimeout(() => this.setState({ toast: null }), undo ? 6000 : 2400); };
-  reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
+  reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang, mode: prev.mode }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
   surprise = () => {
     const rnd = (a, b) => a + Math.random() * (b - a), pick = (a) => a[Math.floor(Math.random() * a.length)];
     const f = pick(FONTS), h = Math.floor(rnd(0, 360)), light = Math.random() < 0.28;
     const x = { ...VDEF, font: f.name, weight: f.dw, dateFont: NODATE.has(f.name) ? 'Geist' : 'same' };
     if (light) { const ink = hsl(h + 200, 55, 18); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 160, 80, 46), bgColor: hsl(h, 70, 90), bg1: hsl(h, 75, 91), bg2: hsl(h + 35, 65, 80), bg3: hsl(h - 30, 70, 85), vignette: 0 }); }
     else { const ink = hsl(h + 30, 45, 94); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 170, 90, 62), bgColor: hsl(h, 40, 8), bg1: hsl(h, 50, 22), bg2: hsl(h + 40, 50, 6), bg3: hsl(h - 40, 60, 24), vignette: Math.round(rnd(20, 60)) }); }
-    x.bgType = pick(light ? ['solid', 'gradient', 'gradient'] : ['solid', 'gradient', 'gradient', 'aurora']);
+    x.bgType = pick(light ? ['solid', 'gradient', 'gradient', 'grid'] : ['solid', 'gradient', 'gradient', 'aurora', 'grid', 'spooky']);
     x.bgShape = pick(['linear', 'radial']); x.bgAngle = pick([90, 135, 160, 180, 210]);
+    x.gridLit = x.accent; x.gridLine = light ? '#000000' : '#ffffff'; x.gridTurn = Math.round(rnd(-30, 30)); x.gridTilt = Math.round(rnd(35, 62));
+    if (x.bgType === 'spooky') { x.bg1 = hsl(h, 60, 16); x.bg2 = hsl(h, 50, 3); x.bg3 = hsl(h + 180, 95, 52); }
     x.glowColor = x.accent; x.glow = !light && Math.random() < 0.3 ? Math.round(rnd(20, 60)) : 0;
-    x.anim = pick(['fade', 'slide', 'drop', 'flip', 'blur', 'pop']); x.sepAccent = Math.random() < 0.35;
+    x.anim = pick(ANIMS.slice(1)); x.sepAccent = Math.random() < 0.35;
+    x.weird = Math.random() < 0.3 ? pick(WEIRDS.slice(1)) : 'none';
     if (f.cat === 'pixel' && !light && Math.random() < 0.4) x.scanlines = true;
     if (this.state.media.length && Math.random() < 0.25) { x.bgType = 'image'; x.bgImage = pick(this.state.media).id; }
     this.setS(x);
@@ -631,9 +1021,16 @@ class Component extends DCLogic {
   };
   delStyle = (id) => { const styles = this.state.styles.filter(x => x.id !== id); this.setState({ styles }); try { localStorage.setItem(STKEY, JSON.stringify(styles)); } catch (e) {} };
   applyStyle = (x) => { const p = { ...VDEF, ...x.s }; if (p.bgType === 'image' && !this.state.media.some(m => m.id === p.bgImage)) p.bgImage = this.state.media[0] ? this.state.media[0].id : null; this.setS(p); };
-  openTab = (id) => { const tab = this.state.tab === id ? null : id; this.setState({ tab }); if (tab === 'font' || tab === 'presets') FONTS.forEach(f => this.ensureFont(f.name)); if (!tab) this.activity(); };
+  openTab = (id) => {
+    const prev = this.state.tab, tab = prev === id ? null : id;
+    const panelDir = !prev || !tab ? 'd' : TAB_IDS.indexOf(tab) > TAB_IDS.indexOf(prev) ? 'r' : 'l';
+    this.setState({ tab, panelDir });
+    if (tab === 'font' || tab === 'presets') FONTS.forEach(f => this.ensureFont(f.name));
+    if (!tab) this.activity();
+    else requestAnimationFrame(() => { const el = this.tabEls[tab]; if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); });
+  };
   closePanel = () => { if (this.state.tab) this.setState({ tab: null }); this.activity(); };
-  onStage = () => { if (this.state.tab) this.closePanel(); };
+  onStage = () => { if (this.state.ringing) this.stopAlarm(); if (this.state.tab) this.closePanel(); };
   L() { const li = Math.max(0, LANGS.indexOf(this.state.s.uiLang)); if (this._li !== li) { this._li = li; const o = {}; for (const k in T) o[k] = T[k][li]; this._L = o; } return this._L; }
   cardText(ps) {
     const pf = FONT_BY[ps.font] || FONTS[0], g = ps.glow / 100, sh = [];
@@ -654,33 +1051,83 @@ class Component extends DCLogic {
     const num = (n, pad) => (isRoman ? roman(n) : conv(pad ? String(n).padStart(2, '0') : String(n), dm));
     const h12 = s.hour12 ? (p.h % 12 || 12) : p.h;
     const hStr = num(h12, s.leadingZero), mStr = num(p.m, true), sStr = num(p.s, true);
-    const sep1 = s.sep, sep2 = s.sep === 'h' ? ' ' : s.sep;
-    const ap = s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
-    this.timeLen = hStr.length + mStr.length + (s.seconds !== 'off' ? sStr.length : 0) + ap.length;
-    this.titleStr = `${hStr}${sep1 === ' ' ? ':' : sep1}${mStr} · findheure`;
+    const sep1 = s.sep, sep2 = s.sep === 'h' ? ' ' : s.sep, tsep = sep1 === 'h' || sep1 === ' ' ? ':' : sep1;
+    const mode = MODES.includes(s.mode) ? s.mode : 'clock', nowMs = now.getTime(), tm = st.tm, sw = st.sw;
+    const ap = mode === 'clock' && s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
+    const hms = (ms, up, forceH) => { const tot = up ? Math.ceil(ms / 1000) : Math.floor(ms / 1000), hh = Math.floor(tot / 3600), mm = Math.floor((tot % 3600) / 60), ss = tot % 60; return hh || forceH ? [num(hh, false), num(mm, true), num(ss, true)] : [num(mm, true), num(ss, true)]; };
+    const tmLeft = tm.endAt ? Math.max(0, tm.endAt - nowMs) : tm.left, tmRun = !!tm.endAt;
+    const swEl = sw.acc + (sw.start ? Math.max(0, nowMs - sw.start) : 0);
+    let big, small = [], paused = false, display;
+    if (mode === 'timer') {
+      const v = hms(tmLeft, true, tm.dur >= 3600000); paused = !tmRun && !tm.done && tm.left !== tm.dur && tm.left > 0;
+      big = v.length === 3 ? [[v[0], 'd', 'H'], [tsep, 's', 'A'], [v[1], 'd', 'M'], [tsep, 's', 'B'], [v[2], 'd', 'S']] : [[v[0], 'd', 'M'], [tsep, 's', 'A'], [v[1], 'd', 'S']];
+      display = v.join(':');
+    } else if (mode === 'stopwatch') {
+      const v = hms(swEl, false, false); paused = !sw.start && swEl > 0;
+      big = v.length === 3 ? [[v[0], 'd', 'H'], [tsep, 's', 'A'], [v[1], 'd', 'M'], [tsep, 's', 'B'], [v[2], 'd', 'S']] : [[v[0], 'd', 'M'], [tsep, 's', 'A'], [v[1], 'd', 'S']];
+      small = [[num(Math.floor(swEl / 10) % 100, true), 'c', 'C']];
+      display = v.join(':');
+    } else {
+      big = [[hStr, 'd', 'H'], [sep1, 's', 'A'], [mStr, 'd', 'M']];
+      if (s.seconds === 'same') big.push([sep2, 's', 'B'], [sStr, 'd', 'S']);
+      if (s.seconds === 'small') small = [[sStr, 'd', 'S']];
+      display = `${hStr}${sep1 === ' ' ? ':' : sep1}${mStr}`;
+    }
+    this.timeLen = [...big, ...small].reduce((n, x) => n + x[0].length, 0) + ap.length;
+    this.titleStr = `${mode === 'timer' ? (tm.done ? '🔔 ' : '⏳ ') : mode === 'stopwatch' ? '⏱ ' : ''}${display} · findheure`;
 
     // clock
     const f = FONT_BY[s.font] || FONTS[0], wt = clampW(f, s.weight), ls = s.letterSpacing / 100;
     const avail = st.vw * (['c', 't', 'b'].includes(s.pos) ? 0.84 : 0.74);
-    let fontPx = Math.min(avail / st.ratio, st.vh * 0.46) * s.size / 100;
+    let fontPx = Math.min(avail / st.ratio, st.vh * (mode === 'clock' ? 0.46 : 0.4)) * s.size / 100;
     fontPx = Math.max(20, Math.min(fontPx, (st.vw * 0.96) / st.ratio));
-    const anim = s.anim !== 'none' ? `fh-${s.anim} .6s cubic-bezier(.2,.75,.2,1) both` : undefined;
-    const fill = s.outline ? null : s.gradText ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : null;
-    const sepFill = s.sepAccent ? (s.outline ? { WebkitTextStroke: `${s.outlineW}px ${s.accent}` } : { color: s.accent, WebkitTextFillColor: s.accent }) : fill;
-    const blinkOff = s.blink && p.s % 2 === 1;
-    const chars = (txt, kind, kb) => Array.from(txt).map((ch, i) => E('span', { key: kb + i + ch, style: { display: 'inline-block', whiteSpace: 'pre', textAlign: 'center', width: kind === 'd' && s.fixedDigits && latin ? `calc(1ch + ${ls}em)` : undefined, animation: kind === 'd' ? anim : undefined, ...(kind === 's' ? { ...sepFill, opacity: blinkOff ? 0.15 : 1, transition: 'opacity .3s ease' } : fill) } }, ch));
-    const trail = [];
-    if (s.seconds === 'small') trail.push(E('div', { key: 'ts', style: { display: 'flex' } }, chars(sStr, 'd', 'S')));
-    if (ap) trail.push(E('div', { key: 'ta', style: { fontSize: s.seconds === 'small' ? '.62em' : '.8em', letterSpacing: '.06em', marginTop: trail.length ? '.4em' : 0, opacity: 0.85, ...(s.sepAccent && !s.outline ? { color: s.accent, WebkitTextFillColor: s.accent } : fill) } }, ap));
-    const kids = [...chars(hStr, 'd', 'H'), ...chars(sep1, 's', 'A'), ...chars(mStr, 'd', 'M')];
-    if (s.seconds === 'same') kids.push(...chars(sep2, 's', 'B'), ...chars(sStr, 'd', 'S'));
-    if (trail.length) kids.push(E('div', { key: 'tr', style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '.3em', lineHeight: 1, letterSpacing: ls + 'em', marginLeft: '.22em', marginTop: '.3em' } }, trail));
+    const anim = s.anim !== 'none' ? `fh-${s.anim} ${ANIM_DUR[s.anim] || 0.6}s cubic-bezier(.2,.75,.2,1) both` : undefined;
+    const rb = s.weird === 'rainbow', wk = Math.max(0.2, (s.weirdSpeed || 50) / 50), sec = (x) => (x / wk).toFixed(2) + 's';
+    const fill = s.outline || rb ? null : s.gradText ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : null;
+    const sepFill = rb ? null : s.sepAccent ? (s.outline ? { WebkitTextStroke: `${s.outlineW}px ${s.accent}` } : { color: s.accent, WebkitTextFillColor: s.accent }) : fill;
+    const blinkOff = (mode === 'clock' ? s.blink : paused) && p.s % 2 === 1;
+    const charFx = (i) => {
+      if (s.weird === 'wave') return `fhx-wave ${sec(1.8)} ease-in-out ${(-i * 0.16).toFixed(2)}s infinite`;
+      if (s.weird === 'jelly') return `fhx-jelly ${sec(1.4)} ease-in-out ${(-i * 0.21).toFixed(2)}s infinite`;
+      if (s.weird === 'shake') return `fhx-shake ${sec(0.32)} linear ${(-i * 0.07).toFixed(2)}s infinite`;
+      return undefined;
+    };
+    // chaque caractère : un span stable (effet permanent) qui contient un span re-créé à chaque changement (animation d'entrée)
+    // glow = copie placée derrière qui ne dessine que la lueur (bien plus léger qu'un filtre sur tout le bloc)
+    const buildKids = (glow) => {
+      let ci = 0;
+      const chars = (txt, kind, kb) => Array.from(txt).map((ch, i) => {
+        const idx = ci++;
+        const rbc = rb && !glow ? hsl(idx * 47, 95, 63) : null, rbFill = rbc ? (s.outline ? { WebkitTextStroke: `${s.outlineW}px ${rbc}` } : { color: rbc, WebkitTextFillColor: rbc }) : null;
+        const inner = { display: 'inline-block', whiteSpace: 'pre', animation: kind === 'd' ? anim : undefined, ...(kind === 's' ? { ...(glow ? null : sepFill), ...rbFill, opacity: blinkOff ? 0.15 : 1, transition: 'opacity .3s ease' } : glow ? null : rbFill || fill) };
+        return E('span', { key: kb + i, style: { display: 'inline-block', whiteSpace: 'pre', textAlign: 'center', width: kind !== 's' && s.fixedDigits && latin ? `calc(1ch + ${ls}em)` : undefined, animation: charFx(idx) } }, E('span', { key: ch, style: inner }, ch));
+      });
+      const kids = big.flatMap(([t, k, kb]) => chars(t, k, kb));
+      const trail = [];
+      if (small.length) trail.push(E('div', { key: 'ts', style: { display: 'flex' } }, small.flatMap(([t, k, kb]) => chars(t, k, kb))));
+      if (ap) trail.push(E('div', { key: 'ta', style: { fontSize: s.seconds === 'small' ? '.62em' : '.8em', letterSpacing: '.06em', marginTop: trail.length ? '.4em' : 0, opacity: 0.85, ...(glow ? null : s.sepAccent && !s.outline && !rb ? { color: s.accent, WebkitTextFillColor: s.accent } : fill) } }, ap));
+      if (trail.length) kids.push(E('div', { key: 'tr', style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '.3em', lineHeight: 1, letterSpacing: ls + 'em', marginLeft: '.22em', marginTop: '.3em' } }, trail));
+      return kids;
+    };
     const g = s.glow / 100, shd = s.shadow / 100, gc = s.glowColor, sh = [];
     if (g > 0) sh.push(`0 0 ${(0.02 + g * 0.05).toFixed(3)}em ${hexA(gc, 0.9)}`, `0 0 ${(0.08 + g * 0.22).toFixed(3)}em ${hexA(gc, (0.25 + g * 0.5).toFixed(2))}`, `0 0 ${(0.25 + g * 0.6).toFixed(3)}em ${hexA(gc, (g * 0.55).toFixed(2))}`);
     if (shd > 0) sh.push(`0 ${(0.01 + shd * 0.05).toFixed(3)}em ${(0.02 + shd * 0.12).toFixed(3)}em rgba(0,0,0,${(0.2 + shd * 0.5).toFixed(2)})`);
-    const useFilter = !!fill;
-    const timeStyle = { display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: fontPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, filter: useFilter && sh.length ? sh.map(x => `drop-shadow(${x})`).join(' ') : undefined, animation: s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: 'font-size .35s ease, color .4s ease' };
-    const clockEl = E('div', { ref: this.timeRef, style: timeStyle, role: 'timer', 'aria-label': `${hStr}:${mStr}` }, kids);
+    const useFilter = !!fill || rb;
+    const ring = mode === 'timer' && tm.done;
+    const timeStyle = { position: 'relative', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: fontPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, animation: ring ? 'fh-blinkfast 1s steps(1) infinite' : s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: 'font-size .35s ease, color .4s ease' };
+    const glowEl = useFilter && sh.length ? E('div', { key: 'glow', 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: sh.join(', '), pointerEvents: 'none' } }, buildKids(true)) : null;
+    const timeEl = E('div', { key: 'time', ref: this.timeRef, style: timeStyle, role: 'timer', 'aria-label': display }, buildKids(false));
+    // effets bizarres appliqués à tout le bloc
+    const wrapFx = { rainbow: `fhx-hue ${sec(5)} linear infinite`, float: `fhx-float ${sec(5)} ease-in-out infinite`, drunk: `fhx-drunk ${sec(3.4)} ease-in-out infinite`, glitch: `fhx-glitch ${sec(3)} linear infinite`, holo: `fhx-holo ${sec(4.5)} linear infinite, fhx-holoscan ${sec(1.6)} linear infinite`, spin: `fhx-spin ${sec(12)} linear infinite` }[s.weird];
+    const wStyle = { position: 'relative', fontSize: fontPx.toFixed(1) + 'px', lineHeight: 1, animation: wrapFx, willChange: 'transform' };
+    if (s.weird === 'holo') { const m = 'repeating-linear-gradient(0deg, #000 0 .1em, rgba(0,0,0,.4) .1em .24em)'; Object.assign(wStyle, { WebkitMaskImage: m, maskImage: m, filter: `drop-shadow(0 0 .04em ${hexA('#5ef2ff', 0.75)})` }); }
+    if (s.weird === 'mirror') wStyle.WebkitBoxReflect = 'below -.04em linear-gradient(transparent 35%, rgba(0,0,0,.5))';
+    if (s.weird === 'liquid') wStyle.filter = 'url(#fh-liquid)';
+    const bf = (1.1 / fontPx).toFixed(4), bf2 = (1.9 / fontPx).toFixed(4);
+    const liquid = s.weird === 'liquid' ? E('svg', { key: 'lq', width: 0, height: 0, 'aria-hidden': true, style: { position: 'absolute' } }, E('filter', { id: 'fh-liquid', x: '-20%', y: '-25%', width: '140%', height: '150%' },
+      E('feTurbulence', { type: 'fractalNoise', baseFrequency: `${bf} ${bf2}`, numOctaves: 1, seed: 7, result: 'n' }, E('animate', { attributeName: 'baseFrequency', dur: sec(9), values: `${bf} ${bf2};${(bf * 1.7).toFixed(4)} ${(bf2 * 1.4).toFixed(4)};${bf} ${bf2}`, repeatCount: 'indefinite' })),
+      E('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: (fontPx * 0.09).toFixed(1), xChannelSelector: 'R', yChannelSelector: 'G' }))) : null;
+    const clockEl = E('div', { key: 'mode-' + mode, style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both' } }, E('div', { style: wStyle }, liquid, glowEl, timeEl));
 
     // date, message, zone, cities
     const df = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f);
@@ -701,13 +1148,17 @@ class Component extends DCLogic {
     const dateColor = hexA(s.dateColor, s.dateOpacity / 100);
     const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : undefined, transition: 'color .4s ease' };
     const greet = p.h < 5 ? L.g_night : p.h < 12 ? L.g_morning : p.h < 18 ? L.g_afternoon : p.h < 22 ? L.g_evening : L.g_night;
-    const msgText = s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : '';
+    const endStr = tmRun ? fmt(locale, { hour: '2-digit', minute: '2-digit', hour12: !!s.hour12, timeZone: tz }).format(new Date(tm.endAt)) : '';
+    const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
+      : mode === 'stopwatch' ? (sw.laps.length ? `${L.lap} ${sw.laps.length + 1}` : L.md_sw)
+      : s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : s.msg === 'spooky' ? L.happyHalloween : '';
     const citiesList = (s.cities || []).slice(0, 4).map(z => { const q = zp(now, z); const hh = s.hour12 ? (q.h % 12 || 12) : q.h; return { name: tzLabel(z), time: `${num(hh, s.leadingZero)}${sep1}${num(q.m, true)}${s.hour12 ? ' ' + dayPeriod(locale, now, z, q.h) : ''}` }; });
     const P = POS[s.pos] || POS.c;
 
     // background
     const grad = (o) => (o.bgShape === 'radial' ? `radial-gradient(130% 110% at 50% 0%, ${o.bg1} 0%, ${o.bg2} 72%)` : `linear-gradient(${o.bgAngle}deg, ${o.bg1}, ${o.bg2})`);
-    const base = s.bgType === 'solid' ? s.bgColor : s.bgType === 'gradient' ? grad(s) : s.bgType === 'aurora' ? s.bg2 : '#000';
+    const spookyBase = (o) => `radial-gradient(120% 65% at 50% 112%, ${hexA(o.bg3, 0.5)} 0%, transparent 62%), linear-gradient(180deg, ${o.bg2} 0%, ${o.bg1} 78%)`;
+    const base = s.bgType === 'solid' || s.bgType === 'grid' ? s.bgColor : s.bgType === 'gradient' ? grad(s) : s.bgType === 'aurora' ? s.bg2 : s.bgType === 'spooky' ? spookyBase(s) : '#000';
     let aurora = null, layers = null;
     if (s.bgType === 'aurora') {
       const spd = 70 - s.bgSpeed * 0.6;
@@ -727,21 +1178,30 @@ class Component extends DCLogic {
     }
 
     // chrome
-    const bgL = s.bgType === 'image' ? 0.05 : s.bgType === 'solid' ? lum(s.bgColor) : (lum(s.bg1) + lum(s.bg2)) / 2;
+    const bgL = s.bgType === 'image' ? 0.05 : s.bgType === 'solid' || s.bgType === 'grid' ? lum(s.bgColor) : (lum(s.bg1) + lum(s.bg2)) / 2;
     const dark = s.uiTheme === 'dark' || (s.uiTheme === 'auto' && bgL < 0.4);
-    const ui = dark
+    const spooky = s.bgType === 'spooky';
+    const ui0 = dark
       ? { scheme: 'dark', bar: 'rgba(22,21,20,.62)', panel: 'rgba(22,21,20,.8)', border: 'rgba(255,255,255,.1)', fg: '#f6f4f0', fg2: 'rgba(246,244,240,.64)', fg3: 'rgba(246,244,240,.4)', hover: 'rgba(255,255,255,.07)', active: 'rgba(255,255,255,.14)', field: 'rgba(255,255,255,.06)', tile: 'rgba(255,255,255,.04)', invBg: '#f6f4f0', invFg: '#151413', track: 'rgba(255,255,255,.2)', ringGap: '#1c1b1a', shadow: '0 18px 50px rgba(0,0,0,.35)' }
       : { scheme: 'light', bar: 'rgba(252,251,249,.72)', panel: 'rgba(252,251,249,.88)', border: 'rgba(20,18,16,.1)', fg: '#191817', fg2: 'rgba(25,24,23,.64)', fg3: 'rgba(25,24,23,.42)', hover: 'rgba(0,0,0,.05)', active: 'rgba(0,0,0,.08)', field: 'rgba(0,0,0,.045)', tile: 'rgba(0,0,0,.03)', invBg: '#191817', invFg: '#fbfaf8', track: 'rgba(0,0,0,.18)', ringGap: '#fbfaf8', shadow: '0 18px 50px rgba(0,0,0,.12)' };
+    // interface teintée Halloween quand le décor citrouilles est actif
+    const ui = spooky && dark ? { ...ui0, bar: 'rgba(30,12,44,.66)', panel: 'rgba(24,9,36,.86)', border: 'rgba(255,140,60,.2)', hover: 'rgba(255,140,60,.1)', active: 'rgba(255,140,60,.18)', field: 'rgba(255,255,255,.06)', ringGap: '#1d0b2b', shadow: '0 18px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,106,0,.08)' } : ui0;
     const hidden = st.idle && s.autoHide && !st.tab;
     const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`;
     const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
-    const tabs = TABS.map(([id, label]) => ({ label, pick: () => this.openTab(id), bg: st.tab === id ? ui.active : 'transparent', fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? ui.active : ui.hover }));
+    const tabs = TABS.map(([id, label]) => ({ label, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const iv = st.ind || { x: 0, w: 0, on: false, slide: false };
+    const ind = { x: iv.x + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}`, tr: iv.slide ? 'transform .5s cubic-bezier(.3,1.3,.45,1), width .5s cubic-bezier(.3,1.3,.45,1), opacity .2s ease' : 'opacity .25s ease' };
+    const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? s.accent : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
       if (ps.bgType === 'solid') b = ps.bgColor;
       else if (ps.bgType === 'gradient') b = grad(ps);
       else if (ps.bgType === 'aurora') b = `radial-gradient(60% 80% at 25% 30%, ${ps.bg1}, transparent), radial-gradient(60% 80% at 80% 70%, ${ps.bg3}, transparent), ${ps.bg2}`;
+      else if (ps.bgType === 'grid') b = `radial-gradient(38% 46% at 30% 64%, ${hexA(ps.gridLit, 0.38)}, transparent 70%), repeating-linear-gradient(0deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), ${ps.bgColor}`;
+      else if (ps.bgType === 'spooky') b = `radial-gradient(circle at 80% 24%, #fff6d5 0 8%, rgba(255,214,140,.35) 9%, transparent 19%), ${spookyBase(ps)}`;
       else { const m = st.media.find(x => x.id === ps.bgImage) || st.media[0]; b = m && m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #111` : '#111'; }
       return ps.vignette ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,${(ps.vignette * 0.006).toFixed(2)}) 100%), ${b}` : b;
     };
@@ -750,7 +1210,7 @@ class Component extends DCLogic {
     const controls = [];
     let presets = [], fontTiles = [], fontCats = [], media = [];
     if (st.tab) {
-      const add = (o) => controls.push({ span: 'auto', op: 1, display: '', padTop: '0px', hasLabel: !o.isHead && !o.isTog, ...o });
+      const add = (o) => controls.push({ span: 'auto', op: 1, display: '', padTop: '0px', hasLabel: !o.isHead && !o.isTog, delay: Math.min(controls.length, 16) * 24 + 'ms', ...o });
       const H = (label) => add({ isHead: true, label, span: '1 / -1', padTop: controls.length ? '10px' : '0px' });
       const on2 = (on) => ({ bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2 });
       const seg = (k, label, opts, x) => add({ isSeg: true, label, options: opts.map(([v, l]) => ({ label: l, pick: () => this.setS({ [k]: v }), ...on2(s[k] === v) })), ...x });
@@ -765,12 +1225,12 @@ class Component extends DCLogic {
         add({ isPresets: true, span: '1 / -1', hasLabel: false });
         H(L.hMine);
         add({ isMine: true, span: '1 / -1', hasLabel: false });
-        presets = PRESETS.map(pr => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { name: pr.n[li], sample, bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.setS(ps) }; });
+        presets = PRESETS.map((pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { name: pr.n[li], sample, bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.setS(ps), delay: 60 + Math.min(i, 18) * 30 + 'ms' }; });
       }
       if (t === 'font') {
         add({ isFontGrid: true, span: '1 / -1', hasLabel: false });
         fontCats = CATS.map(c => ({ label: L['cat_' + c], pick: () => this.setState({ fontCat: c }), bg: st.fontCat === c ? ui.invBg : 'transparent', fg: st.fontCat === c ? ui.invFg : ui.fg2, border: st.fontCat === c ? ui.invBg : ui.border }));
-        fontTiles = FONTS.filter(x => st.fontCat === 'all' || x.cat === st.fontCat).map(x => ({ name: x.name, sample, pick: () => this.setS({ font: x.name, weight: x.dw }), bg: s.font === x.name ? ui.active : ui.tile, ring: s.font === x.name ? `inset 0 0 0 1.5px ${ui.fg}` : ringOff, style: { fontFamily: stack(x), fontWeight: x.dw, fontSize: Math.round(Math.min(34, 112 / (4 * x.w + 0.4))) + 'px', lineHeight: 1.1, whiteSpace: 'nowrap', flex: 1, display: 'flex', alignItems: 'center' } }));
+        fontTiles = FONTS.filter(x => st.fontCat === 'all' || x.cat === st.fontCat).map((x, i) => ({ name: x.name, sample, delay: Math.min(i, 24) * 14 + 'ms', pick: () => this.setS({ font: x.name, weight: x.dw }), bg: s.font === x.name ? ui.active : ui.tile, ring: s.font === x.name ? `inset 0 0 0 1.5px ${ui.fg}` : ringOff, style: { fontFamily: stack(x), fontWeight: x.dw, fontSize: Math.round(Math.min(34, 112 / (4 * x.w + 0.4))) + 'px', lineHeight: 1.1, whiteSpace: 'nowrap', flex: 1, display: 'flex', alignItems: 'center' } }));
         H(L.hTime);
         const single = f.wmin === f.wmax;
         rng('weight', L.weight, f.wmin, f.wmax, 10, () => (single ? `${f.wmin} · ${L.singleWeight}` : String(wt)), { value: wt, disabled: single, op: single ? 0.5 : 1 });
@@ -788,7 +1248,9 @@ class Component extends DCLogic {
         H(L.hAccent); col('accent', L.accent, SW_INK); tog('sepAccent', L.sepAccent);
       }
       if (t === 'bg') {
-        seg('bgType', L.bgType, [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['image', L.image]], { span: '1 / -1' });
+        seg('bgType', L.bgType, [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['spooky', L.spooky], ['image', L.image]], { span: '1 / -1' });
+        if (s.bgType === 'grid') { col('bgColor', L.bgColor, SW_BG); col('gridLit', L.gridLit, SW_INK); col('gridLine', L.gridLine, SW_INK); rng('gridSize', L.gridSize, 24, 120, 1, v => v + ' px'); rng('gridTilt', L.gridTilt, 0, 68, 1, v => v + '°'); rng('gridTurn', L.gridTurn, -45, 45, 1, v => v + '°'); rng('gridTrail', L.gridTrail, 0, 100, 1, raw); tog('gridIdle', L.gridIdle); }
+        if (s.bgType === 'spooky') { col('bg1', L.sky, SW_BG); col('bg2', L.deep, SW_BG); col('bg3', L.horizon, SW_BG); }
         if (s.bgType === 'solid') col('bgColor', L.bgColor, SW_BG);
         if (s.bgType === 'gradient') { col('bg1', L.color + ' 1', SW_BG); col('bg2', L.color + ' 2', SW_BG); seg('bgShape', L.shape, [['linear', L.linear], ['radial', L.radial]]); if (s.bgShape === 'linear') rng('bgAngle', L.angle, 0, 360, 5, v => v + '°'); }
         if (s.bgType === 'aurora') { col('bg1', L.color + ' 1', SW_BG); col('bg2', L.color + ' 2', SW_BG); col('bg3', L.color + ' 3', SW_BG); rng('bgSpeed', L.speed, 0, 100, 1, raw); }
@@ -805,6 +1267,9 @@ class Component extends DCLogic {
         H(L.hText); rng('glow', L.glow, 0, 100, 1, raw); col('glowColor', L.glowColor, SW_INK); rng('shadow', L.shadow, 0, 100, 1, raw); tog('outline', L.outline);
         if (s.outline) rng('outlineW', L.outlineW, 1, 12, 0.5, v => v + ' px');
         H(L.hMotion); seg('anim', L.anim, ANIMS.map(a => [a, L['a_' + a]]), { span: '1 / -1' }); tog('breathe', L.breathe);
+        H(L.hWeird);
+        add({ isChips: true, label: L.weird, span: '1 / -1', options: WEIRDS.map(w => ({ label: L['w_' + w], pick: () => this.setS({ weird: w }), bg: s.weird === w ? ui.invBg : 'transparent', fg: s.weird === w ? ui.invFg : ui.fg2, border: s.weird === w ? ui.invBg : ui.border })) });
+        if (s.weird !== 'none' && s.weird !== 'mirror') rng('weirdSpeed', L.weirdSpeed, 10, 100, 1, raw);
         H(L.hAtmos); rng('vignette', L.vignette, 0, 100, 1, raw); rng('grain', L.grain, 0, 100, 1, raw); tog('scanlines', L.scanlines); tog('tick', L.tick);
       }
       if (t === 'clock') {
@@ -835,7 +1300,7 @@ class Component extends DCLogic {
         seg('datePos', L.datePos, [['above', L.above], ['below', L.below]]);
         rng('gap', L.gap, 0, 300, 5, pct);
         H(L.hExtras);
-        seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['custom', L.m_custom]]);
+        seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['spooky', L.m_spooky], ['custom', L.m_custom]]);
         if (s.msg === 'custom') add({ isText: true, label: L.m_custom, value: s.msgText, ph: L.msgPh, onText: (e) => this.setS({ msgText: e.target.value.slice(0, 80) }) });
         tog('progress', L.progress);
         add({ isChips: true, label: L.cities, span: '1 / -1', options: ZONES.map(([z, n]) => { const on = s.cities.includes(z); return { label: n[li], pick: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) });
@@ -853,19 +1318,64 @@ class Component extends DCLogic {
     };
     const dayPct = (p.h * 3600 + p.m * 60 + p.s) / 86400;
     const tabLabel = (TABS.find(x => x[0] === st.tab) || [])[1] || '';
+    const pct0 = new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 });
+    const tmFrac = tm.dur > 0 ? Math.min(1, Math.max(0, 1 - tmLeft / tm.dur)) : 0;
+
+    // minuteur / chrono : boutons dessinés avec la police et les couleurs du style choisi
+    let toolsEl = null;
+    if (mode !== 'clock') {
+      const bfs = Math.round(Math.max(13, Math.min(dPx * 0.8, 19)));
+      const ink = s.dateColor, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', font = `600 ${bfs}px/1 ${stack(df)}`;
+      const btn = (key, icon, label, onClick, o = {}) => E('button', { key, type: 'button', className: 'fh-btn', title: o.title || label, disabled: !!o.disabled, onClick, style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.45em', height: '2.7em', minWidth: '2.7em', padding: label ? '0 1.2em 0 .95em' : 0, boxSizing: 'border-box', borderRadius: 999, border: `1px solid ${o.primary ? acc : hexA(ink, 0.26)}`, background: o.primary ? acc : hexA(ink, 0.08), color: o.primary ? accInk : ink, font, cursor: 'pointer', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: o.primary ? `0 8px 28px ${hexA(acc, 0.4)}` : 'none', whiteSpace: 'nowrap' } },
+        icon ? E('span', { style: { ...ICON, fontSize: '1.35em' } }, icon) : null, label ? E('span', null, label) : null);
+      const row = (key, kids, extra) => E('div', { key, style: { display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '.6em', ...extra } }, kids);
+      const parts = [];
+      if (mode === 'timer') {
+        const go = tm.done ? (st.ringing ? btn('go', 'stop', L.stopAlarm, this.stopAlarm, { primary: true }) : btn('go', 'replay', L.again, this.tmAgain, { primary: true }))
+          : btn('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : paused ? L.resume : L.start, this.tmToggle, { primary: true, disabled: !tmRun && tm.left <= 0 && tm.dur <= 0 });
+        parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur })]));
+        if (!tmRun) parts.push(row('r2', TIMER_PRESETS.map(m => { const on = tm.dur === m * 60000; return E('button', { key: 'p' + m, type: 'button', className: 'fh-btn', onClick: () => this.tmSet(m), style: { height: '2.1em', padding: '0 .9em', borderRadius: 999, border: `1px solid ${on ? acc : hexA(ink, 0.2)}`, background: on ? hexA(acc, 0.22) : 'transparent', color: ink, font: `500 ${Math.round(bfs * 0.86)}px/1 ${stack(df)}`, cursor: 'pointer', fontVariantNumeric: 'tabular-nums' } }, `${num(m, false)} min`); }), { marginTop: '.8em', gap: '.45em', maxWidth: '36em' }));
+      } else {
+        parts.push(row('r1', sw.start
+          ? [btn('lap', 'flag', L.lap, this.swLap, { title: L.lap + ' (L)' }), btn('go', 'pause', L.pause, this.swToggle, { primary: true })]
+          : [btn('rs', 'replay', L.reset, this.swReset, { title: L.reset + ' (R)', disabled: swEl === 0 }), btn('go', 'play_arrow', paused ? L.resume : L.start, this.swToggle, { primary: true })]));
+        if (sw.laps.length) {
+          const fmtT = (ms) => `${hms(ms, false, false).join(tsep)}.${num(Math.floor(ms / 10) % 100, true)}`;
+          const splits = sw.laps.map((t, i) => t - (i ? sw.laps[i - 1] : 0));
+          const best = splits.length > 1 ? Math.min(...splits) : -1, worst = splits.length > 1 ? Math.max(...splits) : -1;
+          const rows = splits.map((d, i) => ({ i, d, t: sw.laps[i] })).reverse().slice(0, 5);
+          parts.push(E('div', { key: 'laps', style: { display: 'grid', gridTemplateColumns: 'auto auto auto', gap: '.4em 1.8em', marginTop: '1.1em', justifyContent: P[1], font: `500 ${Math.round(bfs * 0.95)}px/1.2 ${stack(df)}`, color: ink, fontVariantNumeric: 'tabular-nums' } },
+            rows.flatMap((r, k) => { const c = r.d === best ? acc : r.d === worst ? hexA(ink, 0.5) : hexA(ink, 0.88), x = { color: c, opacity: 1 - k * 0.15, animation: k === 0 ? 'fh-rise .4s ease both' : undefined }; return [E('span', { key: 'a' + r.i, style: x }, `${L.lap} ${num(r.i + 1, false)}`), E('span', { key: 'b' + r.i, style: x }, fmtT(r.d)), E('span', { key: 'c' + r.i, style: { ...x, color: hexA(ink, 0.55) } }, fmtT(r.t))]; })));
+        }
+      }
+      toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px' } }, parts);
+    }
+
+    // notes autocollantes (déplaçables, redimensionnables, enregistrées dans le navigateur)
+    const notesEl = st.notes.map(n => {
+      const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y));
+      return E('div', { key: n.id, className: 'fh-note', onPointerDown: () => this.raiseNote(n.id), style: { position: 'absolute', left: x, top: y, zIndex: n.z || 1, pointerEvents: 'auto', color: '#2a2113', background: `linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 40px), ${n.c}`, borderRadius: '3px 3px 3px 22px', boxShadow: '0 14px 30px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)', transform: `rotate(${n.r || 0}deg)`, animation: 'fh-note-in .5s cubic-bezier(.2,.9,.3,1.25) both' } },
+        E('div', { onPointerDown: (e) => this.noteDown(e, n.id), onPointerMove: this.noteMove, onPointerUp: this.noteUp, onPointerCancel: this.noteUp, style: { height: 30, display: 'flex', alignItems: 'center', gap: 5, padding: '0 6px 0 10px', cursor: 'grab', touchAction: 'none' } },
+          NOTE_C.map(c => E('button', { key: c, type: 'button', className: 'fh-dot', title: L.color, onClick: () => this.patchNote(n.id, { c }), style: { width: 12, height: 12, padding: 0, borderRadius: '50%', border: '1.5px solid rgba(42,33,19,.45)', background: c, cursor: 'pointer', boxShadow: n.c === c ? '0 0 0 2px rgba(42,33,19,.7)' : 'none' } })),
+          E('div', { style: { flex: 1 } }),
+          E('button', { type: 'button', title: L.noteDel, onClick: () => this.delNote(n.id), style: { width: 24, height: 24, padding: 0, border: 0, borderRadius: 6, background: 'transparent', color: 'rgba(42,33,19,.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 18 } }, 'close'))),
+        E('textarea', { value: n.t || '', placeholder: L.notePh, autoFocus: n.id === this.newNoteId, spellCheck: false, onChange: (e) => this.patchNote(n.id, { t: e.target.value.slice(0, 2000) }, true), onMouseUp: (e) => this.noteSize(n.id, e), onPointerUp: (e) => this.noteSize(n.id, e), style: { display: 'block', width: w, height: h, minWidth: 150, minHeight: 80, maxWidth: '80vw', maxHeight: '70vh', boxSizing: 'border-box', resize: 'both', border: 0, margin: 0, background: 'transparent', color: 'inherit', padding: '0 14px 14px', font: "600 23px/1.2 'Caveat', 'Comic Sans MS', cursive", userSelect: 'text', overflow: 'auto' } }));
+    });
 
     return {
       s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
-      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})` },
+      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid', isSpooky: spooky, spooky: spooky ? spookyScene(E) : null },
+      alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
       clock: { el: clockEl, gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
-      msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: hexA(s.dateColor, Math.min(1, s.dateOpacity / 100 + 0.15)) } },
-      date: { show: !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
-      cities: { show: citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor } },
-      prog: { show: !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
-      chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1180, surprisePad: st.vw > 1180 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22) },
-      tabs, panel: { open: !!st.tab, title: tabLabel }, controls, presets, mine, fontCats, fontTiles, media,
+      msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: hexA(s.dateColor, Math.min(1, s.dateOpacity / 100 + 0.15)), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
+      date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
+      cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor } },
+      prog: mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
+      chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1180, surprisePad: st.vw > 1180 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
+      tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      tools: { show: mode !== 'clock', el: toolsEl }, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
