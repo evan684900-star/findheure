@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,open_in_full,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,mic,mic_off,notifications,notifications_off,open_in_full,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,timer&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -122,6 +122,9 @@ a{color:inherit}a:hover{opacity:.8}
   </sc-if>
   <sc-if value="{{ fx.scan }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.3) 0px, rgba(0,0,0,.3) 1px, transparent 1px, transparent 3px);"></div>
+  </sc-if>
+  <sc-if value="{{ sndAlert.on }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; pointer-events: none; z-index: 4; box-shadow: inset 0 0 0 10px rgba(239,68,68,.8), inset 0 0 140px rgba(239,68,68,.45); animation: fh-alarm 1.1s ease-in-out infinite;"></div>
   </sc-if>
   <sc-if value="{{ alarm.on }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ alarm.bg }}; animation: fh-alarm 1.2s ease-in-out infinite;"></div>
@@ -483,6 +486,15 @@ const T_RAW = {
   endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
+  md_snd: "Sonomètre|Sound meter|Sonómetro|Lärmampel", sndOn: "Activer le micro|Turn on the mic|Activar el micro|Mikrofon einschalten", sndOff: "Couper le micro|Turn off the mic|Apagar el micro|Mikrofon ausschalten",
+  sndThr: "Seuil d’alerte|Alert level|Umbral de alerta|Alarmschwelle", sndSens: "Sensibilité|Sensitivity|Sensibilidad|Empfindlichkeit",
+  sndBeep: "Bip quand c’est trop fort|Beep when too loud|Pitido si hay demasiado ruido|Piepton bei zu viel Lärm", sndCount: "Dépassements|Times over|Veces superado|Überschreitungen",
+  sndReset: "Remettre le compteur à zéro|Reset the counter|Poner el contador a cero|Zähler zurücksetzen", pinnedSnd: "Sonomètre affiché sur l’horloge|Sound meter shown on the clock|Sonómetro mostrado en el reloj|Lärmampel auf der Uhr angezeigt",
+  sndPrivacy: "Le son est analysé dans votre navigateur : rien n’est enregistré ni envoyé.|Sound is analysed in your browser: nothing is recorded or sent.|El sonido se analiza en tu navegador: no se graba ni se envía nada.|Der Ton wird im Browser ausgewertet: Nichts wird aufgenommen oder gesendet.",
+  sndDenied: "Micro refusé : autorisez-le dans la barre d’adresse du navigateur, puis réessayez.|Microphone blocked: allow it in the browser’s address bar, then try again.|Micrófono bloqueado: permítelo en la barra de direcciones y vuelve a intentarlo.|Mikrofon blockiert: Erlaube es in der Adressleiste des Browsers und versuche es erneut.",
+  sndNoMic: "Aucun micro trouvé sur cet appareil.|No microphone found on this device.|No se encontró ningún micrófono en este dispositivo.|Kein Mikrofon auf diesem Gerät gefunden.",
+  sndAsk: "Cliquez sur « Activer le micro » pour mesurer le bruit de la classe.|Click “Turn on the mic” to measure the noise in the classroom.|Haz clic en «Activar el micro» para medir el ruido de la clase.|Klicke auf „Mikrofon einschalten“, um den Lärm in der Klasse zu messen.",
+  z_calm: "Calme|Calm|Tranquilo|Ruhig", z_ok: "Ça va|OK|Bien|In Ordnung", z_up: "Ça monte…|Getting loud…|Sube el ruido…|Wird lauter …", z_loud: "Trop de bruit !|Too loud!|¡Demasiado ruido!|Zu laut!",
   pinClock: "Afficher sur l’horloge|Show on the clock|Mostrar en el reloj|Auf der Uhr anzeigen", unpin: "Retirer de l’horloge|Remove from the clock|Quitar del reloj|Von der Uhr entfernen",
   openFull: "Ouvrir en grand|Open full size|Abrir en grande|Groß öffnen", pinnedT: "Minuteur affiché sur l’horloge|Timer shown on the clock|Temporizador mostrado en el reloj|Timer auf der Uhr angezeigt", pinnedS: "Chrono affiché sur l’horloge|Stopwatch shown on the clock|Cronómetro mostrado en el reloj|Stoppuhr auf der Uhr angezeigt",
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
@@ -508,8 +520,8 @@ const T_RAW = {
   tour3: "Police, couleurs, fond (images, décors animés…) et effets : tout se règle dans ces onglets.|Font, colors, background (images, animated scenery…) and effects: it’s all in these tabs.|Fuente, colores, fondo (imágenes, decorados animados…) y efectos: todo está en estas pestañas.|Schrift, Farben, Hintergrund (Bilder, animierte Kulissen …) und Effekte: alles in diesen Tabs.",
   tour4t: "Réglages|Settings|Ajustes|Einstellungen",
   tour4: "Format 12 h ou 24 h, secondes, langue et format de la date, position à l’écran, message au-dessus de l’heure…|12 or 24 h, seconds, date language and format, position on screen, message above the time…|12 o 24 h, segundos, idioma y formato de la fecha, posición en pantalla, mensaje sobre la hora…|12 oder 24 h, Sekunden, Sprache und Format des Datums, Position, Nachricht über der Uhrzeit …",
-  tour5t: "Horloge, minuteur, chrono|Clock, timer, stopwatch|Reloj, temporizador, cronómetro|Uhr, Timer, Stoppuhr",
-  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le bouton « Afficher sur l’horloge » les garde en petit à côté de l’heure.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. “Show on the clock” keeps them small next to the time.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. «Mostrar en el reloj» los deja en pequeño junto a la hora.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. „Auf der Uhr anzeigen“ zeigt sie klein neben der Uhrzeit.",
+  tour5t: "Horloge, minuteur, chrono, sonomètre|Clock, timer, stopwatch, sound meter|Reloj, temporizador, cronómetro, sonómetro|Uhr, Timer, Stoppuhr, Lärmampel",
+  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le sonomètre montre le bruit de la classe. « Afficher sur l’horloge » les garde en petit à côté de l’heure.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. The sound meter shows how noisy the class is. “Show on the clock” keeps them small next to the time.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. El sonómetro muestra el ruido de la clase. «Mostrar en el reloj» los deja en pequeño junto a la hora.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Die Lärmampel zeigt, wie laut die Klasse ist. „Auf der Uhr anzeigen“ zeigt sie klein neben der Uhrzeit.",
   tour6t: "Notes|Notes|Notas|Notizen",
   tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur ou la taille du texte (A− / A+) : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, change its color or text size (A− / A+): it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color o el tamaño del texto (A− / A+): se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe oder Schriftgröße ändern (A− / A+): Sie bleibt gespeichert.",
   tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
@@ -596,7 +608,10 @@ const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
 const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop', 'zoom', 'spin', 'swirl', 'melt', 'bounce', 'jelly', 'glitch', 'slot'];
 const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .85, glitch: .55, slot: .7 };
 const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
-const MODES = ['clock', 'timer', 'stopwatch'];
+const MODES = ['clock', 'timer', 'stopwatch', 'sound'];
+// sonomètre : couleur et mot selon le niveau (0–100) et le seuil
+const sndColor = (lv, thr) => (lv >= thr ? '#ef4444' : lv >= thr * 0.85 ? '#f59e0b' : lv >= thr * 0.6 ? '#eab308' : '#22c55e');
+const sndZone = (lv, thr) => (lv >= thr ? ['z_loud', '🙉'] : lv >= thr * 0.85 ? ['z_up', '😬'] : lv >= thr * 0.6 ? ['z_ok', '🙂'] : ['z_calm', '😌']);
 const TAB_IDS = ['presets', 'font', 'colors', 'bg', 'fx', 'clock', 'date', 'layout'];
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
@@ -623,7 +638,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false,
+  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, sndThr: 65, sndSens: 50, sndBeep: false,
 };
 // Thème par défaut : Halloween
 const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
@@ -857,7 +872,7 @@ class Component extends DCLogic {
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
-    return { s, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -893,7 +908,7 @@ class Component extends DCLogic {
     }).catch(() => {});
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -902,6 +917,7 @@ class Component extends DCLogic {
     this.syncInd();
     this.syncFast();
     this.tourMeasure();
+    if (this.snd && s.mode !== 'sound' && !s.pinSnd) this.sndStop();
   }
   // Tuto de la première visite : une flèche montre chaque bouton, avec le texte dessous
   startTour = () => { clearTimeout(this.tourT); if (this.state.tab) this.setState({ tab: null }); this.setState({ tour: 0, idle: false }); };
@@ -1014,12 +1030,63 @@ class Component extends DCLogic {
   swToggle = () => { const sw = this.state.sw, now = Date.now(); this.setTools({ sw: sw.start ? { ...sw, start: null, acc: sw.acc + now - sw.start } : { ...sw, start: now } }); };
   swLap = () => { const sw = this.state.sw; if (!sw.start) return; this.setTools({ sw: { ...sw, laps: [...sw.laps, sw.acc + Date.now() - sw.start].slice(-99) } }); };
   swReset = () => this.setTools({ sw: { start: null, acc: 0, laps: [] } });
-  setMode = (m) => { if (this.state.s.mode !== m) this.setS({ mode: m }); };
+  setMode = (m) => { if (this.state.s.mode !== m) this.setS({ mode: m }); if (m === 'sound') this.sndStart(); };
+  // Sonomètre : le micro est analysé en direct dans le navigateur, rien n'est enregistré
+  sndRefs = { arc: (el) => { this.sndArc = el; }, needle: (el) => { this.sndNeedle = el; }, bar: (el) => { this.sndBar = el; } };
+  sndStart = async () => {
+    if (this.snd || this.sndBusy) return;
+    const L = this.L(), md = navigator.mediaDevices;
+    if (!md || !md.getUserMedia) { this.setState(st => ({ snd: { ...st.snd, err: L.sndNoMic } })); return; }
+    const ac = this.audio(); this.sndBusy = true;
+    try {
+      const stream = await md.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
+      if (!ac) { stream.getTracks().forEach(t => t.stop()); throw new Error('audio'); }
+      const src = ac.createMediaStreamSource(stream), an = ac.createAnalyser(); an.fftSize = 1024; src.connect(an);
+      this.snd = { stream, src, an, buf: new Float32Array(an.fftSize), lv: 0, over: 0, under: 0, alert: false, t: performance.now(), pushT: 0 };
+      this.setState(st => ({ snd: { ...st.snd, on: true, err: '' } }));
+      const loop = (t) => { if (!this.snd) return; this.sndRaf = requestAnimationFrame(loop); this.sndTick(t); };
+      this.sndRaf = requestAnimationFrame(loop);
+    } catch (e) {
+      const denied = e && (e.name === 'NotAllowedError' || e.name === 'SecurityError');
+      this.setState(st => ({ snd: { ...st.snd, on: false, err: denied ? L.sndDenied : L.sndNoMic } }));
+    } finally { this.sndBusy = false; }
+  };
+  sndStop = (quiet) => {
+    const x = this.snd; if (!x) return;
+    cancelAnimationFrame(this.sndRaf); this.snd = null;
+    try { x.src.disconnect(); } catch (e) {}
+    x.stream.getTracks().forEach(t => t.stop());
+    if (!quiet) this.setState(st => ({ snd: { ...st.snd, on: false, lv: 0, alert: false } }));
+  };
+  sndToggle = () => { if (this.snd) this.sndStop(); else this.sndStart(); };
+  sndChime = () => {
+    const ac = this.audio(); if (!ac) return;
+    try { const t0 = ac.currentTime; [[660, 0], [440, 0.22]].forEach(([fq, d]) => { const o = ac.createOscillator(), g = ac.createGain(); o.type = 'sine'; o.frequency.value = fq; g.gain.setValueAtTime(0.0001, t0 + d); g.gain.exponentialRampToValueAtTime(0.12, t0 + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.4); o.connect(g); g.connect(ac.destination); o.start(t0 + d); o.stop(t0 + d + 0.45); }); } catch (e) {}
+  };
+  sndTick = (t) => {
+    const x = this.snd, s = this.state.s, dt = Math.min(0.1, (t - x.t) / 1000); x.t = t;
+    x.an.getFloatTimeDomainData(x.buf);
+    let sum = 0; for (let i = 0; i < x.buf.length; i++) sum += x.buf[i] * x.buf[i];
+    const db = 20 * Math.log10(Math.sqrt(sum / x.buf.length) + 1e-9), shift = ((+s.sndSens || 50) - 50) * 0.4, lo = -70 - shift, hi = -15 - shift;
+    const target = Math.max(0, Math.min(100, (db - lo) / (hi - lo) * 100));
+    x.lv += (target - x.lv) * (target > x.lv ? 0.35 : 0.06);
+    const lv = x.lv, thr = +s.sndThr || 65;
+    if (lv >= thr) { x.over += dt; x.under = 0; } else { x.under += dt; x.over = 0; }
+    let changed = false;
+    if (!x.alert && x.over > 0.6) { x.alert = true; changed = true; this.setState(st => ({ snd: { ...st.snd, count: st.snd.count + 1 } })); if (s.sndBeep) this.sndChime(); }
+    if (x.alert && x.under > 1.5) { x.alert = false; changed = true; }
+    // dessin direct, sans re-rendre toute la page 60 fois par seconde
+    const col = sndColor(lv, thr);
+    if (this.sndArc) { this.sndArc.setAttribute('stroke-dasharray', `${lv.toFixed(1)} 200`); this.sndArc.style.stroke = col; }
+    if (this.sndNeedle) this.sndNeedle.setAttribute('transform', `rotate(${(-90 + lv * 1.8).toFixed(1)})`);
+    if (this.sndBar) { this.sndBar.style.transform = `scaleX(${(lv / 100).toFixed(3)})`; this.sndBar.style.background = col; }
+    if (changed || t - x.pushT > 250) { x.pushT = t; this.setState(st => ({ snd: { ...st.snd, lv: Math.round(lv), alert: x.alert } })); }
+  };
   // épingle le minuteur ou le chrono sur l'écran de l'heure (ou l'enlève)
   pinTool = (which) => {
-    const k = which === 'timer' ? 'pinTimer' : 'pinSw', L = this.L();
+    const k = which === 'timer' ? 'pinTimer' : which === 'sound' ? 'pinSnd' : 'pinSw', L = this.L();
     if (this.state.s[k]) { this.setS({ [k]: false }); return; }
-    this.setS({ [k]: true, mode: 'clock' }); this.toast(which === 'timer' ? L.pinnedT : L.pinnedS);
+    this.setS({ [k]: true, mode: 'clock' }); this.toast(which === 'timer' ? L.pinnedT : which === 'sound' ? L.pinnedSnd : L.pinnedS);
   };
   stopEv = (e) => { e.stopPropagation(); };
 
@@ -1263,7 +1330,7 @@ class Component extends DCLogic {
     const hStr = num(h12, s.leadingZero), mStr = num(p.m, true), sStr = num(p.s, true);
     const sep1 = s.sep, sep2 = s.sep === 'h' ? ' ' : s.sep, tsep = sep1 === 'h' || sep1 === ' ' ? ':' : sep1;
     const mode = MODES.includes(s.mode) ? s.mode : 'clock', nowMs = now.getTime(), tm = st.tm, sw = st.sw;
-    const ap = mode === 'clock' && s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
+    const ap = (mode === 'clock' || mode === 'sound') && s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
     const hms = (ms, up, forceH) => { const tot = up ? Math.ceil(ms / 1000) : Math.floor(ms / 1000), hh = Math.floor(tot / 3600), mm = Math.floor((tot % 3600) / 60), ss = tot % 60; return hh || forceH ? [num(hh, false), num(mm, true), num(ss, true)] : [num(mm, true), num(ss, true)]; };
     const tmLeft = tm.endAt ? Math.max(0, tm.endAt - nowMs) : tm.left, tmRun = !!tm.endAt;
     const swEl = sw.acc + (sw.start ? Math.max(0, nowMs - sw.start) : 0);
@@ -1284,7 +1351,7 @@ class Component extends DCLogic {
       display = `${hStr}${sep1 === ' ' ? ':' : sep1}${mStr}`;
     }
     this.timeLen = [...big, ...small].reduce((n, x) => n + x[0].length, 0) + ap.length;
-    this.titleStr = `${mode === 'timer' ? (tm.done ? '🔔 ' : '⏳ ') : mode === 'stopwatch' ? '⏱ ' : ''}${display} · findheure`;
+    this.titleStr = `${mode === 'timer' ? (tm.done ? '🔔 ' : '⏳ ') : mode === 'stopwatch' ? '⏱ ' : mode === 'sound' ? '🎤 ' : ''}${display} · findheure`;
 
     // clock
     const f = FONT_BY[s.font] || FONTS[0], wt = clampW(f, s.weight), ls = s.letterSpacing / 100;
@@ -1292,7 +1359,7 @@ class Component extends DCLogic {
     let fontPx = Math.min(avail / st.ratio, st.vh * (mode === 'clock' ? 0.46 : 0.4)) * s.size / 100;
     fontPx = Math.max(20, Math.min(fontPx, (st.vw * 0.96) / st.ratio));
     const P = POS[s.pos] || POS.c;
-    const visual = mode === 'timer' && s.tmVisual !== false, clockPx = visual ? fontPx * 0.34 : fontPx;
+    const visual = (mode === 'timer' && s.tmVisual !== false) || mode === 'sound', clockPx = visual ? fontPx * 0.34 : fontPx;
     const anim = s.anim !== 'none' ? `fh-${s.anim} ${ANIM_DUR[s.anim] || 0.6}s cubic-bezier(.2,.75,.2,1) both` : undefined;
     const rb = s.weird === 'rainbow', wk = Math.max(0.2, (s.weirdSpeed || 50) / 50), sec = (x) => (x / wk).toFixed(2) + 's';
     const fill = s.outline || rb ? null : s.gradText ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : null;
@@ -1354,7 +1421,26 @@ class Component extends DCLogic {
         E('circle', { r: detail ? 10 : 16, fill: hexA(ink, 0.9) }), E('circle', { r: detail ? 4 : 7, fill: zone, style: { transition: 'fill .8s ease' } }));
     };
     let disc = null;
-    if (visual) {
+    const sThr = +s.sndThr || 65, sLv = st.snd.on ? st.snd.lv : 0, sCol = sndColor(sLv, sThr), sZone = sndZone(sLv, sThr);
+    if (mode === 'sound') {
+      // cadran du sonomètre : zones vert → rouge, aiguille et seuil
+      const gw = Math.round(Math.max(240, Math.min(st.vw * 0.5, st.vh * 0.6, 620))), arcD = 'M -100 0 A 100 100 0 0 1 100 0';
+      const zone = (a, b, c) => E('path', { key: 'z' + c, d: arcD, pathLength: 100, fill: 'none', stroke: c, strokeOpacity: 0.3, strokeWidth: 22, strokeDasharray: `${(b - a).toFixed(2)} 200`, strokeDashoffset: (-a).toFixed(2) });
+      const at = (v, r) => { const a = Math.PI - v / 100 * Math.PI; return [(Math.cos(a) * r).toFixed(2), (-Math.sin(a) * r).toFixed(2)]; };
+      const ticks = []; for (let k = 0; k <= 10; k++) { const [x1, y1] = at(k * 10, 116), [x2, y2] = at(k * 10, k % 5 ? 120 : 124); ticks.push(E('line', { key: 't' + k, x1, y1, x2, y2, stroke: hexA(s.color, 0.5), strokeWidth: 1.6, strokeLinecap: 'round' })); }
+      const [tx1, ty1] = at(sThr, 84), [tx2, ty2] = at(sThr, 118);
+      disc = E('div', { key: 'gauge', style: { width: gw, display: 'flex', flexDirection: 'column', alignItems: 'center' } },
+        E('svg', { viewBox: '-128 -128 256 140', width: gw, height: Math.round(gw * 140 / 256), style: { display: 'block', overflow: 'visible' } },
+          zone(0, sThr * 0.6, '#22c55e'), zone(sThr * 0.6, sThr * 0.85, '#eab308'), zone(sThr * 0.85, sThr, '#f59e0b'), zone(sThr, 100, '#ef4444'),
+          E('path', { ref: this.sndRefs.arc, d: arcD, pathLength: 100, fill: 'none', stroke: sCol, strokeWidth: 22, strokeDasharray: '0 200' }),
+          ...ticks,
+          E('line', { x1: tx1, y1: ty1, x2: tx2, y2: ty2, stroke: hexA(s.color, 0.95), strokeWidth: 3.5, strokeLinecap: 'round' }),
+          E('g', { ref: this.sndRefs.needle, transform: 'rotate(-90)' }, E('line', { x1: 0, y1: 8, x2: 0, y2: -80, stroke: s.color, strokeWidth: 5, strokeLinecap: 'round' })),
+          E('circle', { r: 11, fill: s.color }), E('circle', { r: 5, fill: sCol })),
+        E('div', { style: { display: 'flex', alignItems: 'center', gap: '.35em', marginTop: Math.round(gw * 0.02), font: `${clampW(f, 600)} ${Math.round(Math.max(22, gw * 0.07))}px/1.1 ${stack(f)}`, color: st.snd.on ? sCol : hexA(s.color, 0.6), transition: 'color .3s ease' } },
+          E('span', { style: { fontSize: '1.3em' } }, st.snd.on ? sZone[1] : '🎤'), E('span', null, st.snd.on ? L[sZone[0]] : L.md_snd)));
+    }
+    if (visual && mode === 'timer') {
       const size = Math.round(Math.max(160, Math.min(st.vh * 0.46, st.vw * 0.62)));
       disc = E('div', { key: 'disc', style: { width: size, height: size, borderRadius: '50%', boxShadow: `0 20px 60px rgba(0,0,0,.28), 0 0 0 1px ${hexA(s.color, 0.12)}`, opacity: paused ? 0.75 : 1, transition: 'opacity .3s ease', animation: tm.done && st.ringing ? 'fh-ring .8s ease-in-out infinite' : undefined } }, discSvg(size, s.color, true));
     }
@@ -1383,6 +1469,7 @@ class Component extends DCLogic {
     const endStr = tmRun ? fmt(locale, { hour: '2-digit', minute: '2-digit', hour12: !!s.hour12, timeZone: tz }).format(new Date(tm.endAt)) : '';
     const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
       : mode === 'stopwatch' ? (sw.laps.length ? `${L.lap} ${sw.laps.length + 1}` : L.md_sw)
+      : mode === 'sound' ? L.md_snd
       : s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : s.msg === 'theme' ? (s.bgType === 'spooky' ? L.happyHalloween : s.bgType === 'scene' ? L['g_' + s.scene] || '' : '') : '';
     const citiesList = (s.cities || []).slice(0, 4).map(z => { const q = zp(now, z); const hh = s.hour12 ? (q.h % 12 || 12) : q.h; return { name: tzLabel(z), time: `${num(hh, s.leadingZero)}${sep1}${num(q.m, true)}${s.hour12 ? ' ' + dayPeriod(locale, now, z, q.h) : ''}` }; });
 
@@ -1425,7 +1512,7 @@ class Component extends DCLogic {
     const iv = st.ind || { x: 0, w: 0, on: false, slide: false };
     const ind = { x: iv.x + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}`, tr: iv.slide ? 'transform .5s cubic-bezier(.3,1.3,.45,1), width .5s cubic-bezier(.3,1.3,.45,1), opacity .2s ease' : 'opacity .25s ease' };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? s.accent : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? s.accent : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -1573,6 +1660,13 @@ class Component extends DCLogic {
           : btn('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : paused ? L.resume : L.start, this.tmToggle, { primary: true, disabled: !tmRun && tm.left <= 0 && tm.dur <= 0 });
         parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur }), btn('vis', 'pie_chart', '', () => this.setS({ tmVisual: !visual }), { title: L.tmVisual, on: visual }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('timer'), { title: s.pinTimer ? L.unpin : L.pinClock, on: s.pinTimer })]));
         if (!tmRun) parts.push(row('r2', TIMER_PRESETS.map(m => { const on = tm.dur === m * 60000; return E('button', { key: 'p' + m, type: 'button', className: 'fh-btn', onClick: () => this.tmSet(m), style: { height: '2.1em', padding: '0 .9em', borderRadius: 999, border: `1px solid ${on ? acc : hexA(ink, 0.2)}`, background: on ? hexA(acc, 0.22) : 'transparent', color: ink, font: `500 ${Math.round(bfs * 0.86)}px/1 ${stack(df)}`, cursor: 'pointer', fontVariantNumeric: 'tabular-nums' } }, `${num(m, false)} min`); }), { marginTop: '.8em', gap: '.45em', maxWidth: '36em' }));
+      } else if (mode === 'sound') {
+        const on = st.snd.on, slider = (key, label, k, min, max) => E('label', { key, style: { display: 'inline-flex', alignItems: 'center', gap: '.6em', font: `500 ${Math.round(bfs * 0.9)}px/1 ${stack(df)}`, color: ink } },
+          E('span', null, label), E('input', { type: 'range', min, max, value: s[k], onChange: (e) => this.setS({ [k]: +e.target.value }), style: { width: 150, accentColor: acc, cursor: 'pointer' } }), E('span', { style: { minWidth: '2ch', fontVariantNumeric: 'tabular-nums', opacity: 0.8 } }, s[k]));
+        parts.push(row('r1', [btn('go', on ? 'mic_off' : 'mic', on ? L.sndOff : L.sndOn, this.sndToggle, { primary: !on }), btn('beep', s.sndBeep ? 'notifications' : 'notifications_off', '', () => this.setS({ sndBeep: !s.sndBeep }), { title: L.sndBeep, on: s.sndBeep }), btn('rs', 'replay', '', () => this.setState(x => ({ snd: { ...x.snd, count: 0 } })), { title: L.sndReset, disabled: !st.snd.count }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('sound'), { title: s.pinSnd ? L.unpin : L.pinClock, on: s.pinSnd })]));
+        parts.push(row('r2', [slider('thr', L.sndThr, 'sndThr', 20, 95), slider('sens', L.sndSens, 'sndSens', 0, 100)], { marginTop: '1em', gap: '1em 2em' }));
+        parts.push(E('div', { key: 'info', style: { marginTop: '1em', font: `500 ${Math.round(bfs * 0.85)}px/1.4 ${stack(df)}`, color: st.snd.err ? '#ef4444' : hexA(ink, 0.75), textAlign: P[2], maxWidth: '34em' } },
+          st.snd.err || (on ? `${L.sndCount} : ${num(st.snd.count, false)} · ${L.sndPrivacy}` : `${L.sndAsk} ${L.sndPrivacy}`)));
       } else {
         parts.push(row('r1', sw.start
           ? [btn('lap', 'flag', L.lap, this.swLap, { title: L.lap + ' (L)' }), btn('go', 'pause', L.pause, this.swToggle, { primary: true }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('stopwatch'), { title: s.pinSw ? L.unpin : L.pinClock, on: s.pinSw })]
@@ -1591,7 +1685,7 @@ class Component extends DCLogic {
 
     // minuteur / chrono épinglés : petite carte dans un coin de l'écran de l'heure
     let pinsEl = null;
-    if (mode === 'clock' && (s.pinTimer || s.pinSw)) {
+    if (mode === 'clock' && (s.pinTimer || s.pinSw || s.pinSnd)) {
       const ink = ui.fg, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', ff = stack(f);
       const ib = (key, icon, title, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 34, height: 34, padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: primary ? 0 : `1px solid ${ui.border}`, background: primary ? acc : 'transparent', color: primary ? accInk : ui.fg2, cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: 19 } }, icon));
       const card = (key, lead, big, label, btns, alarm) => E('div', { key, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px 10px 12px', borderRadius: 18, background: ui.bar, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
@@ -1613,6 +1707,14 @@ class Component extends DCLogic {
           `${hms(swEl, false, false).join(tsep)}.${num(Math.floor(swEl / 100) % 10, false)}`,
           sw.laps.length ? `${L.md_sw} · ${L.lap} ${sw.laps.length + 1}` : L.md_sw,
           [ib('go', sw.start ? 'pause' : 'play_arrow', sw.start ? L.pause : swEl ? L.resume : L.start, this.swToggle, true), sw.start ? ib('lap', 'flag', L.lap, this.swLap) : null, ib('open', 'open_in_full', L.openFull, () => this.setMode('stopwatch')), ib('x', 'close', L.unpin, () => this.setS({ pinSw: false }))], false));
+      }
+      if (s.pinSnd) {
+        const bar = E('div', { style: { position: 'relative', width: 150, height: 12, margin: '10px 0 6px', borderRadius: 6, background: hexA(ink, 0.15) } },
+          E('div', { ref: this.sndRefs.bar, style: { position: 'absolute', inset: 0, borderRadius: 6, transformOrigin: '0 50%', transform: 'scaleX(0)', background: sCol } }),
+          E('div', { style: { position: 'absolute', top: -3, bottom: -3, left: `calc(${sThr}% - 1px)`, width: 2, borderRadius: 1, background: ink } }));
+        cards.push(card('pn', E('div', { style: { width: 52, height: 52, flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, background: hexA(st.snd.on ? sCol : ink, 0.18), transition: 'background .3s ease' } }, st.snd.on ? sZone[1] : '🎤'), bar,
+          st.snd.err || (st.snd.on ? `${L.md_snd} · ${L[sZone[0]]}` : L.sndAsk),
+          [st.snd.on ? null : ib('mic', 'mic', L.sndOn, this.sndStart, true), ib('open', 'open_in_full', L.openFull, () => this.setMode('sound')), ib('x', 'close', L.unpin, () => this.setS({ pinSnd: false }))], st.snd.alert));
       }
       const right = !/r$/.test(s.pos), top = s.pos[0] === 'b';
       pinsEl = E('div', { style: { position: 'absolute', zIndex: 6, display: 'flex', flexDirection: 'column', alignItems: right ? 'flex-end' : 'flex-start', gap: 10, pointerEvents: 'none', [right ? 'right' : 'left']: 18, [top ? 'top' : 'bottom']: top ? 72 : 34, maxWidth: 'calc(100vw - 36px)' } }, cards);
@@ -1663,6 +1765,7 @@ class Component extends DCLogic {
     return {
       s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
       bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid', isSpooky: spooky, spooky: spooky ? spookyScene(E) : null, isScene: s.bgType === 'scene', scene: s.bgType === 'scene' ? sceneLayer(E, s) : null },
+      sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (mode === 'clock' && !!s.pinSnd)) },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
