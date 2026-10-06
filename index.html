@@ -906,6 +906,7 @@ class Component extends DCLogic {
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
+    sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
     return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
@@ -930,6 +931,7 @@ class Component extends DCLogic {
     on(window, 'dragenter', this.onDragEnter); on(window, 'dragover', this.onDragOver); on(window, 'dragleave', this.onDragLeave); on(window, 'drop', this.onDrop);
     if (document.fonts) { on(document.fonts, 'loadingdone', this.bumpFonts); document.fonts.ready.then(() => this.bumpFonts()); }
     on(window, 'pointermove', this.gridMove, { passive: true });
+    on(window, 'pagehide', this.freezeSw);
     this.activity();
     this.checkTimer();
     this.applyAuto();
@@ -1063,6 +1065,11 @@ class Component extends DCLogic {
   };
   swToggle = () => { const sw = this.state.sw, now = Date.now(); this.setTools({ sw: sw.start ? { ...sw, start: null, acc: sw.acc + now - sw.start } : { ...sw, start: now } }); };
   swLap = () => { const sw = this.state.sw; if (!sw.start) return; this.setTools({ sw: { ...sw, laps: [...sw.laps, sw.acc + Date.now() - sw.start].slice(-99) } }); };
+  // en quittant la page, le chrono est mis en pause à l'instant exact (le minuteur, lui, garde son heure de fin)
+  freezeSw = () => {
+    const { sw, tm } = this.state; if (!sw.start) return;
+    try { localStorage.setItem(TKEY, JSON.stringify({ tm, sw: { ...sw, start: null, acc: sw.acc + Date.now() - sw.start } })); } catch (e) {}
+  };
   swReset = () => this.setTools({ sw: { start: null, acc: 0, laps: [] } });
   // Mode « site ou image » : contenu en plein écran, l'heure dans une carte déplaçable
   showFileRef = React.createRef();
