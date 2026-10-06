@@ -482,6 +482,7 @@ const T_RAW = {
   endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
+  noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
   m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
   g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
   g_summer: "Bel été ☀️|Happy summer ☀️|Feliz verano ☀️|Schönen Sommer ☀️", g_autumn: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂",
@@ -507,7 +508,7 @@ const T_RAW = {
   tour5t: "Horloge, minuteur, chrono|Clock, timer, stopwatch|Reloj, temporizador, cronómetro|Uhr, Timer, Stoppuhr",
   tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Touche Espace : démarrer ou mettre en pause.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. Space: start or pause.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. Espacio: iniciar o pausar.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Leertaste: Start oder Pause.",
   tour6t: "Notes|Notes|Notas|Notizen",
-  tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, recolor it: it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color: se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe ändern: Sie bleibt gespeichert.",
+  tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur ou la taille du texte (A− / A+) : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, change its color or text size (A− / A+): it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color o el tamaño del texto (A− / A+): se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe oder Schriftgröße ändern (A− / A+): Sie bleibt gespeichert.",
   tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
   tour7: "Un style au hasard à chaque clic (touche S).|A random style with every click (S key).|Un estilo al azar con cada clic (tecla S).|Bei jedem Klick ein zufälliger Stil (Taste S).",
   tour8t: "Plein écran|Fullscreen|Pantalla completa|Vollbild",
@@ -600,6 +601,7 @@ const SCENE_IDS = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine'
 const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇' };
 const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note'], ['surprise'], ['fs'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
+const NOTE_FS = [14, 80];
 const NOTE_C = ['#ffb35c', '#ffe066', '#ffadc8', '#a0e7ff', '#b8f2a6', '#d4b8ff'];
 const ICON = { fontFamily: "'Material Symbols Rounded'", fontWeight: 'normal', fontStyle: 'normal', lineHeight: 1, display: 'inline-block', whiteSpace: 'nowrap', letterSpacing: 'normal', textTransform: 'none', direction: 'ltr', fontFeatureSettings: "'liga'" };
 const POSK = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
@@ -1608,13 +1610,14 @@ class Component extends DCLogic {
 
     // notes autocollantes (déplaçables, redimensionnables, enregistrées dans le navigateur)
     const notesEl = st.notes.map(n => {
-      const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y));
+      const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y)), nfs = n.fs || 23;
       return E('div', { key: n.id, className: 'fh-note', onPointerDown: () => this.raiseNote(n.id), style: { position: 'absolute', left: x, top: y, zIndex: n.z || 1, pointerEvents: 'auto', color: '#2a2113', background: `linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 40px), ${n.c}`, borderRadius: '3px 3px 3px 22px', boxShadow: '0 14px 30px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)', transform: `rotate(${n.r || 0}deg)`, animation: 'fh-note-in .5s cubic-bezier(.2,.9,.3,1.25) both' } },
         E('div', { onPointerDown: (e) => this.noteDown(e, n.id), onPointerMove: this.noteMove, onPointerUp: this.noteUp, onPointerCancel: this.noteUp, style: { height: 30, display: 'flex', alignItems: 'center', gap: 5, padding: '0 6px 0 10px', cursor: 'grab', touchAction: 'none' } },
           NOTE_C.map(c => E('button', { key: c, type: 'button', className: 'fh-dot', title: L.color, onClick: () => this.patchNote(n.id, { c }), style: { width: 12, height: 12, padding: 0, borderRadius: '50%', border: '1.5px solid rgba(42,33,19,.45)', background: c, cursor: 'pointer', boxShadow: n.c === c ? '0 0 0 2px rgba(42,33,19,.7)' : 'none' } })),
           E('div', { style: { flex: 1 } }),
+          ...[[-1, L.noteSmaller, 13], [1, L.noteBigger, 18]].map(([d, title, z]) => E('button', { key: 'fs' + d, type: 'button', title, disabled: d < 0 ? nfs <= NOTE_FS[0] : nfs >= NOTE_FS[1], onClick: () => this.patchNote(n.id, { fs: Math.max(NOTE_FS[0], Math.min(NOTE_FS[1], nfs + d * (nfs >= 32 ? 6 : 3))) }), style: { height: 24, minWidth: 26, padding: '0 4px', border: 0, borderRadius: 6, background: 'transparent', color: 'rgba(42,33,19,.75)', cursor: 'pointer', font: `700 ${z}px/1 Geist, system-ui, sans-serif`, opacity: (d < 0 ? nfs <= NOTE_FS[0] : nfs >= NOTE_FS[1]) ? 0.3 : 1 } }, 'A')),
           E('button', { type: 'button', title: L.noteDel, onClick: () => this.delNote(n.id), style: { width: 24, height: 24, padding: 0, border: 0, borderRadius: 6, background: 'transparent', color: 'rgba(42,33,19,.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 18 } }, 'close'))),
-        E('textarea', { value: n.t || '', placeholder: L.notePh, autoFocus: n.id === this.newNoteId, spellCheck: false, onChange: (e) => this.patchNote(n.id, { t: e.target.value.slice(0, 2000) }, true), onMouseUp: (e) => this.noteSize(n.id, e), onPointerUp: (e) => this.noteSize(n.id, e), style: { display: 'block', width: w, height: h, minWidth: 150, minHeight: 80, maxWidth: '80vw', maxHeight: '70vh', boxSizing: 'border-box', resize: 'both', border: 0, margin: 0, background: 'transparent', color: 'inherit', padding: '0 14px 14px', font: "600 23px/1.2 'Caveat', 'Comic Sans MS', cursive", userSelect: 'text', overflow: 'auto' } }));
+        E('textarea', { value: n.t || '', placeholder: L.notePh, autoFocus: n.id === this.newNoteId, spellCheck: false, onChange: (e) => this.patchNote(n.id, { t: e.target.value.slice(0, 2000) }, true), onMouseUp: (e) => this.noteSize(n.id, e), onPointerUp: (e) => this.noteSize(n.id, e), style: { display: 'block', width: w, height: h, minWidth: 150, minHeight: 80, maxWidth: '80vw', maxHeight: '70vh', boxSizing: 'border-box', resize: 'both', border: 0, margin: 0, background: 'transparent', color: 'inherit', padding: '0 14px 14px', font: `600 ${nfs}px/1.2 'Caveat', 'Comic Sans MS', cursive`, userSelect: 'text', overflow: 'auto' } }));
     });
 
     return {
