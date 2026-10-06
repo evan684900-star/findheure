@@ -509,6 +509,7 @@ const T_RAW = {
   sndNoMic: "Aucun micro trouvé sur cet appareil.|No microphone found on this device.|No se encontró ningún micrófono en este dispositivo.|Kein Mikrofon auf diesem Gerät gefunden.",
   sndAsk: "Cliquez sur « Activer le micro » pour mesurer le bruit de la classe.|Click “Turn on the mic” to measure the noise in the classroom.|Haz clic en «Activar el micro» para medir el ruido de la clase.|Klicke auf „Mikrofon einschalten“, um den Lärm in der Klasse zu messen.",
   z_calm: "Calme|Calm|Tranquilo|Ruhig", z_ok: "Ça va|OK|Bien|In Ordnung", z_up: "Ça monte…|Getting loud…|Sube el ruido…|Wird lauter …", z_loud: "Trop de bruit !|Too loud!|¡Demasiado ruido!|Zu laut!",
+  pinMoveHint: "Glisser pour déplacer · double-clic pour ranger dans le coin|Drag to move · double-click to put back in the corner|Arrastra para mover · doble clic para volver a la esquina|Ziehen zum Verschieben · Doppelklick: zurück in die Ecke",
   pinClock: "Afficher sur l’horloge|Show on the clock|Mostrar en el reloj|Auf der Uhr anzeigen", unpin: "Retirer de l’horloge|Remove from the clock|Quitar del reloj|Von der Uhr entfernen",
   openFull: "Ouvrir en grand|Open full size|Abrir en grande|Groß öffnen", pinnedT: "Minuteur affiché sur l’horloge|Timer shown on the clock|Temporizador mostrado en el reloj|Timer auf der Uhr angezeigt", pinnedS: "Chrono affiché sur l’horloge|Stopwatch shown on the clock|Cronómetro mostrado en el reloj|Stoppuhr auf der Uhr angezeigt",
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
@@ -652,7 +653,7 @@ const SCENE_IDS = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine'
 const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇' };
 const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note'], ['surprise'], ['fs'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
-const NOTE_FS = [14, 80];
+const NOTE_FS = [14, 80], PIN_K = [0.6, 3];
 const NOTE_C = ['#ffb35c', '#ffe066', '#ffadc8', '#a0e7ff', '#b8f2a6', '#d4b8ff'];
 const ICON = { fontFamily: "'Material Symbols Rounded'", fontWeight: 'normal', fontStyle: 'normal', lineHeight: 1, display: 'inline-block', whiteSpace: 'nowrap', letterSpacing: 'normal', textTransform: 'none', direction: 'ltr', fontFeatureSettings: "'liga'" };
 const POSK = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
@@ -671,7 +672,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false,
+  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false,
 };
 // Thème par défaut : Halloween
 const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
@@ -905,7 +906,7 @@ class Component extends DCLogic {
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
-    return { s, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -1077,6 +1078,27 @@ class Component extends DCLogic {
   };
   cardMove = (e) => { const d = this.cardDrag; if (!d) return; const st = this.state; this.setState({ showDrag: { x: Math.max(0, Math.min(st.vw - d.w, e.clientX - d.dx)), y: Math.max(0, Math.min(st.vh - d.h, e.clientY - d.dy)) } }); };
   cardUp = () => { if (!this.cardDrag) return; this.cardDrag = null; const st = this.state, p = st.showDrag; if (p) this.setS({ showPos: { x: p.x / st.vw, y: p.y / st.vh } }); this.setState({ showDrag: null }); };
+  // cartes épinglées : glisser pour déplacer, double-clic pour les ranger dans le coin, − / + pour la taille
+  pinDown = (e, id) => {
+    if (e.button !== 0 || (e.target.closest && e.target.closest('button'))) return;
+    const r = e.currentTarget.getBoundingClientRect(); e.preventDefault();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
+    this.pinD = { id, dx: e.clientX - r.left, dy: e.clientY - r.top, w: r.width, h: r.height, sx: e.clientX, sy: e.clientY, moved: false };
+  };
+  pinMove = (e) => {
+    const d = this.pinD; if (!d) return;
+    if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 5) return;
+    d.moved = true; const st = this.state;
+    this.setState({ pinDrag: { id: d.id, x: Math.max(0, Math.min(st.vw - d.w, e.clientX - d.dx)), y: Math.max(0, Math.min(st.vh - d.h, e.clientY - d.dy)) } });
+  };
+  pinUp = () => {
+    const d = this.pinD; if (!d) return; this.pinD = null;
+    const st = this.state, p = st.pinDrag;
+    if (d.moved && p) this.setS({ pinPos: { ...(st.s.pinPos || {}), [d.id]: { x: p.x / st.vw, y: p.y / st.vh } } });
+    this.setState({ pinDrag: null });
+  };
+  pinReset = (id) => { const pp = { ...(this.state.s.pinPos || {}) }; delete pp[id]; this.setS({ pinPos: pp }); };
+  pinZoom = (id, d) => { const ps = { ...(this.state.s.pinScale || {}) }; ps[id] = Math.round(Math.max(PIN_K[0], Math.min(PIN_K[1], (+ps[id] || 1) + d)) * 100) / 100; this.setS({ pinScale: ps }); };
   setMode = (m) => { if (this.state.s.mode !== m) this.setS({ mode: m }); if (m === 'sound') this.sndStart(); };
   // Sonomètre : le micro est analysé en direct dans le navigateur, rien n'est enregistré
   sndRefs = { arc: (el) => { this.sndArc = el; }, needle: (el) => { this.sndNeedle = el; }, bar: (el) => { this.sndBar = el; } };
@@ -1735,41 +1757,53 @@ class Component extends DCLogic {
       toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px' } }, parts);
     }
 
-    // minuteur / chrono épinglés : petite carte dans un coin de l'écran de l'heure
+    // minuteur / chrono / sonomètre épinglés : cartes déplaçables et redimensionnables sur l'écran de l'heure
     let pinsEl = null;
     if (pinView(mode) && (s.pinTimer || s.pinSw || s.pinSnd)) {
       const ink = ui.fg, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', ff = stack(f);
-      const ib = (key, icon, title, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 34, height: 34, padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: primary ? 0 : `1px solid ${ui.border}`, background: primary ? acc : 'transparent', color: primary ? accInk : ui.fg2, cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: 19 } }, icon));
-      const card = (key, lead, big, label, btns, alarm) => E('div', { key, style: { display: 'flex', alignItems: 'center', gap: 12, padding: '10px 10px 10px 12px', borderRadius: 18, background: ui.bar, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
-        lead,
-        E('div', { style: { display: 'flex', flexDirection: 'column', gap: 4, minWidth: 0 } },
-          E('div', { style: { font: `${clampW(f, Math.max(400, wt))} 32px/1 ${ff}`, fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap', direction: 'ltr' } }, big),
-          E('div', { style: { font: '500 12px/1.1 Geist, system-ui, sans-serif', color: alarm ? '#ef4444' : ui.fg2, whiteSpace: 'nowrap' } }, label)),
-        E('div', { style: { display: 'flex', gap: 4, marginLeft: 4 } }, btns));
+      const pinPos = s.pinPos || {}, kOf = (id) => Math.max(PIN_K[0], Math.min(PIN_K[1], +(s.pinScale || {})[id] || 1));
+      const right = !/r$/.test(s.pos), top = s.pos[0] === 'b';
+      const ib = (key, icon, title, onClick, primary, k) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: Math.round(34 * k), height: Math.round(34 * k), padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: primary ? 0 : `1px solid ${ui.border}`, background: primary ? acc : 'transparent', color: primary ? accInk : ui.fg2, cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: Math.round(19 * k) } }, icon));
+      const tb = (key, icon, title, onClick) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 28, height: 28, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: `1px solid ${ui.border}`, background: ui.panel, color: ui.fg, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.25)' } }, E('span', { style: { ...ICON, fontSize: 16 } }, icon));
+      const card = (id, k, lead, big, label, btns, alarm) => {
+        const drag = st.pinDrag && st.pinDrag.id === id ? st.pinDrag : null, saved = pinPos[id];
+        const free = drag || (saved ? { x: saved.x * st.vw, y: saved.y * st.vh } : null);
+        return E('div', { key: id, className: 'fh-card', title: L.pinMoveHint, onPointerDown: (e) => this.pinDown(e, id), onPointerMove: this.pinMove, onPointerUp: this.pinUp, onPointerCancel: this.pinUp, onDoubleClick: (e) => { if (!(e.target.closest && e.target.closest('button'))) this.pinReset(id); },
+          style: { position: free ? 'absolute' : 'relative', left: free ? Math.max(0, Math.min(st.vw - 80, free.x)) : undefined, top: free ? Math.max(0, Math.min(st.vh - 40, free.y)) : undefined, zIndex: drag ? 2 : 1, display: 'flex', alignItems: 'center', gap: Math.round(12 * k), padding: `${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(12 * k)}px`, borderRadius: Math.round(14 + 4 * k), background: ui.bar, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+          lead,
+          E('div', { style: { display: 'flex', flexDirection: 'column', gap: Math.round(4 * k), minWidth: 0 } },
+            E('div', { style: { font: `${clampW(f, Math.max(400, wt))} ${Math.round(32 * k)}px/1 ${ff}`, fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap', direction: 'ltr' } }, big),
+            E('div', { style: { font: `500 ${Math.max(11, Math.round(12 * k))}px/1.1 Geist, system-ui, sans-serif`, color: alarm ? '#ef4444' : ui.fg2, whiteSpace: 'nowrap' } }, label)),
+          E('div', { style: { display: 'flex', gap: Math.round(4 * k), marginLeft: Math.round(4 * k) } }, btns),
+          E('div', { className: 'fh-card-tools', style: { position: 'absolute', top: -14, right: -8, display: 'flex', gap: 4 } },
+            tb('sm', 'remove', L.clkSmaller, () => this.pinZoom(id, -0.2)), tb('bg', 'add', L.clkBigger, () => this.pinZoom(id, 0.2))));
+      };
       const cards = [], tmPaused = !tmRun && !tm.done && tm.left !== tm.dur && tm.left > 0;
+      const disk = (k, kids, extra) => E('div', { style: { width: Math.round(52 * k), height: Math.round(52 * k), flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', ...extra } }, kids);
       if (s.pinTimer) {
-        const go = tm.done ? (st.ringing ? ib('go', 'stop', L.stopAlarm, this.stopAlarm, true) : ib('go', 'replay', L.again, this.tmAgain, true))
-          : ib('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : tmPaused ? L.resume : L.start, this.tmToggle, true);
-        cards.push(card('pt', E('div', { style: { flexShrink: 0, opacity: tmPaused ? 0.75 : 1 } }, discSvg(52, ink, false)), hms(tmLeft, true, tm.dur >= 3600000).join(tsep),
+        const k = kOf('pt'), go = tm.done ? (st.ringing ? ib('go', 'stop', L.stopAlarm, this.stopAlarm, true, k) : ib('go', 'replay', L.again, this.tmAgain, true, k))
+          : ib('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : tmPaused ? L.resume : L.start, this.tmToggle, true, k);
+        cards.push(card('pt', k, E('div', { style: { flexShrink: 0, opacity: tmPaused ? 0.75 : 1 } }, discSvg(Math.round(52 * k), ink, false)), hms(tmLeft, true, tm.dur >= 3600000).join(tsep),
           tm.done ? L.done : tmRun ? `${L.md_timer} · ${L.endsAt} ${endStr}` : L.md_timer,
-          [go, ib('open', 'open_in_full', L.openFull, () => this.setMode('timer')), ib('x', 'close', L.unpin, () => this.setS({ pinTimer: false }))], tm.done && st.ringing));
+          [go, ib('open', 'open_in_full', L.openFull, () => this.setMode('timer'), false, k), ib('x', 'close', L.unpin, () => this.setS({ pinTimer: false }), false, k)], tm.done && st.ringing));
       }
       if (s.pinSw) {
-        cards.push(card('ps', E('div', { style: { width: 52, height: 52, flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: hexA(acc, 0.18), color: acc } }, E('span', { style: { ...ICON, fontSize: 28 } }, 'timer')),
+        const k = kOf('ps');
+        cards.push(card('ps', k, disk(k, E('span', { style: { ...ICON, fontSize: Math.round(28 * k) } }, 'timer'), { background: hexA(acc, 0.18), color: acc }),
           `${hms(swEl, false, false).join(tsep)}.${num(Math.floor(swEl / 100) % 10, false)}`,
           sw.laps.length ? `${L.md_sw} · ${L.lap} ${sw.laps.length + 1}` : L.md_sw,
-          [ib('go', sw.start ? 'pause' : 'play_arrow', sw.start ? L.pause : swEl ? L.resume : L.start, this.swToggle, true), sw.start ? ib('lap', 'flag', L.lap, this.swLap) : null, ib('open', 'open_in_full', L.openFull, () => this.setMode('stopwatch')), ib('x', 'close', L.unpin, () => this.setS({ pinSw: false }))], false));
+          [ib('go', sw.start ? 'pause' : 'play_arrow', sw.start ? L.pause : swEl ? L.resume : L.start, this.swToggle, true, k), sw.start ? ib('lap', 'flag', L.lap, this.swLap, false, k) : null, ib('open', 'open_in_full', L.openFull, () => this.setMode('stopwatch'), false, k), ib('x', 'close', L.unpin, () => this.setS({ pinSw: false }), false, k)], false));
       }
       if (s.pinSnd) {
-        const bar = E('div', { style: { position: 'relative', width: 150, height: 12, margin: '10px 0 6px', borderRadius: 6, background: hexA(ink, 0.15) } },
-          E('div', { ref: this.sndRefs.bar, style: { position: 'absolute', inset: 0, borderRadius: 6, transformOrigin: '0 50%', transform: 'scaleX(0)', background: sCol } }),
+        const k = kOf('pn'), bar = E('div', { style: { position: 'relative', width: Math.round(150 * k), height: Math.round(12 * k), margin: `${Math.round(10 * k)}px 0 ${Math.round(6 * k)}px`, borderRadius: 6 * k, background: hexA(ink, 0.15) } },
+          E('div', { ref: this.sndRefs.bar, style: { position: 'absolute', inset: 0, borderRadius: 6 * k, transformOrigin: '0 50%', transform: 'scaleX(0)', background: sCol } }),
           E('div', { style: { position: 'absolute', top: -3, bottom: -3, left: `calc(${sThr}% - 1px)`, width: 2, borderRadius: 1, background: ink } }));
-        cards.push(card('pn', E('div', { style: { width: 52, height: 52, flexShrink: 0, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 28, background: hexA(st.snd.on ? sCol : ink, 0.18), transition: 'background .3s ease' } }, st.snd.on ? sZone[1] : '🎤'), bar,
+        cards.push(card('pn', k, disk(k, st.snd.on ? sZone[1] : '🎤', { fontSize: Math.round(28 * k), background: hexA(st.snd.on ? sCol : ink, 0.18), transition: 'background .3s ease' }), bar,
           st.snd.err || (st.snd.on ? `${L.md_snd} · ${L[sZone[0]]}` : L.sndAsk),
-          [st.snd.on ? null : ib('mic', 'mic', L.sndOn, this.sndStart, true), ib('open', 'open_in_full', L.openFull, () => this.setMode('sound')), ib('x', 'close', L.unpin, () => this.setS({ pinSnd: false }))], st.snd.alert));
+          [st.snd.on ? null : ib('mic', 'mic', L.sndOn, this.sndStart, true, k), ib('open', 'open_in_full', L.openFull, () => this.setMode('sound'), false, k), ib('x', 'close', L.unpin, () => this.setS({ pinSnd: false }), false, k)], st.snd.alert));
       }
-      const right = !/r$/.test(s.pos), top = s.pos[0] === 'b';
-      pinsEl = E('div', { style: { position: 'absolute', zIndex: 6, display: 'flex', flexDirection: 'column', alignItems: right ? 'flex-end' : 'flex-start', gap: 10, pointerEvents: 'none', [right ? 'right' : 'left']: 18, [top ? 'top' : 'bottom']: top ? 72 : 34, maxWidth: 'calc(100vw - 36px)' } }, cards);
+      // un seul conteneur plein écran : les cartes « rangées » s'empilent dans le coin, les autres sont posées où on les a lâchées
+      pinsEl = E('div', { style: { position: 'absolute', inset: 0, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: top ? 'flex-start' : 'flex-end', alignItems: right ? 'flex-end' : 'flex-start', gap: 10, padding: top ? '72px 18px 0' : '0 18px 34px', boxSizing: 'border-box', pointerEvents: 'none' } }, cards);
     }
 
     // tuto : projecteur sur l'élément, flèche dessinée à la main et texte juste dessous
