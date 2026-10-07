@@ -12,6 +12,8 @@
 <!-- React servi depuis le site lui-même : marche même si le réseau de l’établissement bloque unpkg.com -->
 <script src="./vendor/react.production.min.js"></script>
 <script src="./vendor/react-dom.production.min.js"></script>
+<!-- décors animés des thèmes -->
+<script src="./scenes.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -133,7 +135,10 @@ a{color:inherit}a:hover{opacity:.8}
   </sc-if>
 
   <div onClick="{{ onStage }}" onDoubleClick="{{ toggleFs }}" style="position: absolute; inset: 0; box-sizing: border-box; display: {{ stageDisplay }}; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
-    <div style="display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%;">
+    <div style="position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%;">
+      <sc-if value="{{ halo.on }}" hint-placeholder-val="{{ false }}">
+        <div style="position: absolute; left: -16%; right: -16%; top: -20%; bottom: -20%; z-index: -1; pointer-events: none; background: {{ halo.bg }};"></div>
+      </sc-if>
       <sc-if value="{{ msg.show }}" hint-placeholder-val="{{ false }}">
         <div style="{{ msg.style }}">{{ msg.text }}</div>
       </sc-if>
@@ -749,17 +754,17 @@ const PRESETS = [
   { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'solid', bgColor: '#120d0b', grain: 30, vignette: 65, anim: 'fade', sepAccent: true } },
   // saisons & fêtes
   { id: 'rentree', n: 'Rentrée|Back to school|Vuelta al cole|Schulstart', s: { font: 'Caveat', weight: 600, color: '#f6f6ef', dateColor: '#ecece2', dateOpacity: 80, accent: '#ffe066', bgType: 'scene', scene: 'rentree', bg1: '#24452f', bg2: '#1c3a29', bg3: '#3c6b4c', vignette: 35, grain: 40, anim: 'fade' } },
-  { id: 'autumn', n: 'Automne|Autumn|Otoño|Herbst', s: { font: 'Righteous', weight: 400, color: '#ffe8cc', dateColor: '#ffd9ae', dateOpacity: 80, accent: '#ff8c42', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'autumn', bg1: '#8a3b12', bg2: '#2b160d', bg3: '#ffb347', vignette: 40, anim: 'swirl' } },
+  { id: 'autumn', n: 'Automne|Autumn|Otoño|Herbst', s: { font: 'Righteous', weight: 400, color: '#ffe8cc', dateColor: '#ffd9ae', dateOpacity: 80, accent: '#ff8c42', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'autumn', bg1: '#b24a2b', bg2: '#3a1f3f', bg3: '#ffbe6b', vignette: 40, anim: 'swirl' } },
   { id: 'halloween', n: 'Halloween|Halloween|Halloween|Halloween', s: HALLOWEEN },
   { id: 'winter', n: 'Hiver|Winter|Invierno|Winter', s: { font: 'Unbounded', weight: 300, color: '#f4fbff', dateColor: '#dcefff', dateOpacity: 75, accent: '#7cc4ff', shadow: 25, bgType: 'scene', scene: 'winter', bg1: '#4a7fb5', bg2: '#0b1d3a', bg3: '#cfe8ff', vignette: 25, anim: 'drop' } },
-  { id: 'xmas', n: 'Noël|Christmas|Navidad|Weihnachten', s: { font: 'Mountains of Christmas', weight: 700, color: '#fff4e0', dateColor: '#ffe9c7', dateOpacity: 85, accent: '#e63946', sepAccent: true, shadow: 35, bgType: 'scene', scene: 'xmas', bg1: '#0f3d2e', bg2: '#06140f', bg3: '#ffd166', vignette: 40, anim: 'bounce' } },
+  { id: 'xmas', n: 'Noël|Christmas|Navidad|Weihnachten', s: { font: 'Mountains of Christmas', weight: 700, color: '#fff4e0', dateColor: '#ffe9c7', dateOpacity: 85, accent: '#e63946', sepAccent: true, shadow: 35, bgType: 'scene', scene: 'xmas', bg1: '#1d3a6b', bg2: '#0a1630', bg3: '#f3b56b', vignette: 40, anim: 'bounce' } },
   { id: 'newyear', n: 'Nouvel An|New Year|Año Nuevo|Neujahr', s: { font: 'Bebas Neue', weight: 400, letterSpacing: 4, color: '#ffd166', gradText: true, grad1: '#fff4c2', grad2: '#d4a017', dateColor: '#ffe9a8', dateOpacity: 80, accent: '#ffd166', bgType: 'scene', scene: 'newyear', bg1: '#1b1446', bg2: '#05040f', bg3: '#ffd166', vignette: 45, anim: 'zoom' } },
-  { id: 'valentine', n: 'Saint-Valentin|Valentine’s|San Valentín|Valentinstag', s: { font: 'Great Vibes', weight: 400, color: '#ffffff', dateColor: '#ffe0ec', dateOpacity: 85, accent: '#ff4d8d', shadow: 30, bgType: 'scene', scene: 'valentine', bg1: '#c2185b', bg2: '#4a0d27', bg3: '#ffb3d1', vignette: 35, anim: 'pop' } },
-  { id: 'spring', n: 'Printemps|Spring|Primavera|Frühling', s: { font: 'Fredoka', weight: 600, color: '#2e6b3f', dateColor: '#3d5a40', dateOpacity: 80, accent: '#ff6fb5', bgType: 'scene', scene: 'spring', bg1: '#ffe3f1', bg2: '#bfe6ff', bg3: '#fff7c2', vignette: 0, anim: 'bounce' } },
-  { id: 'april', n: 'Poisson d’avril|April Fools|Inocentes|Aprilscherz', s: { font: 'Fredoka', weight: 600, color: '#e9fbff', dateColor: '#c9f1ff', dateOpacity: 80, accent: '#ffb703', sepAccent: true, shadow: 25, bgType: 'scene', scene: 'april', bg1: '#032b4f', bg2: '#0b5ea8', bg3: '#7fdcff', vignette: 35, anim: 'jelly' } },
-  { id: 'easter', n: 'Pâques|Easter|Pascua|Ostern', s: { font: 'Fredoka', weight: 600, color: '#6b3fa0', dateColor: '#7a5a9e', dateOpacity: 85, accent: '#ff8fab', bgType: 'scene', scene: 'easter', bg1: '#fff6d6', bg2: '#d9f2ff', bg3: '#ffd6e8', vignette: 0, anim: 'bounce' } },
+  { id: 'valentine', n: 'Saint-Valentin|Valentine’s|San Valentín|Valentinstag', s: { font: 'Great Vibes', weight: 400, color: '#ffffff', dateColor: '#ffe0ec', dateOpacity: 85, accent: '#ff4d8d', shadow: 30, bgType: 'scene', scene: 'valentine', bg1: '#a3214f', bg2: '#3a0b2a', bg3: '#ff9fb8', vignette: 35, anim: 'pop' } },
+  { id: 'spring', n: 'Printemps|Spring|Primavera|Frühling', s: { font: 'Fredoka', weight: 600, color: '#2e6b3f', dateColor: '#3d5a40', dateOpacity: 80, accent: '#ff6fb5', bgType: 'scene', scene: 'spring', bg1: '#dff3ff', bg2: '#9fd6ff', bg3: '#fff4c4', vignette: 0, anim: 'bounce' } },
+  { id: 'april', n: 'Poisson d’avril|April Fools|Inocentes|Aprilscherz', s: { font: 'Fredoka', weight: 600, color: '#e9fbff', dateColor: '#c9f1ff', dateOpacity: 80, accent: '#ffb703', sepAccent: true, shadow: 25, bgType: 'scene', scene: 'april', bg1: '#0a5d9e', bg2: '#2ea3dc', bg3: '#032746', vignette: 35, anim: 'jelly' } },
+  { id: 'easter', n: 'Pâques|Easter|Pascua|Ostern', s: { font: 'Fredoka', weight: 600, color: '#6b3fa0', dateColor: '#7a5a9e', dateOpacity: 85, accent: '#ff8fab', bgType: 'scene', scene: 'easter', bg1: '#e8f7ff', bg2: '#b9e5ff', bg3: '#fff1cf', vignette: 0, anim: 'bounce' } },
   { id: 'music', n: 'Fête de la musique|Music Day|Día de la música|Fête de la Musique', s: { font: 'Righteous', weight: 400, color: '#ffffff', dateColor: '#f3d9ff', dateOpacity: 80, accent: '#f72585', sepAccent: true, bgType: 'scene', scene: 'music', bg1: '#3a0ca3', bg2: '#120a2e', bg3: '#f72585', vignette: 40, anim: 'pop' } },
-  { id: 'summer', n: 'Été|Summer|Verano|Sommer', s: { font: 'Pacifico', weight: 400, color: '#ffffff', dateColor: '#ffffff', dateOpacity: 90, accent: '#ff7a59', shadow: 55, bgType: 'scene', scene: 'summer', bg1: '#ffe0a3', bg2: '#4fc3f7', bg3: '#fff3b0', vignette: 0, anim: 'slide' } },
+  { id: 'summer', n: 'Été|Summer|Verano|Sommer', s: { font: 'Pacifico', weight: 400, color: '#ffffff', dateColor: '#ffffff', dateOpacity: 90, accent: '#ff7a59', shadow: 55, bgType: 'scene', scene: 'summer', bg1: '#3aa5e8', bg2: '#0f6fc4', bg3: '#ffe9b0', vignette: 0, anim: 'slide' } },
   { id: 'bastille', n: '14 Juillet|Bastille Day|14 de julio|14. Juli', s: { font: 'Bebas Neue', weight: 400, letterSpacing: 3, color: '#ffffff', dateColor: '#cfe0ff', dateOpacity: 80, accent: '#e63946', sepAccent: true, bgType: 'scene', scene: 'bastille', bg1: '#0b1a4a', bg2: '#030614', bg3: '#e63946', vignette: 40, anim: 'drop' } },
   // autres thèmes
   { n: 'Grille|Grid|Cuadrícula|Raster', s: { font: 'Geist', dateFont: 'JetBrains Mono', weight: 300, letterSpacing: -2, color: '#f1fff5', dateColor: '#bdf5d0', dateOpacity: 60, accent: '#4ade80', glow: 18, glowColor: '#4ade80', bgType: 'grid', bgColor: '#000000', gridLit: '#4ade80', gridLine: '#ffffff', vignette: 40, anim: 'blur' } },
@@ -1674,7 +1679,8 @@ class Component extends DCLogic {
     // background
     const grad = (o) => (o.bgShape === 'radial' ? `radial-gradient(130% 110% at 50% 0%, ${o.bg1} 0%, ${o.bg2} 72%)` : `linear-gradient(${o.bgAngle}deg, ${o.bg1}, ${o.bg2})`);
     const spookyBase = (o) => `radial-gradient(120% 65% at 50% 112%, ${hexA(o.bg3, 0.5)} 0%, transparent 62%), linear-gradient(180deg, ${o.bg2} 0%, ${o.bg1} 78%)`;
-    const sceneBase = (o) => (o.scene === 'rentree' ? `radial-gradient(120% 90% at 50% 40%, ${o.bg1} 0%, ${o.bg2} 100%)` : `radial-gradient(110% 60% at 50% 110%, ${hexA(o.bg3, 0.45)} 0%, transparent 62%), linear-gradient(180deg, ${o.bg2} 0%, ${o.bg1} 100%)`);
+    const FHS = window.FHScenes, newScene = (id) => !!(FHS && FHS.has(id));
+    const sceneBase = (o) => newScene(o.scene) ? FHS.base(o.scene, o) : (o.scene === 'rentree' ? `radial-gradient(120% 90% at 50% 40%, ${o.bg1} 0%, ${o.bg2} 100%)` : `radial-gradient(110% 60% at 50% 110%, ${hexA(o.bg3, 0.45)} 0%, transparent 62%), linear-gradient(180deg, ${o.bg2} 0%, ${o.bg1} 100%)`);
     const base = s.bgType === 'solid' || s.bgType === 'grid' ? s.bgColor : s.bgType === 'gradient' ? grad(s) : s.bgType === 'aurora' ? s.bg2 : s.bgType === 'spooky' ? spookyBase(s) : s.bgType === 'scene' ? sceneBase(s) : '#000';
     let aurora = null, layers = null;
     if (s.bgType === 'aurora') {
@@ -1722,7 +1728,7 @@ class Component extends DCLogic {
       else if (ps.bgType === 'aurora') b = `radial-gradient(60% 80% at 25% 30%, ${ps.bg1}, transparent), radial-gradient(60% 80% at 80% 70%, ${ps.bg3}, transparent), ${ps.bg2}`;
       else if (ps.bgType === 'grid') b = `radial-gradient(38% 46% at 30% 64%, ${hexA(ps.gridLit, 0.38)}, transparent 70%), repeating-linear-gradient(0deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), ${ps.bgColor}`;
       else if (ps.bgType === 'spooky') b = `radial-gradient(circle at 80% 24%, #fff6d5 0 8%, rgba(255,214,140,.35) 9%, transparent 19%), ${spookyBase(ps)}`;
-      else if (ps.bgType === 'scene') b = sceneBase(ps);
+      else if (ps.bgType === 'scene') b = newScene(ps.scene) ? `${FHS.preview(ps.scene, ps)} center bottom / cover no-repeat, ${sceneBase(ps)}` : sceneBase(ps);
       else { const m = st.media.find(x => x.id === ps.bgImage) || st.media[0]; b = m && m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #111` : '#111'; }
       return ps.vignette ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,${(ps.vignette * 0.006).toFixed(2)}) 100%), ${b}` : b;
     };
@@ -2050,11 +2056,13 @@ class Component extends DCLogic {
 
     return {
       s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
-      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !showing, isSpooky: spooky && !showing, spooky: spooky && !showing ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !showing, scene: s.bgType === 'scene' && !showing ? sceneLayer(E, s) : null },
+      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !showing, isSpooky: spooky && !showing, spooky: spooky && !showing ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !showing, scene: s.bgType === 'scene' && !showing ? (newScene(s.scene) ? FHS.render(s.scene, E, s, { vw: st.vw, vh: st.vh }) : sceneLayer(E, s)) : null },
       sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (pinView(mode) && !!s.pinSnd)) },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
+      // voile doux derrière l'heure sur les décors : les chiffres restent lisibles même devant un dessin chargé
+      halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const c = lum(s.color) > 0.35 ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : '#ffffff', a = lum(s.color) > 0.35 ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: hexA(s.dateColor, Math.min(1, s.dateOpacity / 100 + 0.15)), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
