@@ -57,10 +57,7 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fhx-glitch{0%,84%,100%{transform:none;clip-path:inset(0 0 0 0);filter:none}86%{transform:translate(-.03em,.01em) skewX(-8deg);clip-path:inset(10% 0 55% 0);filter:drop-shadow(.04em 0 #ff2a6d) drop-shadow(-.04em 0 #05d9e8)}88%{transform:translate(.04em,-.01em);clip-path:inset(58% 0 6% 0);filter:drop-shadow(-.05em 0 #ff2a6d) drop-shadow(.05em 0 #05d9e8)}90%{transform:translate(-.02em,0) skewX(14deg);clip-path:inset(30% 0 30% 0);filter:drop-shadow(.03em 0 #ff2a6d) drop-shadow(-.03em 0 #05d9e8)}92%{transform:translate(.012em,0);clip-path:inset(0 0 0 0);filter:drop-shadow(.02em 0 #ff2a6d) drop-shadow(-.02em 0 #05d9e8)}94%{transform:none;filter:none}}
 @keyframes fhx-holo{0%,100%{opacity:.92;transform:none}4%{opacity:.55}5%{opacity:.95}38%{opacity:.85;transform:none}39%{opacity:.45;transform:skewX(-7deg) translateX(.025em)}40%{opacity:.92;transform:none}68%{opacity:.8}69%{opacity:.35}70%{opacity:.9}}
 @keyframes fhx-spin{from{transform:perspective(14em) rotateY(0)}to{transform:perspective(14em) rotateY(360deg)}}
-@keyframes fh-jelly{0%{transform:scale(1)}25%{transform:scale(1.14,.86)}55%{transform:scale(.93,1.08)}75%{transform:scale(1.03,.97)}100%{transform:scale(1)}}
-@keyframes fh-drop{0%{transform:scale(.5,.4);opacity:0}60%{transform:scale(1.06,1.08);opacity:1}100%{transform:scale(1);opacity:1}}
-@keyframes fh-ripple{0%{transform:scale(1);opacity:.75}100%{transform:scale(1.22,1.3);opacity:0}}
-@media (prefers-reduced-motion:reduce){.fh-ind,.fh-ind *{animation:none!important;transition:none!important}}
+@media (prefers-reduced-motion:reduce){.fh-ind{transition:none!important}}
 @keyframes fh-tabpop{0%{transform:scale(1)}35%{transform:scale(1.14) translateY(-1px)}65%{transform:scale(.96)}100%{transform:scale(1)}}
 @keyframes fh-panel-open{from{opacity:0;transform:translateY(-12px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes fh-pin-r{from{opacity:0;transform:translateX(34px)}}
@@ -182,9 +179,9 @@ a{color:inherit}a:hover{opacity:.8}
       </div>
       <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0; display: {{ chrome.sepDisplay }};"></div>
       <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; padding: 6px; margin: -6px; flex: {{ chrome.tabsFlex }}; order: {{ chrome.tabsOrder }}; min-width: 0; overflow-x: auto; scrollbar-width: none;">
-        <div class="fh-ind" style="position: absolute; top: 0; left: 0; height: 36px; width: {{ ind.w }}; transform: translate({{ ind.x }}, {{ ind.y }}); opacity: {{ ind.op }}; transition: {{ ind.tr }}; pointer-events: none;">
-          <div key="{{ ind.k1 }}" style="position: absolute; inset: 0; border-radius: 10px; box-shadow: {{ ind.ringC }}; animation: {{ ind.ripple }};"></div>
-          <div key="{{ ind.k2 }}" style="position: absolute; inset: 0; border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.shadow }}; animation: {{ ind.anim }};"></div>
+        <div class="fh-ind" ref="{{ indRef }}" style="position: absolute; top: 0; left: 0; height: 36px; pointer-events: none;">
+          <div style="position: absolute; inset: 0; border-radius: 10px; box-shadow: {{ ind.ringC }}; opacity: 0;"></div>
+          <div style="position: absolute; inset: 0; border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.shadow }};"></div>
         </div>
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
           <button ref="{{ t.ref }}" data-tour="{{ t.tour }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
@@ -247,9 +244,9 @@ a{color:inherit}a:hover{opacity:.8}
                 <sc-if value="{{ c.isPresets }}" hint-placeholder-val="{{ false }}">
                   <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 170px), 1fr)); gap: 10px;">
                     <sc-for list="{{ c.list }}" as="p" hint-placeholder-count="8">
-                      <button data-tour="{{ p.tour }}" onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }}; animation: fh-rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: {{ p.delay }};">
+                      <button data-tour="{{ p.tour }}" onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; padding: 0; border: 0; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }};">
                         <span style="{{ p.text }}">{{ p.sample }}</span>
-                        <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.5); color: #fff; backdrop-filter: blur(8px);">{{ p.name }}</span>
+                        <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.62); color: #fff;">{{ p.name }}</span>
                         <span style="position: absolute; right: 9px; top: 7px; font-size: 20px; line-height: 1;">{{ p.deco }}</span>
                       </button>
                     </sc-for>
@@ -272,7 +269,7 @@ a{color:inherit}a:hover{opacity:.8}
                       <sc-for list="{{ mine.list }}" as="p" hint-placeholder-count="0">
                         <div onClick="{{ p.pick }}" style="position: relative; height: 108px; border-radius: 14px; overflow: hidden; cursor: pointer; display: flex; align-items: center; justify-content: center; background: {{ p.bg }}; box-shadow: {{ p.ring }};">
                           <span style="{{ p.text }}">{{ p.sample }}</span>
-                          <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.5); color: #fff; backdrop-filter: blur(8px);">{{ p.name }}</span>
+                          <span style="position: absolute; left: 8px; bottom: 8px; padding: 4px 7px; border-radius: 7px; font: 600 11px/1 Geist, system-ui, sans-serif; background: rgba(10,10,10,.62); color: #fff;">{{ p.name }}</span>
                           <button onClick="{{ p.del }}" title="{{ L.remove }}" style="position: absolute; top: 6px; right: 6px; width: 26px; height: 26px; border-radius: 8px; border: 0; padding: 0; background: rgba(10,10,10,.5); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);">
                             <span style="font-family: 'Material Symbols Rounded'; font-size: 16px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">delete</span>
                           </button>
@@ -982,7 +979,8 @@ class Component extends DCLogic {
 
   componentDidMount() {
     const s = this.state.s;
-    this.ensureFont(s.font); if (s.dateFont !== 'same') this.ensureFont(s.dateFont);
+    this.ensureFonts([s.font, s.dateFont]);
+    this.warmT = setTimeout(() => (window.requestIdleCallback || setTimeout)(this.warmThemes), 3000);
     const loop = () => { this.tick(); this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10); };
     this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10);
     const on = (t, ev, fn, o) => { t.addEventListener(ev, fn, o); this.offs.push(() => t.removeEventListener(ev, fn, o)); };
@@ -1010,7 +1008,7 @@ class Component extends DCLogic {
     }).catch(() => this.setState({ mediaReady: true }));
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT, this.fontT, this.warmT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -1058,13 +1056,25 @@ class Component extends DCLogic {
   };
   pickPreset = (ps) => { const was = this.state.s.autoTheme; this.setS({ ...ps, autoTheme: false }); if (was) this.toast(this.L().autoOff); };
   // Pastille animée sous l'onglet actif de la barre du haut
-  // bulle sous l'onglet actif : le CSS fait tout (glissement, gelée, onde), on ne donne que la place
+  // repère sous l'onglet actif : on le déplace directement, sans relancer le rendu de toute la page
+  indRef = React.createRef();
   syncInd = () => {
-    const st = this.state, el = st.tab && this.tabEls[st.tab], cur = st.ind;
-    if (!el) { if (cur && cur.on) this.setState({ ind: { ...cur, on: false, slide: false } }); return; }
-    const x = el.offsetLeft, y = el.offsetTop, w = el.offsetWidth, n = (cur && cur.n) || 0;
-    if (!cur || !cur.on) this.setState({ ind: { x, y, w, on: true, slide: false, tab: st.tab, n: n + 1 } });
-    else if (cur.x !== x || cur.y !== y || cur.w !== w || cur.tab !== st.tab) this.setState({ ind: { x, y, w, on: true, slide: true, tab: st.tab, n: cur.tab !== st.tab ? n + 1 : n } });
+    const st = this.state, el = st.tab && this.tabEls[st.tab], ind = this.indRef.current; if (!ind) return;
+    const k = el ? [st.tab, el.offsetLeft, el.offsetTop, el.offsetWidth].join(',') : '';
+    if (k === this.indK) return; this.indK = k;
+    const prev = this.indTab; this.indTab = el ? st.tab : null;
+    if (!el) { ind.style.transition = 'opacity .25s ease'; ind.style.opacity = '0'; return; }
+    const ease = 'cubic-bezier(.3,1.25,.45,1)', slide = !!prev;
+    ind.style.transition = slide ? `transform .5s ${ease}, width .5s ${ease}, opacity .2s ease` : 'opacity .25s ease';
+    Object.assign(ind.style, { width: el.offsetWidth + 'px', transform: `translate(${el.offsetLeft}px, ${el.offsetTop}px)`, opacity: '1' });
+    if (prev === st.tab || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
+    // petit rebond en arrivant et une onde
+    const [ring, body] = ind.children;
+    body.animate(slide
+      ? [{ transform: 'scale(1)' }, { transform: 'scale(1.14,.86)', offset: 0.25 }, { transform: 'scale(.93,1.08)', offset: 0.55 }, { transform: 'scale(1.03,.97)', offset: 0.75 }, { transform: 'scale(1)' }]
+      : [{ transform: 'scale(.5,.4)', opacity: 0 }, { transform: 'scale(1.06,1.08)', opacity: 1, offset: 0.6 }, { transform: 'scale(1)', opacity: 1 }],
+      { duration: slide ? 700 : 500, easing: slide ? 'ease-out' : 'cubic-bezier(.3,1.5,.5,1)' });
+    ring.animate([{ transform: 'scale(1)', opacity: 0.75 }, { transform: 'scale(1.22,1.3)', opacity: 0 }], { duration: 750, delay: 300, easing: 'cubic-bezier(.15,.7,.3,1)', fill: 'both' });
   };
   tabRef = (id) => this.tabRefs[id] || (this.tabRefs[id] = (el) => { this.tabEls[id] = el; });
   // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
@@ -1082,7 +1092,8 @@ class Component extends DCLogic {
     const r = w / fs;
     if (Math.abs(r - this.state.ratio) / this.state.ratio > 0.01) this.setState({ ratio: r });
   };
-  bumpFonts = () => this.setState(st => ({ fontsTick: st.fontsTick + 1 }));
+  // les polices arrivent par dizaines : un seul nouveau rendu pour toute la rafale
+  bumpFonts = () => { clearTimeout(this.fontT); this.fontT = setTimeout(() => this.setState(st => ({ fontsTick: st.fontsTick + 1 })), 150); };
   tick = () => {
     const now = new Date(), s = this.state.s;
     this.checkTimer();
@@ -1472,9 +1483,23 @@ class Component extends DCLogic {
     if (patch.font) this.ensureFont(patch.font);
     if (patch.dateFont && patch.dateFont !== 'same') this.ensureFont(patch.dateFont);
   };
-  ensureFont = (name) => {
-    const f = FONT_BY[name]; if (!f || this.loaded.has(name)) return; this.loaded.add(name);
-    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = `https://fonts.googleapis.com/css2?family=${f.spec}&display=swap`; document.head.appendChild(l);
+  ensureFont = (name) => this.ensureFonts([name]);
+  // plusieurs polices d'un coup : une seule feuille de style, donc un seul recalcul des styles de la page
+  ensureFonts = (names) => {
+    const fs = [...new Set(names)].map(n => FONT_BY[n]).filter(f => f && !this.loaded.has(f.name)); if (!fs.length) return;
+    fs.forEach(f => this.loaded.add(f.name));
+    const l = document.createElement('link'); l.rel = 'stylesheet'; l.href = `https://fonts.googleapis.com/css2?${fs.map(f => 'family=' + f.spec).join('&')}&display=swap`; document.head.appendChild(l);
+  };
+  // quelques secondes après le démarrage, en tâche de fond : polices des cartes de thèmes déjà prêtes au premier clic
+  warmThemes = () => {
+    this.ensureFonts(PRESETS.map(p => p.s.font));
+    if (!document.fonts) return;
+    this.warmT = setTimeout(() => PRESETS.forEach(p => { const f = FONT_BY[p.s.font]; if (f) document.fonts.load(`${p.s.italic ? 'italic ' : ''}${clampW(f, p.s.weight || f.dw)} 40px '${f.name}'`, '0123456789:').catch(() => {}); }), 800);
+    // aperçus des décors : dessinés et décodés à l'avance, quelques-uns à la fois pour ne rien ralentir
+    const FHS = window.FHScenes, idle = window.requestIdleCallback || ((f) => setTimeout(f, 50));
+    const todo = PRESETS.map(p => ({ ...VDEF, ...p.s })).filter(ps => ps.bgType === 'scene' && FHS && FHS.has(ps.scene));
+    const step = () => { todo.splice(0, 3).forEach(ps => { const m = /url\("(.+)"\)/.exec(FHS.preview(ps.scene, ps)); if (m) { const im = new Image(); im.src = m[1]; if (im.decode) im.decode().catch(() => {}); } }); if (todo.length) idle(step); };
+    idle(step);
   };
   activity = () => {
     if (this.state.idle) this.setState({ idle: false });
@@ -1591,7 +1616,9 @@ class Component extends DCLogic {
     const prev = this.state.tab, tab = prev === id ? null : id;
     const panelDir = !prev || !tab ? 'd' : TAB_IDS.indexOf(tab) > TAB_IDS.indexOf(prev) ? 'r' : 'l';
     this.setState({ tab, panelDir });
-    if (tab === 'font' || tab === 'presets') FONTS.forEach(f => this.ensureFont(f.name));
+    // Thèmes : seulement les polices des cartes ; Police : toutes
+    if (tab === 'font') this.ensureFonts(FONTS.map(f => f.name));
+    else if (tab === 'presets') this.ensureFonts([...PRESETS, ...this.state.styles].map(x => x.s.font));
     if (!tab) this.activity();
     else requestAnimationFrame(() => { const el = this.tabEls[tab]; if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); });
   };
@@ -1813,12 +1840,7 @@ class Component extends DCLogic {
     const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
     const tabs = TABS.map(([id, label]) => ({ label, tour: 'tab-' + id, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     // repère de l'onglet actif, dans le même style que les boutons de mode : seule sa place change
-    const iv = st.ind || { x: 0, y: 6, w: 0, on: false, slide: false, n: 0 }, ease = 'cubic-bezier(.3,1.25,.45,1)';
-    const ind = { x: iv.x + 'px', y: (iv.y == null ? 6 : iv.y) + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, k1: 'r' + iv.n, k2: 'g' + iv.n,
-      tr: iv.slide ? `transform .5s ${ease}, width .5s ${ease}, opacity .2s ease` : 'opacity .25s ease',
-      anim: !iv.n ? 'none' : iv.slide ? 'fh-jelly .7s ease-out both' : 'fh-drop .5s cubic-bezier(.3,1.5,.5,1) both',
-      ripple: iv.n ? 'fh-ripple .75s .3s cubic-bezier(.15,.7,.3,1) both' : 'none',
-      ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
+    const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
     const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
@@ -1839,7 +1861,7 @@ class Component extends DCLogic {
     const controls = [];
     let presets = [], fontTiles = [], fontCats = [], media = [];
     if (st.tab) {
-      const add = (o) => controls.push({ span: 'auto', op: 1, display: '', padTop: '0px', hasLabel: !o.isHead && !o.isTog, delay: Math.min(controls.length, 16) * 24 + 'ms', ...o });
+      const add = (o) => controls.push({ span: 'auto', op: 1, display: '', padTop: '0px', hasLabel: !o.isHead && !o.isTog, delay: Math.min(controls.length, 8) * 18 + 'ms', ...o });
       const H = (label) => add({ isHead: true, label, span: '1 / -1', padTop: controls.length ? '10px' : '0px' });
       const on2 = (on) => ({ bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2 });
       const seg = (k, label, opts, x) => add({ isSeg: true, label, options: opts.map(([v, l]) => ({ label: l, pick: () => this.setS({ [k]: v }), ...on2(s[k] === v) })), ...x });
@@ -1850,7 +1872,7 @@ class Component extends DCLogic {
       const pctF = new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }), pct = (v) => pctF.format(v / 100), raw = (v) => String(v);
       const t = st.tab;
       if (t === 'presets') {
-        const card = (pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { tour: 'card-' + (pr.id || pr.s.scene || i), name: pr.n[li], sample, deco: DECO[pr.id] || '', bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.pickPreset(ps), delay: 60 + Math.min(i, 18) * 30 + 'ms' }; };
+        const card = (pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { tour: 'card-' + (pr.id || pr.s.scene || i), name: pr.n[li], sample, deco: DECO[pr.id] || '', bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.pickPreset(ps) }; };
         const todayPr = PRESETS.find(x => x.id === themeOfDay(now));
         H(L.hSeasons);
         add({ isTog: true, tour: 'tog-auto', label: `${L.autoTheme} · ${L.today} : ${todayPr ? todayPr.n[li] : ''} ${DECO[todayPr && todayPr.id] || ''}`, span: '1 / -1', toggle: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.setS({ autoTheme: true, autoId: '' }); setTimeout(() => this.applyAuto(true), 0); } }, trackBg: s.autoTheme ? ui.invBg : ui.track, knobBg: s.autoTheme ? ui.invFg : '#ffffff', knobX: s.autoTheme ? '14px' : '0px' });
@@ -2199,7 +2221,7 @@ class Component extends DCLogic {
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, textShadow: legib } },
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
       chrome: { tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
-      tabs, ind, modes, panel: { open: !!st.tab, maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      tabs, ind, indRef: this.indRef, modes, panel: { open: !!st.tab, maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);
