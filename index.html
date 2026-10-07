@@ -1054,9 +1054,10 @@ class Component extends DCLogic {
       if (this.plan !== pl) return;
       try {
         const t0 = ac.currentTime + Math.max(0.05, (endAt - Date.now()) / 1000), g = ac.createGain();
-        g.gain.setValueAtTime(vol * 0.7, t0); g.gain.linearRampToValueAtTime(vol, t0 + c * 3); g.connect(ac.destination);
-        if (buf) { const src = ac.createBufferSource(); src.buffer = buf; src.loop = true; src.loopStart = c; src.loopEnd = c * 2; src.connect(g); src.start(t0); src.stop(t0 + ALARM_LEN); pl.src = src; }
-        else for (let i = 0; i * c < ALARM_LEN; i++) alarmVoice(ac, g, t0 + i * c, kind);
+        // la sonnerie ne retentit qu'une fois (un seul cycle, avec un court fondu à la fin)
+        g.gain.setValueAtTime(vol, t0); g.gain.setValueAtTime(vol, t0 + c - 0.2); g.gain.linearRampToValueAtTime(0, t0 + c); g.connect(ac.destination);
+        if (buf) { const src = ac.createBufferSource(); src.buffer = buf; src.connect(g); src.start(t0); src.stop(t0 + c + 0.05); pl.src = src; }
+        else alarmVoice(ac, g, t0, kind);
         pl.t0 = t0; pl.g = g;
       } catch (e) {}
     });
