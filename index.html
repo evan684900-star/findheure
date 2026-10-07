@@ -157,6 +157,7 @@ a{color:inherit}a:hover{opacity:.8}
   </div>
 
   <sc-if value="{{ show.on }}" hint-placeholder-val="{{ false }}">{{ show.el }}</sc-if>
+  <div style="position: absolute; inset: 0; z-index: 5; pointer-events: none;">{{ picsEl }}</div>
   <div style="position: absolute; inset: 0; z-index: 5; pointer-events: none;">{{ notesEl }}</div>
   <sc-if value="{{ pins.show }}" hint-placeholder-val="{{ false }}">{{ pins.el }}</sc-if>
 
@@ -191,6 +192,9 @@ a{color:inherit}a:hover{opacity:.8}
         </div>
         <button data-tour="note" title="{{ L.noteNew }}" onClick="{{ addNote }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
           <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">sticky_note_2</span>
+        </button>
+        <button data-tour="img" title="{{ L.picBtn }}" onClick="{{ pickPic }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
+          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">add_photo_alternate</span>
         </button>
       </div>
       <div style="display: flex; gap: 2px; flex-shrink: 0;">
@@ -372,6 +376,7 @@ a{color:inherit}a:hover{opacity:.8}
   </div>
 
   <input type="file" accept="image/*,video/*" multiple="{{ true }}" ref="{{ fileRef }}" onChange="{{ onFiles }}" style="display: none;">
+  <input type="file" accept="image/*" multiple="{{ true }}" ref="{{ picRef }}" onChange="{{ onPicFiles }}" style="display: none;">
 
   <sc-if value="{{ dragOver }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 12px; z-index: 30; border-radius: 22px; border: 2px dashed rgba(255,255,255,.75); background: rgba(10,10,10,.55); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font: 500 22px/1.2 Geist, system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box;">{{ L.dropHere }}</div>
@@ -392,7 +397,7 @@ a{color:inherit}a:hover{opacity:.8}
 <script type="text/x-dc" data-dc-script>
 const LANGS = ['fr', 'en', 'es', 'de'];
 const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
-const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1', TOURKEY = 'findheure:tour:v1';
+const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1', TOURKEY = 'findheure:tour:v1', PKEY = 'findheure:pics:v1';
 const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
 
 const T_RAW = {
@@ -509,6 +514,10 @@ const T_RAW = {
   alarmSnd: "Sonnerie de fin|End-of-timer sound|Sonido final|Endton", alarmVol: "Volume de la sonnerie|Alarm volume|Volumen del aviso|Lautstärke des Signals", alarmTest: "Écouter|Listen|Escuchar|Anhören",
   alarmUnlock: "Cliquez n’importe où pour activer le son du minuteur|Click anywhere to turn on the timer sound|Haz clic en cualquier sitio para activar el sonido del temporizador|Klicke irgendwo, um den Timer-Ton einzuschalten",
   al_chime: "Carillon|Chime|Carillón|Glockenspiel", al_bell: "Cloche|Bell|Campana|Glocke", al_school: "Sonnerie d’école|School bell|Timbre escolar|Schulklingel", al_digital: "Réveil|Alarm clock|Despertador|Wecker", al_gong: "Gong|Gong|Gong|Gong",
+  picBtn: "Image à côté de l’heure (I)|Image next to the time (I)|Imagen junto a la hora (I)|Bild neben der Uhrzeit (I)", picsH: "Images à côté de l’heure|Images next to the time|Imágenes junto a la hora|Bilder neben der Uhrzeit",
+  picAdd: "Ajouter une image|Add an image|Añadir una imagen|Bild hinzufügen", picN: "Image|Image|Imagen|Bild", picDel: "Retirer l’image|Remove the image|Quitar la imagen|Bild entfernen",
+  picSmaller: "Image plus petite|Smaller image|Imagen más pequeña|Kleineres Bild", picBigger: "Image plus grande|Bigger image|Imagen más grande|Größeres Bild", picResize: "Tirer pour changer la taille|Drag to resize|Arrastra para cambiar el tamaño|Ziehen, um die Größe zu ändern",
+  picHint: "Glisser pour déplacer · coin en bas à droite pour la taille|Drag to move · bottom-right corner to resize|Arrastra para mover · esquina inferior derecha para el tamaño|Ziehen zum Verschieben · Ecke unten rechts für die Größe",
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
   m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
   g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
@@ -534,8 +543,8 @@ const T_RAW = {
   tour4: "Format 12 h ou 24 h, secondes, langue et format de la date, position à l’écran, message au-dessus de l’heure…|12 or 24 h, seconds, date language and format, position on screen, message above the time…|12 o 24 h, segundos, idioma y formato de la fecha, posición en pantalla, mensaje sobre la hora…|12 oder 24 h, Sekunden, Sprache und Format des Datums, Position, Nachricht über der Uhrzeit …",
   tour5t: "Horloge, minuteur, chrono, sonomètre|Clock, timer, stopwatch, sound meter|Reloj, temporizador, cronómetro, sonómetro|Uhr, Timer, Stoppuhr, Lärmampel",
   tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le sonomètre montre le bruit de la classe. Le dernier bouton affiche un site ou une image avec l’heure par-dessus.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. The sound meter shows how noisy the class is. The last button shows a website or an image with the time on top.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. El sonómetro muestra el ruido de la clase. El último botón muestra un sitio o una imagen con la hora encima.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Die Lärmampel zeigt, wie laut die Klasse ist. Der letzte Knopf zeigt eine Website oder ein Bild mit der Uhrzeit darüber.",
-  tour6t: "Notes|Notes|Notas|Notizen",
-  tour6: "Une note autocollante pour une consigne ou les devoirs (touche N). Déplacez-la, changez sa couleur ou la taille du texte (A− / A+) : elle reste enregistrée.|A sticky note for instructions or homework (N key). Drag it, change its color or text size (A− / A+): it stays saved.|Una nota adhesiva para una consigna o los deberes (tecla N). Muévela, cambia su color o el tamaño del texto (A− / A+): se queda guardada.|Eine Haftnotiz für Aufgaben oder Hausaufgaben (Taste N). Verschieben, Farbe oder Schriftgröße ändern (A− / A+): Sie bleibt gespeichert.",
+  tour6t: "Notes et images|Notes and images|Notas e imágenes|Notizen und Bilder",
+  tour6: "Une note pour une consigne ou les devoirs (touche N), ou une image de votre ordinateur à poser à côté de l’heure (touche I). Glissez-les où vous voulez et changez leur taille : elles restent enregistrées.|A note for instructions or homework (N key), or an image from your computer placed next to the time (I key). Drag them anywhere and resize them: they stay saved.|Una nota para una consigna o los deberes (tecla N), o una imagen de tu ordenador junto a la hora (tecla I). Muévelas y cambia su tamaño: se quedan guardadas.|Eine Notiz für Aufgaben oder Hausaufgaben (Taste N) oder ein Bild von deinem Computer neben der Uhrzeit (Taste I). Verschiebe sie und ändere ihre Größe: Sie bleiben gespeichert.",
   tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
   tour7: "Un style au hasard à chaque clic (touche S).|A random style with every click (S key).|Un estilo al azar con cada clic (tecla S).|Bei jedem Klick ein zufälliger Stil (Taste S).",
   tour8t: "Plein écran|Fullscreen|Pantalla completa|Vollbild",
@@ -703,9 +712,9 @@ const SCENE_FETES = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentin
 const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'holo', 'trippy'];
 const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
 const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', holo: '🛰️', trippy: '🌀' };
-const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note'], ['surprise'], ['fs'], ['help']];
+const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note', 'img'], ['surprise'], ['fs'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
-const NOTE_FS = [14, 80], PIN_K = [0.6, 3];
+const NOTE_FS = [14, 80], PIN_K = [0.6, 3], PIC_W = [0.04, 0.9];
 const NOTE_C = ['#ffb35c', '#ffe066', '#ffadc8', '#a0e7ff', '#b8f2a6', '#d4b8ff'];
 const ICON = { fontFamily: "'Material Symbols Rounded'", fontWeight: 'normal', fontStyle: 'normal', lineHeight: 1, display: 'inline-block', whiteSpace: 'nowrap', letterSpacing: 'normal', textTransform: 'none', direction: 'ltr', fontFeatureSettings: "'liga'" };
 const POSK = ['tl', 't', 'tr', 'l', 'c', 'r', 'bl', 'b', 'br'];
@@ -895,12 +904,12 @@ class Component extends DCLogic {
     if (!SCENE_IDS.includes(s.scene)) s.scene = BASE.scene;
     if (!ALARMS.includes(s.alarmSnd)) s.alarmSnd = 'chime';
     if (s.msg === 'spooky') s.msg = 'theme';
-    const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {};
+    const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {}, pics = loadJSON(PKEY, []);
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, testing: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m) : [], picDrag: '', tm, sw, ringing: false, testing: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -933,7 +942,7 @@ class Component extends DCLogic {
     this.applyAuto();
     if (!loadJSON(TOURKEY, false)) this.tourT = setTimeout(this.startTour, 1200);
     if (this.state.notes.length) this.ensureFont('Caveat');
-    this.zTop = this.state.notes.reduce((m, n) => Math.max(m, n.z || 0), 10);
+    this.zTop = [...this.state.notes, ...this.state.pics].reduce((m, n) => Math.max(m, n.z || 0), 10);
     DB.all().then(list => {
       const media = (list || []).filter(r => r && r.blob).sort((a, b) => a.t - b.t).map(r => ({ id: r.id, type: r.type, name: r.name, url: URL.createObjectURL(r.blob) }));
       this.setState(media.length ? { media, mediaReady: true } : { mediaReady: true });
@@ -1236,6 +1245,47 @@ class Component extends DCLogic {
   noteUp = () => { if (!this.drag) return; this.drag = null; this.saveNotes(); };
   noteSize = (id, e) => { const el = e.currentTarget, n = this.state.notes.find(x => x.id === id); if (n && el && (el.offsetWidth !== n.w || el.offsetHeight !== n.h)) this.patchNote(id, { w: el.offsetWidth, h: el.offsetHeight }); };
 
+  // Images posées à côté de l'heure (pas en fond) : on les glisse, on tire le coin pour la taille ; position en fraction de l'écran
+  picRef = React.createRef();
+  savePics = () => { try { localStorage.setItem(PKEY, JSON.stringify(this.state.pics)); } catch (e) {} };
+  pickPic = () => { if (this.picRef.current) this.picRef.current.click(); };
+  onPicFiles = async (e) => {
+    const files = Array.from(e.target.files || []).filter(f => /^image\//.test(f.type)).slice(0, 8); e.target.value = '';
+    if (!files.length) return;
+    const added = [];
+    for (const f of files) {
+      const id = 'm' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+      try { await DB.put({ id, blob: f, type: 'image', name: f.name, t: Date.now() }); } catch (err) {}
+      added.push({ id, type: 'image', name: f.name, url: URL.createObjectURL(f) });
+    }
+    this.setState(st => {
+      // à côté de l'heure s'il y a la place, sinon dans le coin du bas (à gauche si l'heure est à droite), sans cacher les chiffres
+      const el = this.timeRef.current, r = el ? el.getBoundingClientRect() : null, n0 = st.pics.length;
+      const roomR = r ? (st.vw - r.right) / st.vw : 0, roomL = r ? r.left / st.vw : 0, left = /r$/.test(st.s.pos);
+      const spot = r && roomR >= 0.15 ? { x: (r.right + 20) / st.vw, y: r.top / st.vh, w: Math.min(0.2, roomR - 0.03) } : r && roomL >= 0.15 ? { x: 0.02, y: r.top / st.vh, w: Math.min(0.2, roomL - 0.03) } : { x: left ? 0.04 : 0.78, y: 0.6, w: 0.16 };
+      const pics = [...st.pics, ...added.map((m, k) => ({ id: 'p' + Date.now().toString(36) + k, m: m.id, w: spot.w, x: spot.x + ((n0 + k) % 4) * 0.02 * (spot.x > 0.5 ? -1 : 1), y: spot.y + ((n0 + k) % 4) * 0.04, z: ++this.zTop }))].slice(-12);
+      return { media: [...st.media, ...added], pics };
+    }, this.savePics);
+  };
+  patchPic = (id, patch) => { this.setState(st => ({ pics: st.pics.map(q => (q.id === id ? { ...q, ...patch } : q)) }), this.savePics); };
+  delPic = (id) => { this.setState(st => ({ pics: st.pics.filter(q => q.id !== id) }), this.savePics); };
+  picZoom = (id, k) => { const q = this.state.pics.find(x => x.id === id); if (q) this.patchPic(id, { w: Math.max(PIC_W[0], Math.min(PIC_W[1], q.w * k)) }); };
+  picDown = (e, id, resize) => {
+    if (e.button !== 0 || (!resize && e.target.closest && e.target.closest('button, [data-resize]'))) return;
+    const q = this.state.pics.find(x => x.id === id); if (!q) return;
+    e.preventDefault(); e.stopPropagation();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
+    this.picD = { id, resize, sx: e.clientX, sy: e.clientY, x: q.x, y: q.y, w: q.w };
+    this.setState(st => ({ picDrag: id, pics: st.pics.map(p => (p.id === id ? { ...p, z: ++this.zTop } : p)) }));
+  };
+  picMove = (e) => {
+    const d = this.picD; if (!d) return;
+    const st = this.state, dx = (e.clientX - d.sx) / st.vw, dy = (e.clientY - d.sy) / st.vh;
+    const patch = d.resize ? { w: Math.max(PIC_W[0], Math.min(PIC_W[1], d.w + dx)) } : { x: d.x + dx, y: d.y + dy };
+    this.setState({ pics: st.pics.map(q => (q.id === d.id ? { ...q, ...patch } : q)) });
+  };
+  picUp = () => { if (!this.picD) return; this.picD = null; this.setState({ picDrag: '' }); this.savePics(); };
+
   // Fond « grille » : plan en perspective dont les cases s'allument derrière la souris
   gridRef = (el) => { this.gridEl = el; if (el) this.gridStart(); else this.gridStop(); };
   gridStart = () => { if (this.gridRaf) return; this.cells.clear(); this.gKey = ''; this.gT = 0; const frame = (t) => { this.gridRaf = requestAnimationFrame(frame); this.gridDraw(t); }; this.gridRaf = requestAnimationFrame(frame); };
@@ -1364,6 +1414,7 @@ class Component extends DCLogic {
     else if (k === 'f') this.toggleFs();
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
+    else if (k === 'i') { e.preventDefault(); this.pickPic(); }
     else if (e.key === ' ' && ((mode !== 'clock' && mode !== 'show') || this.state.s.pinTimer || this.state.s.pinSw)) { e.preventDefault(); const t = mode === 'timer' || (pinView(mode) && this.state.s.pinTimer); if (t) { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
     else if (k === 'r' && mode === 'timer') this.tmReset();
     else if (k === 'r' && mode === 'stopwatch') this.swReset();
@@ -1400,6 +1451,7 @@ class Component extends DCLogic {
     const bgs = media.filter(x => x.type !== 'pdf');
     if (this.state.s.bgImage === id) this.setS({ bgImage: bgs.length ? bgs[0].id : null });
     if (this.state.s.showMedia === id) this.setS({ showType: '', showMedia: '' });
+    if (this.state.pics.some(q => q.m === id)) this.setState(st => ({ pics: st.pics.filter(q => q.m !== id) }), this.savePics);
   };
   toast = (msg, undo) => { clearTimeout(this.toastT); this.setState({ toast: { msg, undo } }); this.toastT = setTimeout(() => this.setState({ toast: null }), undo ? 6000 : 2400); };
   reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang, mode: prev.mode }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
@@ -1770,8 +1822,12 @@ class Component extends DCLogic {
       if (t === 'layout') {
         H(L.hPlace);
         add({ isPos: true, label: L.position, cells: POSK.map(k => ({ pick: () => this.setS({ pos: k }), bg: s.pos === k ? ui.invBg : 'transparent', dot: s.pos === k ? ui.invFg : ui.fg3 })) });
+        rng('size', L.size, 30, 130, 1, pct);
+        rng('dateSize', L.dateSize, 50, 220, 1, pct);
         seg('datePos', L.datePos, [['above', L.above], ['below', L.below]]);
         rng('gap', L.gap, 0, 300, 5, pct);
+        H(L.picsH);
+        add({ isChips: true, hasLabel: false, span: '1 / -1', options: [{ label: '＋ ' + L.picAdd, pick: this.pickPic, bg: ui.invBg, fg: ui.invFg, border: ui.invBg }, ...st.pics.map((q, i) => ({ label: `✕ ${L.picN} ${i + 1}`, pick: () => this.delPic(q.id), bg: 'transparent', fg: ui.fg2, border: ui.border }))] });
         H(L.hExtras);
         seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['theme', L.m_theme], ['custom', L.m_custom]]);
         if (s.msg === 'custom') add({ isText: true, label: L.m_custom, value: s.msgText, ph: L.msgPh, onText: (e) => this.setS({ msgText: e.target.value.slice(0, 80) }) });
@@ -1926,6 +1982,19 @@ class Component extends DCLogic {
         text);
     }
 
+    // images posées à côté de l'heure (cachées en mode « site ou image » pour ne pas couvrir le contenu)
+    const picsEl = mode === 'show' ? null : st.pics.map(q => {
+      const m = st.media.find(x => x.id === q.m); if (!m) return null;
+      const w = Math.max(40, q.w * st.vw), x = Math.max(60 - w, Math.min(st.vw - 60, q.x * st.vw)), y = Math.max(0, Math.min(st.vh - 50, q.y * st.vh)), drag = st.picDrag === q.id;
+      const tb = (key, icon, title, onClick) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 28, height: 28, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: `1px solid ${ui.border}`, background: ui.panel, color: ui.fg, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.25)' } }, E('span', { style: { ...ICON, fontSize: 16 } }, icon));
+      return E('div', { key: q.id, className: 'fh-card', title: L.picHint, onPointerDown: (e) => this.picDown(e, q.id, false), onPointerMove: this.picMove, onPointerUp: this.picUp, onPointerCancel: this.picUp, style: { position: 'absolute', left: x, top: y, width: w, zIndex: q.z || 1, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+        E('img', { src: m.url, alt: m.name || '', draggable: false, style: { display: 'block', width: '100%', height: 'auto', borderRadius: 8, filter: 'drop-shadow(0 10px 18px rgba(0,0,0,.35))', pointerEvents: 'none' } }),
+        E('div', { className: 'fh-card-tools', style: { position: 'absolute', top: -14, right: -8, display: 'flex', gap: 4 } },
+          tb('sm', 'remove', L.picSmaller, () => this.picZoom(q.id, 1 / 1.2)), tb('bg', 'add', L.picBigger, () => this.picZoom(q.id, 1.2)), tb('x', 'close', L.picDel, () => this.delPic(q.id))),
+        E('div', { className: 'fh-card-tools', 'data-resize': 1, title: L.picResize, onPointerDown: (e) => this.picDown(e, q.id, true), onPointerMove: this.picMove, onPointerUp: this.picUp, onPointerCancel: this.picUp, style: { position: 'absolute', right: -10, bottom: -10, width: 28, height: 28, borderRadius: 999, background: ui.panel, border: `1px solid ${ui.border}`, color: ui.fg, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'nwse-resize', touchAction: 'none', boxShadow: '0 4px 14px rgba(0,0,0,.25)' } },
+          E('span', { style: { ...ICON, fontSize: 16, transform: 'rotate(90deg)' } }, 'open_in_full')));
+    });
+
     // notes autocollantes (déplaçables, redimensionnables, enregistrées dans le navigateur)
     const notesEl = st.notes.map(n => {
       const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y)), nfs = n.fs || 23;
@@ -2011,7 +2080,7 @@ class Component extends DCLogic {
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
       chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
-      tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
+      tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,

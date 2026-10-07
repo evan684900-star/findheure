@@ -14,9 +14,11 @@ Horloge plein écran personnalisable, en une seule page (`index.html` + `support
 - **Site ou image** : afficher un site (YouTube, Google Slides, Canva…) ou un fichier de l’ordinateur (image, vidéo, PDF) en plein écran, avec l’heure dans une carte qu’on déplace et qu’on agrandit. Certains sites (Pronote, ENT, Google) refusent d’être affichés dans un autre site.
 - **Tuto** à la première visite : une flèche montre chaque bouton avec son explication (bouton « ? » pour le revoir).
 - **Notes autocollantes** déplaçables et redimensionnables.
+- **Images à côté de l’heure** (bouton image de la barre, touche `I`, ou onglet Disposition) : une image de l’ordinateur posée sur l’écran, pas en fond. On la glisse où on veut, on tire le coin pour changer sa taille (ou − / +), elle reste enregistrée.
+- **Taille de l’heure et de la date** réglables dans l’onglet Disposition (et Police).
 - **Icône du site** (onglet, favoris, écran d’accueil) : on peut aussi « installer » le site comme une appli depuis le navigateur.
 
-Raccourcis : `F` plein écran · `S` surprise · `N` nouvelle note · `Espace` démarrer/pause · `R` remettre à zéro · `L` tour (chrono) · `Échap` fermer.
+Raccourcis : `F` plein écran · `S` surprise · `N` nouvelle note · `I` image à côté de l’heure · `Espace` démarrer/pause · `R` remettre à zéro · `L` tour (chrono) · `Échap` fermer.
 
 Les réglages, styles, notes et minuteurs sont enregistrés dans le navigateur : rien n’est envoyé nulle part.
 React est servi depuis le dossier `vendor/`, pour que le site marche même sur les réseaux d’établissement qui bloquent les sites externes.
