@@ -183,10 +183,8 @@ a{color:inherit}a:hover{opacity:.8}
       <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0; display: {{ chrome.sepDisplay }};"></div>
       <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; padding: 6px; margin: -6px; flex: {{ chrome.tabsFlex }}; order: {{ chrome.tabsOrder }}; min-width: 0; overflow-x: auto; scrollbar-width: none;">
         <div class="fh-ind" style="position: absolute; top: 0; left: 0; height: 36px; width: {{ ind.w }}; transform: translate({{ ind.x }}, {{ ind.y }}); opacity: {{ ind.op }}; transition: {{ ind.tr }}; pointer-events: none;">
-          <div key="{{ ind.k1 }}" style="position: absolute; inset: 0; border-radius: 999px; box-shadow: {{ ind.ringC }}; animation: {{ ind.ripple }};"></div>
-          <div key="{{ ind.k2 }}" style="position: absolute; inset: 0; border-radius: 999px; overflow: hidden; background: {{ ind.bg }}; box-shadow: {{ ind.shadow }}; animation: {{ ind.anim }};">
-            <div style="position: absolute; left: 13%; top: 2px; width: 48%; height: 42%; border-radius: 999px; background: {{ ind.glint }};"></div>
-          </div>
+          <div key="{{ ind.k1 }}" style="position: absolute; inset: 0; border-radius: 10px; box-shadow: {{ ind.ringC }}; animation: {{ ind.ripple }};"></div>
+          <div key="{{ ind.k2 }}" style="position: absolute; inset: 0; border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.shadow }}; animation: {{ ind.anim }};"></div>
         </div>
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
           <button ref="{{ t.ref }}" data-tour="{{ t.tour }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
@@ -1814,16 +1812,14 @@ class Component extends DCLogic {
     const accUi = readable(s.accent, ui.solid, ui.fg);
     const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
     const tabs = TABS.map(([id, label]) => ({ label, tour: 'tab-' + id, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
-    // bulle de verre : dessinée une fois (teinte d'accent, liserés de lumière, reflet), seule sa place change
+    // repère de l'onglet actif, dans le même style que les boutons de mode : seule sa place change
     const iv = st.ind || { x: 0, y: 6, w: 0, on: false, slide: false, n: 0 }, ease = 'cubic-bezier(.3,1.25,.45,1)';
     const ind = { x: iv.x + 'px', y: (iv.y == null ? 6 : iv.y) + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, k1: 'r' + iv.n, k2: 'g' + iv.n,
       tr: iv.slide ? `transform .5s ${ease}, width .5s ${ease}, opacity .2s ease` : 'opacity .25s ease',
       anim: !iv.n ? 'none' : iv.slide ? 'fh-jelly .7s ease-out both' : 'fh-drop .5s cubic-bezier(.3,1.5,.5,1) both',
       ripple: iv.n ? 'fh-ripple .75s .3s cubic-bezier(.15,.7,.3,1) both' : 'none',
-      ringC: `inset 0 0 0 1.5px ${dark ? 'rgba(255,255,255,.5)' : hexA(s.accent, 0.55)}, 0 0 10px ${hexA(s.accent, dark ? 0.4 : 0.3)}`,
-      bg: `radial-gradient(120% 95% at 50% 0%, rgba(255,255,255,${dark ? 0.16 : 0.5}), rgba(255,255,255,0) 62%), radial-gradient(60% 45% at 50% 100%, ${hexA(s.accent, 0.45)}, ${hexA(s.accent, 0)}), ${hexA(s.accent, dark ? 0.2 : 0.16)}`,
-      shadow: ['inset 0 0 0 .5px rgba(255,255,255,.6)', 'inset 1.5px 2.5px 1px -1.5px rgba(255,255,255,.95)', 'inset -1.5px -2.5px 1px -1.5px rgba(255,255,255,.5)', `0 6px 16px -6px rgba(0,0,0,${dark ? 0.55 : 0.28})`, `0 0 0 .5px rgba(0,0,0,${dark ? 0.35 : 0.14})`].join(', '),
-      glint: `linear-gradient(180deg, rgba(255,255,255,${dark ? 0.45 : 0.7}), rgba(255,255,255,0))` };
+      ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
+      bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
     const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
