@@ -1580,7 +1580,7 @@ class Component extends DCLogic {
           E('line', { x1: tx1, y1: ty1, x2: tx2, y2: ty2, stroke: hexA(s.color, 0.95), strokeWidth: 3.5, strokeLinecap: 'round' }),
           E('g', { ref: this.sndRefs.needle, transform: 'rotate(-90)' }, E('line', { x1: 0, y1: 8, x2: 0, y2: -80, stroke: s.color, strokeWidth: 5, strokeLinecap: 'round' })),
           E('circle', { r: 11, fill: s.color }), E('circle', { r: 5, fill: sCol })),
-        E('div', { style: { display: 'flex', alignItems: 'center', gap: '.35em', marginTop: Math.round(gw * 0.02), font: `${clampW(f, 600)} ${Math.round(Math.max(22, gw * 0.07))}px/1.1 ${stack(f)}`, color: st.snd.on ? (lum(s.color) < 0.3 ? SND_DARK[sCol] || sCol : sCol) : s.color, textShadow: legib, transition: 'color .3s ease' } },
+        E('div', { style: { display: 'flex', alignItems: 'center', gap: '.35em', marginTop: Math.round(gw * 0.02), font: `${clampW(f, 800)} ${Math.round(Math.max(22, gw * 0.07))}px/1.1 ${stack(f)}`, color: st.snd.on ? (lum(s.color) < 0.3 ? SND_DARK[sCol] || sCol : sCol) : s.color, textShadow: legib, transition: 'color .3s ease' } },
           E('span', { style: { fontSize: '1.3em' } }, st.snd.on ? sZone[1] : '🎤'), E('span', null, st.snd.on ? L[sZone[0]] : L.md_snd)));
     }
     if (visual && mode === 'timer') {
