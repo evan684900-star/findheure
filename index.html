@@ -56,7 +56,6 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fhx-drunk{0%,100%{transform:rotate(-3deg) scale(1,1) translateX(-.03em)}25%{transform:rotate(2deg) scale(.97,1.02) translateX(.04em)}50%{transform:rotate(4deg) scale(1,1) translateX(.02em)}75%{transform:rotate(-2deg) scale(.98,1.01) translateX(-.04em)}}
 @keyframes fhx-glitch{0%,84%,100%{transform:none;clip-path:inset(0 0 0 0);filter:none}86%{transform:translate(-.03em,.01em) skewX(-8deg);clip-path:inset(10% 0 55% 0);filter:drop-shadow(.04em 0 #ff2a6d) drop-shadow(-.04em 0 #05d9e8)}88%{transform:translate(.04em,-.01em);clip-path:inset(58% 0 6% 0);filter:drop-shadow(-.05em 0 #ff2a6d) drop-shadow(.05em 0 #05d9e8)}90%{transform:translate(-.02em,0) skewX(14deg);clip-path:inset(30% 0 30% 0);filter:drop-shadow(.03em 0 #ff2a6d) drop-shadow(-.03em 0 #05d9e8)}92%{transform:translate(.012em,0);clip-path:inset(0 0 0 0);filter:drop-shadow(.02em 0 #ff2a6d) drop-shadow(-.02em 0 #05d9e8)}94%{transform:none;filter:none}}
 @keyframes fhx-holo{0%,100%{opacity:.92;transform:none}4%{opacity:.55}5%{opacity:.95}38%{opacity:.85;transform:none}39%{opacity:.45;transform:skewX(-7deg) translateX(.025em)}40%{opacity:.92;transform:none}68%{opacity:.8}69%{opacity:.35}70%{opacity:.9}}
-@keyframes fhx-holoscan{from{-webkit-mask-position:0 0;mask-position:0 0}to{-webkit-mask-position:0 .24em;mask-position:0 .24em}}
 @keyframes fhx-spin{from{transform:perspective(14em) rotateY(0)}to{transform:perspective(14em) rotateY(360deg)}}
 @keyframes fh-tabpop{0%{transform:scale(1)}35%{transform:scale(1.14) translateY(-1px)}65%{transform:scale(.96)}100%{transform:scale(1)}}
 @keyframes fh-panel-open{from{opacity:0;transform:translateY(-12px) scale(.985)}to{opacity:1;transform:none}}
@@ -78,14 +77,6 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-ember{0%{transform:translate3d(0,0,0);opacity:0}12%{opacity:1}100%{transform:translate3d(var(--dx,0px),-78vh,0);opacity:0}}
 @keyframes fh-flicker{0%,100%{opacity:1}8%{opacity:.7}12%{opacity:.95}40%{opacity:.82}44%{opacity:1}70%{opacity:.65}74%{opacity:.95}}
 @keyframes fh-wobble{0%,100%{transform:rotate(-9deg)}50%{transform:rotate(9deg)}}
-@keyframes fh-fall{from{transform:translate3d(0,-14vh,0) rotate(0deg)}to{transform:translate3d(var(--dx,0px),118vh,0) rotate(var(--rot,0deg))}}
-@keyframes fh-up{0%{transform:translate3d(0,0,0) rotate(0deg);opacity:0}10%{opacity:1}85%{opacity:1}100%{transform:translate3d(var(--dx,0px),-118vh,0) rotate(var(--rot,0deg));opacity:0}}
-@keyframes fh-sway{0%,100%{transform:translateX(-16px)}50%{transform:translateX(16px)}}
-@keyframes fh-spinslow{to{transform:rotate(360deg)}}
-@keyframes fh-waves{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
-@keyframes fh-burst{0%{transform:scale(.05);opacity:0}4%{opacity:1}45%{opacity:1}62%{transform:scale(1) translateY(14px);opacity:0}100%{transform:scale(1) translateY(14px);opacity:0}}
-@keyframes fh-bulb{0%,100%{opacity:1}50%{opacity:.28}}
-@keyframes fh-eq{0%,100%{transform:scaleY(.25)}50%{transform:scaleY(1)}}
 @keyframes fh-tour-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 @keyframes fh-nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 @keyframes fh-nudge-up{0%,100%{transform:translateY(0) scaleY(-1)}50%{transform:translateY(-7px) scaleY(-1)}}
@@ -526,7 +517,7 @@ const T_RAW = {
   g_valentine: "Joyeuse Saint-Valentin 💘|Happy Valentine’s Day 💘|Feliz San Valentín 💘|Alles Liebe zum Valentinstag 💘", g_april: "Poisson d’avril ! 🐟|April Fools! 🐟|¡Inocente! 🐟|April, April! 🐟",
   g_easter: "Joyeuses Pâques 🐣|Happy Easter 🐣|Felices Pascuas 🐣|Frohe Ostern 🐣", g_music: "Fête de la musique 🎶|Happy Music Day 🎶|Feliz Día de la música 🎶|Fête de la Musique 🎶",
   g_bastille: "Bon 14 Juillet ! 🎆|Happy Bastille Day! 🎆|¡Feliz 14 de julio! 🎆|Schönen 14. Juli! 🎆", g_rentree: "Bonne rentrée ! ✏️|Happy back to school! ✏️|¡Feliz vuelta al cole! ✏️|Guten Schulstart! ✏️",
-  scene: "Saisons & fêtes|Seasons & holidays|Estaciones y fiestas|Jahreszeiten & Feste", sceneDecor: "Décor|Scenery|Decorado|Kulisse",
+  scene: "Décors animés|Animated scenes|Decorados animados|Animierte Kulissen", sceneDecor: "Décor|Scenery|Decorado|Kulisse",
   hSeasons: "Saisons & fêtes|Seasons & holidays|Estaciones y fiestas|Jahreszeiten & Feste", hStyles: "Autres thèmes|Other themes|Otros temas|Weitere Themen",
   autoTheme: "Changer de thème tout seul selon la date|Change theme automatically by date|Cambiar de tema solo según la fecha|Thema automatisch nach Datum wechseln",
   today: "aujourd’hui|today|hoy|heute", autoOff: "Thème automatique désactivé|Automatic theme turned off|Tema automático desactivado|Automatisches Thema ausgeschaltet",
@@ -707,8 +698,11 @@ function renderAlarm(kind, sr) {
 const TAB_IDS = ['presets', 'font', 'colors', 'bg', 'fx', 'clock', 'date', 'layout'];
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
-const SCENE_IDS = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
-const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇' };
+const SCENE_FETES = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
+// décors des autres thèmes (dessinés dans scenes.js)
+const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'holo', 'trippy'];
+const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
+const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', holo: '🛰️', trippy: '🌀' };
 const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note'], ['surprise'], ['fs'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 const NOTE_FS = [14, 80], PIN_K = [0.6, 3];
@@ -739,19 +733,19 @@ const VKEYS = ['font', 'dateFont', 'weight', 'italic', 'letterSpacing', 'fixedDi
 const IKEYS = ['bgImage', 'bgFit', 'bgBlur', 'bgDim', 'bgSat'];
 const VDEF = {}; VKEYS.forEach(k => { VDEF[k] = BASE[k]; });
 const PRESETS = [
-  { n: 'Papier|Paper|Papel|Papier', s: { font: 'Instrument Serif', weight: 400, color: '#1c1a17', dateColor: '#1c1a17', dateOpacity: 65, accent: '#c2410c', glowColor: '#c2410c', bgType: 'solid', bgColor: '#efe9df', vignette: 0, grain: 35, anim: 'fade' } },
-  { n: 'Néon|Neon|Neón|Neon', s: { font: 'Monoton', dateFont: 'Righteous', weight: 400, color: '#ff5ad8', dateColor: '#ffc2f1', dateOpacity: 85, accent: '#5af2ff', glow: 70, glowColor: '#ff2fd0', bgType: 'solid', bgColor: '#0a0610', vignette: 55, anim: 'fade', dateUpper: true } },
-  { n: 'Terminal|Terminal|Terminal|Terminal', s: { font: 'VT323', weight: 400, color: '#41ff8a', dateColor: '#41ff8a', dateOpacity: 70, accent: '#41ff8a', glow: 35, glowColor: '#1aff6a', bgType: 'solid', bgColor: '#030703', scanlines: true, vignette: 60, anim: 'none' } },
-  { n: 'Coucher de soleil|Sunset|Atardecer|Sonnenuntergang', s: { font: 'Bebas Neue', weight: 400, color: '#fff6ec', dateColor: '#fff6ec', dateOpacity: 85, accent: '#ffd166', glowColor: '#ffd166', bgType: 'gradient', bgShape: 'linear', bgAngle: 160, bg1: '#ff8a4c', bg2: '#5b2a86', shadow: 35, vignette: 20, letterSpacing: 2 } },
-  { n: 'Bonbon|Candy|Caramelo|Bonbon', s: { font: 'Fredoka', weight: 600, color: '#5b2bd9', dateColor: '#5b2bd9', dateOpacity: 70, accent: '#ff4f9a', glowColor: '#ff4f9a', bgType: 'gradient', bgShape: 'linear', bgAngle: 135, bg1: '#ffd6ea', bg2: '#dcd6ff', vignette: 0, anim: 'pop', sepAccent: true } },
-  { n: 'Brutal|Brutal|Brutal|Brutal', s: { font: 'Archivo Black', dateFont: 'Space Grotesk', weight: 400, color: '#111111', dateColor: '#111111', dateOpacity: 100, accent: '#111111', glowColor: '#111111', bgType: 'solid', bgColor: '#ffe14d', vignette: 0, dateUpper: true, letterSpacing: -4, anim: 'drop' } },
-  { n: 'Cosmos|Cosmos|Cosmos|Kosmos', s: { font: 'Orbitron', weight: 500, color: '#c8f3ff', dateColor: '#c8f3ff', dateOpacity: 65, accent: '#7c5cff', glow: 40, glowColor: '#3ab8ff', bgType: 'aurora', bg1: '#1b3a8a', bg2: '#06070f', bg3: '#0f5a6a', bgSpeed: 45, vignette: 50, dateUpper: true, letterSpacing: 4 } },
-  { n: 'Arcade|Arcade|Arcade|Arcade', s: { font: 'Press Start 2P', weight: 400, color: '#ffd23f', dateColor: '#ff7ad9', dateOpacity: 100, accent: '#ff7ad9', glowColor: '#ff7ad9', shadow: 60, bgType: 'solid', bgColor: '#1a0f3d', scanlines: true, vignette: 40, anim: 'none', dateUpper: true } },
-  { n: 'Luxe|Luxury|Lujo|Luxus', s: { font: 'Italiana', dateFont: 'Cormorant Garamond', weight: 400, color: '#e8c77c', dateColor: '#e8c77c', dateOpacity: 75, accent: '#e8c77c', glowColor: '#e8c77c', gradText: true, grad1: '#fbe9bd', grad2: '#a87a2f', bgType: 'gradient', bgShape: 'radial', bg1: '#221d14', bg2: '#070605', letterSpacing: 6, dateUpper: true, vignette: 45, anim: 'blur' } },
-  { n: 'Matrice|Dot matrix|Matriz|Punktmatrix', s: { font: 'Doto', dateFont: 'Geist', weight: 800, color: '#ff5a36', dateColor: '#f0ece6', dateOpacity: 55, accent: '#ff5a36', glowColor: '#ff5a36', bgType: 'solid', bgColor: '#111111', vignette: 30, anim: 'flip' } },
-  { n: 'Glacier|Glacier|Glaciar|Gletscher', s: { font: 'Unbounded', weight: 200, color: '#0d2c4d', dateColor: '#0d2c4d', dateOpacity: 65, accent: '#2b7fff', glowColor: '#2b7fff', bgType: 'gradient', bgShape: 'linear', bgAngle: 180, bg1: '#eef8ff', bg2: '#b9dcff', vignette: 0, grain: 15 } },
-  { n: 'Iso 3D|Iso 3D|Iso 3D|Iso 3D', s: { font: 'Nabla', dateFont: 'Fredoka', weight: 400, color: '#ffffff', dateColor: '#ffe8b3', dateOpacity: 85, accent: '#ffb84d', glowColor: '#ffb84d', bgType: 'gradient', bgShape: 'radial', bg1: '#2b1a4a', bg2: '#0e0a1a', vignette: 40, anim: 'pop' } },
-  { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'solid', bgColor: '#120d0b', grain: 30, vignette: 65, anim: 'fade', sepAccent: true } },
+  { n: 'Papier|Paper|Papel|Papier', s: { font: 'Instrument Serif', weight: 400, color: '#1c1a17', dateColor: '#1c1a17', dateOpacity: 65, accent: '#c2410c', glowColor: '#c2410c', bgType: 'scene', scene: 'paper', bgColor: '#efe9df', bg1: '#fbf8f1', bg2: '#efe9df', bg3: '#e8e2d6', vignette: 0, grain: 22, anim: 'fade' } },
+  { n: 'Néon|Neon|Neón|Neon', s: { font: 'Monoton', dateFont: 'Righteous', weight: 400, color: '#ff5ad8', dateColor: '#ffc2f1', dateOpacity: 85, accent: '#5af2ff', glow: 70, glowColor: '#ff2fd0', bgType: 'scene', scene: 'neon', bgColor: '#0a0610', bg1: '#1c0a33', bg2: '#07030f', bg3: '#3a0f4a', vignette: 45, anim: 'fade', dateUpper: true } },
+  { n: 'Terminal|Terminal|Terminal|Terminal', s: { font: 'VT323', weight: 400, color: '#41ff8a', dateColor: '#41ff8a', dateOpacity: 70, accent: '#41ff8a', glow: 35, glowColor: '#1aff6a', bgType: 'scene', scene: 'terminal', bgColor: '#030703', bg1: '#0b2a14', bg2: '#030703', bg3: '#041207', scanlines: true, vignette: 50, anim: 'none' } },
+  { n: 'Coucher de soleil|Sunset|Atardecer|Sonnenuntergang', s: { font: 'Bebas Neue', weight: 400, color: '#fff6ec', dateColor: '#fff6ec', dateOpacity: 85, accent: '#ffd166', glowColor: '#ffd166', bgType: 'scene', scene: 'sunset', bg1: '#d63a6b', bg2: '#1a0b3d', bg3: '#ff9a4c', shadow: 40, vignette: 25, letterSpacing: 2 } },
+  { n: 'Bonbon|Candy|Caramelo|Bonbon', s: { font: 'Fredoka', weight: 600, color: '#5b2bd9', dateColor: '#5b2bd9', dateOpacity: 70, accent: '#ff4f9a', glowColor: '#ff4f9a', bgType: 'scene', scene: 'candy', bg1: '#ffe3f1', bg2: '#e4dcff', bg3: '#fff0f7', vignette: 0, anim: 'pop', sepAccent: true } },
+  { n: 'Brutal|Brutal|Brutal|Brutal', s: { font: 'Archivo Black', dateFont: 'Space Grotesk', weight: 400, color: '#111111', dateColor: '#111111', dateOpacity: 100, accent: '#111111', glowColor: '#111111', bgType: 'scene', scene: 'brutal', bgColor: '#ffe14d', bg1: '#ffe14d', bg2: '#ffe14d', bg3: '#111111', vignette: 0, dateUpper: true, letterSpacing: -4, anim: 'drop' } },
+  { n: 'Cosmos|Cosmos|Cosmos|Kosmos', s: { font: 'Orbitron', weight: 500, color: '#c8f3ff', dateColor: '#c8f3ff', dateOpacity: 65, accent: '#7c5cff', glow: 40, glowColor: '#3ab8ff', bgType: 'scene', scene: 'cosmos', bg1: '#2a3f9e', bg2: '#05060e', bg3: '#127a8a', bgSpeed: 45, vignette: 40, dateUpper: true, letterSpacing: 4 } },
+  { n: 'Arcade|Arcade|Arcade|Arcade', s: { font: 'Press Start 2P', weight: 400, color: '#ffd23f', dateColor: '#ff7ad9', dateOpacity: 100, accent: '#ff7ad9', glowColor: '#ff7ad9', shadow: 60, bgType: 'scene', scene: 'arcade', bgColor: '#1a0f3d', bg1: '#2b1a66', bg2: '#1a0f3d', bg3: '#120a2e', scanlines: true, vignette: 35, anim: 'none', dateUpper: true } },
+  { n: 'Luxe|Luxury|Lujo|Luxus', s: { font: 'Italiana', dateFont: 'Cormorant Garamond', weight: 400, color: '#e8c77c', dateColor: '#e8c77c', dateOpacity: 75, accent: '#e8c77c', glowColor: '#e8c77c', gradText: true, grad1: '#fbe9bd', grad2: '#a87a2f', bgType: 'scene', scene: 'luxe', bg1: '#221d14', bg2: '#070605', bg3: '#3a2c14', letterSpacing: 6, dateUpper: true, vignette: 40, anim: 'blur' } },
+  { n: 'Matrice|Dot matrix|Matriz|Punktmatrix', s: { font: 'Doto', dateFont: 'Geist', weight: 800, color: '#ff5a36', dateColor: '#f0ece6', dateOpacity: 55, accent: '#ff5a36', glowColor: '#ff5a36', bgType: 'scene', scene: 'matrix', bgColor: '#111111', bg1: '#191919', bg2: '#0b0b0b', bg3: '#222222', vignette: 30, anim: 'flip' } },
+  { n: 'Glacier|Glacier|Glaciar|Gletscher', s: { font: 'Unbounded', weight: 300, color: '#0d2c4d', dateColor: '#0d2c4d', dateOpacity: 75, accent: '#2b7fff', glowColor: '#2b7fff', bgType: 'scene', scene: 'glacier', bg1: '#eef8ff', bg2: '#bfe3ff', bg3: '#ffffff', vignette: 0, grain: 10 } },
+  { n: 'Iso 3D|Iso 3D|Iso 3D|Iso 3D', s: { font: 'Nabla', dateFont: 'Fredoka', weight: 400, color: '#ffffff', dateColor: '#ffe8b3', dateOpacity: 85, accent: '#ffb84d', glowColor: '#ffb84d', bgType: 'scene', scene: 'iso', bg1: '#2b1a4a', bg2: '#0e0a1a', bg3: '#3a2466', vignette: 30, anim: 'pop' } },
+  { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'scene', scene: 'gothic', bgColor: '#120d0b', bg1: '#2a1e18', bg2: '#120d0b', bg3: '#0a0706', grain: 25, vignette: 50, anim: 'fade', sepAccent: true } },
   // saisons & fêtes
   { id: 'rentree', n: 'Rentrée|Back to school|Vuelta al cole|Schulstart', s: { font: 'Caveat', weight: 600, color: '#f6f6ef', dateColor: '#ecece2', dateOpacity: 80, accent: '#ffe066', bgType: 'scene', scene: 'rentree', bg1: '#24452f', bg2: '#1c3a29', bg3: '#3c6b4c', vignette: 35, grain: 40, anim: 'fade' } },
   { id: 'autumn', n: 'Automne|Autumn|Otoño|Herbst', s: { font: 'Righteous', weight: 400, color: '#ffe8cc', dateColor: '#ffd9ae', dateOpacity: 80, accent: '#ff8c42', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'autumn', bg1: '#b24a2b', bg2: '#3a1f3f', bg3: '#ffbe6b', vignette: 40, anim: 'swirl' } },
@@ -768,8 +762,8 @@ const PRESETS = [
   { id: 'bastille', n: '14 Juillet|Bastille Day|14 de julio|14. Juli', s: { font: 'Bebas Neue', weight: 400, letterSpacing: 3, color: '#ffffff', dateColor: '#cfe0ff', dateOpacity: 80, accent: '#e63946', sepAccent: true, bgType: 'scene', scene: 'bastille', bg1: '#0b1a4a', bg2: '#030614', bg3: '#e63946', vignette: 40, anim: 'drop' } },
   // autres thèmes
   { n: 'Grille|Grid|Cuadrícula|Raster', s: { font: 'Geist', dateFont: 'JetBrains Mono', weight: 300, letterSpacing: -2, color: '#f1fff5', dateColor: '#bdf5d0', dateOpacity: 60, accent: '#4ade80', glow: 18, glowColor: '#4ade80', bgType: 'grid', bgColor: '#000000', gridLit: '#4ade80', gridLine: '#ffffff', vignette: 40, anim: 'blur' } },
-  { n: 'Hologramme|Hologram|Holograma|Hologramm', s: { font: 'Tektur', weight: 500, letterSpacing: 6, color: '#9ff8ff', dateColor: '#9ff8ff', dateOpacity: 70, accent: '#22d3ee', glow: 55, glowColor: '#22d3ee', bgType: 'gradient', bgShape: 'radial', bg1: '#06283a', bg2: '#020409', vignette: 55, anim: 'glitch', weird: 'holo', dateUpper: true } },
-  { n: 'Psyché|Trippy|Psicodélico|Psychedelisch', s: { font: 'Shrikhand', weight: 400, color: '#ffffff', dateColor: '#fff3fb', dateOpacity: 85, accent: '#ffe14d', glow: 25, glowColor: '#ff4fd8', gradText: true, grad1: '#fff1a8', grad2: '#ff4fd8', bgType: 'aurora', bg1: '#7b2ff7', bg2: '#12002b', bg3: '#00c2a8', bgSpeed: 70, vignette: 30, anim: 'jelly', weird: 'liquid' } },
+  { n: 'Hologramme|Hologram|Holograma|Hologramm', s: { font: 'Tektur', weight: 500, letterSpacing: 6, color: '#9ff8ff', dateColor: '#9ff8ff', dateOpacity: 70, accent: '#22d3ee', glow: 55, glowColor: '#22d3ee', bgType: 'scene', scene: 'holo', bg1: '#06283a', bg2: '#020409', bg3: '#0a3a50', vignette: 45, anim: 'glitch', weird: 'holo', dateUpper: true } },
+  { n: 'Psyché|Trippy|Psicodélico|Psychedelisch', s: { font: 'Shrikhand', weight: 400, color: '#ffffff', dateColor: '#fff3fb', dateOpacity: 85, accent: '#ffe14d', glow: 0, glowColor: '#ff4fd8', shadow: 30, gradText: true, grad1: '#fff1a8', grad2: '#ff4fd8', bgType: 'scene', scene: 'trippy', bg1: '#7b2ff7', bg2: '#12002b', bg3: '#00c2a8', bgSpeed: 70, vignette: 30, anim: 'jelly', weird: 'wave' } },
 ].map(p => ({ id: p.id || '', fete: !!p.id, n: four(p.n), s: p.s }));
 const GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
@@ -856,72 +850,6 @@ function themeOfDay(d) {
   if (md >= 621 && md < 923) return 'summer';
   if (md >= 923 && md < 1221) return 'autumn';
   return 'winter';
-}
-
-// Décors animés des saisons & fêtes (positions tirées une fois pour toutes)
-const SEEDED = new Map();
-function seeded(key, n, mk) {
-  if (!SEEDED.has(key)) { let a = 7; for (const ch of key) a = (Math.imul(a, 31) + ch.charCodeAt(0)) | 0; const r = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; SEEDED.set(key, Array.from({ length: n }, (_, i) => mk(r, i))); }
-  return SEEDED.get(key);
-}
-const pickOf = (r, a) => a[Math.floor(r() * a.length)];
-function sceneLayer(E, s) {
-  const id = SCENE_IDS.includes(s.scene) ? s.scene : 'winter', out = [];
-  // particules qui tombent (up = qui montent)
-  const drift = (key, n, opt) => seeded(id + key, n, (r) => ({ x: r() * 100, dur: opt.dur[0] + r() * opt.dur[1], dl: -r() * 30, dx: Math.round((r() - 0.5) * (opt.dx || 120)), rot: opt.spin ? Math.round((r() - 0.5) * opt.spin) : 0, sway: opt.sway ? 2.5 + r() * 3 : 0, z: opt.size[0] + r() * opt.size[1], g: opt.glyphs ? pickOf(r, opt.glyphs) : '', c: opt.colors ? pickOf(r, opt.colors) : '', o: opt.op ? opt.op[0] + r() * opt.op[1] : 1 }))
-    .map((p, i) => E('div', { key: key + i, style: { position: 'absolute', left: p.x + '%', [opt.up ? 'bottom' : 'top']: '-10%', '--dx': p.dx + 'px', '--rot': p.rot + 'deg', animation: `${opt.up ? 'fh-up' : 'fh-fall'} ${p.dur.toFixed(1)}s linear ${p.dl.toFixed(1)}s infinite` } },
-      E('div', { style: { animation: p.sway ? `fh-sway ${p.sway.toFixed(1)}s ease-in-out ${p.dl.toFixed(1)}s infinite` : undefined, opacity: p.o, ...(opt.shape ? opt.shape(p) : { fontSize: Math.round(p.z), lineHeight: 1, color: p.c || undefined, textShadow: opt.glow && p.c ? `0 0 10px ${p.c}` : undefined }) } }, opt.shape ? null : p.g)));
-  const snow = (n) => drift('snow', n, { dur: [9, 10], size: [4, 8], op: [0.5, 0.5], sway: true, shape: (p) => ({ width: p.z, height: p.z, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,.95) 0 45%, rgba(255,255,255,0) 70%)' }) });
-  const ground = (back, front, h) => E('svg', { key: 'ground', viewBox: '0 0 1600 320', preserveAspectRatio: 'xMidYMax slice', style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: (h || 24) + 'vh', display: 'block' } },
-    E('path', { d: 'M0 320 L0 214 C220 180 420 206 640 196 C860 186 1100 170 1320 186 C1460 196 1540 188 1600 182 L1600 320 Z', fill: back }),
-    E('path', { d: 'M0 320 L0 262 C140 240 260 246 420 258 C560 268 700 236 860 232 C1020 228 1120 244 1260 238 C1400 232 1500 250 1600 244 L1600 320 Z', fill: front }));
-  const trees = (color, list) => E('svg', { key: 'trees', viewBox: '0 0 1600 320', preserveAspectRatio: 'xMidYMax slice', style: { position: 'absolute', left: 0, bottom: 0, width: '100%', height: '24vh', display: 'block' } },
-    list.map(([x, base, h], i) => E('g', { key: i, fill: color },
-      E('rect', { x: x - h * 0.05, y: base - h * 0.12, width: h * 0.1, height: h * 0.14 }),
-      E('path', { d: `M${x} ${base - h} L${x - h * 0.22} ${base - h * 0.55} L${x + h * 0.22} ${base - h * 0.55} Z M${x} ${base - h * 0.8} L${x - h * 0.3} ${base - h * 0.3} L${x + h * 0.3} ${base - h * 0.3} Z M${x} ${base - h * 0.58} L${x - h * 0.38} ${base - h * 0.08} L${x + h * 0.38} ${base - h * 0.08} Z` }))));
-  const fireworks = (colors) => seeded(id + 'fw', 6, (r, i) => ({ x: 8 + r() * 84, y: 8 + r() * 40, R: 60 + r() * 60, dur: 2.6 + r() * 1.6, dl: -(i * 0.9 + r()), c: pickOf(r, colors), c2: pickOf(r, colors) }))
-    .map((b, i) => { const dots = []; for (let k = 0; k < 16; k++) { const a = k / 16 * Math.PI * 2; dots.push(`${(Math.cos(a) * b.R).toFixed(1)}px ${(Math.sin(a) * b.R).toFixed(1)}px 0 2px ${b.c}`, `${(Math.cos(a + 0.2) * b.R * 0.58).toFixed(1)}px ${(Math.sin(a + 0.2) * b.R * 0.58).toFixed(1)}px 0 1px ${b.c2}`); }
-      return E('div', { key: 'fw' + i, style: { position: 'absolute', left: b.x + '%', top: b.y + '%', width: 4, height: 4, borderRadius: '50%', background: b.c, boxShadow: dots.join(', '), animation: `fh-burst ${b.dur.toFixed(1)}s ease-out ${b.dl.toFixed(1)}s infinite` } }); });
-  const swim = (key, n, glyphs) => seeded(id + key, n, (r, i) => ({ top: 10 + r() * 62, z: 26 + r() * 30, dur: 16 + r() * 18, dl: -r() * 30, rev: i % 2 === 0, g: pickOf(r, glyphs) }))
-    .map((f, i) => E('div', { key: key + i, style: { position: 'absolute', left: 0, right: 0, top: f.top + '%', transform: f.rev ? 'scaleX(-1)' : undefined } },
-      E('div', { style: { display: 'inline-block', fontSize: Math.round(f.z), lineHeight: 1, animation: `fh-batfly ${f.dur.toFixed(1)}s linear ${f.dl.toFixed(1)}s infinite` } }, E('span', { style: { display: 'inline-block', transform: 'scaleX(-1)' } }, f.g))));
-
-  if (id === 'winter') out.push(ground('#cfe2f3', '#f2f8ff'), trees('#123247', [[180, 268, 120], [270, 262, 90], [1340, 252, 130], [1450, 258, 100]]), ...snow(38));
-  if (id === 'xmas') {
-    out.push(ground('#c9dbe8', '#f2f8ff'), trees('#0b2a1f', [[200, 266, 130], [300, 262, 95], [1330, 252, 140], [1440, 258, 105]]), ...snow(30));
-    out.push(E('svg', { key: 'wire', viewBox: '0 0 100 10', preserveAspectRatio: 'none', style: { position: 'absolute', left: 0, top: 0, width: '100%', height: '9vh' } }, E('path', { d: 'M0 1 Q 16.6 9 33.3 1 Q 50 9 66.6 1 Q 83.3 9 100 1', stroke: '#14301f', strokeWidth: 0.35, fill: 'none', vectorEffect: 'non-scaling-stroke' })));
-    const bulbs = ['#ff4d4d', '#ffd166', '#4ade80', '#4ea8ff'];
-    for (let i = 0; i < 27; i++) { const t = (i + 0.5) / 27, seg = (t * 3) % 1, y = 1 + Math.sin(seg * Math.PI) * 6.6; const c = bulbs[i % 4]; out.push(E('div', { key: 'b' + i, style: { position: 'absolute', left: `calc(${(t * 100).toFixed(2)}% - 5px)`, top: `calc(${(y * 0.9).toFixed(2)}vh + 2px)`, width: 10, height: 14, borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', background: c, boxShadow: `0 0 14px 4px ${hexA(c, 0.55)}`, animation: `fh-bulb 1.8s ease-in-out ${(i % 2) * -0.9}s infinite` } })); }
-  }
-  if (id === 'autumn') out.push(ground('#4a2513', '#2b160d'), ...drift('leaf', 22, { dur: [9, 9], size: [18, 18], glyphs: ['🍂', '🍁', '🍂'], spin: 900, sway: true }));
-  if (id === 'spring') out.push(ground('#9bd88a', '#6cc25a'), ...drift('petal', 22, { dur: [10, 9], size: [14, 14], glyphs: ['🌸', '🌸', '🌼', '🌷'], spin: 500, sway: true }));
-  if (id === 'easter') out.push(ground('#b5e3a1', '#8fd17a'), ...drift('egg', 16, { dur: [12, 8], size: [20, 16], glyphs: ['🥚', '🐣', '🌷', '🐰', '🍫'], spin: 240, sway: true }));
-  if (id === 'valentine') out.push(...drift('heart', 26, { up: true, dur: [10, 10], size: [16, 30], glyphs: ['♥'], colors: ['#ff4d8d', '#ff8fb3', '#ffffff', '#ff2e63', '#ffc2d6'], op: [0.55, 0.45], spin: 60, sway: true }));
-  if (id === 'music') {
-    out.push(...drift('note', 22, { up: true, dur: [9, 9], size: [22, 26], glyphs: ['♪', '♫', '♬', '♩'], colors: ['#f72585', '#4cc9f0', '#ffd166', '#b5179e', '#7cff6b'], glow: true, spin: 80, sway: true }));
-    out.push(E('div', { key: 'eq', style: { position: 'absolute', left: 0, right: 0, bottom: 0, height: '16vh', display: 'flex', alignItems: 'flex-end', gap: '0.6vw', padding: '0 1vw', boxSizing: 'border-box', opacity: 0.55 } },
-      seeded('eqbars', 36, (r) => ({ d: 0.5 + r() * 0.9, dl: -r() })).map((b, i) => E('div', { key: i, style: { flex: 1, height: '100%', transformOrigin: '50% 100%', borderRadius: '6px 6px 0 0', background: 'linear-gradient(180deg, #f72585, #7209b7)', animation: `fh-eq ${b.d.toFixed(2)}s ease-in-out ${b.dl.toFixed(2)}s infinite` } }))));
-  }
-  if (id === 'newyear') out.push(...fireworks(['#ffd166', '#f72585', '#4cc9f0', '#7cff6b', '#ffffff', '#ff8c42']), ...drift('conf', 30, { dur: [8, 7], size: [6, 6], spin: 1400, colors: ['#ffd166', '#f72585', '#4cc9f0', '#7cff6b', '#ffffff'], sway: true, shape: (p) => ({ width: p.z, height: p.z * 1.7, borderRadius: 2, background: p.c }) }));
-  if (id === 'bastille') out.push(...fireworks(['#2b59ff', '#ffffff', '#e63946']), ground('#0a1233', '#050816', 16));
-  if (id === 'april') out.push(...swim('fish', 8, ['🐟', '🐠', '🐡', '🐟']), ...drift('bub', 20, { up: true, dur: [8, 8], size: [6, 14], op: [0.4, 0.5], sway: true, shape: (p) => ({ width: p.z, height: p.z, borderRadius: '50%', border: '1.5px solid rgba(255,255,255,.6)', background: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 60%)' }) }),
-    E('div', { key: 'rays', style: { position: 'absolute', inset: 0, background: 'repeating-linear-gradient(100deg, rgba(255,255,255,.07) 0 4%, transparent 4% 11%)', WebkitMaskImage: 'linear-gradient(180deg, #000, transparent 70%)', maskImage: 'linear-gradient(180deg, #000, transparent 70%)' } }));
-  if (id === 'summer') {
-    out.push(E('div', { key: 'rays', style: { position: 'absolute', right: '-6vmin', top: '-14vmin', width: '62vmin', height: '62vmin', borderRadius: '50%', background: 'repeating-conic-gradient(rgba(255,244,190,.32) 0 7deg, transparent 7deg 20deg)', WebkitMaskImage: 'radial-gradient(circle, #000 25%, transparent 70%)', maskImage: 'radial-gradient(circle, #000 25%, transparent 70%)', animation: 'fh-spinslow 80s linear infinite' } }),
-      E('div', { key: 'sun', style: { position: 'absolute', right: '15vmin', top: '9vmin', width: '18vmin', height: '18vmin', borderRadius: '50%', background: 'radial-gradient(circle, #fffbe0 0 38%, #ffd54f 62%, #ffb300 100%)', boxShadow: '0 0 60px 20px rgba(255,213,79,.45)' } }));
-    const wave = (k, y, amp, color, dur, h) => { let d = `M0 ${y}`; for (let i = 0; i < 16; i++) d += ` Q${i * 200 + 100} ${y + (i % 2 ? amp : -amp)} ${i * 200 + 200} ${y}`; d += ' V100 H0 Z';
-      return E('div', { key: k, style: { position: 'absolute', left: 0, bottom: 0, width: '200%', height: h + 'vh', animation: `fh-waves ${dur}s linear infinite` } }, E('svg', { viewBox: '0 0 3200 100', preserveAspectRatio: 'none', style: { width: '100%', height: '100%', display: 'block' } }, E('path', { d, fill: color }))); };
-    out.push(wave('w1', 30, 14, 'rgba(129,212,250,.75)', 26, 22), wave('w2', 40, 12, 'rgba(41,182,246,.8)', 17, 16), wave('w3', 50, 10, 'rgba(2,119,189,.92)', 11, 10));
-  }
-  if (id === 'rentree') {
-    out.push(E('div', { key: 'smudge', style: { position: 'absolute', inset: 0, background: 'radial-gradient(40% 30% at 30% 40%, rgba(255,255,255,.05), transparent 70%), radial-gradient(35% 25% at 72% 62%, rgba(255,255,255,.04), transparent 70%)' } }));
-    const chalk = (k, txt, st) => E('div', { key: k, style: { position: 'absolute', fontFamily: "'Caveat', cursive", fontWeight: 600, color: 'rgba(255,255,255,.26)', lineHeight: 1, whiteSpace: 'nowrap', ...st } }, txt);
-    out.push(chalk('c1', '2 + 2 = 4', { left: '6%', top: '16%', fontSize: '5vmin', transform: 'rotate(-6deg)' }), chalk('c2', 'a² + b² = c²', { right: '7%', top: '17%', fontSize: '4.6vmin', transform: 'rotate(4deg)' }),
-      chalk('c3', 'A B C', { left: '8%', bottom: '14%', fontSize: '6vmin', transform: 'rotate(3deg)' }), chalk('c4', 'π ≈ 3,14', { right: '9%', bottom: '15%', fontSize: '5vmin', transform: 'rotate(-4deg)' }),
-      chalk('c5', '☆', { left: '44%', top: '11%', fontSize: '5vmin' }), chalk('c6', '✎', { right: '30%', bottom: '10%', fontSize: '5vmin', transform: 'rotate(-20deg)' }));
-    out.push(E('div', { key: 'frame', style: { position: 'absolute', inset: 0, boxShadow: 'inset 0 0 0 1.4vmin #8a5a33, inset 0 0 0 1.9vmin #5e3a1d, inset 0 0 80px rgba(0,0,0,.45)' } }));
-  }
-  return out;
 }
 
 function hexA(hex, a) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); h = h.padEnd(6, '0'); return `rgba(${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)},${a})`; }
@@ -1386,6 +1314,16 @@ class Component extends DCLogic {
     if (v.tan > 1e-3) {
       const yFog = v.cy + v.f * (1 / 1.7 - 1) / v.tan, y0 = Math.max(0, yTop);
       if (yFog > 0) { const g = ctx.createLinearGradient(0, y0, 0, yFog); g.addColorStop(0, hexA(s.bgColor, 1)); g.addColorStop(1, hexA(s.bgColor, 0)); ctx.fillStyle = s.bgColor; ctx.fillRect(0, 0, v.W, y0); ctx.fillStyle = g; ctx.fillRect(0, y0, v.W, yFog - y0); }
+      // ciel au-dessus du plan : étoiles fixes et lueur de la couleur des cases sur l'horizon
+      if (y0 > 24) {
+        let a = 99; const rnd = () => { a = (a * 16807) % 2147483647; return a / 2147483647; };
+        ctx.fillStyle = s.gridLine;
+        for (let i = 0; i < 140; i++) { const x = rnd() * v.W, y = rnd() * (y0 - 12), z = rnd(); ctx.globalAlpha = 0.15 + z * 0.55; ctx.fillRect(x, y, z > 0.85 ? 2 : 1.2, z > 0.85 ? 2 : 1.2); }
+        ctx.globalAlpha = 1;
+        const hg = ctx.createLinearGradient(0, y0 - Math.min(160, y0), 0, y0 + 30); hg.addColorStop(0, hexA(s.gridLit, 0)); hg.addColorStop(0.8, hexA(s.gridLit, 0.2)); hg.addColorStop(1, hexA(s.gridLit, 0));
+        ctx.fillStyle = hg; ctx.fillRect(0, y0 - Math.min(160, y0), v.W, Math.min(160, y0) + 30);
+        ctx.fillStyle = hexA(s.gridLit, 0.55); ctx.fillRect(0, y0 - 1, v.W, 1.5);
+      }
     }
   };
 
@@ -1472,7 +1410,9 @@ class Component extends DCLogic {
     const x = { ...VDEF, font: f.name, weight: f.dw, dateFont: NODATE.has(f.name) ? 'Geist' : 'same' };
     if (light) { const ink = hsl(h + 200, 55, 18); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 160, 80, 46), bgColor: hsl(h, 70, 90), bg1: hsl(h, 75, 91), bg2: hsl(h + 35, 65, 80), bg3: hsl(h - 30, 70, 85), vignette: 0 }); }
     else { const ink = hsl(h + 30, 45, 94); Object.assign(x, { color: ink, dateColor: ink, accent: hsl(h + 170, 90, 62), bgColor: hsl(h, 40, 8), bg1: hsl(h, 50, 22), bg2: hsl(h + 40, 50, 6), bg3: hsl(h - 40, 60, 24), vignette: Math.round(rnd(20, 60)) }); }
-    x.bgType = pick(light ? ['solid', 'gradient', 'gradient', 'grid'] : ['solid', 'gradient', 'gradient', 'aurora', 'grid', 'spooky', 'scene']); x.scene = pick(SCENE_IDS);
+    x.bgType = pick(light ? ['solid', 'gradient', 'gradient', 'grid'] : ['solid', 'gradient', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'scene', 'scene']); x.scene = pick(SCENE_IDS.filter(id => !window.FHScenes || FHScenes.has(id)));
+    // un décor garde ses couleurs (ciel, texte) pour rester joli et lisible
+    if (x.bgType === 'scene') { const pr = PRESETS.find(q => q.id === x.scene || q.s.scene === x.scene); if (pr) ['bg1', 'bg2', 'bg3', 'bgColor', 'color', 'dateColor'].forEach(k => { if (pr.s[k]) x[k] = pr.s[k]; }); }
     x.bgShape = pick(['linear', 'radial']); x.bgAngle = pick([90, 135, 160, 180, 210]);
     x.gridLit = x.accent; x.gridLine = light ? '#000000' : '#ffffff'; x.gridTurn = Math.round(rnd(-30, 30)); x.gridTilt = Math.round(rnd(35, 62));
     if (x.bgType === 'spooky') { x.bg1 = hsl(h, 60, 16); x.bg2 = hsl(h, 50, 3); x.bg3 = hsl(h + 180, 95, 52); }
@@ -1597,14 +1537,15 @@ class Component extends DCLogic {
     const glowEl = useFilter && sh.length ? E('div', { key: 'glow', 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: sh.join(', '), pointerEvents: 'none' } }, buildKids(true)) : null;
     const timeEl = E('div', { key: 'time', ref: this.timeRef, 'data-tour': 'clock', style: timeStyle, role: 'timer', 'aria-label': display }, buildKids(false));
     // effets bizarres appliqués à tout le bloc
-    const wrapFx = { rainbow: `fhx-hue ${sec(5)} linear infinite`, float: `fhx-float ${sec(5)} ease-in-out infinite`, drunk: `fhx-drunk ${sec(3.4)} ease-in-out infinite`, glitch: `fhx-glitch ${sec(3)} linear infinite`, holo: `fhx-holo ${sec(4.5)} linear infinite, fhx-holoscan ${sec(1.6)} linear infinite`, spin: `fhx-spin ${sec(12)} linear infinite` }[s.weird];
+    const wrapFx = { rainbow: `fhx-hue ${sec(5)} linear infinite`, float: `fhx-float ${sec(5)} ease-in-out infinite`, drunk: `fhx-drunk ${sec(3.4)} ease-in-out infinite`, glitch: `fhx-glitch ${sec(3)} linear infinite`, holo: `fhx-holo ${sec(4.5)} linear infinite`, liquid: `fhx-float ${sec(7)} ease-in-out infinite`, spin: `fhx-spin ${sec(12)} linear infinite` }[s.weird];
     const wStyle = { position: 'relative', fontSize: clockPx.toFixed(1) + 'px', lineHeight: 1, animation: wrapFx, willChange: 'transform' };
-    if (s.weird === 'holo') { const m = 'repeating-linear-gradient(0deg, #000 0 .1em, rgba(0,0,0,.4) .1em .24em)'; Object.assign(wStyle, { WebkitMaskImage: m, maskImage: m, filter: `drop-shadow(0 0 .04em ${hexA('#5ef2ff', 0.75)})` }); }
+    // (masque fixe, sans filtre : l'effet reste fluide même devant un décor animé)
+    if (s.weird === 'holo') { const m = 'repeating-linear-gradient(0deg, #000 0 .1em, rgba(0,0,0,.4) .1em .24em)'; Object.assign(wStyle, { WebkitMaskImage: m, maskImage: m }); }
     if (s.weird === 'mirror') wStyle.WebkitBoxReflect = 'below -.04em linear-gradient(transparent 35%, rgba(0,0,0,.5))';
     if (s.weird === 'liquid') wStyle.filter = 'url(#fh-liquid)';
     const bf = (1.1 / clockPx).toFixed(4), bf2 = (1.9 / clockPx).toFixed(4);
     const liquid = s.weird === 'liquid' ? E('svg', { key: 'lq', width: 0, height: 0, 'aria-hidden': true, style: { position: 'absolute' } }, E('filter', { id: 'fh-liquid', x: '-20%', y: '-25%', width: '140%', height: '150%' },
-      E('feTurbulence', { type: 'fractalNoise', baseFrequency: `${bf} ${bf2}`, numOctaves: 1, seed: 7, result: 'n' }, E('animate', { attributeName: 'baseFrequency', dur: sec(9), values: `${bf} ${bf2};${(bf * 1.7).toFixed(4)} ${(bf2 * 1.4).toFixed(4)};${bf} ${bf2}`, repeatCount: 'indefinite' })),
+      E('feTurbulence', { type: 'fractalNoise', baseFrequency: `${bf} ${bf2}`, numOctaves: 1, seed: 7, result: 'n' }),
       E('feDisplacementMap', { in: 'SourceGraphic', in2: 'n', scale: (clockPx * 0.09).toFixed(1), xChannelSelector: 'R', yChannelSelector: 'G' }))) : null;
     // minuteur visuel : un disque qui se vide, vert → orange → rouge
     const fl = tm.dur > 0 ? Math.min(1, Math.max(0, tmLeft / tm.dur)) : 0;
@@ -1780,7 +1721,7 @@ class Component extends DCLogic {
       }
       if (t === 'bg') {
         seg('bgType', L.bgType, [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['scene', L.scene], ['spooky', L.spooky], ['image', L.image]], { span: '1 / -1' });
-        if (s.bgType === 'scene') { add({ isChips: true, label: L.sceneDecor, span: '1 / -1', options: SCENE_IDS.map(id => { const pr = PRESETS.find(x => x.id === id), on = s.scene === id; return { label: `${DECO[id]} ${pr ? pr.n[li] : id}`, pick: () => this.setS({ scene: id }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) }); col('bg2', L.sky, SW_BG); col('bg1', L.color + ' 2', SW_BG); col('bg3', L.horizon, SW_BG); }
+        if (s.bgType === 'scene') { add({ isChips: true, label: L.sceneDecor, span: '1 / -1', options: SCENE_IDS.filter(id => !window.FHScenes || FHScenes.has(id)).map(id => { const pr = PRESETS.find(x => x.id === id || x.s.scene === id), on = s.scene === id; return { label: `${DECO[id]} ${pr ? pr.n[li] : id}`, pick: () => this.setS({ scene: id }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) }); col('bg2', L.sky, SW_BG); col('bg1', L.color + ' 2', SW_BG); col('bg3', L.horizon, SW_BG); }
         if (s.bgType === 'grid') { col('bgColor', L.bgColor, SW_BG); col('gridLit', L.gridLit, SW_INK); col('gridLine', L.gridLine, SW_INK); rng('gridSize', L.gridSize, 24, 120, 1, v => v + ' px'); rng('gridTilt', L.gridTilt, 0, 68, 1, v => v + '°'); rng('gridTurn', L.gridTurn, -45, 45, 1, v => v + '°'); rng('gridTrail', L.gridTrail, 0, 100, 1, raw); tog('gridIdle', L.gridIdle); }
         if (s.bgType === 'spooky') { col('bg1', L.sky, SW_BG); col('bg2', L.deep, SW_BG); col('bg3', L.horizon, SW_BG); }
         if (s.bgType === 'solid') col('bgColor', L.bgColor, SW_BG);
@@ -1903,7 +1844,7 @@ class Component extends DCLogic {
             rows.flatMap((r, k) => { const c = r.d === best ? accT : r.d === worst ? hexA(ink, 0.62) : hexA(ink, 0.92), x = { color: c, opacity: 1 - k * 0.12, animation: k === 0 ? 'fh-rise .4s ease both' : undefined }; return [E('span', { key: 'a' + r.i, style: x }, `${L.lap} ${num(r.i + 1, false)}`), E('span', { key: 'b' + r.i, style: x }, fmtT(r.d)), E('span', { key: 'c' + r.i, style: { ...x, color: hexA(ink, 0.66) } }, fmtT(r.t))]; })));
         }
       }
-      toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px', padding: '.9em 1.1em', borderRadius: Math.round(bfs * 1.6), background: glassDark ? 'rgba(16,14,20,.7)' : 'rgba(255,255,255,.82)', border: `1px solid ${glassDark ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.1)'}`, boxShadow: '0 14px 40px rgba(0,0,0,.18)', fontSize: bfs + 'px' } }, parts);
+      toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px', padding: '.9em 1.1em', borderRadius: Math.round(bfs * 1.6), background: glassDark ? 'rgba(16,14,20,.72)' : 'rgba(255,255,255,.9)', border: `1px solid ${glassDark ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.1)'}`, boxShadow: '0 14px 40px rgba(0,0,0,.18)', fontSize: bfs + 'px' } }, parts);
     }
 
     // minuteur / chrono / sonomètre épinglés : cartes déplaçables et redimensionnables sur l'écran de l'heure
@@ -2056,13 +1997,13 @@ class Component extends DCLogic {
 
     return {
       s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
-      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !showing, isSpooky: spooky && !showing, spooky: spooky && !showing ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !showing, scene: s.bgType === 'scene' && !showing ? (newScene(s.scene) ? FHS.render(s.scene, E, s, { vw: st.vw, vh: st.vh }) : sceneLayer(E, s)) : null },
+      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !showing, isSpooky: spooky && !showing, spooky: spooky && !showing ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !showing, scene: s.bgType === 'scene' && !showing ? (newScene(s.scene) ? FHS.render(s.scene, E, s, { vw: st.vw, vh: st.vh }) : null) : null },
       sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (pinView(mode) && !!s.pinSnd)) },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
       // voile doux derrière l'heure sur les décors : les chiffres restent lisibles même devant un dessin chargé
-      halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const c = lum(s.color) > 0.35 ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : '#ffffff', a = lum(s.color) > 0.35 ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
+      halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: hexA(s.dateColor, Math.min(1, s.dateOpacity / 100 + 0.15)), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },

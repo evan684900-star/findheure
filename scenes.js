@@ -340,7 +340,7 @@
   }
 
   // ---------------- NOËL : village sous la neige, grand sapin, traîneau devant la lune ----------------
-  const XHOUSES = [[180, 720, 110, 70], [300, 712, 90, 86], [410, 724, 120, 62], [660, 728, 100, 66], [770, 716, 84, 80], [870, 726, 110, 64], [990, 720, 96, 76]], XT = [1355, 880, 400];
+  const XHOUSES = [[180, 720, 110, 70], [300, 712, 90, 86], [410, 724, 120, 62], [660, 728, 100, 66], [770, 716, 84, 80], [870, 726, 110, 64], [990, 720, 96, 76]], XT = [1320, 880, 400];
   def('xmas', {
     base: (o) => o.bg2,
     layers: (t, o) => {
@@ -363,7 +363,7 @@
           XHOUSES.forEach(([x, b, w, h], i) => { s += house(r, x, b, w, h, { wall: hc[i % hc.length], roof: '#3d3346', snow: '#f1f6fc', win: '#ffd27a' }); });
           s += hill(r, { y: 760, amp: 40, n: 12, f: [0.9, 2.2, 5] }, '#eaf2fb');
           // bonhomme de neige
-          const sx = 250, sb = 846;
+          const sx = 300, sb = 846;
           s += ell(sx + 8, sb + 4, 70, 12, 'rgba(90,120,170,.25)') + circ(sx, sb - 46, 50, '#f7fbff', ' stroke="#b9cbe3" stroke-width="2"') + circ(sx + 14, sb - 38, 36, 'rgba(150,180,220,.22)') + circ(sx, sb - 120, 37, '#f2f7fd', ' stroke="#b9cbe3" stroke-width="2"') + circ(sx, sb - 176, 27, '#f7fbff', ' stroke="#b9cbe3" stroke-width="2"');
           s += path(`M${sx - 22} ${sb - 160}Q${sx} ${sb - 150} ${sx + 24} ${sb - 160}L${sx + 26} ${sb - 150}Q${sx} ${sb - 140} ${sx - 24} ${sb - 150}Z`, '#d6334a') + path(`M${sx + 10} ${sb - 152}L${sx + 18} ${sb - 112}L${sx + 30} ${sb - 116}L${sx + 20} ${sb - 152}Z`, '#d6334a');
           s += rect(sx - 26, sb - 207, 52, 8, '#1f1b24') + rect(sx - 17, sb - 240, 34, 35, '#1f1b24') + rect(sx - 17, sb - 214, 34, 6, '#d6334a');
@@ -866,6 +866,556 @@
         }),
         ...t.n('arm', 9, (r, i) => { const x = rr(r, 60, 1540); return t.el('ar' + i, t.img(spr('arm', '#0b0814'), { left: em(x), top: em(rr(r, 700, 760)), width: em(30), height: em(110), transformOrigin: '50% 100%', '--a': `${N(rr(r, 8, 16))}deg`, animation: `fhs-rock ${N(rr(r, 0.9, 1.6))}s ease-in-out ${N(-r() * 2)}s infinite` })); }),
         ...drift(t, 'nt', t.n('nt', 12, (r) => { const c = pick(r, lc); return { x: rr(r, 80, 1520), y: 760, w: rr(r, 26, 40), h: rr(r, 36, 52), y1: -720, x1: rr(r, -80, 80), r1: rr(r, -40, 40), dur: rr(r, 9, 15), dl: -r() * 15, sw: 2.5, sr: 10, swd: 2.6, fade: true, op: 0.9, img: spr(r() < 0.5 ? 'note1' : 'note2', c) }; })),
+      ];
+    },
+  });
+
+  // position en % de la scène (pour les éléments qui changent de taille de police : leurs « em » ne sont plus ceux de la scène)
+  const pct = (x, y, w, h) => ({ left: N(x / 16) + '%', top: N(y / 9) + '%', ...(w != null ? { width: N(w / 16) + '%' } : null), ...(h != null ? { height: N(h / 9) + '%' } : null) });
+  // ---------------- PAPIER : feuille à grands carreaux (Seyès), gribouillis au stylo, avions en papier ----------------
+  def('paper', {
+    base: (o) => o.bg1,
+    layers: (t, o) => {
+      const ink = '#2b4fa8', pen = (d, w) => line(d, ink, w || 2.6, ' opacity=".8"');
+      return [
+        t.art('sheet', (p) => {
+          const r = t.r('pa');
+          let s = rect(0, 0, W, H, o.bg1);
+          for (let y = 24; y < H; y += 8) s += rect(0, y, W, (y - 24) % 32 === 0 ? 1.6 : 0.9, (y - 24) % 32 === 0 ? '#8fb0dc' : '#bccfe9', ` opacity="${(y - 24) % 32 === 0 ? 0.8 : 0.55}"`);
+          for (let x = 262; x < W; x += 32) s += rect(x, 0, 0.9, H, '#c9b6e2', ' opacity=".5"');
+          s += rect(230, 0, 2.4, H, '#e8737a', ' opacity=".85"');
+          [150, 450, 750].forEach((y) => { s += circ(110, y, 20, '#e9e3d6') + circ(110, y + 2, 20, 'rgba(0,0,0,.08)') + circ(110, y, 18, '#d8d1c2'); });
+          // tache de café et gribouillis
+          s += circ(1380, 720, 92, 'none', ' stroke="#c9a06a" stroke-width="9" opacity=".3"') + circ(1386, 716, 84, 'none', ' stroke="#c9a06a" stroke-width="3" opacity=".22"');
+          let sp = 'M1340 170'; for (let k = 0; k < 60; k++) { const a = k * 0.42, rr2 = 3 + k * 0.9; sp += `L${N(1340 + Math.cos(a) * rr2)} ${N(170 + Math.sin(a) * rr2)}`; } s += pen(sp, 2.2);
+          s += [[400, 140], [1180, 120], [1500, 420], [330, 640]].map(([x, y]) => pen(`M${x} ${y - 14}L${x + 4} ${y - 4}L${x + 15} ${y - 4}L${x + 6} ${y + 3}L${x + 10} ${y + 14}L${x} ${y + 7}L${x - 10} ${y + 14}L${x - 6} ${y + 3}L${x - 15} ${y - 4}L${x - 4} ${y - 4}Z`, 2)).join('');
+          s += circ(330, 300, 34, 'none', ` stroke="${ink}" stroke-width="2.6" opacity=".8"`) + circ(319, 292, 3.5, ink) + circ(341, 292, 3.5, ink) + pen('M316 310Q330 322 344 310');
+          s += pen('M300 820L330 740L360 820Z M330 740Q318 690 330 660Q342 690 330 740 M312 800L292 830L318 812 M348 800L368 830L342 812') + circ(330, 700, 7, 'none', ` stroke="${ink}" stroke-width="2"`);
+          s += pen('M1250 560h70v70h-70z M1250 560l26 -22h70l-26 22 M1346 538v70l-26 22');
+          s += pen('M1150 820C1180 790 1220 830 1250 800') + pen('M1240 790l12 10l-14 6');
+          s += pen('M480 790q20 -30 40 0t40 0', 2.2) + pen('M1080 250l40 -10M1080 262l52 -12', 2);
+          // crayon posé en biais et trombone
+          s += `<g transform="rotate(-24 1130 830)">${rect(940, 815, 300, 30, '#f6c84c')}${rect(940, 815, 300, 9, '#ffe08a')}${rect(940, 836, 300, 9, '#d9a92c')}${rect(910, 815, 32, 30, '#c9c9cf')}${rect(880, 815, 32, 30, '#ff9fb2', ' rx="6"')}${path('M1240 815L1300 830L1240 845Z', '#f2d8b0')}${path('M1282 825.5L1300 830L1282 834.5Z', '#3b3b44')}</g>`;
+          s += path('M760 0V60Q760 80 780 80Q800 80 800 60V10Q800 -4 788 -4Q776 -4 776 10V56', 'none', ' stroke="#9aa3ad" stroke-width="5" stroke-linecap="round"');
+          return s;
+        }),
+        ...scribble(t, 'tx', [['Brouillon', 560, 770, 44, -6, ink, 0.7], ['Ne pas oublier :', 280, 470, 36, -3, ink, 0.6], ['→ les devoirs !', 300, 520, 36, -3, '#d6334a', 0.6]]),
+        t.still(`<text x="560" y="800" font-family="cursive" font-size="44" fill="${ink}" opacity=".7" transform="rotate(-6 560 780)">Brouillon</text>`),
+        ...drift(t, 'pl', t.n('pl', 2, (r, i) => ({ x: -160, y: i ? 260 : 520, w: 110, h: 55, x1: 1900, y1: i ? 160 : -200, r0: i ? 6 : -4, r1: i ? -4 : -12, dur: i ? 19 : 25, dl: i ? -4 : -15, sw: 0, img: spr('plane', '#ffffff', '#dfe6f2') }))),
+        t.still(`<image href="${spr('plane', '#ffffff', '#dfe6f2').slice(5, -2)}" x="1020" y="230" width="110" height="55"/>`),
+      ];
+    },
+  });
+
+  // ---------------- NÉON : rue la nuit sous la pluie, enseignes lumineuses ----------------
+  const neonText = (x, y, txt, c, size, extra) => `<g filter="url(#nglow)"><text x="${x}" y="${y}" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="${size}" fill="none" stroke="${c}" stroke-width="${N(size * 0.06)}" ${extra || ''}>${txt}</text></g><text x="${x}" y="${y}" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="${size}" fill="none" stroke="#ffffff" stroke-width="${N(size * 0.02)}" opacity=".85" ${extra || ''}>${txt}</text>`;
+  def('neon', {
+    base: (o) => o.bgColor || '#0a0610',
+    layers: (t, o) => {
+      const E = t.E, defs = '<defs><filter id="nglow" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>';
+      return [
+        t.art('city', (p) => {
+          const r = t.r('ne');
+          let s = defs + sky(p + 's', [[0, '#07030f'], [0.55, '#1c0a33'], [0.8, '#3a0f4a']]);
+          s += skyline(r, { y: 640, minW: 50, maxW: 120, minH: 160, maxH: 460, fill: '#160a29', win: ['#ff5ad8', '#5af2ff', '#ffe066'], winP: 0.12, winW: 3, winH: 5, gapX: 8, gapY: 10, roofs: true });
+          s += skyline(r, { y: 680, minW: 60, maxW: 140, minH: 80, maxH: 260, fill: '#0f0620', win: ['#ff5ad8', '#5af2ff'], winP: 0.16, winW: 4, winH: 6, roofs: true });
+          // immeubles de la rue, à gauche et à droite
+          // rue qui file vers le fond, trottoirs
+          s += rect(-10, 690, 1620, 120, '#0a0514') + path('M560 700L1040 700L1500 810L100 810Z', '#120a22') + line('M800 712V730M800 746V770M800 786V808', '#3a2a55', 4);
+          s += rect(-10, 120, 380, 700, '#0b0516') + rect(1230, 160, 380, 660, '#0b0516') + rect(360, 120, 14, 700, '#140a26') + rect(1226, 160, 14, 660, '#140a26');
+          for (let y = 150; y < 760; y += 38) for (let x = 18; x < 350; x += 30) if (r() < 0.3) s += rect(x, y, 14, 18, pick(r, ['#ffd27a', '#ff9ad8', '#2b1847', '#2b1847']), ' opacity=".7"');
+          for (let y = 190; y < 760; y += 38) for (let x = 1256; x < 1590; x += 30) if (r() < 0.3) s += rect(x, y, 14, 18, pick(r, ['#9af2ff', '#ffd27a', '#2b1847', '#2b1847']), ' opacity=".7"');
+          [470, 1130].forEach((x) => { s += rect(x - 3, 560, 6, 150, '#1d1230') + path(`M${x} 562Q${x} 548 ${x + (x < 800 ? 34 : -34)} 548`, 'none', ' stroke="#1d1230" stroke-width="5"') + circ(x + (x < 800 ? 34 : -34), 552, 8, '#fff1c4') + glow('nl' + x, x + (x < 800 ? 34 : -34), 560, 90, '#ffd9a0', 0.3); });
+          // enseignes
+          s += rect(250, 200, 90, 330, '#120822', ' rx="8"') + neonText(273, 260, 'B', '#5af2ff', 58) + neonText(273, 330, 'A', '#5af2ff', 58) + neonText(273, 400, 'R', '#5af2ff', 58);
+          s += neonText(40, 600, 'OPEN', '#ff4fd8', 70) + neonText(1280, 280, '24/7', '#ffe066', 74);
+          s += `<g filter="url(#nglow)">${path('M1420 470C1380 440 1360 410 1380 390C1396 374 1414 380 1420 396C1426 380 1444 374 1460 390C1480 410 1460 440 1420 470Z', 'none', ' stroke="#ff3b6b" stroke-width="5"')}</g>`;
+          s += `<g filter="url(#nglow)">${path('M1300 560H1440L1420 540M1440 560L1420 580', 'none', ' stroke="#7cff6b" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"')}</g>` + neonText(1290, 640, 'CAFÉ', '#ff9b3d', 52);
+          // sol mouillé et reflets
+          s += `<defs>${lg(p + 'g', [[0, '#120822'], [1, '#05020a']])}</defs>` + rect(-10, 800, 1620, 110, `url(#${p}g)`) + rect(-10, 798, 1620, 3, '#2b1847');
+          [[75, '#ff4fd8'], [295, '#5af2ff'], [1340, '#ffe066'], [1420, '#ff3b6b'], [1350, '#ff9b3d']].forEach(([x, c]) => { s += rect(x - 30, 806, 60, 90, c, ' opacity=".14"') + rect(x - 8, 806, 16, 94, c, ' opacity=".22"'); });
+          for (let i = 0; i < 30; i++) s += ell(rr(r, 0, 1600), rr(r, 820, 890), rr(r, 30, 90), rr(r, 2, 5), pick(r, ['#ff4fd8', '#5af2ff', '#ffe066']), ` opacity="${N(rr(r, 0.1, 0.3))}"`);
+          return s;
+        }),
+        // enseignes qui grésillent
+        t.el('fl1', t.img(cached('neonOpen', () => svg('0 510 300 120', defs + neonText(40, 600, 'OPEN', '#ff4fd8', 70))), { left: 0, top: em(510), width: em(300), height: em(120), animation: 'fhs-flick 4.2s linear infinite' })),
+        t.el('fl2', t.img(cached('neon247', () => svg('1240 180 280 130', defs + neonText(1280, 280, '24/7', '#ffe066', 74))), { left: em(1240), top: em(180), width: em(280), height: em(130), animation: 'fhs-flick 6.4s linear -2s infinite' })),
+        // voiture volante avec traînée
+        t.el('car', { position: 'absolute', left: em(-220), top: em(150), width: em(200), height: em(16), borderRadius: 99, background: 'linear-gradient(90deg, rgba(90,242,255,0), rgba(90,242,255,.75))', '--x1': em(2100), '--y1': em(40), animation: 'fhs-move 9s linear -3s infinite' }),
+        ...drift(t, 'rn', t.n('rn', 30, (r) => ({ x: rr(r, -100, 1650), y: -120, w: 2, h: rr(r, 50, 90), x1: -110, y1: 1050, r0: 6, r1: 6, dur: rr(r, 0.7, 1.1), dl: -r() * 1.2, op: rr(r, 0.25, 0.5), bg: 'linear-gradient(180deg, rgba(180,220,255,0), rgba(180,220,255,.9))' }))),
+      ];
+    },
+  });
+
+  // ---------------- TERMINAL : vieil écran cathodique, journaux qui défilent, curseur qui clignote ----------------
+  def('terminal', {
+    base: (o) => o.bgColor || '#030703',
+    layers: (t, o) => {
+      const E = t.E, g = '#41ff8a', mono = "'VT323', ui-monospace, monospace";
+      const logs = ['[ OK ] Démarrage de la classe', '[ OK ] Élèves connectés : 28/28', '[ .. ] Chargement de la leçon', '> ping recreation.local', '64 octets : temps=15 min', '[ OK ] Cahiers ouverts', '[WARN] Bavardages détectés', '> calc 6 * 7', '= 42', '[ OK ] Tableau nettoyé', '> ls devoirs/', 'maths.txt  francais.txt', '[ OK ] Silence rétabli', '> date', '[ .. ] Synchronisation horloge', '[ OK ] Cantine : 12:00', '> echo "Bonne journée"', 'Bonne journée'];
+      return [
+        t.art('crt', (p) => {
+          const r = t.r('te');
+          let s = `<defs>${rg(p + 'g', [[0, '#0b2a14'], [0.7, '#041207'], [1, '#010401']], 0.5, 0.5, 0.75)}</defs>` + rect(0, 0, W, H, `url(#${p}g)`);
+          for (let i = 0; i < 40; i++) s += rect(rr(r, 60, 1540), rr(r, 60, 840), rr(r, 30, 120), 3, g, ` opacity="${N(rr(r, 0.03, 0.08))}"`);
+          // panneau de surveillance à droite
+          s += rect(1210, 110, 300, 250, 'none', ` stroke="${g}" stroke-width="2" opacity=".45"`) + rect(1210, 110, 300, 34, g, ' opacity=".18"');
+          s += rect(90, 650, 340, 150, 'none', ` stroke="${g}" stroke-width="2" opacity=".35"`);
+          let wave = 'M100 760'; for (let x = 100; x <= 420; x += 8) wave += `L${x} ${N(740 + Math.sin(x / 18) * 18 + (r() - 0.5) * 14)}`; s += line(wave, g, 2, ' opacity=".55"');
+          // cadre de l'écran (coins arrondis du tube)
+          s += path(`M0 0H${W}V${H}H0Z M70 40Q20 40 20 90V810Q20 860 70 860H1530Q1580 860 1580 810V90Q1580 40 1530 40Z`, '#0e0f0c', ' fill-rule="evenodd"') + path('M70 40Q20 40 20 90V810Q20 860 70 860H1530Q1580 860 1580 810V90Q1580 40 1530 40Z', 'none', ' stroke="#1d2019" stroke-width="10"');
+          s += circ(1540, 882, 5, '#2b2b26');
+          return s;
+        }),
+        t.el('logs', { position: 'absolute', ...pct(70, 70, 560, 520), overflow: 'hidden', fontFamily: mono, fontSize: em(26), lineHeight: 1.25, color: g, opacity: 0.5, whiteSpace: 'pre', maskImage: 'linear-gradient(180deg, transparent, #000 15%, #000 85%, transparent)', WebkitMaskImage: 'linear-gradient(180deg, transparent, #000 15%, #000 85%, transparent)' },
+          E('div', { style: { '--sy': '-50%', '--sx': '0', animation: 'fhs-scroll 40s linear infinite' } }, [...logs, ...logs].map((l, i) => E('div', { key: i }, l)))),
+        t.el('mon', { position: 'absolute', ...pct(1225, 116, 270), fontFamily: mono, fontSize: em(24), color: g, opacity: 0.75, lineHeight: 1.3 },
+          [E('div', { key: 'h' }, 'SYSTÈME'), ...['CPU', 'MÉM', 'RÉSEAU', 'CAFÉ'].map((k, i) => E('div', { key: k, style: { display: 'flex', alignItems: 'center', gap: '.5em', marginTop: '.35em' } }, E('span', { style: { width: '4.2em' } }, k), E('span', { style: { flex: 1, height: '.55em', background: 'rgba(65,255,138,.18)', position: 'relative', overflow: 'hidden' } }, E('span', { style: { position: 'absolute', inset: 0, background: g, transformOrigin: '0 50%', '--f': 0.3, animation: `fhs-flapx ${N(2.2 + i * 0.9)}s ease-in-out ${-i}s infinite` } }))))]),
+        t.el('prompt', { position: 'absolute', ...pct(70, 800), fontFamily: mono, fontSize: em(30), color: g, opacity: 0.85, whiteSpace: 'nowrap' }, ['eleve@classe:~$ ', E('span', { key: 'c', style: { display: 'inline-block', width: '.55em', height: '.9em', verticalAlign: '-.12em', background: g, animation: 'fhs-blink 1.06s steps(1) infinite' } })]),
+        t.still(`<g font-family="monospace" font-size="24" fill="${g}" opacity=".5">${logs.slice(0, 12).map((l, i) => `<text x="80" y="${100 + i * 34}">${l.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</text>`).join('')}</g>`),
+        t.el('roll', { position: 'absolute', left: 0, top: em(-120), width: '100%', height: em(120), background: 'linear-gradient(180deg, rgba(65,255,138,0), rgba(65,255,138,.06), rgba(65,255,138,0))', '--y1': em(1140), animation: 'fhs-move 7s linear infinite' }),
+        t.el('led', { position: 'absolute', left: em(1535), top: em(877), width: em(10), height: em(10), borderRadius: '50%', background: g, boxShadow: `0 0 .8em ${g}`, '--o0': 0.4, animation: 'fhs-tw 2.4s ease-in-out infinite' }),
+      ];
+    },
+  });
+
+  // ---------------- COUCHER DE SOLEIL : soleil rayé, montagnes néon, sol quadrillé qui avance, palmiers ----------------
+  def('sunset', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const E = t.E;
+      return [
+        t.art('sky', (p) => {
+          const r = t.r('su');
+          let s = sky(p + 's', [[0, o.bg2], [0.35, '#4a1466'], [0.55, o.bg1], [0.67, o.bg3]]) + starsSvg(r, 90, { y1: 300 });
+          // soleil rayé
+          s += `<defs>${lg(p + 'sun', [[0, '#ffe36e'], [0.5, '#ff8a4c'], [1, '#ff2f7d']])}<clipPath id="${p}c">${[0, 1, 2, 3, 4, 5, 6].map((k) => rect(560, 390 + k * 30 + (k > 2 ? (k - 2) * 4 : 0), 480, 30 - (k > 2 ? (k - 2) * 4 : 0) - (k > 2 ? 2 : 0))).join('')}${rect(560, 380, 480, 100)}</clipPath></defs>`;
+          s += glow(p + 'sg', 800, 520, 420, '#ff6a8a', 0.45) + `<g clip-path="url(#${p}c)">${circ(800, 600, 210, `url(#${p}sun)`)}</g>`;
+          return s;
+        }),
+        shooting(t, 'sh', 300, 90, 360, 140, 13, 2),
+        t.art('mounts', (p) => {
+          const r = t.r('mo');
+          const ridge = (x0, x1, h, n) => { const pts = []; for (let i = 0; i <= n; i++) { const x = x0 + (x1 - x0) * i / n; pts.push([x, 600 - (i % 2 ? h * rr(r, 0.5, 1) : h * rr(r, 0.05, 0.3))]); } pts[0][1] = 600; pts[n][1] = 600; return pts; };
+          const L = ridge(-20, 560, 190, 8), R = ridge(1040, 1620, 210, 8);
+          let s = '';
+          [L, R].forEach((pts) => { s += path(`M${P(pts)}Z`, '#1d0b33') + line(`M${P(pts)}`, '#ff4fd8', 3, ' opacity=".9"'); for (let i = 1; i < pts.length - 1; i++) s += line(`M${N(pts[i][0])} ${N(pts[i][1])}L${N(pts[i][0] + (r() - 0.5) * 60)} 600`, '#ff4fd8', 1.4, ' opacity=".45"'); });
+          s += rect(-10, 598, 1620, 4, '#ff8ad8');
+          return s;
+        }),
+        // sol quadrillé en perspective qui défile vers nous
+        t.el('floor', { position: 'absolute', left: 0, top: em(600), width: '100%', height: em(300), overflow: 'hidden', background: 'linear-gradient(180deg, #2a0b45, #12051f)', perspective: em(120), perspectiveOrigin: '50% 0' },
+          E('div', { style: { position: 'absolute', left: '-150%', width: '400%', top: 0, height: em(1600), transformOrigin: '50% 0', transform: 'rotateX(80deg)' } },
+            E('div', { style: { position: 'absolute', left: 0, right: 0, top: em(-80), bottom: 0, backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,79,216,.85) 0 .25em, transparent .25em 8em), repeating-linear-gradient(90deg, rgba(255,79,216,.85) 0 .25em, transparent .25em 8em)', '--sy': em(80), '--sx': '0', animation: 'fhs-scroll 1.6s linear infinite' } }))),
+        t.still(`<defs>${lg('flo', [[0, '#2a0b45'], [1, '#12051f']])}</defs>${rect(0, 600, 1600, 300, 'url(#flo)')}${Array.from({ length: 21 }, (_, i) => line(`M800 600L${-1200 + i * 200} 900`, '#ff4fd8', 2)).join('')}${[610, 625, 648, 685, 740, 820].map((y) => line(`M0 ${y}H1600`, '#ff4fd8', 2)).join('')}`),
+        t.art('palms', (p) => {
+          const r = t.r('pa');
+          const pl = (x, base, h, lean) => `<g transform="translate(3 -2)" opacity=".8">${palm(prng(x), x, base, h, lean, { trunk: '#ff4fd8', trunk2: '#ff4fd8', leaf: '#ff4fd8', leaf2: '#ff4fd8' })}</g>` + palm(prng(x), x, base, h, lean, { trunk: '#14061f', trunk2: '#1a0828', leaf: '#14061f', leaf2: '#1a0828' });
+          return pl(120, 905, 560, 110) + pl(1490, 905, 520, -100) + pl(260, 905, 360, 50);
+        }),
+      ];
+    },
+  });
+
+  // ---------------- BONBON : pays des friandises, sucettes qui tournent, nuages de barbe à papa ----------------
+  def('candy', {
+    base: (o) => o.bg1,
+    layers: (t, o) => {
+      const E = t.E, sw = ['#ff4f9a', '#7c4dff', '#4fd1ff', '#ffd43b', '#5be08a'];
+      const swirl = (c1, c2) => cached('sw' + c1 + c2, () => svg('-50 -50 100 100', circ(0, 0, 49, c1) + Array.from({ length: 6 }, (_, i) => `<path d="M0 0 C 18 -10, 30 10, 44 ${N(-6 + i)}" transform="rotate(${i * 60})" fill="none" stroke="${c2}" stroke-width="9" stroke-linecap="round"/>`).join('') + circ(0, 0, 49, 'none', ' stroke="rgba(255,255,255,.6)" stroke-width="3"') + ell(-18, -22, 10, 6, 'rgba(255,255,255,.55)', ' transform="rotate(-30 -18 -22)"')));
+      const lolly = (k, x, y, R, stick, c1, c2) => [
+        t.el('st' + k, { position: 'absolute', left: em(x - 7), top: em(y), width: em(14), height: em(stick), borderRadius: 7, background: 'linear-gradient(90deg, #fff, #e8e2f2)', boxShadow: 'inset -.2em 0 0 rgba(0,0,0,.08)' }),
+        t.el('lo' + k, t.img(swirl(c1, c2), { left: em(x - R), top: em(y - R), width: em(R * 2), height: em(R * 2), animation: `fhs-spin ${20 + R / 10}s linear infinite` })),
+        t.still(rect(x - 7, y, 14, stick, '#ffffff') + `<image href="${swirl(c1, c2).slice(5, -2)}" x="${x - R}" y="${y - R}" width="${R * 2}" height="${R * 2}"/>`),
+      ];
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.6, o.bg1], [1, '#fff0f7']]) + glow(p + 'g', 800, 300, 600, '#ffffff', 0.35)),
+        ...clouds(t, 'cl', [{ x: -260, y: 80, k: 1, dx: 2000, dur: 100, dl: -10, c: '#ffd1ea', s: '#ffb3dc', h: '#ffe6f4' }, { x: -260, y: 220, k: 0.7, dx: 2000, dur: 80, dl: -50, c: '#d6e8ff', s: '#b9d4ff', h: '#eef5ff' }, { x: -260, y: 30, k: 0.6, dx: 2000, dur: 120, dl: -85, c: '#ffd1ea', s: '#ffb3dc', h: '#ffe6f4' }]),
+        t.still(cloud(380, 120, 1, '#ffd1ea', '#ffb3dc', '#ffe6f4') + cloud(1150, 230, 0.7, '#d6e8ff', '#b9d4ff', '#eef5ff')),
+        t.art('land', (p) => {
+          const r = t.r('ca');
+          let s = '';
+          // collines en boules de gomme avec grains de sucre
+          [[-60, 720, 300, '#9be8c6'], [300, 760, 260, '#ffc2dd'], [700, 740, 320, '#ffe58f'], [1100, 760, 280, '#c9b6ff'], [1480, 720, 300, '#9be8c6']].forEach(([x, y, R, c]) => { s += ell(x + 140, y + 60, R, R * 0.62, c) + ell(x + 100, y + 20, R * 0.5, R * 0.22, 'rgba(255,255,255,.35)'); for (let k = 0; k < 18; k++) s += circ(x + 140 + rr(r, -R * 0.8, R * 0.8), y + 60 + rr(r, -R * 0.4, R * 0.1), 3, '#ffffff', ' opacity=".7"'); });
+          // sucres d'orge
+          const cane = (x, y, h, rot) => `<g transform="rotate(${rot} ${x} ${y})"><defs><pattern id="${p}st${x}" width="24" height="24" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">${rect(0, 0, 24, 24, '#ffffff')}${rect(0, 0, 10, 24, '#ff3b5c')}</pattern></defs>${path(`M${x} ${y}V${y - h}A40 40 0 0 1 ${x + 80} ${y - h}`, 'none', ` stroke="url(#${p}st${x})" stroke-width="22" stroke-linecap="round"`)}</g>`;
+          s += cane(430, 860, 220, -8) + cane(1130, 870, 180, 6);
+          // petits gâteaux et beignets
+          const cupcake = (x, y, k, c) => path(`M${x - 40 * k} ${y - 50 * k}L${x + 40 * k} ${y - 50 * k}L${x + 30 * k} ${y}L${x - 30 * k} ${y}Z`, '#ff8fb8') + Array.from({ length: 5 }, (_, i) => line(`M${N(x - 30 * k + i * 15 * k)} ${N(y - 48 * k)}L${N(x - 24 * k + i * 12 * k)} ${N(y - 2)}`, 'rgba(255,255,255,.4)', 3)).join('') + circ(x - 24 * k, y - 62 * k, 24 * k, c) + circ(x + 24 * k, y - 62 * k, 24 * k, c) + circ(x, y - 80 * k, 30 * k, c) + circ(x, y - 116 * k, 10 * k, '#e63946') + Array.from({ length: 8 }, (_, i) => rect(x - 30 * k + rr(r, 0, 60 * k), y - 100 * k + rr(r, 0, 50 * k), 8 * k, 3 * k, pick(r, sw), ` rx="1.5" transform="rotate(${N(rr(r, 0, 180))} ${N(x)} ${N(y - 70 * k)})"`)).join('');
+          s += cupcake(640, 880, 1, '#fff3c4') + cupcake(980, 885, 0.8, '#c9b6ff');
+          s += circ(1300, 830, 54, '#e2a46b') + circ(1300, 822, 50, '#ff7fb4') + circ(1300, 830, 16, '#fff0f7') + Array.from({ length: 14 }, () => rect(1300 + rr(r, -40, 40), 822 + rr(r, -40, 30), 9, 3, pick(r, sw), ` transform="rotate(${N(rr(r, 0, 180))} 1300 822)"`)).join('');
+          s += path('M-20 900L-20 860Q400 830 800 856Q1200 880 1620 850L1620 900Z', '#ffd1ea');
+          return s;
+        }),
+        ...lolly('a', 190, 520, 120, 380, '#ff7fb4', '#ffffff'), ...lolly('b', 1430, 480, 130, 420, '#7c9bff', '#fff3c4'), ...lolly('c', 330, 700, 60, 200, '#ffe066', '#ff4f9a'), ...lolly('d', 1270, 700, 54, 190, '#5be08a', '#ffffff'),
+        ...drift(t, 'sp', t.n('sp', 26, (r) => ({ x: rr(r, 0, 1600), y: -30, w: 6, h: 18, y1: 980, x1: rr(r, -80, 80), r1: rr(r, -700, 700), dur: rr(r, 8, 14), dl: -r() * 14, bg: pick(r, sw), round: 4 }))),
+      ];
+    },
+  });
+
+  // dessin en pixels à partir de lignes de texte (« X » = pixel allumé)
+  const pix = (rows, c, k) => rows.map((row, y) => Array.from(row).map((ch, x) => (ch === '.' ? '' : rect(x * k, y * k, k + 0.3, k + 0.3, typeof c === 'string' ? c : c[ch] || '#fff'))).join('')).join('');
+  const pixSvg = (rows, c) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${rows[0].length} ${rows.length}" shape-rendering="crispEdges">${pix(rows, c, 1)}</svg>`;
+  const INV = {
+    a1: ['..X.....X..', '...X...X...', '..XXXXXXX..', '.XX.XXX.XX.', 'XXXXXXXXXXX', 'X.XXXXXXX.X', 'X.X.....X.X', '...XX.XX...'],
+    a2: ['..X.....X..', 'X..X...X..X', 'X.XXXXXXX.X', 'XXX.XXX.XXX', 'XXXXXXXXXXX', '.XXXXXXXXX.', '..X.....X..', '.X.......X.'],
+    b1: ['...XX...', '..XXXX..', '.XXXXXX.', 'XX.XX.XX', 'XXXXXXXX', '..X..X..', '.X.XX.X.', 'X.X..X.X'],
+    b2: ['...XX...', '..XXXX..', '.XXXXXX.', 'XX.XX.XX', 'XXXXXXXX', '.X.XX.X.', 'X......X', '.X....X.'],
+    ship: ['......X......', '.....XXX.....', '.....XXX.....', '.XXXXXXXXXXX.', 'XXXXXXXXXXXXX', 'XXXXXXXXXXXXX', 'XXXXXXXXXXXXX', 'XXXXXXXXXXXXX'],
+    heart: ['.XX.XX.', 'XXXXXXX', 'XXXXXXX', '.XXXXX.', '..XXX..', '...X...'],
+    ufo: ['.....XXXXXX.....', '...XXXXXXXXXX...', '..XXXXXXXXXXXX..', '.XX.XX.XX.XX.XX.', 'XXXXXXXXXXXXXXXX', '..XXX..XX..XXX..', '...X........X...'],
+  };
+  Object.assign(SP, {
+    astro: () => svg('0 0 80 100', rect(18, 34, 44, 40, '#d9dde6', ' rx="10"') + rect(10, 38, 12, 32, '#c4c9d4', ' rx="6"') + rect(58, 38, 12, 32, '#c4c9d4', ' rx="6"') + rect(24, 70, 14, 26, '#e8ebf1', ' rx="6"') + rect(42, 70, 14, 26, '#e8ebf1', ' rx="6"') + circ(40, 24, 22, '#eef1f6') + ell(40, 25, 15, 12, '#1d2b4f') + ell(35, 21, 5, 3.4, 'rgba(255,255,255,.6)') + rect(30, 46, 20, 12, '#7c8aa5', ' rx="3"') + circ(35, 52, 2.2, '#ff5a5f') + circ(43, 52, 2.2, '#5af2ff')),
+    sat: () => svg('0 0 120 60', rect(0, 18, 40, 24, '#3a6bd6') + rect(80, 18, 40, 24, '#3a6bd6') + line('M10 18V42M20 18V42M30 18V42M90 18V42M100 18V42M110 18V42', '#9cc0ff', 1) + rect(44, 14, 32, 32, '#d8dce6', ' rx="4"') + line('M40 30H44M76 30H80', '#aab', 3) + line('M60 14V4', '#aab', 2) + circ(60, 3, 3, '#ffd166')),
+  });
+
+  // ---------------- BRUTAL : formes géométriques noires sur jaune, bandeau qui défile ----------------
+  def('brutal', {
+    base: (o) => o.bg1,
+    layers: (t, o) => {
+      const E = t.E, k = '#111111', red = '#ff3b30';
+      const ticker = 'L’HEURE ✱ THE TIME ✱ LA HORA ✱ DIE ZEIT ✱ L’ORA ✱ O TEMPO ✱ ';
+      return [
+        t.art('shapes', (p) => {
+          const r = t.r('br');
+          let s = rect(0, 0, W, H, o.bg1);
+          // trame de points (demi-teinte)
+          s += `<defs><pattern id="${p}h" width="18" height="18" patternUnits="userSpaceOnUse">${circ(9, 9, 3.4, k)}</pattern><pattern id="${p}z" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">${rect(0, 0, 20, 40, k)}</pattern></defs>`;
+          s += rect(40, 230, 260, 250, `url(#${p}h)`, ' opacity=".9"') + rect(1290, 520, 300, 220, `url(#${p}h)`, ' opacity=".9"');
+          // blocs avec ombres franches
+          s += rect(70, 90, 300, 110, k) + rect(1240, 70, 220, 220, 'none', ` stroke="${k}" stroke-width="16"`) + rect(1262, 92, 220, 220, k, ' opacity=".0"');
+          s += path('M0 900V720H120V780H240V840H360V900Z', k) + circ(1520, 940, 230, k) + circ(1520, 940, 150, o.bg1) + circ(1520, 940, 80, red);
+          s += rect(1380, 330, 160, 18, k) + rect(1380, 366, 110, 18, k) + rect(1380, 402, 140, 18, k);
+          s += rect(380, 820, 900, 44, `url(#${p}z)`) + rect(380, 820, 900, 44, 'none', ` stroke="${k}" stroke-width="6"`);
+          s += line('M420 120H700M700 120L660 90M700 120L660 150', k, 14);
+          s += rect(1080, 640, 70, 70, red) + rect(1094, 654, 70, 70, 'none', ` stroke="${k}" stroke-width="8"`);
+          for (let i = 0; i < 5; i++) s += rect(60 + i * 46, 560, 30, 30 + i * 22, k);
+          return s;
+        }),
+        ...scribble(t, 'tx', [['N°1', 92, 100, 92, 0, '#ffe14d', 1], ['TEMPS', 412, 160, 48, 0, k, 1]], "'Archivo Black', Impact, sans-serif"),
+        t.still(`<text x="92" y="180" font-family="Impact, sans-serif" font-size="92" fill="#ffe14d">N°1</text>`),
+        t.el('ast', t.img(cached('aster', () => svg('-50 -50 100 100', Array.from({ length: 6 }, (_, i) => `<rect x="-7" y="-48" width="14" height="96" fill="${k}" transform="rotate(${i * 30})"/>`).join(''))), { left: em(1290), top: em(120), width: em(130), height: em(130), animation: 'fhs-spin 14s linear infinite' })),
+        t.still(`<g transform="translate(1355 185)">${Array.from({ length: 6 }, (_, i) => `<rect x="-6" y="-62" width="12" height="124" fill="${k}" transform="rotate(${i * 30})"/>`).join('')}</g>`),
+        t.el('band', { position: 'absolute', left: 0, ...pct(0, 760, 1600, 56), background: k, overflow: 'hidden' },
+          E('div', { style: { display: 'flex', width: 'max-content', height: '100%', alignItems: 'center', '--sx': '-50%', animation: 'fhs-scroll 22s linear infinite' } }, [0, 1].map((i) => E('div', { key: i, style: { fontFamily: "'Archivo Black', Impact, sans-serif", fontSize: em(36), color: o.bg1, whiteSpace: 'pre', paddingRight: '.5em' } }, ticker.repeat(3))))),
+        t.still(rect(0, 760, 1600, 56, k) + `<text x="20" y="800" font-family="Impact, sans-serif" font-size="36" fill="${o.bg1}">${ticker.repeat(2).replace(/’/g, "'")}</text>`),
+      ];
+    },
+  });
+
+  // ---------------- COSMOS : nébuleuse, planète à anneaux, galaxie, étoiles filantes, astronaute ----------------
+  def('cosmos', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const E = t.E;
+      return [
+        t.art('space', (p) => {
+          const r = t.r('co');
+          let s = rect(0, 0, W, H, o.bg2) + `<defs><filter id="${p}b" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="40"/></filter></defs>`;
+          s += `<g filter="url(#${p}b)" opacity=".85">${ell(380, 260, 380, 160, o.bg1, ' opacity=".55" transform="rotate(-18 380 260)"')}${ell(1180, 520, 420, 170, o.bg3, ' opacity=".5" transform="rotate(14 1180 520)"')}${ell(760, 640, 300, 120, '#b0307a', ' opacity=".35"')}${ell(1300, 180, 220, 100, '#7c5cff', ' opacity=".45"')}</g>`;
+          s += starsSvg(r, 320, { y1: 900, max: 2.4 });
+          for (let i = 0; i < 26; i++) s += circ(rr(r, 0, 1600), rr(r, 0, 900), rr(r, 1.6, 3), pick(r, ['#bfe3ff', '#ffe7c4', '#ffd0f0']));
+          // galaxie spirale
+          let gx = ''; for (let k2 = 0; k2 < 2; k2++) for (let i = 0; i < 70; i++) { const a = i * 0.16 + k2 * Math.PI, d = i * 1.6; gx += circ(1330 + Math.cos(a) * d * 1.6, 160 + Math.sin(a) * d * 0.7, rr(r, 0.8, 2.2), '#e9e2ff', ` opacity="${N(1 - i / 80)}"`); }
+          s += glow(p + 'gc', 1330, 160, 60, '#fff0d8', 0.8) + gx;
+          // planète à anneaux
+          s += `<defs>${rg(p + 'pl', [[0, '#ffd8a8'], [0.55, '#e0864a'], [1, '#5a2a3a']], 0.35, 0.3, 0.75)}${lg(p + 'ri', [[0, '#ffe9c7', 0.1], [0.5, '#ffe9c7', 0.85], [1, '#ffe9c7', 0.1]], 1, 0)}</defs>`;
+          s += ell(240, 720, 260, 56, 'none', ` stroke="url(#${p}ri)" stroke-width="16" transform="rotate(-14 240 720)"`) + circ(240, 720, 150, `url(#${p}pl)`) + `<path d="M${240 - 255} ${720 + 60}A260 56 0 0 0 ${240 + 255} ${720 - 60}" transform="rotate(-14 240 720)" fill="none" stroke="url(#${p}ri)" stroke-width="16"/>`;
+          s += [0.3, 0.5, 0.7].map((f) => ell(240, 720 - 150 + f * 300, 140 * Math.sin(Math.acos(f * 2 - 1)) || 10, 10, '#000', ' opacity=".07"')).join('');
+          s += `<defs>${rg(p + 'mo', [[0, '#e9edf5'], [1, '#7d8396']], 0.35, 0.3, 0.75)}</defs>` + circ(470, 560, 34, `url(#${p}mo)`) + circ(462, 552, 6, '#9aa0b0', ' opacity=".6"') + circ(480, 572, 4, '#9aa0b0', ' opacity=".6"');
+          s += `<defs>${rg(p + 'bl', [[0, '#9fe7ff'], [0.6, '#3a7bd5'], [1, '#132a5c']], 0.35, 0.3, 0.75)}</defs>` + circ(1420, 760, 90, `url(#${p}bl)`) + path('M1350 730Q1400 700 1460 720Q1420 750 1380 760Z', '#5fd38a', ' opacity=".7"');
+          return s;
+        }),
+        twinkles(t, 'tw', 16, [20, 20, 1580, 880]),
+        shooting(t, 'sh1', 300, 120, 420, 180, 11, 1), shooting(t, 'sh2', 1100, 380, 380, 160, 15, 7),
+        t.el('sat', t.img(spr('sat'), { left: em(-140), top: em(110), width: em(110), height: em(55), '--x1': em(1900), '--y1': em(80), '--r0': '-10deg', '--r1': '20deg', animation: 'fhs-move 70s linear -20s infinite' })),
+        t.el('astro', { position: 'absolute', left: em(1120), top: em(250), width: em(80), height: em(100), '--bx': em(-40), '--by': em(-50), '--br': '18deg', animation: 'fhs-bob 12s ease-in-out infinite' }, E('div', { style: t.img(spr('astro'), { inset: 0, transform: 'rotate(-20deg)' }) })),
+        t.still(`<image href="${spr('astro').slice(5, -2)}" x="1120" y="250" width="80" height="100" transform="rotate(-20 1160 300)"/>`),
+      ];
+    },
+  });
+
+  // ---------------- ARCADE : envahisseurs en pixels, vaisseau, ville pixelisée, « INSERT COIN » ----------------
+  def('arcade', {
+    base: (o) => o.bgColor || '#1a0f3d',
+    layers: (t, o) => {
+      const E = t.E, font = "'Press Start 2P', ui-monospace, monospace", cols = ['#5af2ff', '#ff7ad9', '#7cff6b'];
+      const frame = (rows, c) => cached('px|' + rows.join('') + c, () => pixSvg(rows, c));
+      const alien = (key, x, y, kind, c, i) => t.el(key, { position: 'absolute', left: em(x), top: em(y), width: em(kind === 'a' ? 66 : 48), height: em(48) },
+        [E('div', { key: 1, style: t.img(frame(INV[kind + '1'], c), { inset: 0, animation: `fhs-blink 1s steps(1) ${i % 2 ? -0.5 : 0}s infinite` }) }), E('div', { key: 2, style: t.img(frame(INV[kind + '2'], c), { inset: 0, animation: `fhs-blink 1s steps(1) ${i % 2 ? 0 : -0.5}s infinite` }) })]);
+      const grid = [];
+      for (let row = 0; row < 3; row++) for (let c = 0; c < 7; c++) grid.push([row, c]);
+      return [
+        t.art('bg', (p) => {
+          const r = t.r('ar');
+          let s = rect(0, 0, W, H, o.bgColor || '#1a0f3d');
+          for (let i = 0; i < 140; i++) { const z = pick(r, [3, 3, 4, 6]); s += rect(Math.round(rr(r, 0, 1600) / 3) * 3, Math.round(rr(r, 0, 640) / 3) * 3, z, z, pick(r, ['#ffffff', '#ffe066', '#9ad8ff']), ` opacity="${N(rr(r, 0.4, 1))}"`); }
+          s += `<g shape-rendering="crispEdges">`;
+          // lune pixelisée
+          s += `<g transform="translate(1360 120)">${pix(['..XXXX..', '.XXXXXX.', 'XXXOXXXX', 'XXXXXXOX', 'XOXXXXXX', 'XXXXXXXX', '.XXXXOX.', '..XXXX..'], { X: '#fff3c4', O: '#e6d08a' }, 12)}</g>`;
+          // ville en blocs
+          let x = -10; while (x < 1610) { const w = Math.round(rr(r, 6, 14)) * 9, h = Math.round(rr(r, 8, 26)) * 9, top = 780 - h; s += rect(x, top, w, h + 10, pick(r, ['#2b1a66', '#33207a', '#26175a'])); for (let wy = top + 9; wy < 770; wy += 18) for (let wx = x + 9; wx < x + w - 9; wx += 18) if (r() < 0.35) s += rect(wx, wy, 9, 9, pick(r, ['#ffe066', '#ff7ad9', '#5af2ff'])); x += w + 9; }
+          s += rect(-10, 780, 1620, 120, '#120a2e') + rect(-10, 780, 1620, 9, '#5af2ff');
+          for (let i = 0; i < 20; i++) s += rect(i * 90 + 20, 838, 45, 9, '#ffe066');
+          s += '</g>';
+          return s;
+        }),
+        // armée d'envahisseurs qui va et vient
+        t.el('army', { position: 'absolute', left: em(330), top: em(96), width: em(800), height: em(260), '--x1': em(140), animation: 'fhs-move 6s steps(12) infinite alternate' }, grid.map(([row, c], i) => alien('al' + i, c * 110 + (row === 1 ? 0 : 8), row * 72, row === 1 ? 'a' : 'b', cols[row], i)).map((el) => el)),
+        t.still(grid.map(([row, c]) => `<image href="${frame(INV[(row === 1 ? 'a' : 'b') + '1'], cols[row]).slice(5, -2)}" x="${330 + c * 110}" y="${96 + row * 72}" width="${row === 1 ? 66 : 48}" height="48"/>`).join('')),
+        t.el('ufo', t.img(frame(INV.ufo, '#ff3b5c'), { left: em(-120), top: em(36), width: em(96), height: em(42), '--x1': em(1900), animation: 'fhs-move 14s linear -5s infinite' })),
+        t.el('ship', { position: 'absolute', left: em(380), top: em(712), width: em(78), height: em(48), '--x1': em(760), animation: 'fhs-move 7s ease-in-out infinite alternate' }, [E('div', { key: 's', style: t.img(frame(INV.ship, '#7cff6b'), { inset: 0 }) }), E('div', { key: 'b', style: { position: 'absolute', left: '47%', top: em(-30), width: em(5), height: em(22), background: '#ffffff', '--y1': em(-560), animation: 'fhs-movef 1.4s linear infinite' } })]),
+        ...[0, 1, 2].map((i) => t.el('hp' + i, t.img(frame(INV.heart, '#ff3b5c'), { left: em(60 + i * 52), top: em(860), width: em(42), height: em(36) }))),
+        t.el('coin', { position: 'absolute', ...pct(800, 870), transform: 'translateX(-50%)', fontFamily: font, fontSize: em(24), color: '#ffe066', whiteSpace: 'nowrap', animation: 'fhs-blink 1.2s steps(1) infinite' }, 'INSERT COIN'),
+        t.el('score', { position: 'absolute', ...pct(1240, 862), fontFamily: font, fontSize: em(18), color: '#5af2ff', whiteSpace: 'nowrap', lineHeight: 1.6 }, ['HI-SCORE', E('br', { key: 'b' }), '0099990']),
+        t.still(`<text x="800" y="890" text-anchor="middle" font-family="monospace" font-weight="700" font-size="26" fill="#ffe066">INSERT COIN</text>`),
+      ];
+    },
+  });
+
+  // ---------------- LUXE : ornements Art déco dorés, éventail, étincelles, reflet qui passe ----------------
+  def('luxe', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const gold = (p) => `url(#${p}gd)`;
+      return [
+        t.art('deco', (p) => {
+          const G = gold(p);
+          let s = `<defs>${rg(p + 'bg', [[0, o.bg1], [1, o.bg2]], 0.5, 0.45, 0.8)}${lg(p + 'gd', [[0, '#fbe9bd'], [0.45, '#e8c77c'], [0.7, '#b98b3e'], [1, '#f5dd9e']], 1, 1)}</defs>` + rect(0, 0, W, H, `url(#${p}bg)`);
+          // cadre double et coins en éventail
+          s += rect(40, 40, 1520, 820, 'none', ` stroke="${G}" stroke-width="3"`) + rect(56, 56, 1488, 788, 'none', ` stroke="${G}" stroke-width="1.4"`);
+          [[56, 56, 0], [1544, 56, 90], [1544, 844, 180], [56, 844, 270]].forEach(([x, y, rot]) => { let f = ''; for (let i = 0; i <= 6; i++) { const a = i / 6 * Math.PI / 2; f += line(`M0 0L${N(Math.cos(a) * 110)} ${N(Math.sin(a) * 110)}`, G, 1.6); } [40, 75, 110].forEach((R) => { f += path(`M${R} 0A${R} ${R} 0 0 1 0 ${R}`, 'none', ` stroke="${G}" stroke-width="2"`); }); s += `<g transform="translate(${x} ${y}) rotate(${rot})">${f}</g>`; });
+          // éventail central en bas
+          let fan = ''; for (let i = 0; i <= 24; i++) { const a = Math.PI + i / 24 * Math.PI; fan += line(`M800 900L${N(800 + Math.cos(a) * 240)} ${N(900 + Math.sin(a) * 240)}`, G, i % 2 ? 1.2 : 2.6); }
+          [90, 150, 205, 240].forEach((R, i) => { fan += path(`M${800 - R} 900A${R} ${R} 0 0 1 ${800 + R} 900`, 'none', ` stroke="${G}" stroke-width="${i === 3 ? 4 : 2}"`); });
+          s += fan + circ(800, 900, 46, G);
+          // colonnes à chevrons et arches en gradins sur les côtés
+          [[150, 1], [1450, -1]].forEach(([x]) => { s += line(`M${x - 40} 120V780M${x + 40} 120V780`, G, 2); for (let y = 150; y < 760; y += 44) s += path(`M${x - 40} ${y}L${x} ${y + 26}L${x + 40} ${y}`, 'none', ` stroke="${G}" stroke-width="2.2"`); s += path(`M${x - 64} 120V100H${x - 44}V80H${x - 22}V60H${x + 22}V80H${x + 44}V100H${x + 64}V120Z`, 'none', ` stroke="${G}" stroke-width="2"`); });
+          [[275, 1], [1325, -1]].forEach(([x]) => { for (let i = 0; i < 4; i++) s += path(`M${x - 70 + i * 13} 780V${560 + i * 30}Q${x} ${490 + i * 30} ${x + 70 - i * 13} ${560 + i * 30}V780`, 'none', ` stroke="${G}" stroke-width="${i ? 1.2 : 2.4}" opacity="${1 - i * 0.18}"`); s += path(`M${x} 660L${x + 18} 692L${x} 724L${x - 18} 692Z`, G); });
+          s += line('M200 820H1400', G, 1.4) + [400, 560, 1040, 1200].map((x) => path(`M${x} 808L${x + 12} 820L${x} 832L${x - 12} 820Z`, G)).join('');
+          return s;
+        }),
+        ...t.n('sp', 14, (r, i) => t.el('sp' + i, t.img(spr('sparkle', pick(r, ['#fff4d6', '#e8c77c', '#ffffff'])), { left: em(rr(r, 80, 1520)), top: em(rr(r, 80, 820)), width: em(rr(r, 10, 24)), height: em(rr(r, 10, 24)), '--o0': 0, animation: `fhs-tw ${N(rr(r, 2.2, 4.5))}s ease-in-out ${N(-r() * 4)}s infinite` }))),
+        t.el('shine', { position: 'absolute', left: em(-700), top: em(-200), width: em(400), height: em(1300), transform: 'rotate(25deg)', background: 'linear-gradient(90deg, rgba(255,236,190,0), rgba(255,236,190,.09), rgba(255,236,190,0))', '--x1': em(2600), animation: 'fhs-move 12s ease-in-out infinite' }),
+      ];
+    },
+  });
+
+  // ---------------- MATRICE : tableau à LED, bandeaux qui défilent, horaires comme en gare ----------------
+  def('matrix', {
+    base: (o) => o.bgColor || '#111111',
+    layers: (t, o) => {
+      const E = t.E, led = '#ff5a36', font = "'Doto', ui-monospace, monospace";
+      const top = 'BIENVENUE ◆ BONNE JOURNÉE À TOUS ◆ PENSEZ À VOS AFFAIRES ◆ ';
+      const bot = 'PROCHAINE SONNERIE ◆ RESTEZ CALMES DANS LES COULOIRS ◆ MERCI ◆ ';
+      const tick = (k, y, txt, d) => [t.el(k, { position: 'absolute', ...pct(0, y, 1600, 70), overflow: 'hidden', background: '#0a0a0a', borderTop: '.25em solid #222', borderBottom: '.25em solid #222' },
+        E('div', { style: { display: 'flex', width: 'max-content', height: '100%', alignItems: 'center', '--sx': '-50%', animation: `fhs-scroll ${d}s linear infinite` } }, [0, 1].map((i) => E('div', { key: i, style: { fontFamily: font, fontWeight: 800, fontSize: em(46), color: led, textShadow: `0 0 .3em ${led}`, whiteSpace: 'pre' } }, txt.repeat(2))))),
+        t.still(rect(0, y, 1600, 70, '#0a0a0a') + `<text x="20" y="${y + 50}" font-family="monospace" font-weight="700" font-size="40" fill="${led}">${txt}</text>`)];
+      const board = (k, x, rows) => [t.el(k, { position: 'absolute', ...pct(x, 580, 300), fontFamily: font, fontWeight: 700, fontSize: em(22), lineHeight: 1.55, color: '#ffb03a', opacity: 0.75, whiteSpace: 'pre' }, rows.map((r2, i) => E('div', { key: i, style: { color: i ? '#ffb03a' : led } }, r2))),
+        t.still(`<g font-family="monospace" font-size="22" fill="#ffb03a" opacity=".75">${rows.map((r2, i) => `<text x="${x}" y="${606 + i * 34}">${r2}</text>`).join('')}</g>`)];
+      return [
+        t.art('leds', (p) => `<defs><pattern id="${p}d" width="14" height="14" patternUnits="userSpaceOnUse">${circ(7, 7, 3.2, '#1f1f1f')}</pattern>${rg(p + 'v', [[0, '#191919'], [1, '#0b0b0b']], 0.5, 0.5, 0.75)}</defs>` + rect(0, 0, W, H, `url(#${p}v)`) + rect(0, 0, W, H, `url(#${p}d)`)),
+        ...tick('t1', 110, top, 26), ...tick('t2', 760, bot, 30),
+        ...board('b1', 70, ['DÉPART   QUAI', '08:30 MATHS   A', '09:30 HISTOIRE B', '10:30 ANGLAIS C']),
+        ...board('b2', 1250, ['ARRIVÉE  SALLE', '13:30 SVT    12', '14:30 MUSIQUE 3', '16:30 SORTIE  ◆']),
+        ...t.n('px', 18, (r, i) => t.el('px' + i, { position: 'absolute', left: em(Math.round(rr(r, 0, 1600) / 14) * 14 + 3.8), top: em(Math.round(rr(r, 200, 740) / 14) * 14 + 3.8), width: em(6.4), height: em(6.4), borderRadius: '50%', background: led, boxShadow: `0 0 .5em ${led}`, '--o0': 0, animation: `fhs-tw ${N(rr(r, 1.5, 4))}s ease-in-out ${N(-r() * 4)}s infinite` })),
+      ];
+    },
+  });
+
+  Object.assign(SP, {
+    penguin: () => svg('0 0 40 60', ell(20, 34, 14, 22, '#1d2433') + ell(20, 38, 9, 16, '#f5f7fb') + circ(20, 13, 10, '#1d2433') + circ(16.5, 11.5, 2.4, '#ffffff') + circ(16.8, 11.8, 1.2, '#111') + path('M12 15L5 17L12 18Z', '#f2a33a') + path('M7 30Q2 42 8 48L11 36Z', '#1d2433') + path('M33 30Q38 42 32 48L29 36Z', '#1d2433') + ell(15, 57, 5, 2.4, '#f2a33a') + ell(25, 57, 5, 2.4, '#f2a33a')),
+    blades: (c) => svg('-60 -60 120 120', [0, 90, 180, 270].map((a) => `<g transform="rotate(${a})">${path('M-3 0L-6 -56L6 -56L3 0Z', c)}${rect(-5, -54, 10, 30, 'rgba(255,255,255,.35)')}</g>`).join('') + circ(0, 0, 6, '#5a4a3a')),
+    car: (top, side) => svg('0 0 60 40', path('M6 22L30 10L54 22L30 34Z', top) + path('M6 22L30 34V40L6 28Z', side) + path('M54 22L30 34V40L54 28Z', 'rgba(0,0,0,.35)') + path('M20 19L30 14L40 19L30 24Z', '#cfe8ff', ' opacity=".9"')),
+    hballoon2: () => svg('0 0 80 120', ell(40, 40, 34, 38, '#ff6b6b') + path('M18 14Q40 -6 62 14Q52 40 40 78Q28 40 18 14Z', '#ffd166') + path('M40 2Q46 40 40 78Q34 40 40 2Z', '#4ecdc4') + line('M14 58L30 96M66 58L50 96', '#5a4a3a', 1.4) + rect(28, 94, 24, 18, '#a8743f', ' rx="3"')),
+    ring: (c, kind) => {
+      let s = '';
+      if (kind === 0) { s += circ(0, 0, 96, 'none', ` stroke="${c}" stroke-width="1.2" stroke-dasharray="2 4"`) + circ(0, 0, 88, 'none', ` stroke="${c}" stroke-width="3" stroke-dasharray="60 20 10 20" opacity=".8"`); for (let i = 0; i < 72; i++) { const a = i / 72 * Math.PI * 2, r1 = i % 6 ? 92 : 84; s += line(`M${N(Math.cos(a) * r1)} ${N(Math.sin(a) * r1)}L${N(Math.cos(a) * 99)} ${N(Math.sin(a) * 99)}`, c, i % 6 ? 0.6 : 1.4); } }
+      else if (kind === 1) { s += circ(0, 0, 90, 'none', ` stroke="${c}" stroke-width="1"`) + path('M-90 0A90 90 0 0 1 0 -90', 'none', ` stroke="${c}" stroke-width="6" opacity=".7"`) + path('M90 0A90 90 0 0 1 0 90', 'none', ` stroke="${c}" stroke-width="6" opacity=".7"`) + circ(0, 0, 80, 'none', ` stroke="${c}" stroke-width="1" stroke-dasharray="8 6" opacity=".7"`); }
+      else { s += circ(0, 0, 94, 'none', ` stroke="${c}" stroke-width="2" stroke-dasharray="1 9" opacity=".9"`) + [0, 120, 240].map((a) => `<path d="M0 -97A97 97 0 0 1 60 -76" transform="rotate(${a})" fill="none" stroke="${c}" stroke-width="3"/>`).join(''); }
+      return svg('-100 -100 200 200', s);
+    },
+    sweep: (c) => svg('-100 -100 200 200', `<defs><linearGradient id="w" x1="0" y1="0" x2="1" y2="0">${stp([0, c, 0])}${stp([1, c, 0.55])}</linearGradient></defs>${path('M0 0L100 0A100 100 0 0 0 70.7 -70.7Z', 'url(#w)')}${line('M0 0L100 0', c, 1.5)}`),
+    flower70: (a, b) => svg('-50 -50 100 100', Array.from({ length: 8 }, (_, i) => `<ellipse cx="0" cy="-27" rx="13" ry="22" fill="${i % 2 ? a : b}" transform="rotate(${i * 45})"/>`).join('') + circ(0, 0, 17, '#ffe14d') + circ(-6, -4, 2.6, '#2b1a3a') + circ(6, -4, 2.6, '#2b1a3a') + path('M-7 5Q0 12 7 5', 'none', ' stroke="#2b1a3a" stroke-width="2.4" stroke-linecap="round"')),
+  });
+
+  // ---------------- GLACIER : banquise, icebergs (partie cachée sous l'eau), manchots ----------------
+  function iceberg(x, y, w, h, deep) {
+    const top = `M${x - w / 2} ${y}L${x - w * 0.36} ${y - h * 0.55}L${x - w * 0.12} ${y - h}L${x + w * 0.05} ${y - h * 0.7}L${x + w * 0.22} ${y - h * 0.85}L${x + w * 0.5} ${y}Z`;
+    const under = `M${x - w / 2} ${y}L${x - w * 0.62} ${y + deep * 0.5}L${x - w * 0.3} ${y + deep}L${x + w * 0.35} ${y + deep * 0.85}L${x + w * 0.62} ${y + deep * 0.35}L${x + w * 0.5} ${y}Z`;
+    return path(under, '#9fd3ee', ' opacity=".35"') + path(top, '#f4fbff') + path(`M${x - w * 0.12} ${y - h}L${x + w * 0.05} ${y - h * 0.7}L${x + w * 0.22} ${y - h * 0.85}L${x + w * 0.5} ${y}L${x - w * 0.02} ${y}Z`, '#cfe8f7') + path(`M${x - w * 0.36} ${y - h * 0.55}L${x - w * 0.12} ${y - h}L${x - w * 0.2} ${y}L${x - w / 2} ${y}Z`, '#ffffff');
+  }
+  def('glacier', {
+    base: (o) => o.bg1,
+    layers: (t, o) => {
+      const E = t.E;
+      return [
+        t.art('sky', (p) => {
+          const r = t.r('gl');
+          let s = sky(p + 's', [[0, o.bg2], [0.5, o.bg1], [0.7, '#ffffff']]) + glow(p + 'sun', 1250, 170, 260, '#ffffff', 0.9);
+          s += mountains(r, p + 'm', { y: 650, amp: 220, n: 8, valley: 0.6, fill: '#d6ecf9', shade: 'rgba(90,150,200,.25)', snow: '#ffffff', snowLine: 0.5, haze: '#eef8ff', hazeA: 0.8 });
+          // mer
+          s += `<defs>${lg(p + 'w', [[0, '#3c86b5'], [0.4, '#1d5f8a'], [1, '#0b3352']])}</defs>` + rect(0, 650, W, 260, `url(#${p}w)`);
+          for (let i = 0; i < 40; i++) s += rect(rr(r, 0, 1600), rr(r, 660, 880), rr(r, 30, 120), 2, '#ffffff', ` opacity="${N(rr(r, 0.08, 0.25))}"`);
+          return s;
+        }),
+        ...[[230, 650, 300, 170, 150, 7], [1270, 652, 240, 130, 120, 9]].map(([x, y, w, h, d, du], i) => t.el('ib' + i, t.img(cached('ib' + i, () => svg(`${x - w * 0.7} ${y - h - 10} ${w * 1.4} ${h + d + 20}`, iceberg(x, y, w, h, d))), { left: em(x - w * 0.7), top: em(y - h - 10), width: em(w * 1.4), height: em(h + d + 20), '--by': em(-6), animation: `fhs-bob ${du}s ease-in-out infinite` }))),
+        t.still(iceberg(230, 650, 300, 170, 150) + iceberg(1270, 652, 240, 130, 120)),
+        t.art('floes', (p) => {
+          let s = '';
+          [[560, 760, 180, 18], [960, 800, 130, 14], [1420, 790, 220, 22], [120, 840, 200, 20]].forEach(([x, y, w, h]) => { s += ell(x, y + h * 0.9, w * 0.55, h * 0.8, '#9fd3ee', ' opacity=".35"') + path(`M${x - w / 2} ${y}L${x - w * 0.4} ${y - h}L${x + w * 0.45} ${y - h * 0.8}L${x + w / 2} ${y}Z`, '#f4fbff') + path(`M${x - w / 2} ${y}L${x + w / 2} ${y}L${x + w * 0.48} ${y + h * 0.5}L${x - w * 0.48} ${y + h * 0.5}Z`, '#cfe8f7'); });
+          return s;
+        }),
+        ...[[1360, 744], [1395, 748], [1430, 742], [1470, 750]].map(([x, y], i) => t.el('pg' + i, { position: 'absolute', left: em(x), top: em(y - 52), width: em(30), height: em(45) }, E('div', { style: t.img(spr('penguin'), { inset: 0, transformOrigin: '50% 100%', transform: i % 2 ? 'scaleX(-1)' : undefined, '--a': '5deg', animation: `fhs-rock ${N(1.4 + i * 0.3)}s ease-in-out ${-i * 0.4}s infinite` }) }))),
+        t.still([1360, 1395, 1430, 1470].map((x, i) => `<image href="${spr('penguin').slice(5, -2)}" x="${x}" y="${[692, 696, 690, 698][i]}" width="30" height="45"/>`).join('')),
+        twinkles(t, 'tw', 12, [100, 470, 1500, 800], '#ffffff'),
+        ...snowfall(t, 'sn', { far: 16, near: 6, crystals: 4 }),
+      ];
+    },
+  });
+
+  // ---------------- ISO 3D : petite ville en perspective isométrique, voitures, moulin, montgolfière ----------------
+  def('iso', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const E = t.E, OX = 800, OY = 630, K = 0.866;
+      const pt = (u, v, z) => [OX + (u - v) * K, OY + (u + v) * 0.5 - (z || 0)];
+      const poly = (pts, c, extra) => path(`M${P(pts)}Z`, c, extra);
+      const box = (u, v, w, d, h, c) => {
+        const a = pt(u, v, h), b = pt(u + w, v, h), cc = pt(u + w, v + d, h), dd = pt(u, v + d, h);
+        let s = poly([pt(u, v + d, 0), pt(u + w, v + d, 0), cc, dd], c[1]) + poly([pt(u + w, v, 0), pt(u + w, v + d, 0), cc, b], c[2]) + poly([a, b, cc, dd], c[0]);
+        if (c[3]) for (let z = 14; z < h - 10; z += 20) for (let q = 8; q < w - 6; q += 16) { const p1 = pt(u + q, v + d, z), p2 = pt(u + q + 8, v + d, z), p3 = pt(u + q + 8, v + d, z + 10), p4 = pt(u + q, v + d, z + 10); s += poly([p1, p2, p3, p4], c[3]); }
+        if (c[3]) for (let z = 14; z < h - 10; z += 20) for (let q = 8; q < d - 6; q += 16) { const p1 = pt(u + w, v + q, z), p2 = pt(u + w, v + q + 8, z), p3 = pt(u + w, v + q + 8, z + 10), p4 = pt(u + w, v + q, z + 10); s += poly([p1, p2, p3, p4], c[3], ' opacity=".75"'); }
+        return s;
+      };
+      const tree = (u, v, k) => { const [x, y] = pt(u, v, 0); return rect(x - 3 * k, y - 18 * k, 6 * k, 18 * k, '#6b4a2a') + circ(x, y - 30 * k, 16 * k, '#3fae5a') + circ(x - 5 * k, y - 35 * k, 8 * k, '#6fd17f'); };
+      const B = [['#b8a6ff', '#7d6bd6', '#5a49ad', '#ffe7a3'], ['#ffb3a8', '#e07a6e', '#b85a50', '#fff3c4'], ['#a8e6ff', '#6bb8db', '#4a8db3', '#fff3c4'], ['#ffe49a', '#e0b85a', '#b8913a', '#fff9e0']];
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.7, o.bg1], [1, '#3a2466']]) + starsSvg(t.r('st'), 120, { y1: 600 }) + glow(p + 'g', 800, 760, 600, '#ff7ad9', 0.18)),
+        t.el('bal', t.img(spr('hballoon2'), { left: em(1250), top: em(120), width: em(80), height: em(120), '--by': em(-40), '--bx': em(-30), animation: 'fhs-bob 10s ease-in-out infinite' })),
+        t.still(`<image href="${spr('hballoon2').slice(5, -2)}" x="1250" y="120" width="80" height="120"/>`),
+        t.art('island', (p) => {
+          let s = '';
+          // socle de l'île : terre sur les côtés, herbe dessus
+          const S = 470;
+          s += poly([pt(0, S, 0), pt(S, S, 0), pt(S, S, -60), pt(0, S, -60)], '#7a4a2e') + poly([pt(S, 0, 0), pt(S, S, 0), pt(S, S, -60), pt(S, 0, -60)], '#5a3420');
+          s += poly([pt(0, 0, 0), pt(S, 0, 0), pt(S, S, 0), pt(0, S, 0)], '#6cc56f');
+          // routes en croix
+          s += poly([pt(0, 210, 0), pt(S, 210, 0), pt(S, 250, 0), pt(0, 250, 0)], '#4a4f63') + poly([pt(210, 0, 0), pt(250, 0, 0), pt(250, S, 0), pt(210, S, 0)], '#4a4f63');
+          for (let q = 10; q < S; q += 40) { if (q > 195 && q < 265) continue; s += poly([pt(q, 229, 0), pt(q + 20, 229, 0), pt(q + 20, 231, 0), pt(q, 231, 0)], '#e8e2c8') + poly([pt(229, q, 0), pt(231, q, 0), pt(231, q + 20, 0), pt(229, q + 20, 0)], '#e8e2c8'); }
+          // eau, arbres, immeubles (du fond vers l'avant)
+          s += poly([pt(30, 30, 0), pt(150, 30, 0), pt(150, 110, 0), pt(30, 110, 0)], '#5ab4e6');
+          [[60, 140], [100, 160], [170, 40], [175, 120], [30, 180], [290, 30], [330, 60], [400, 40]].forEach(([u, v]) => { s += tree(u, v, 1); });
+          s += box(280, 90, 60, 60, 120, B[0]) + box(360, 100, 70, 50, 70, B[1]);
+          s += box(40, 280, 60, 60, 150, B[2]) + box(120, 300, 60, 50, 90, B[3]);
+          s += box(290, 290, 70, 70, 190, B[1]) + box(380, 300, 60, 60, 110, B[0]);
+          s += box(60, 380, 50, 50, 60, B[0]) + box(300, 390, 50, 50, 70, B[3]) + box(390, 390, 50, 50, 140, B[2]);
+          [[160, 410], [200, 440], [440, 280], [450, 200]].forEach(([u, v]) => { s += tree(u, v, 1.1); });
+          // moulin
+          s += box(440, 150, 26, 26, 110, ['#f3efe6', '#d9d2c2', '#bfb6a3']);
+          return s;
+        }),
+        (() => { const [x, y] = pt(453, 163, 118); return t.el('mill', t.img(spr('blades', '#fdfaf2'), { left: em(x - 58), top: em(y - 58), width: em(116), height: em(116), animation: 'fhs-spin 6s linear infinite' })); })(),
+        t.still((() => { const [x, y] = pt(453, 163, 118); return `<image href="${spr('blades', '#fdfaf2').slice(5, -2)}" x="${N(x - 58)}" y="${N(y - 58)}" width="116" height="116"/>`; })()),
+        // voitures sur les routes
+        ...[[0, 0, '#ff6b6b', '#c84b4b', 9, 0], [1, 1, '#ffd166', '#c9a23a', 11, -5], [0, 1, '#4ecdc4', '#2f9d95', 13, -8]].map(([dir, back, a, b, dur, dl], i) => {
+          const s0 = dir ? pt(back ? 238 : 222, -10, 0) : pt(-10, back ? 238 : 222, 0), s1 = dir ? pt(back ? 238 : 222, 480, 0) : pt(480, back ? 238 : 222, 0);
+          return t.el('car' + i, t.img(spr('car', a, b), { left: em(s0[0] - 18), top: em(s0[1] - 18), width: em(36), height: em(24), transform: dir ? 'scaleX(-1)' : undefined, '--x1': em(s1[0] - s0[0]), '--y1': em(s1[1] - s0[1]), animation: `fhs-move ${dur}s linear ${dl}s infinite` }));
+        }),
+        ...clouds(t, 'cl', [{ x: -260, y: 260, k: 0.5, dx: 2000, dur: 80, dl: -10, c: '#e9e2ff', s: '#c4b8ff', op: 0.85 }, { x: -260, y: 380, k: 0.4, dx: 2000, dur: 65, dl: -40, c: '#e9e2ff', s: '#c4b8ff', op: 0.8 }]),
+      ];
+    },
+  });
+
+  // ---------------- GOTHIQUE : rosace, vitraux, rayons de lumière, bougies qui vacillent ----------------
+  def('gothic', {
+    base: (o) => o.bgColor || '#120d0b',
+    layers: (t, o) => {
+      const E = t.E, glass = ['#c0352b', '#2b5fc0', '#e0a83a', '#2f8f5a', '#7a3fb5'];
+      return [
+        t.art('nave', (p) => {
+          const r = t.r('go');
+          let s = `<defs>${rg(p + 'bg', [[0, '#2a1e18'], [0.7, '#140e0b'], [1, '#0a0706']], 0.5, 0.35, 0.8)}</defs>` + rect(0, 0, W, H, `url(#${p}bg)`);
+          // rosace
+          const cx = 800, cy = 170;
+          s += glow(p + 'rg', cx, cy, 260, '#ffb070', 0.3) + circ(cx, cy, 128, '#1a120e');
+          for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; s += `<g transform="rotate(${N(a * 180 / Math.PI)} ${cx} ${cy})">${path(`M${cx} ${cy - 30}Q${cx - 26} ${cy - 80} ${cx} ${cy - 118}Q${cx + 26} ${cy - 80} ${cx} ${cy - 30}Z`, glass[i % glass.length], ' opacity=".9"')}${circ(cx, cy - 104, 9, glass[(i + 2) % glass.length])}</g>`; }
+          s += circ(cx, cy, 28, '#e0a83a') + circ(cx, cy, 128, 'none', ' stroke="#3a2a22" stroke-width="10"') + circ(cx, cy, 30, 'none', ' stroke="#3a2a22" stroke-width="6"');
+          // fenêtres en ogive (lancettes) avec vitraux
+          const lancet = (x, y, w, h) => { const d = `M${x - w / 2} ${y + h}V${y + w * 0.6}Q${x - w / 2} ${y} ${x} ${y - w * 0.3}Q${x + w / 2} ${y} ${x + w / 2} ${y + w * 0.6}V${y + h}Z`; let q = glow(p + 'lg' + x, x, y + h / 2, h * 0.7, '#ffb070', 0.18) + path(d, '#1a120e'); q += `<defs><clipPath id="${p}c${x}"><path d="${d}"/></clipPath></defs><g clip-path="url(#${p}c${x})">`; for (let yy = y - w; yy < y + h; yy += 26) for (let xx = x - w / 2; xx < x + w / 2; xx += 22) q += rect(xx + 1.5, yy + 1.5, 19, 23, pick(r, glass), ' opacity=".85"'); return q + `</g>` + path(d, 'none', ' stroke="#3a2a22" stroke-width="8"') + line(`M${x} ${y - w * 0.2}V${y + h}`, '#3a2a22', 5); };
+          s += lancet(330, 220, 90, 380) + lancet(1270, 220, 90, 380);
+          // piliers et arcs brisés
+          [[150, 1], [1450, -1]].forEach(([x]) => { s += rect(x - 44, 0, 88, 900, '#241a15') + rect(x - 44, 0, 14, 900, '#2e221b') + rect(x + 30, 0, 14, 900, '#1a120e'); for (let y = 80; y < 860; y += 120) s += rect(x - 50, y, 100, 10, '#2e221b'); });
+          s += path('M150 0Q170 300 800 -40Q1430 300 1450 0', 'none', ' stroke="#241a15" stroke-width="40"');
+          // dallage en perspective
+          s += `<defs>${lg(p + 'fl', [[0, '#1d1511'], [1, '#2b211b']])}</defs>` + rect(0, 760, W, 140, `url(#${p}fl)`);
+          for (let i = -12; i <= 12; i++) s += line(`M800 700L${800 + i * 140} 900`, '#120c09', 2, ' opacity=".7"');
+          [770, 790, 818, 856].forEach((y) => { s += line(`M0 ${y}H1600`, '#120c09', 2, ' opacity=".7"'); });
+          // chandeliers
+          [[420, 860], [1180, 860]].forEach(([x, y]) => { s += rect(x - 6, y - 130, 12, 130, '#6b5233') + ell(x, y, 40, 9, '#4a3820') + line(`M${x - 60} ${y - 130}Q${x} ${y - 100} ${x + 60} ${y - 130}`, '#6b5233', 6); [-60, 0, 60].forEach((d) => { s += rect(x + d - 7, y - 170 - (d ? 0 : 14), 14, 40 + (d ? 0 : 14), '#f3e7cf'); }); });
+          return s;
+        }),
+        // rayons de lumière qui entrent par les vitraux
+        ...[[330, 26, 9], [1270, -26, 11]].map(([x, a, d], i) => t.el('beam' + i, { position: 'absolute', left: em(x - 120), top: em(260), width: em(240), height: em(760), transformOrigin: '50% 0', transform: `rotate(${a}deg)`, background: 'linear-gradient(180deg, rgba(255,200,140,.28), rgba(255,200,140,0))', clipPath: 'polygon(30% 0, 70% 0, 100% 100%, 0 100%)', '--o0': 0.5, animation: `fhs-tw ${d}s ease-in-out ${-i * 3}s infinite` })),
+        t.still([[330, 26], [1270, -26]].map(([x, a]) => `<g transform="rotate(${a} ${x} 260)">${path(`M${x - 50} 260L${x + 50} 260L${x + 120} 1020L${x - 120} 1020Z`, '#ffc88c', ' opacity=".12"')}</g>`).join('')),
+        // flammes des bougies
+        ...[[360, 690], [420, 676], [480, 690], [1120, 690], [1180, 676], [1240, 690]].map(([x, y], i) => t.el('fl' + i, { position: 'absolute', left: em(x - 9), top: em(y - 26), width: em(18), height: em(30), borderRadius: '50% 50% 50% 50% / 60% 60% 40% 40%', background: 'radial-gradient(closest-side at 50% 65%, #fffbe6, #ffcf5a 55%, rgba(255,140,40,0))', transformOrigin: '50% 100%', '--s': 0.82, '--o0': 0.75, animation: `fhs-pulse ${N(0.5 + (i % 3) * 0.17)}s ease-in-out ${-i * 0.2}s infinite` })),
+        ...[[420, 700], [1180, 700]].map(([x, y], i) => t.el('cg' + i, { position: 'absolute', left: em(x - 150), top: em(y - 150), width: em(300), height: em(300), borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(255,190,100,.32), rgba(255,190,100,0))', '--o0': 0.75, animation: `fhs-flick ${3 + i}s linear infinite` })),
+        t.still([360, 420, 480, 1120, 1180, 1240].map((x, i) => ell(x, [664, 650, 664, 664, 650, 664][i], 7, 12, '#ffcf5a')).join('')),
+        ...drift(t, 'du', t.n('du', 14, (r) => ({ x: rr(r, 250, 1350), y: rr(r, 400, 800), w: rr(r, 3, 6), x1: rr(r, -80, 80), y1: -rr(r, 150, 350), dur: rr(r, 12, 20), dl: -r() * 20, fade: true, op: 0.6, img: spr('dot', '#ffe2b0') }))),
+      ];
+    },
+  });
+
+  // ---------------- HOLOGRAMME : anneaux d'interface qui tournent, radar, panneaux de données ----------------
+  def('holo', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const E = t.E, c = '#22d3ee';
+      const ring = (k, D, kind, dur, rev) => [t.el(k, t.img(spr('ring', c, kind), { left: em(800 - D / 2), top: em(450 - D / 2), width: em(D), height: em(D), opacity: 0.55, animation: `${rev ? 'fhs-spinr' : 'fhs-spin'} ${dur}s linear infinite` })), t.still(`<image href="${spr('ring', c, kind).slice(5, -2)}" x="${800 - D / 2}" y="${450 - D / 2}" width="${D}" height="${D}" opacity=".55"/>`)];
+      return [
+        t.art('hud', (p) => {
+          const r = t.r('ho');
+          let s = `<defs>${rg(p + 'bg', [[0, o.bg1], [1, o.bg2]], 0.5, 0.5, 0.75)}<pattern id="${p}hx" width="52" height="30" patternUnits="userSpaceOnUse">${path('M13 0L39 0L52 15L39 30L13 30L0 15Z', 'none', ` stroke="${c}" stroke-width=".8" opacity=".14"`)}</pattern></defs>` + rect(0, 0, W, H, `url(#${p}bg)`) + rect(0, 0, W, H, `url(#${p}hx)`);
+          // coins
+          [[40, 40, 1, 1], [1560, 40, -1, 1], [40, 860, 1, -1], [1560, 860, -1, -1]].forEach(([x, y, a, b]) => { s += line(`M${x} ${y + b * 90}V${y}H${x + a * 90}`, c, 3, ' opacity=".8"'); });
+          // panneaux latéraux
+          s += rect(70, 140, 250, 170, 'none', ` stroke="${c}" stroke-width="1.5" opacity=".5"`) + rect(70, 140, 250, 26, c, ' opacity=".15"');
+          let wv = 'M80 260'; for (let x = 80; x <= 310; x += 6) wv += `L${x} ${N(250 + Math.sin(x / 14) * 20 * Math.sin(x / 70))}`; s += line(wv, c, 2, ' opacity=".8"');
+          s += rect(1280, 140, 250, 170, 'none', ` stroke="${c}" stroke-width="1.5" opacity=".5"`) + rect(1280, 140, 250, 26, c, ' opacity=".15"');
+          for (let i = 0; i < 4; i++) s += rect(1295, 186 + i * 28, 220, 12, c, ' opacity=".12"');
+          // radar
+          s += circ(1400, 700, 120, 'none', ` stroke="${c}" stroke-width="1.5" opacity=".6"`) + circ(1400, 700, 80, 'none', ` stroke="${c}" stroke-width="1" opacity=".4"`) + circ(1400, 700, 40, 'none', ` stroke="${c}" stroke-width="1" opacity=".4"`) + line('M1280 700H1520M1400 580V820', c, 1, ' opacity=".35"');
+          s += line('M60 450H360M1240 450H1540', c, 1, ' opacity=".35" stroke-dasharray="4 8"');
+          for (let i = 0; i < 18; i++) s += rect(rr(r, 80, 400), rr(r, 560, 820), rr(r, 20, 90), 3, c, ` opacity="${N(rr(r, 0.15, 0.4))}"`);
+          return s;
+        }),
+        ...ring('r1', 780, 0, 60, false), ...ring('r3', 560, 2, 30, true),
+        t.el('sweep', t.img(spr('sweep', c), { left: em(1280), top: em(580), width: em(240), height: em(240), animation: 'fhs-spin 4s linear infinite' })),
+        ...t.n('blip', 4, (r, i) => t.el('bl' + i, { position: 'absolute', left: em(1400 + rr(r, -90, 90)), top: em(700 + rr(r, -90, 90)), width: em(10), height: em(10), borderRadius: '50%', background: c, boxShadow: `0 0 .6em ${c}`, '--o0': 0, animation: `fhs-tw 4s ease-in-out ${-i}s infinite` })),
+        ...[0, 1, 2, 3].map((i) => t.el('bar' + i, { position: 'absolute', left: em(1295), top: em(186 + i * 28), width: em(220), height: em(12), background: c, opacity: 0.7, transformOrigin: '0 50%', '--f': 0.25, animation: `fhs-flapx ${N(2.4 + i * 0.7)}s ease-in-out ${-i}s infinite` })),
+        t.el('scan', { position: 'absolute', left: 0, top: em(-10), width: '100%', height: em(4), background: `linear-gradient(90deg, rgba(34,211,238,0), rgba(34,211,238,.55), rgba(34,211,238,0))`, '--y1': em(910), animation: 'fhs-move 6s linear infinite' }),
+      ];
+    },
+  });
+
+  // ---------------- PSYCHÉ : spirale arc-en-ciel, anneaux qui pulsent, fleurs seventies ----------------
+  def('trippy', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const cols = ['#ff4fd8', '#ffe14d', '#00c2a8', '#7b2ff7', '#ff8c42', '#4cc9f0'];
+      return [
+        t.art('swirl', (p) => {
+          let s = rect(0, 0, W, H, o.bg2);
+          for (let k = 0; k < 14; k++) { let d = ''; for (let i = 0; i <= 120; i++) { const a = i * 0.11 + k * (Math.PI * 2 / 14), rr2 = 20 + i * 9; d += `${i ? 'L' : 'M'}${N(800 + Math.cos(a) * rr2)} ${N(450 + Math.sin(a) * rr2 * 0.8)}`; } s += line(d, cols[k % cols.length], 34, ' opacity=".55"'); }
+          s += `<defs>${rg(p + 'v', [[0, o.bg2, 0.6], [0.5, o.bg2, 0.2], [1, o.bg2, 0.75]], 0.5, 0.5, 0.75)}</defs>` + rect(0, 0, W, H, `url(#${p}v)`);
+          return s;
+        }),
+        ...[0, 1].map((i) => t.el('ring' + i, { position: 'absolute', left: em(800 - 260 - i * 110), top: em(450 - 260 - i * 110), width: em(520 + i * 220), height: em(520 + i * 220), borderRadius: '50%', border: `${em(12)} solid ${cols[i * 2]}`, opacity: 0.35, '--s': 1.1, '--o0': 0.15, '--o1': 0.4, animation: `fhs-pulse ${4 + i}s ease-in-out ${-i * 1.3}s infinite` })),
+        ...t.n('fl', 7, (r, i) => { const x = [140, 300, 1300, 1460, 220, 1380, 800][i], y = [180, 700, 160, 640, 450, 400, 820][i], z = rr(r, 90, 160); return t.el('fl' + i, t.img(spr('flower70', pick(r, cols), pick(r, cols)), { left: em(x - z / 2), top: em(y - z / 2), width: em(z), height: em(z), animation: `${i % 2 ? 'fhs-spinr' : 'fhs-spin'} ${N(rr(r, 12, 24))}s linear infinite` })); }),
+        t.still([[140, 180], [1300, 160], [300, 700], [1460, 640]].map(([x, y], i) => `<image href="${spr('flower70', cols[i], cols[i + 1]).slice(5, -2)}" x="${x - 60}" y="${y - 60}" width="120" height="120"/>`).join('')),
+        ...drift(t, 'bub', t.n('bub', 10, (r) => ({ x: rr(r, 0, 1600), y: 920, w: rr(r, 30, 70), y1: -1000, x1: rr(r, -100, 100), dur: rr(r, 12, 20), dl: -r() * 20, sw: 3, swd: 4, round: '50%', bg: `radial-gradient(circle at 35% 35%, rgba(255,255,255,.7), ${pick(r, cols)}88 60%, transparent 72%)` }))),
       ];
     },
   });

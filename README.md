@@ -1,12 +1,14 @@
 # findheure
 
-Horloge plein écran personnalisable, en une seule page (`index.html` + `support.js`).
+Horloge plein écran personnalisable, en une seule page (`index.html` + `support.js`, décors dans `scenes.js`).
 
 - **Thème par défaut : Halloween** — cimetière, citrouilles, chauves-souris, fantôme, lune et brume.
-- **Saisons & fêtes** avec décors animés : Rentrée, Automne, Halloween, Hiver, Noël, Nouvel An, Saint-Valentin, Printemps, Poisson d’avril, Pâques, Fête de la musique, Été, 14 Juillet — et un bouton pour **changer de thème tout seul selon la date**.
-- **Autres thèmes** : Papier, Néon, Terminal, Grille (cases qui s’allument derrière la souris), Hologramme, Psyché…
+- **Saisons & fêtes**, chacune avec son vrai décor animé : Rentrée (tableau noir à la craie), Automne (forêt, feuilles qui tombent), Halloween, Hiver (montagnes, aurore boréale, chalet), Noël (village enneigé, sapin illuminé, traîneau), Nouvel An (ville et feux d’artifice), Saint-Valentin, Printemps (cerisiers, papillons), Poisson d’avril (fond marin), Pâques (lapin, poussins, œufs), Fête de la musique (concert), Été (plage, voilier, vagues), 14 Juillet (tour Eiffel qui scintille) — et un bouton pour **changer de thème tout seul selon la date**.
+- **Autres thèmes**, eux aussi avec leur décor : Papier (feuille Seyès, avions en papier), Néon (rue sous la pluie), Terminal (écran cathodique), Coucher de soleil (synthwave), Bonbon, Brutal, Cosmos (planètes, astronaute), Arcade (envahisseurs en pixels), Luxe (Art déco), Matrice (tableau à LED), Glacier (icebergs, manchots), Iso 3D (ville isométrique), Gothique (vitraux, bougies), Grille (cases qui s’allument derrière la souris), Hologramme, Psyché.
+- Les décors ne bougent qu’avec des animations légères (fluides même sur un vieil ordinateur) et un voile doux derrière l’heure la garde lisible. Tous les boutons et textes sont vérifiés pour rester lisibles sur chaque thème.
 - **Animations des chiffres** (fondu, chute, toupie, fonte, rebond, glitch, machine à sous…) et **effets bizarres** permanents (vague, gelée, tremblote, lévitation, arc-en-ciel, liquide, hologramme, reflet…).
 - **Minuteur visuel** (disque qui se vide et passe du vert à l’orange puis au rouge) et **chrono** (avec tours), dessinés dans le style choisi.
+- **Sonnerie de fin** au choix (carillon, cloche, sonnerie d’école, réveil, gong) avec volume et bouton « Écouter » : forte et répétée pendant une minute en crescendo, elle part à l’heure même si l’onglet est en arrière-plan.
 - **Sonomètre** : un cadran montre le bruit de la classe (vert → rouge), avec seuil d’alerte, sensibilité, compteur de dépassements et bip en option. Le son est analysé dans le navigateur, rien n’est enregistré ni envoyé.
 - **Afficher sur l’horloge** : le minuteur, le chrono et le sonomètre restent sur l’écran de l’heure, dans des cartes qu’on déplace à la souris et qu’on agrandit (− / +) ; double-clic pour les ranger dans le coin.
 - **Site ou image** : afficher un site (YouTube, Google Slides, Canva…) ou un fichier de l’ordinateur (image, vidéo, PDF) en plein écran, avec l’heure dans une carte qu’on déplace et qu’on agrandit. Certains sites (Pronote, ENT, Google) refusent d’être affichés dans un autre site.
