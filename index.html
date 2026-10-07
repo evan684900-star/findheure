@@ -177,8 +177,8 @@ a{color:inherit}a:hover{opacity:.8}
         <sc-if value="{{ chrome.brand }}" hint-placeholder-val="{{ true }}"><div style="font-weight: 600; font-size: 14.5px; letter-spacing: -.01em;">findheure</div></sc-if>
       </div>
       <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0; display: {{ chrome.sepDisplay }};"></div>
-      <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; flex: {{ chrome.tabsFlex }}; order: {{ chrome.tabsOrder }}; min-width: 0; overflow-x: auto; scrollbar-width: none;">
-        <div style="position: absolute; top: 0; left: 0; height: 36px; width: {{ ind.w }}; transform: translateX({{ ind.x }}); border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.ring }}; opacity: {{ ind.op }}; transition: {{ ind.tr }}; pointer-events: none;"></div>
+      <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; padding: 6px; margin: -6px; flex: {{ chrome.tabsFlex }}; order: {{ chrome.tabsOrder }}; min-width: 0; overflow-x: auto; scrollbar-width: none;">
+        {{ glass.el }}
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
           <button ref="{{ t.ref }}" data-tour="{{ t.tour }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
         </sc-for>
@@ -718,6 +718,29 @@ const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
 const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', holo: '🛰️', trippy: '🌀' };
 const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note', 'img'], ['surprise'], ['fs'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
+// Bulle « liquid glass » des onglets. Chrome sait déformer ce qu'il y a derrière avec un filtre SVG :
+// on y décrit une lentille bombée (bords qui tordent fort, centre qui grossit un peu).
+const GLASS_LENS = !!(navigator.userAgentData && navigator.userAgentData.brands.some(b => b.brand === 'Chromium')) && !!window.CSS && CSS.supports('backdrop-filter', 'url(#a)');
+const lensMaps = {};
+function lensMap(w, h) {
+  const key = w + 'x' + h; if (lensMaps[key]) return lensMaps[key];
+  const q = 2, W = Math.round(w * q), H = Math.round(h * q), cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'), r = h / 2, hx = w / 2 - r, bev = Math.min(r * 0.45, 8), edge = 7, mag = 0.035, S = 2 * (edge + mag * w / 2 + 1);
+  // une carte par couleur : le bord dévie un peu moins le vert et le bleu (irisation du verre), le centre est identique
+  const urls = [1, 0.93, 0.86].map(k => {
+    const img = g.createImageData(W, H), d = img.data;
+    for (let j = 0; j < H; j++) for (let i = 0; i < W; i++) {
+      const px = (i + 0.5) / q - w / 2, py = (j + 0.5) / q - h / 2;
+      // profondeur depuis le bord de la pilule et normale vers l'extérieur
+      const ax = Math.max(Math.abs(px) - hx, 0), len = Math.hypot(ax, py) || 1e-6, depth = r - len;
+      const nx = Math.sign(px) * ax / len, ny = py / len, f = depth < 0 ? 0 : k * Math.pow(1 - Math.min(1, depth / bev), 2);
+      const ox = -nx * edge * f - px * mag, oy = -ny * edge * 0.6 * f - py * mag, o = (j * W + i) * 4;
+      d[o] = 127.5 + ox / S * 255; d[o + 1] = 127.5 + oy / S * 255; d[o + 2] = 128; d[o + 3] = 255;
+    }
+    g.putImageData(img, 0, 0); return cv.toDataURL();
+  });
+  return (lensMaps[key] = { urls, S });
+}
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
 // act(st, b) : vrai quand l'action demandée est faite (b = état au début de l'étape). prep(app) : remet le décor si on revient en arrière.
 const tabIs = (id) => (st) => st.tab === id, modeIs = (m) => (st) => st.s.mode === m;
@@ -1003,7 +1026,7 @@ class Component extends DCLogic {
     }).catch(() => this.setState({ mediaReady: true }));
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT].forEach(clearTimeout); cancelAnimationFrame(this.glassRaf); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -1052,11 +1075,96 @@ class Component extends DCLogic {
   pickPreset = (ps) => { const was = this.state.s.autoTheme; this.setS({ ...ps, autoTheme: false }); if (was) this.toast(this.L().autoOff); };
   // Pastille animée sous l'onglet actif de la barre du haut
   syncInd = () => {
-    const st = this.state, el = st.tab && this.tabEls[st.tab], cur = st.ind;
-    if (!el) { if (cur && cur.on) this.setState({ ind: { ...cur, on: false, slide: false } }); return; }
-    const x = el.offsetLeft, w = el.offsetWidth;
-    if (!cur || !cur.on) this.setState({ ind: { x, w, on: true, slide: false } });
-    else if (cur.x !== x || cur.w !== w) this.setState({ ind: { x, w, on: true, slide: true } });
+    const st = this.state, el = st.tab && this.tabEls[st.tab];
+    const k = el ? [el.offsetLeft, el.offsetTop, el.offsetWidth, el.offsetHeight].join(',') : '';
+    if (k === this.indK) return; this.indK = k;
+    if (el) this.glassTo(el.offsetLeft, el.offsetTop, el.offsetWidth, el.offsetHeight); else this.glassOff();
+  };
+  // Bulle de verre liquide : deux ressorts (bord avant raide, bord arrière mou) étirent la goutte pendant le trajet,
+  // elle tremble comme une gelée en arrivant et lance des ondes qui font onduler les autres onglets.
+  glassRef = React.createRef();
+  rippleRef = React.createRef();
+  glintRef = React.createRef();
+  lensRef = (n) => { this.lensEl = n; this.lensK = null; };
+  glassMap = (w, h) => {
+    const f = this.lensEl, k = w + 'x' + h; if (!f || this.lensK === k) return; this.lensK = k;
+    const m = lensMap(w, h), ims = f.querySelectorAll('feImage');
+    [f, ...ims].forEach(n => { n.setAttribute('x', 0); n.setAttribute('y', 0); n.setAttribute('width', w); n.setAttribute('height', h); });
+    ims.forEach((n, i) => n.setAttribute('href', m.urls[i]));
+    f.querySelectorAll('feDisplacementMap').forEach(n => n.setAttribute('scale', m.S.toFixed(2)));
+  };
+  glassCalm = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  glassTo = (x, y, w, h) => {
+    const el = this.glassRef.current; if (!el || !w) return;
+    const g = this.glass || (this.glass = { L: x, R: x + w, vL: 0, vR: 0, j: 0, vj: 0, on: false });
+    Object.assign(g, { tL: x, tR: x + w, y, h, W: w });
+    el.style.width = w + 'px'; el.style.height = h + 'px'; this.glassMap(w, h);
+    el.getAnimations().forEach(a => a.cancel());
+    if (!g.on) {
+      // apparition : la goutte se forme sur place, un peu aplatie, puis se gonfle
+      Object.assign(g, { on: true, L: x + w * 0.3, R: x + w * 0.7, vL: 0, vR: 0, j: -0.3, vj: 0, dir: 0, landed: true });
+      el.style.opacity = '1'; el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 180 });
+      this.glassRipple(0.7);
+    } else Object.assign(g, { dir: Math.sign(g.tL + g.tR - g.L - g.R), landed: false, travel: Math.abs(g.tL - g.L) });
+    if (this.glassCalm()) { Object.assign(g, { L: g.tL, R: g.tR, vL: 0, vR: 0, j: 0, vj: 0 }); this.glassPaint(); return; }
+    if (!this.glassRaf) { this.glassLast = performance.now(); this.glassRaf = requestAnimationFrame(this.glassStep); }
+  };
+  glassOff = () => {
+    const g = this.glass, el = this.glassRef.current; if (!g || !g.on || !el) return;
+    g.on = false; cancelAnimationFrame(this.glassRaf); this.glassRaf = 0;
+    const cx = (g.L + g.R) / 2, k = 0.55;
+    // la goutte se résorbe
+    el.animate([{ transform: el.style.transform, opacity: 1 }, { transform: `translate(${cx - g.W * k / 2}px, ${g.y + g.h * (1 - k) / 2}px) scale(${k})`, opacity: 0 }], { duration: this.glassCalm() ? 0 : 240, easing: 'cubic-bezier(.5,0,.75,0)' });
+    el.style.opacity = '0';
+  };
+  glassStep = (now) => {
+    const g = this.glass; if (!g || !g.on) { this.glassRaf = 0; return; }
+    const dt = Math.min(0.034, Math.max(0, (now - this.glassLast) / 1000)); this.glassLast = now;
+    const fast = [620, 38], soft = [300, 31], mid = [360, 24];
+    const [kL, cL] = g.dir < 0 ? fast : g.dir > 0 ? soft : mid, [kR, cR] = g.dir > 0 ? fast : g.dir < 0 ? soft : mid;
+    for (let i = 0, h = dt / 4; i < 4; i++) {
+      g.vL += (kL * (g.tL - g.L) - cL * g.vL) * h; g.L += g.vL * h;
+      g.vR += (kR * (g.tR - g.R) - cR * g.vR) * h; g.R += g.vR * h;
+      g.vj += (-320 * g.j - 7.5 * g.vj) * h; g.j += g.vj * h;
+    }
+    // le bord avant touche l'onglet : choc, gelée et ondes
+    if (!g.landed && Math.abs(g.dir > 0 ? g.tR - g.R : g.tL - g.L) < 2) {
+      g.landed = true; const s = Math.min(1.3, 0.55 + g.travel / 300); g.vj += 0.9 + s * 0.9; this.glassRipple(s);
+    }
+    this.glassPaint();
+    const still = Math.abs(g.vL) + Math.abs(g.vR) < 3 && Math.abs(g.tL - g.L) + Math.abs(g.tR - g.R) < 0.3 && Math.abs(g.j) < 0.003 && Math.abs(g.vj) < 0.03;
+    if (still) { Object.assign(g, { L: g.tL, R: g.tR, vL: 0, vR: 0, j: 0, vj: 0 }); this.glassPaint(); this.glassRaf = 0; return; }
+    this.glassRaf = requestAnimationFrame(this.glassStep);
+  };
+  glassPaint = () => {
+    const g = this.glass, el = this.glassRef.current; if (!g || !el) return;
+    // volume conservé : étirée elle s'aplatit, tassée elle se bombe
+    const raw = g.R - g.L, up = g.W * 0.55, dn = g.W * 0.2;
+    const len = raw >= g.W ? g.W + up * Math.tanh((raw - g.W) / up) : g.W - dn * Math.tanh((g.W - raw) / dn);
+    const vol = Math.max(0.82, Math.min(1.12, Math.sqrt(g.W / len)));
+    const sx = len * (1 - 0.6 * g.j) / g.W, sy = vol * (1 + g.j), wv = sx * g.W, y = g.y + g.h * (1 - sy) / 2;
+    const x = g.dir > 0 ? g.R - wv : g.dir < 0 ? g.L : (g.L + g.R) / 2 - wv / 2;
+    el.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) scale(${sx.toFixed(4)}, ${sy.toFixed(4)})`;
+    // le reflet glisse un peu à contre-sens du mouvement
+    const gl = this.glintRef.current; if (gl) gl.style.transform = `translateX(${Math.max(-9, Math.min(9, -(g.vL + g.vR) * 0.005)).toFixed(2)}px)`;
+  };
+  glassRipple = (s) => {
+    const g = this.glass, box = this.rippleRef.current; if (!g || !box || this.glassCalm()) return;
+    const x = g.tL, w = g.W, y = g.y, h = g.h, c = this.glassTint || { ring: 'rgba(255,255,255,.6)', glow: 'rgba(255,255,255,.3)' };
+    // deux anneaux qui s'élargissent autour de la goutte
+    for (let i = 0; i < 2; i++) {
+      const r = document.createElement('div');
+      r.style.cssText = `position:absolute;left:${x}px;top:${y}px;width:${w}px;height:${h}px;border-radius:999px;pointer-events:none;box-shadow:inset 0 0 0 1.5px ${c.ring},0 0 10px ${c.glow};opacity:0`;
+      box.appendChild(r);
+      r.animate([{ transform: 'scale(1)', opacity: 0.75 * Math.min(1, s) }, { transform: `scale(${1 + 26 / w}, ${1 + 11 / h})`, opacity: 0 }], { duration: 700, delay: i * 150, easing: 'cubic-bezier(.15,.7,.3,1)', fill: 'backwards' }).onfinish = () => r.remove();
+    }
+    // les autres onglets ondulent, comme posés sur l'eau, d'autant moins qu'ils sont loin
+    const cx = x + w / 2;
+    Object.keys(this.tabEls).forEach(id => {
+      const b = this.tabEls[id], sp = b && b.firstChild; if (!sp || !sp.animate || id === this.state.tab) return;
+      const d = Math.abs(b.offsetLeft + b.offsetWidth / 2 - cx), a = 3.4 * s * Math.exp(-d / 230); if (a < 0.3) return;
+      sp.animate([{ transform: 'translateY(0)' }, { transform: `translateY(${-a}px) scale(${1 + a * 0.012})`, offset: 0.28 }, { transform: `translateY(${a * 0.5}px)`, offset: 0.58 }, { transform: `translateY(${-a * 0.18}px)`, offset: 0.82 }, { transform: 'translateY(0)' }], { duration: 620, delay: d / 0.7, easing: 'ease-in-out' });
+    });
   };
   tabRef = (id) => this.tabRefs[id] || (this.tabRefs[id] = (el) => { this.tabEls[id] = el; });
   // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
@@ -1804,8 +1912,28 @@ class Component extends DCLogic {
     const accUi = readable(s.accent, ui.solid, ui.fg);
     const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
     const tabs = TABS.map(([id, label]) => ({ label, tour: 'tab-' + id, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
-    const iv = st.ind || { x: 0, w: 0, on: false, slide: false };
-    const ind = { x: iv.x + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}`, tr: iv.slide ? 'transform .5s cubic-bezier(.3,1.3,.45,1), width .5s cubic-bezier(.3,1.3,.45,1), opacity .2s ease' : 'opacity .25s ease' };
+    // bulle de verre : teinte d'accent très légère, liserés de lumière, reflet en haut et lueur colorée en bas
+    this.glassTint = { ring: dark ? 'rgba(255,255,255,.55)' : hexA(s.accent, 0.6), glow: hexA(s.accent, dark ? 0.4 : 0.3) };
+    const glassEl = E(React.Fragment, null,
+      GLASS_LENS ? E('svg', { key: 'lens', 'aria-hidden': true, width: 0, height: 0, style: { position: 'absolute', width: 0, height: 0, overflow: 'hidden', pointerEvents: 'none' } },
+        E('filter', { id: 'fh-lens', ref: this.lensRef, filterUnits: 'userSpaceOnUse', primitiveUnits: 'userSpaceOnUse', colorInterpolationFilters: 'sRGB' },
+          ...['R', 'G', 'B'].map((ch, i) => E(React.Fragment, { key: ch },
+            E('feImage', { result: 'm' + ch, preserveAspectRatio: 'none' }),
+            E('feDisplacementMap', { in: 'SourceGraphic', in2: 'm' + ch, xChannelSelector: 'R', yChannelSelector: 'G', result: 'd' + ch }),
+            E('feColorMatrix', { in: 'd' + ch, type: 'matrix', values: [0, 1, 2].map(k => [0, 1, 2, 3, 4].map(c => (c === k && k === i ? 1 : 0)).join(' ')).join(' ') + ' 0 0 0 1 0', result: 'c' + ch }))),
+          E('feBlend', { in: 'cR', in2: 'cG', mode: 'screen', result: 'cRG' }),
+          E('feBlend', { in: 'cRG', in2: 'cB', mode: 'screen' }))) : null,
+      E('div', { key: 'rip', ref: this.rippleRef, 'aria-hidden': true, style: { position: 'absolute', left: 0, top: 0, width: 0, height: 0, pointerEvents: 'none' } }),
+      // coque (mouvement + ombre portée) et verre (réfraction) séparés : avec une ombre sur le même élément,
+      // Chrome décale l'origine du filtre et la carte de réfraction ne tombe plus en face des lettres
+      E('div', { key: 'glass', ref: this.glassRef, 'aria-hidden': true, style: { position: 'absolute', left: 0, top: 0, width: 0, height: 36, borderRadius: 999, opacity: 0, pointerEvents: 'none', transformOrigin: '0 0', willChange: 'transform', zIndex: GLASS_LENS ? 1 : 0,
+        boxShadow: `0 6px 16px -6px rgba(0,0,0,${dark ? 0.55 : 0.28}), 0 0 0 .5px rgba(0,0,0,${dark ? 0.35 : 0.14})` } },
+        E('div', { style: { position: 'absolute', inset: 0, borderRadius: 999, overflow: 'hidden',
+          background: `radial-gradient(120% 95% at 50% 0%, rgba(255,255,255,${dark ? 0.16 : 0.5}), rgba(255,255,255,0) 62%), ${hexA(s.accent, dark ? 0.15 : 0.13)}`,
+          boxShadow: ['inset 0 0 0 .5px rgba(255,255,255,.6)', 'inset 1.5px 2.5px 1px -1.5px rgba(255,255,255,.95)', 'inset -1.5px -2.5px 1px -1.5px rgba(255,255,255,.5)', `inset 0 -9px 12px -9px ${hexA(s.accent, 0.6)}`].join(', '),
+          backdropFilter: GLASS_LENS ? 'url(#fh-lens) saturate(1.5) brightness(1.06)' : 'saturate(1.7) brightness(1.08)', WebkitBackdropFilter: GLASS_LENS ? undefined : 'saturate(1.7) brightness(1.08)' } },
+          E('div', { ref: this.glintRef, style: { position: 'absolute', left: '13%', top: 2, width: '48%', height: '42%', borderRadius: 999, background: `linear-gradient(180deg, rgba(255,255,255,${dark ? 0.5 : 0.75}), rgba(255,255,255,0))` } }),
+          E('div', { style: { position: 'absolute', left: '22%', right: '22%', bottom: 0, height: '38%', borderRadius: 999, background: `radial-gradient(60% 100% at 50% 100%, ${hexA(s.accent, 0.5)}, ${hexA(s.accent, 0)})` } }))));
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
     const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
@@ -2185,7 +2313,7 @@ class Component extends DCLogic {
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, textShadow: legib } },
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
       chrome: { tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
-      tabs, ind, modes, panel: { open: !!st.tab, maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      tabs, glass: { el: glassEl }, modes, panel: { open: !!st.tab, maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);

@@ -15,6 +15,7 @@ Horloge plein écran personnalisable, en une seule page (`index.html` + `support
 - **Tuto** à la première visite : une flèche montre chaque bouton avec son explication.
 - **Guide complet** (bouton « ? ») : 28 étapes qui expliquent tout en détail ; à certaines, c’est toi qui fais (« À toi : clique sur… ») et le guide passe à la suite tout seul quand c’est fait.
 - Quand le fond est une de tes photos (par exemple après « Surprends-moi »), un bouton **Supprimer cette image** apparaît en bas à gauche, avec annulation possible.
+- **Bulle « liquid glass »** sous l’onglet choisi en haut : une vraie lentille de verre qui grossit et courbe ce qu’il y a dessous (dans Chrome et Edge ; ailleurs, un verre teinté), qui s’étire comme une goutte en glissant d’un onglet à l’autre, tremble comme une gelée en arrivant et lance des ondes qui font onduler les autres onglets. Tout se calme si l’ordinateur demande moins d’animations.
 - **Notes autocollantes** déplaçables et redimensionnables.
 - **Images à côté de l’heure** (bouton image de la barre, touche `I`, ou onglet Disposition) : une image de l’ordinateur posée sur l’écran, pas en fond. On la glisse où on veut, on tire le coin pour changer sa taille (ou − / +), elle reste enregistrée.
 - **Taille de l’heure et de la date** réglables dans l’onglet Disposition (et Police).
