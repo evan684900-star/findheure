@@ -23,7 +23,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,link,mic,mic_off,notifications,notifications_off,open_in_full,open_in_new,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,swap_horiz,timer,upload_file,web&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,close,delete,flag,fullscreen,fullscreen_exit,help,hourglass_top,link,mic,mic_off,notifications,notifications_active,notifications_off,open_in_full,open_in_new,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,swap_horiz,timer,upload_file,volume_up,web&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -31,13 +31,13 @@ a{color:inherit}a:hover{opacity:.8}
 .fh-btn{transition:transform .15s ease,filter .15s ease,background .2s ease,box-shadow .2s ease}
 .fh-btn:hover{filter:brightness(1.12);transform:translateY(-1px)}
 .fh-btn:active{transform:translateY(0) scale(.96)}
-.fh-btn:disabled{opacity:.32;cursor:default;transform:none;filter:none}
-.fh-note textarea::placeholder{color:currentColor;opacity:.45}
+.fh-btn:disabled{opacity:.55;cursor:default;transform:none;filter:none}
+.fh-note textarea::placeholder{color:currentColor;opacity:.55}
 .fh-note textarea:focus{outline:none}
 .fh-note textarea::-webkit-resizer{background:transparent}
 .fh-dot{transition:transform .15s ease}.fh-dot:hover{transform:scale(1.25)}
 .fh-card .fh-card-tools{opacity:0;transition:opacity .2s ease}.fh-card:hover .fh-card-tools{opacity:1}
-.fh-input::placeholder{color:currentColor;opacity:.45}
+.fh-input::placeholder{color:currentColor;opacity:.58}
 @keyframes fh-zoom{from{opacity:0;transform:perspective(2em) translateZ(-6em)}to{opacity:1;transform:none}}
 @keyframes fh-spin{from{opacity:0;transform:perspective(4em) rotateY(-280deg)}to{opacity:1;transform:none}}
 @keyframes fh-swirl{from{opacity:0;transform:rotate(-220deg) scale(.1)}to{opacity:1;transform:none}}
@@ -168,7 +168,7 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: {{ prog.track }}; pointer-events: none;">
       <div style="height: 100%; width: {{ prog.width }}; background: {{ prog.fill }}; transition: width 1s linear;"></div>
     </div>
-    <div style="position: absolute; right: 18px; bottom: 14px; font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ prog.labelColor }}; pointer-events: none;">{{ prog.label }}</div>
+    <div style="position: absolute; right: 14px; bottom: 11px; padding: 5px 8px; border-radius: 8px; background: {{ prog.labelBg }}; font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ prog.labelColor }}; pointer-events: none;">{{ prog.label }}</div>
   </sc-if>
 
   <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1240px, calc(100% - 24px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: {{ chrome.pe }}; transition: opacity .5s ease;">
@@ -250,7 +250,7 @@ a{color:inherit}a:hover{opacity:.8}
 
                 <sc-if value="{{ c.isMine }}" hint-placeholder-val="{{ false }}">
                   <div style="display: flex; flex-wrap: wrap; gap: 8px; max-width: 580px;">
-                    <input type="text" value="{{ mine.name }}" placeholder="{{ L.styleName }}" onChange="{{ mine.onName }}" onKeyDown="{{ mine.onKey }}" style="flex: 1 1 200px; min-width: 0; box-sizing: border-box; height: 38px; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; outline: none; user-select: text;">
+                    <input type="text" class="fh-input" value="{{ mine.name }}" placeholder="{{ L.styleName }}" onChange="{{ mine.onName }}" onKeyDown="{{ mine.onKey }}" style="flex: 1 1 200px; min-width: 0; box-sizing: border-box; height: 38px; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; outline: none; user-select: text;">
                     <button onClick="{{ mine.save }}" style="height: 38px; display: flex; align-items: center; gap: 7px; padding: 0 14px 0 11px; border: 0; border-radius: 10px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 600 13px/1 Geist, system-ui, sans-serif; cursor: pointer;">
                       <span style="font-family: 'Material Symbols Rounded'; font-size: 18px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">bookmark_add</span>
                       <span>{{ L.save }}</span>
@@ -298,9 +298,7 @@ a{color:inherit}a:hover{opacity:.8}
                     </button>
                     <sc-for list="{{ media }}" as="m" hint-placeholder-count="0">
                       <div onClick="{{ m.pick }}" title="{{ m.name }}" style="position: relative; width: 108px; height: 68px; border-radius: 10px; overflow: hidden; cursor: pointer; background: {{ m.thumb }}; box-shadow: {{ m.ring }};">
-                        <sc-if value="{{ m.isVideo }}" hint-placeholder-val="{{ false }}">
-                          <video src="{{ m.url }}" muted="{{ true }}" preload="metadata" style="width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none;"></video>
-                        </sc-if>
+                        {{ m.vid }}
                         <button onClick="{{ m.del }}" title="{{ L.remove }}" style="position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; border: 0; padding: 0; background: rgba(0,0,0,.6); color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                           <span style="font-family: 'Material Symbols Rounded'; font-size: 15px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">close</span>
                         </button>
@@ -351,7 +349,7 @@ a{color:inherit}a:hover{opacity:.8}
                 </sc-if>
 
                 <sc-if value="{{ c.isText }}" hint-placeholder-val="{{ false }}">
-                  <input type="text" value="{{ c.value }}" placeholder="{{ c.ph }}" onChange="{{ c.onText }}" style="width: 100%; box-sizing: border-box; height: 38px; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; outline: none; user-select: text;">
+                  <input type="text" class="fh-input" value="{{ c.value }}" placeholder="{{ c.ph }}" onChange="{{ c.onText }}" style="width: 100%; box-sizing: border-box; height: 38px; border: 1px solid {{ ui.border }}; background: {{ ui.field }}; color: {{ ui.fg }}; border-radius: 10px; padding: 0 12px; font: 500 13px/1 Geist, system-ui, sans-serif; outline: none; user-select: text;">
                 </sc-if>
 
                 <sc-if value="{{ c.isPos }}" hint-placeholder-val="{{ false }}">
@@ -512,6 +510,9 @@ const T_RAW = {
   pinMoveHint: "Glisser pour déplacer · double-clic pour ranger dans le coin|Drag to move · double-click to put back in the corner|Arrastra para mover · doble clic para volver a la esquina|Ziehen zum Verschieben · Doppelklick: zurück in die Ecke",
   pinClock: "Afficher sur l’horloge|Show on the clock|Mostrar en el reloj|Auf der Uhr anzeigen", unpin: "Retirer de l’horloge|Remove from the clock|Quitar del reloj|Von der Uhr entfernen",
   openFull: "Ouvrir en grand|Open full size|Abrir en grande|Groß öffnen", pinnedT: "Minuteur affiché sur l’horloge|Timer shown on the clock|Temporizador mostrado en el reloj|Timer auf der Uhr angezeigt", pinnedS: "Chrono affiché sur l’horloge|Stopwatch shown on the clock|Cronómetro mostrado en el reloj|Stoppuhr auf der Uhr angezeigt",
+  alarmSnd: "Sonnerie de fin|End-of-timer sound|Sonido final|Endton", alarmVol: "Volume de la sonnerie|Alarm volume|Volumen del aviso|Lautstärke des Signals", alarmTest: "Écouter|Listen|Escuchar|Anhören",
+  alarmUnlock: "Cliquez n’importe où pour activer le son du minuteur|Click anywhere to turn on the timer sound|Haz clic en cualquier sitio para activar el sonido del temporizador|Klicke irgendwo, um den Timer-Ton einzuschalten",
+  al_chime: "Carillon|Chime|Carillón|Glockenspiel", al_bell: "Cloche|Bell|Campana|Glocke", al_school: "Sonnerie d’école|School bell|Timbre escolar|Schulklingel", al_digital: "Réveil|Alarm clock|Despertador|Wecker", al_gong: "Gong|Gong|Gong|Gong",
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
   m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
   g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
@@ -646,6 +647,58 @@ function showUrl(u, forTab) {
 // sonomètre : couleur et mot selon le niveau (0–100) et le seuil
 const sndColor = (lv, thr) => (lv >= thr ? '#ef4444' : lv >= thr * 0.85 ? '#f59e0b' : lv >= thr * 0.6 ? '#eab308' : '#22c55e');
 const sndZone = (lv, thr) => (lv >= thr ? ['z_loud', '🙉'] : lv >= thr * 0.85 ? ['z_up', '😬'] : lv >= thr * 0.6 ? ['z_ok', '🙂'] : ['z_calm', '😌']);
+// mêmes couleurs, assombries pour rester lisibles sur un fond clair
+const SND_DARK = { '#22c55e': '#15803d', '#eab308': '#a16207', '#f59e0b': '#b45309', '#ef4444': '#b91c1c' };
+// Sonneries de fin du minuteur : synthétisées une fois (rendu hors ligne, compressé et normalisé pour porter loin), puis jouées en boucle
+const ALARMS = ['chime', 'bell', 'school', 'digital', 'gong'];
+const ALARM_CYCLE = { chime: 2.6, bell: 2.6, school: 3.2, digital: 1.3, gong: 4.6 };
+const ALARM_LEN = 60; // secondes de sonnerie avant l'arrêt automatique
+const HAS_AUDIO = !!(window.AudioContext || window.webkitAudioContext);
+const alarmGain = (v) => Math.pow(Math.max(5, Math.min(100, +v || 90)) / 100, 1.6);
+// un cycle de la sonnerie « kind », joué dans ctx vers dest à l'instant t
+function alarmVoice(ctx, dest, t, kind) {
+  const tone = (f, t0, dur, amp, type, att) => { const o = ctx.createOscillator(), g = ctx.createGain(); o.type = type || 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(amp, t0 + (att || 0.004)); g.gain.exponentialRampToValueAtTime(0.0001, t0 + dur); o.connect(g); g.connect(dest); o.start(t0); o.stop(t0 + dur + 0.05); };
+  const strike = (f, t0, dur, partials, amp) => partials.forEach(([r, a, d]) => tone(f * r, t0, dur * d, a * amp));
+  if (kind === 'bell') {
+    // cloche d'église : ding (mi) puis dong (do)
+    const P = [[0.5, 0.35, 1.25], [1, 1, 1], [1.19, 0.5, 0.75], [1.5, 0.3, 0.6], [2, 0.55, 0.55], [2.51, 0.2, 0.4], [3.01, 0.22, 0.3], [4.17, 0.1, 0.22]];
+    strike(659.3, t, 2.1, P, 0.45); strike(523.3, t + 0.62, 2.1, P, 0.45);
+  } else if (kind === 'school') {
+    // sonnerie électrique d'école : un marteau frappe la cloche 18 fois par seconde
+    const g = ctx.createGain(), lfo = ctx.createOscillator(), depth = ctx.createGain(), env = ctx.createGain();
+    lfo.type = 'sawtooth'; lfo.frequency.value = 18; depth.gain.value = -0.5; g.gain.value = 0.5;
+    lfo.connect(depth); depth.connect(g.gain);
+    env.gain.setValueAtTime(0, t); env.gain.linearRampToValueAtTime(1, t + 0.02); env.gain.setValueAtTime(1, t + 2.3); env.gain.linearRampToValueAtTime(0, t + 2.45);
+    g.connect(env); env.connect(dest);
+    [[1, 0.6], [2.32, 0.4], [3.9, 0.25], [5.1, 0.15]].forEach(([r, a]) => { const o = ctx.createOscillator(), og = ctx.createGain(); o.frequency.value = 1180 * r; og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 2.5); });
+    lfo.start(t); lfo.stop(t + 2.5);
+  } else if (kind === 'digital') {
+    // réveil : bip-bip-bip-bip aigus
+    for (let i = 0; i < 4; i++) tone(2093, t + i * 0.14, 0.09, 0.4, 'square', 0.002);
+  } else if (kind === 'gong') {
+    // gong : partiels inharmoniques, attaque douce, longue résonance
+    // (fondamentale assez haute et partiels aigus renforcés : il s'entend aussi sur les haut-parleurs d'un portable)
+    [[1, 0.8, 1], [1.52, 0.75, 0.9], [2, 0.7, 0.8], [2.67, 0.7, 0.7], [3.24, 0.65, 0.6], [4.15, 0.55, 0.5], [5.3, 0.45, 0.42], [6.9, 0.35, 0.32], [8.6, 0.25, 0.26], [11.3, 0.15, 0.2]].forEach(([r, a, d]) => tone(185 * r, t, 4.4 * d, a * 0.3, 'sine', 0.03));
+  } else {
+    // carillon : arpège do-mi-sol-do joué sur des lames de métal
+    const P = [[1, 1, 1], [2, 0.5, 0.7], [2.76, 0.35, 0.5], [5.4, 0.18, 0.3], [8.93, 0.08, 0.2]];
+    [1046.5, 1318.5, 1568, 2093].forEach((f, i) => strike(f, t + i * 0.16, 1.8, P, 0.5));
+  }
+}
+// rendu de deux cycles : on rejoue ensuite le 2e en boucle (il contient la fin du 1er, donc la boucle est sans coupure)
+function renderAlarm(kind, sr) {
+  const OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext; if (!OAC) return Promise.resolve(null);
+  try {
+    const c = ALARM_CYCLE[kind], oc = new OAC(1, Math.ceil(sr * c * 2), sr), comp = oc.createDynamicsCompressor();
+    comp.threshold.value = -22; comp.knee.value = 8; comp.ratio.value = 6; comp.attack.value = 0.002; comp.release.value = 0.25;
+    comp.connect(oc.destination);
+    alarmVoice(oc, comp, 0, kind); alarmVoice(oc, comp, c, kind);
+    return new Promise((res) => {
+      const done = (buf) => { const d = buf.getChannelData(0); let pk = 0; for (let i = 0; i < d.length; i++) { const v = Math.abs(d[i]); if (v > pk) pk = v; } if (pk > 0) { const k = 0.95 / pk; for (let i = 0; i < d.length; i++) d[i] *= k; } res(buf); };
+      const p = oc.startRendering(); if (p && p.then) p.then(done, () => res(null)); else oc.oncomplete = (e) => done(e.renderedBuffer);
+    });
+  } catch (e) { return Promise.resolve(null); }
+}
 const TAB_IDS = ['presets', 'font', 'colors', 'bg', 'fx', 'clock', 'date', 'layout'];
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
@@ -672,7 +725,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false,
+  scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false, alarmSnd: 'chime', alarmVol: 90,
 };
 // Thème par défaut : Halloween
 const HALLOWEEN = { font: 'Creepster', dateFont: 'Griffy', weight: 400, letterSpacing: 3, color: '#ff7a18', dateColor: '#f1e4ff', dateOpacity: 80, accent: '#a855f7', sepAccent: true, gradText: true, grad1: '#ffc35c', grad2: '#ff4a00', glow: 0, glowColor: '#ff5a00', shadow: 30, anim: 'melt', bgType: 'spooky', bgColor: '#05020a', bg1: '#2a0e45', bg2: '#05020a', bg3: '#ff6a00', vignette: 50, grain: 16 };
@@ -868,6 +921,12 @@ function sceneLayer(E, s) {
 
 function hexA(hex, a) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); h = h.padEnd(6, '0'); return `rgba(${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)},${a})`; }
 function lum(hex) { let h = String(hex || '#000').replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const v = [0, 2, 4].map(i => { const c = parseInt(h.slice(i, i + 2), 16) / 255; return c <= .03928 ? c / 12.92 : Math.pow((c + .055) / 1.055, 2.4); }); return .2126 * v[0] + .7152 * v[1] + .0722 * v[2]; }
+// contraste WCAG entre deux couleurs (1 = identiques, 21 = noir sur blanc)
+function contrast(a, b) { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
+// texte lisible sur un fond donné : blanc tant qu'il reste bien lisible, sinon presque noir
+function bestInk(bg) { return contrast('#ffffff', bg) >= 3.2 || contrast('#ffffff', bg) >= contrast('#141210', bg) ? '#ffffff' : '#141210'; }
+// couleur affichée sur un fond : gardée si elle se voit, sinon remplacée par le texte normal
+const readable = (c, bg, fallback, min) => (contrast(c, bg) >= (min || 3) ? c : fallback);
 function hsl(h, s, l) { h = ((h % 360) + 360) % 360; s /= 100; l /= 100; const a = s * Math.min(l, 1 - l); const f = (n) => { const k = (n + h / 30) % 12; return Math.round(255 * (l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1)))).toString(16).padStart(2, '0'); }; return '#' + f(0) + f(8) + f(4); }
 const FMT = new Map();
 function fmt(loc, o) { const k = loc + '|' + JSON.stringify(o); let f = FMT.get(k); if (!f) { try { f = new Intl.DateTimeFormat(loc, o); } catch (e) { try { f = new Intl.DateTimeFormat('en-US', o); } catch (e2) { f = new Intl.DateTimeFormat('en-US'); } } FMT.set(k, f); } return f; }
@@ -901,13 +960,14 @@ class Component extends DCLogic {
     if (!MODES.includes(s.mode)) s.mode = 'clock';
     if (!BG_TYPES.includes(s.bgType)) s.bgType = DEFAULTS.bgType;
     if (!SCENE_IDS.includes(s.scene)) s.scene = BASE.scene;
+    if (!ALARMS.includes(s.alarmSnd)) s.alarmSnd = 'chime';
     if (s.msg === 'spooky') s.msg = 'theme';
     const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {};
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], tm, sw, ringing: false, testing: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -932,8 +992,11 @@ class Component extends DCLogic {
     if (document.fonts) { on(document.fonts, 'loadingdone', this.bumpFonts); document.fonts.ready.then(() => this.bumpFonts()); }
     on(window, 'pointermove', this.gridMove, { passive: true });
     on(window, 'pagehide', this.freezeSw);
+    ['pointerdown', 'keydown', 'touchend'].forEach(ev => on(window, ev, this.unlockAudio, { passive: true }));
     this.activity();
     this.checkTimer();
+    // minuteur retrouvé en cours après un rechargement : on reprogramme sa sonnerie (le son se débloque au premier clic)
+    if (this.state.tm.endAt) this.planAlarm(this.state.tm.endAt);
     this.applyAuto();
     if (!loadJSON(TOURKEY, false)) this.tourT = setTimeout(this.startTour, 1200);
     if (this.state.notes.length) this.ensureFont('Caveat');
@@ -944,7 +1007,7 @@ class Component extends DCLogic {
     }).catch(() => this.setState({ mediaReady: true }));
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT].forEach(clearTimeout); [this.fastT, this.alarmT].forEach(clearInterval); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -1011,21 +1074,58 @@ class Component extends DCLogic {
   audio = () => {
     try {
       const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return null;
-      const ac = this.ac || (this.ac = new AC()); if (ac.state === 'suspended') ac.resume();
+      if (!this.ac) {
+        const ac = this.ac = new AC();
+        // le navigateur n'autorise le son qu'après un clic : on suit l'état pour afficher l'aide et reprogrammer la sonnerie
+        ac.onstatechange = () => { this.setState({ acState: ac.state }); if (ac.state === 'running' && this.state.tm.endAt) this.planAlarm(this.state.tm.endAt); };
+        this.setState({ acState: ac.state });
+      }
+      const ac = this.ac; if (ac.state !== 'running' && ac.state !== 'closed') { const r = ac.resume(); if (r && r.catch) r.catch(() => {}); }
       return ac;
     } catch (e) { return null; }
   };
-  beep = () => {
+  unlockAudio = () => { const ac = this.ac; if (ac && ac.state !== 'running' && ac.state !== 'closed') { const r = ac.resume(); if (r && r.catch) r.catch(() => {}); } };
+  alarmBuf = (ac, kind) => { const m = this.alarmBufs || (this.alarmBufs = {}), k = kind + '@' + ac.sampleRate; return m[k] || (m[k] = renderAlarm(kind, ac.sampleRate)); };
+  alarmKind = () => (ALARMS.includes(this.state.s.alarmSnd) ? this.state.s.alarmSnd : 'chime');
+  // la sonnerie est programmée dans le moteur audio dès le départ du minuteur : elle part à l'heure même si l'onglet est en arrière-plan
+  planAlarm = (endAt) => {
+    this.cancelPlan();
+    if (!endAt) return;
     const ac = this.audio(); if (!ac) return;
-    try {
-      const t0 = ac.currentTime;
-      [0, 0.18, 0.36].forEach((d, i) => {
-        const o = ac.createOscillator(), g = ac.createGain();
-        o.type = 'square'; o.frequency.value = i === 2 ? 1320 : 880;
-        g.gain.setValueAtTime(0.0001, t0 + d); g.gain.exponentialRampToValueAtTime(0.1, t0 + d + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t0 + d + 0.14);
-        o.connect(g); g.connect(ac.destination); o.start(t0 + d); o.stop(t0 + d + 0.16);
-      });
-    } catch (e) {}
+    const id = (this.planN = (this.planN || 0) + 1), kind = this.alarmKind(), vol = alarmGain(this.state.s.alarmVol), c = ALARM_CYCLE[kind];
+    const pl = this.plan = { id, endAt, t0: null, src: null, g: null };
+    this.alarmBuf(ac, kind).then((buf) => {
+      if (this.plan !== pl) return;
+      try {
+        const t0 = ac.currentTime + Math.max(0.05, (endAt - Date.now()) / 1000), g = ac.createGain();
+        g.gain.setValueAtTime(vol * 0.7, t0); g.gain.linearRampToValueAtTime(vol, t0 + c * 3); g.connect(ac.destination);
+        if (buf) { const src = ac.createBufferSource(); src.buffer = buf; src.loop = true; src.loopStart = c; src.loopEnd = c * 2; src.connect(g); src.start(t0); src.stop(t0 + ALARM_LEN); pl.src = src; }
+        else for (let i = 0; i * c < ALARM_LEN; i++) alarmVoice(ac, g, t0 + i * c, kind);
+        pl.t0 = t0; pl.g = g;
+      } catch (e) {}
+    });
+  };
+  cancelPlan = () => { const pl = this.plan; this.plan = null; if (!pl) return; try { if (pl.src) pl.src.stop(); } catch (e) {} try { if (pl.g) pl.g.disconnect(); } catch (e) {} };
+  // essai de la sonnerie (2 cycles) ; un clic sur une sonnerie en fait entendre un seul
+  testAlarm = (one) => {
+    const ac = this.audio(); if (!ac) return;
+    const t = this.testing; this.testing = null;
+    if (t) { try { t.g.disconnect(); } catch (e) {} if (one !== true) { this.setState({ testing: false }); return; } }
+    const kind = this.alarmKind(), c = ALARM_CYCLE[kind], g = ac.createGain(), vol = alarmGain(this.state.s.alarmVol), cur = { g };
+    this.testing = cur; this.setState({ testing: true });
+    g.gain.value = vol; g.connect(ac.destination);
+    this.alarmBuf(ac, kind).then((buf) => {
+      if (this.testing !== cur) return;
+      const t0 = ac.currentTime + 0.03, len = one === true ? c : c * 2;
+      if (one === true) { g.gain.setValueAtTime(vol, t0 + c - 0.2); g.gain.linearRampToValueAtTime(0, t0 + c); }
+      if (buf) { const src = ac.createBufferSource(); src.buffer = buf; src.connect(g); src.start(t0); src.stop(t0 + len); }
+      else alarmVoice(ac, g, t0, kind);
+      clearTimeout(this.testT); this.testT = setTimeout(() => { if (this.testing === cur) { this.testing = null; try { g.disconnect(); } catch (e) {} this.setState({ testing: false }); } }, (len + 0.3) * 1000);
+    });
+  };
+  setAlarm = (patch, preview) => {
+    this.setS(patch);
+    setTimeout(() => { if (this.state.tm.endAt) this.planAlarm(this.state.tm.endAt); if (preview) this.testAlarm(true); }, 0);
   };
   playTick = (alt) => {
     try {
@@ -1042,24 +1142,32 @@ class Component extends DCLogic {
     const tm = this.state.tm;
     if (!tm.endAt || Date.now() < tm.endAt) return;
     this.setTools({ tm: { ...tm, endAt: null, left: 0, done: true } });
-    this.startAlarm();
+    this.startAlarm(tm.endAt);
     if (this.state.s.mode !== 'timer' && !(pinView(this.state.s.mode) && this.state.s.pinTimer)) this.setS({ mode: 'timer' });
     this.toast(this.L().timerDone);
   };
-  startAlarm = () => { clearInterval(this.alarmT); let n = 0; const ring = () => { this.beep(); if (++n >= 30) this.stopAlarm(); }; this.setState({ ringing: true }); ring(); this.alarmT = setInterval(ring, 1300); };
-  stopAlarm = () => { clearInterval(this.alarmT); this.alarmT = null; if (this.state.ringing) this.setState({ ringing: false }); };
+  startAlarm = (endAt) => {
+    const late = Math.max(0, Date.now() - endAt), pl = this.plan, ac = this.ac;
+    if (late > ALARM_LEN * 1000) { this.cancelPlan(); return; } // fini depuis longtemps (ordinateur en veille) : pas de sonnerie en retard
+    // la sonnerie programmée à l'avance est déjà partie (ou part tout de suite) : on la laisse, sinon on la lance maintenant
+    const ok = pl && pl.endAt === endAt && (pl.t0 == null || (ac && ac.state === 'running' && ac.currentTime >= pl.t0 - 0.4));
+    if (!ok) this.planAlarm(Date.now());
+    this.setState({ ringing: true });
+    clearTimeout(this.ringT); this.ringT = setTimeout(this.stopAlarm, ALARM_LEN * 1000 - late);
+  };
+  stopAlarm = () => { clearTimeout(this.ringT); this.cancelPlan(); if (this.state.ringing) this.setState({ ringing: false }); };
   tmToggle = () => {
     const tm = this.state.tm, now = Date.now(); this.audio(); this.stopAlarm();
     if (tm.endAt) { this.setTools({ tm: { ...tm, endAt: null, left: Math.max(0, tm.endAt - now) } }); return; }
     const left = tm.left > 0 ? tm.left : tm.dur; if (left <= 0) return;
-    this.setTools({ tm: { ...tm, left, endAt: now + left, done: false } });
+    this.setTools({ tm: { ...tm, left, endAt: now + left, done: false } }); this.planAlarm(now + left);
   };
   tmReset = () => { this.stopAlarm(); const tm = this.state.tm; this.setTools({ tm: { ...tm, endAt: null, left: tm.dur, done: false } }); };
-  tmAgain = () => { this.stopAlarm(); const tm = this.state.tm; this.audio(); this.setTools({ tm: { ...tm, left: tm.dur, endAt: Date.now() + tm.dur, done: false } }); };
+  tmAgain = () => { this.stopAlarm(); const tm = this.state.tm, endAt = Date.now() + tm.dur; this.audio(); this.setTools({ tm: { ...tm, left: tm.dur, endAt, done: false } }); this.planAlarm(endAt); };
   tmSet = (min) => { this.stopAlarm(); const d = min * 60000; this.setTools({ tm: { dur: d, left: d, endAt: null, done: false } }); };
   tmAdd = (ms) => {
     const tm = this.state.tm, now = Date.now(), MAX = 24 * 3600000; this.stopAlarm();
-    if (tm.endAt) { const endAt = Math.min(now + MAX, Math.max(now + 1000, tm.endAt + ms)); this.setTools({ tm: { ...tm, endAt, dur: Math.min(MAX, Math.max(endAt - now, tm.dur + ms)) } }); return; }
+    if (tm.endAt) { const endAt = Math.min(now + MAX, Math.max(now + 1000, tm.endAt + ms)); this.setTools({ tm: { ...tm, endAt, dur: Math.min(MAX, Math.max(endAt - now, tm.dur + ms)) } }); this.planAlarm(endAt); return; }
     const left = Math.min(MAX, Math.max(0, tm.left + ms)), fresh = tm.done || tm.left === tm.dur;
     this.setTools({ tm: { ...tm, left, dur: fresh ? left : Math.min(MAX, Math.max(left, tm.dur + ms)), done: false } });
   };
@@ -1439,8 +1547,14 @@ class Component extends DCLogic {
     const avail = st.vw * (['c', 't', 'b'].includes(s.pos) ? 0.84 : 0.74);
     let fontPx = Math.min(avail / st.ratio, st.vh * (mode === 'clock' ? 0.46 : 0.4)) * s.size / 100;
     fontPx = Math.max(20, Math.min(fontPx, (st.vw * 0.96) / st.ratio));
+    const dPx = Math.round(Math.max(14, Math.min(fontPx * 0.085, 64)) * s.dateSize / 100);
+    // son du minuteur bloqué par le navigateur tant qu'on n'a pas cliqué sur la page
+    const audioLocked = HAS_AUDIO && (tmRun || st.ringing) && st.acState !== 'running';
     const P = POS[s.pos] || POS.c;
-    const visual = (mode === 'timer' && s.tmVisual !== false) || mode === 'sound', clockPx = visual ? fontPx * 0.34 : fontPx;
+    // ombre de lisibilité pour les petits textes posés sur un décor chargé
+    const busyBg = ['scene', 'spooky', 'image', 'grid', 'aurora'].includes(s.bgType);
+    const legib = busyBg ? (lum(s.dateColor) > 0.3 ? '0 1px 2px rgba(0,0,0,.6), 0 0 .8em rgba(0,0,0,.45)' : '0 0 2px rgba(255,255,255,.9), 0 0 .8em rgba(255,255,255,.7)') : undefined;
+    const visual =(mode === 'timer' && s.tmVisual !== false) || mode === 'sound', clockPx = visual ? fontPx * 0.34 : fontPx;
     const anim = s.anim !== 'none' ? `fh-${s.anim} ${ANIM_DUR[s.anim] || 0.6}s cubic-bezier(.2,.75,.2,1) both` : undefined;
     const rb = s.weird === 'rainbow', wk = Math.max(0.2, (s.weirdSpeed || 50) / 50), sec = (x) => (x / wk).toFixed(2) + 's';
     const fill = s.outline || rb ? null : s.gradText ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : null;
@@ -1505,7 +1619,9 @@ class Component extends DCLogic {
     const sThr = +s.sndThr || 65, sLv = st.snd.on ? st.snd.lv : 0, sCol = sndColor(sLv, sThr), sZone = sndZone(sLv, sThr);
     if (mode === 'sound') {
       // cadran du sonomètre : zones vert → rouge, aiguille et seuil
-      const gw = Math.round(Math.max(240, Math.min(st.vw * 0.5, st.vh * 0.6, 620))), arcD = 'M -100 0 A 100 100 0 0 1 100 0';
+      // cadran réduit si besoin pour que tout tienne sous la barre du haut
+      const bfsS = Math.round(Math.max(13, Math.min(dPx * 0.8, 19))), roomS = st.vh - 150 - dPx * 1.7 - clockPx * 1.32 - dPx * 0.9 - bfsS * 10.6;
+      const gw = Math.round(Math.max(200, Math.min(st.vw * 0.5, st.vh * 0.6, 620, roomS / 0.644))), arcD = 'M -100 0 A 100 100 0 0 1 100 0';
       const zone = (a, b, c) => E('path', { key: 'z' + c, d: arcD, pathLength: 100, fill: 'none', stroke: c, strokeOpacity: 0.3, strokeWidth: 22, strokeDasharray: `${(b - a).toFixed(2)} 200`, strokeDashoffset: (-a).toFixed(2) });
       const at = (v, r) => { const a = Math.PI - v / 100 * Math.PI; return [(Math.cos(a) * r).toFixed(2), (-Math.sin(a) * r).toFixed(2)]; };
       const ticks = []; for (let k = 0; k <= 10; k++) { const [x1, y1] = at(k * 10, 116), [x2, y2] = at(k * 10, k % 5 ? 120 : 124); ticks.push(E('line', { key: 't' + k, x1, y1, x2, y2, stroke: hexA(s.color, 0.5), strokeWidth: 1.6, strokeLinecap: 'round' })); }
@@ -1518,11 +1634,13 @@ class Component extends DCLogic {
           E('line', { x1: tx1, y1: ty1, x2: tx2, y2: ty2, stroke: hexA(s.color, 0.95), strokeWidth: 3.5, strokeLinecap: 'round' }),
           E('g', { ref: this.sndRefs.needle, transform: 'rotate(-90)' }, E('line', { x1: 0, y1: 8, x2: 0, y2: -80, stroke: s.color, strokeWidth: 5, strokeLinecap: 'round' })),
           E('circle', { r: 11, fill: s.color }), E('circle', { r: 5, fill: sCol })),
-        E('div', { style: { display: 'flex', alignItems: 'center', gap: '.35em', marginTop: Math.round(gw * 0.02), font: `${clampW(f, 600)} ${Math.round(Math.max(22, gw * 0.07))}px/1.1 ${stack(f)}`, color: st.snd.on ? sCol : hexA(s.color, 0.6), transition: 'color .3s ease' } },
+        E('div', { style: { display: 'flex', alignItems: 'center', gap: '.35em', marginTop: Math.round(gw * 0.02), font: `${clampW(f, 600)} ${Math.round(Math.max(22, gw * 0.07))}px/1.1 ${stack(f)}`, color: st.snd.on ? (lum(s.color) < 0.3 ? SND_DARK[sCol] || sCol : sCol) : s.color, textShadow: legib, transition: 'color .3s ease' } },
           E('span', { style: { fontSize: '1.3em' } }, st.snd.on ? sZone[1] : '🎤'), E('span', null, st.snd.on ? L[sZone[0]] : L.md_snd)));
     }
     if (visual && mode === 'timer') {
-      const size = Math.round(Math.max(160, Math.min(st.vh * 0.46, st.vw * 0.62)));
+      // le disque rapetisse pour laisser la place aux boutons (réglages visibles tant que le minuteur ne tourne pas)
+      const bfs0 = Math.round(Math.max(13, Math.min(dPx * 0.8, 19))), toolsH = dPx * 0.9 + bfs0 * ((tmRun ? 5 : 12.8) + (audioLocked ? 3 : 0));
+      const size = Math.round(Math.max(140, Math.min(st.vh * 0.46, st.vw * 0.62, st.vh - 150 - dPx * 1.7 - clockPx * 1.32 - toolsH)));
       disc = E('div', { key: 'disc', style: { width: size, height: size, borderRadius: '50%', boxShadow: `0 20px 60px rgba(0,0,0,.28), 0 0 0 1px ${hexA(s.color, 0.12)}`, opacity: paused ? 0.75 : 1, transition: 'opacity .3s ease', animation: tm.done && st.ringing ? 'fh-ring .8s ease-in-out infinite' : undefined } }, discSvg(size, s.color, true));
     }
     const inner = E('div', { key: 'w', style: wStyle }, liquid, glowEl, timeEl);
@@ -1530,7 +1648,6 @@ class Component extends DCLogic {
 
     // date, message, zone, cities
     const df = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f);
-    const dPx = Math.round(Math.max(14, Math.min(fontPx * 0.085, 64)) * s.dateSize / 100);
     const u = ['ca-' + (s.calendar || 'gregory')]; if (s.digits !== 'auto') u.push('nu-' + (isRoman ? 'latn' : s.digits));
     const dloc = `${locale}-u-${u.join('-')}`;
     let dateText = '';
@@ -1545,7 +1662,7 @@ class Component extends DCLogic {
     let zoneText = '';
     if (s.showZone) { const off = offOf(tz); zoneText = `${tzLabel(tz || localTz)}${off ? ' · ' + off : ''}`; }
     const dateColor = hexA(s.dateColor, s.dateOpacity / 100);
-    const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : undefined, transition: 'color .4s ease' };
+    const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: [g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : '', legib || ''].filter(Boolean).join(', ') || undefined, transition: 'color .4s ease' };
     const greet = p.h < 5 ? L.g_night : p.h < 12 ? L.g_morning : p.h < 18 ? L.g_afternoon : p.h < 22 ? L.g_evening : L.g_night;
     const endStr = tmRun ? fmt(locale, { hour: '2-digit', minute: '2-digit', hour12: !!s.hour12, timeZone: tz }).format(new Date(tm.endAt)) : '';
     const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
@@ -1582,18 +1699,21 @@ class Component extends DCLogic {
     const dark = s.uiTheme === 'dark' || (s.uiTheme === 'auto' && bgL < 0.4);
     const spooky = s.bgType === 'spooky';
     const ui0 = dark
-      ? { scheme: 'dark', bar: 'rgba(22,21,20,.62)', panel: 'rgba(22,21,20,.8)', border: 'rgba(255,255,255,.1)', fg: '#f6f4f0', fg2: 'rgba(246,244,240,.64)', fg3: 'rgba(246,244,240,.4)', hover: 'rgba(255,255,255,.07)', active: 'rgba(255,255,255,.14)', field: 'rgba(255,255,255,.06)', tile: 'rgba(255,255,255,.04)', invBg: '#f6f4f0', invFg: '#151413', track: 'rgba(255,255,255,.2)', ringGap: '#1c1b1a', shadow: '0 18px 50px rgba(0,0,0,.35)' }
-      : { scheme: 'light', bar: 'rgba(252,251,249,.72)', panel: 'rgba(252,251,249,.88)', border: 'rgba(20,18,16,.1)', fg: '#191817', fg2: 'rgba(25,24,23,.64)', fg3: 'rgba(25,24,23,.42)', hover: 'rgba(0,0,0,.05)', active: 'rgba(0,0,0,.08)', field: 'rgba(0,0,0,.045)', tile: 'rgba(0,0,0,.03)', invBg: '#191817', invFg: '#fbfaf8', track: 'rgba(0,0,0,.18)', ringGap: '#fbfaf8', shadow: '0 18px 50px rgba(0,0,0,.12)' };
+      ? { scheme: 'dark', bar: 'rgba(22,21,20,.66)', panel: 'rgba(22,21,20,.84)', border: 'rgba(255,255,255,.12)', fg: '#f6f4f0', fg2: 'rgba(246,244,240,.7)', fg3: 'rgba(246,244,240,.54)', hover: 'rgba(255,255,255,.08)', active: 'rgba(255,255,255,.14)', field: 'rgba(255,255,255,.07)', tile: 'rgba(255,255,255,.04)', invBg: '#f6f4f0', invFg: '#151413', track: 'rgba(255,255,255,.24)', ringGap: '#1c1b1a', solid: '#1c1b1a', shadow: '0 18px 50px rgba(0,0,0,.35)' }
+      : { scheme: 'light', bar: 'rgba(252,251,249,.78)', panel: 'rgba(252,251,249,.9)', border: 'rgba(20,18,16,.14)', fg: '#191817', fg2: 'rgba(25,24,23,.7)', fg3: 'rgba(25,24,23,.58)', hover: 'rgba(0,0,0,.06)', active: 'rgba(0,0,0,.09)', field: 'rgba(0,0,0,.05)', tile: 'rgba(0,0,0,.03)', invBg: '#191817', invFg: '#fbfaf8', track: 'rgba(0,0,0,.24)', ringGap: '#fbfaf8', solid: '#f4f2ef', shadow: '0 18px 50px rgba(0,0,0,.14)' };
     // interface teintée Halloween quand le décor citrouilles est actif
-    const ui = spooky && dark ? { ...ui0, bar: 'rgba(30,12,44,.66)', panel: 'rgba(24,9,36,.86)', border: 'rgba(255,140,60,.2)', hover: 'rgba(255,140,60,.1)', active: 'rgba(255,140,60,.18)', field: 'rgba(255,255,255,.06)', ringGap: '#1d0b2b', shadow: '0 18px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,106,0,.08)' } : ui0;
+    const ui = spooky && dark ? { ...ui0, bar: 'rgba(30,12,44,.7)', panel: 'rgba(24,9,36,.88)', border: 'rgba(255,140,60,.22)', hover: 'rgba(255,140,60,.1)', active: 'rgba(255,140,60,.18)', field: 'rgba(255,255,255,.07)', ringGap: '#1d0b2b', solid: '#1d0b2b', shadow: '0 18px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,106,0,.08)' } : ui0;
     const hidden = st.idle && s.autoHide && !st.tab && st.tour == null;
-    const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`;
+    // pastilles : anneau plus marqué quand la couleur se confond avec le panneau (blanc sur clair, noir sur sombre)
+    const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`, ringSoft = `inset 0 0 0 1.5px ${hexA(ui.fg, 0.4)}`;
+    const swRing = (c, on) => (on ? ringOn : contrast(c, ui.solid) < 1.6 ? ringSoft : ringOff);
+    const accUi = readable(s.accent, ui.solid, ui.fg);
     const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
     const tabs = TABS.map(([id, label]) => ({ label, tour: 'tab-' + id, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const iv = st.ind || { x: 0, w: 0, on: false, slide: false };
     const ind = { x: iv.x + 'px', w: iv.w + 'px', op: iv.on ? 1 : 0, bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}`, tr: iv.slide ? 'transform .5s cubic-bezier(.3,1.3,.45,1), width .5s cubic-bezier(.3,1.3,.45,1), opacity .2s ease' : 'opacity .25s ease' };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? s.accent : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -1617,7 +1737,7 @@ class Component extends DCLogic {
       const seg = (k, label, opts, x) => add({ isSeg: true, label, options: opts.map(([v, l]) => ({ label: l, pick: () => this.setS({ [k]: v }), ...on2(s[k] === v) })), ...x });
       const tog = (k, label) => add({ isTog: true, label, toggle: () => this.setS({ [k]: !s[k] }), trackBg: s[k] ? ui.invBg : ui.track, knobBg: s[k] ? ui.invFg : '#ffffff', knobX: s[k] ? '14px' : '0px' });
       const rng = (k, label, min, max, step, show, x) => add({ isRange: true, label, min, max, step, value: s[k], display: show(s[k]), disabled: false, onInput: (e) => this.setS({ [k]: +e.target.value }), ...x });
-      const col = (k, label, sw) => { const cur = String(s[k] || '').toLowerCase(); add({ isColor: true, label, value: cur, swatches: sw.map(c => ({ c, pick: () => this.setS({ [k]: c }), ring: cur === c ? ringOn : ringOff })), customRing: sw.includes(cur) ? ringOff : ringOn, onPick: (e) => this.setS({ [k]: e.target.value }) }); };
+      const col = (k, label, sw) => { const cur = String(s[k] || '').toLowerCase(); add({ isColor: true, label, value: cur, swatches: sw.map(c => ({ c, pick: () => this.setS({ [k]: c }), ring: swRing(c, cur === c) })), customRing: sw.includes(cur) ? ringOff : ringOn, onPick: (e) => this.setS({ [k]: e.target.value }) }); };
       const sel = (k, label, opts, isNum) => add({ isSel: true, label, value: String(s[k]), opts: opts.map(([v, l]) => E('option', { key: String(v), value: String(v) }, l)), onSel: (e) => this.setS({ [k]: isNum ? +e.target.value : e.target.value }) });
       const pctF = new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }), pct = (v) => pctF.format(v / 100), raw = (v) => String(v);
       const t = st.tab;
@@ -1662,7 +1782,7 @@ class Component extends DCLogic {
         if (s.bgType === 'aurora') { col('bg1', L.color + ' 1', SW_BG); col('bg2', L.color + ' 2', SW_BG); col('bg3', L.color + ' 3', SW_BG); rng('bgSpeed', L.speed, 0, 100, 1, raw); }
         if (s.bgType === 'image') {
           add({ isMedia: true, label: L.gallery, span: '1 / -1' });
-          media = st.media.filter(m => m.type !== 'pdf').map(m => ({ name: m.name, url: m.url, isVideo: m.type === 'video', thumb: m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #222` : '#111', ring: s.bgImage === m.id ? ringOn : ringOff, pick: () => this.setS({ bgType: 'image', bgImage: m.id }), del: (e) => { e.stopPropagation(); this.delMedia(m.id); } }));
+          media = st.media.filter(m => m.type !== 'pdf').map(m => ({ name: m.name, url: m.url, vid: m.type === 'video' ? E('video', { src: m.url, muted: true, preload: 'metadata', style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block', pointerEvents: 'none' } }) : null, thumb: m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #222` : '#111', ring: s.bgImage === m.id ? ringOn : ringOff, pick: () => this.setS({ bgType: 'image', bgImage: m.id }), del: (e) => { e.stopPropagation(); this.delMedia(m.id); } }));
           seg('bgFit', L.fit, [['cover', L.cover], ['contain', L.contain], ['tile', L.tile]]);
           rng('bgBlur', L.blur, 0, 40, 1, v => v + ' px'); rng('bgDim', L.dim, 0, 85, 1, pct); rng('bgSat', L.saturation, 0, 200, 1, pct);
           tog('slideshow', L.slideshow);
@@ -1731,22 +1851,38 @@ class Component extends DCLogic {
     let toolsEl = null;
     if (mode !== 'clock') {
       const bfs = Math.round(Math.max(13, Math.min(dPx * 0.8, 19)));
-      const ink = s.dateColor, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', font = `600 ${bfs}px/1 ${stack(df)}`;
-      const btn = (key, icon, label, onClick, o = {}) => E('button', { key, type: 'button', className: 'fh-btn', title: o.title || label, disabled: !!o.disabled, onClick, style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.45em', height: '2.7em', minWidth: '2.7em', padding: label ? '0 1.2em 0 .95em' : 0, boxSizing: 'border-box', borderRadius: 999, border: `1px solid ${o.primary || o.on ? acc : hexA(ink, 0.26)}`, background: o.primary ? acc : o.on ? hexA(acc, 0.22) : hexA(ink, 0.08), color: o.primary ? accInk : ink, font, cursor: 'pointer', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', boxShadow: o.primary ? `0 8px 28px ${hexA(acc, 0.4)}` : 'none', whiteSpace: 'nowrap' } },
+      // boutons posés sur une plaque sombre (texte clair) ou claire (texte foncé) : lisibles sur n'importe quel décor
+      const ink = s.dateColor, glassDark = lum(ink) > 0.3, glassC = glassDark ? '#17151b' : '#f6f4f1';
+      const acc = s.accent, accInk = bestInk(acc), accT = readable(acc, glassC, ink), font = `600 ${bfs}px/1 ${stack(df)}`;
+      const accEdge = contrast(acc, glassC) < 1.7 ? `, 0 0 0 1.5px ${hexA(ink, 0.6)}` : '';
+      const btn = (key, icon, label, onClick, o = {}) => E('button', { key, type: 'button', className: 'fh-btn', title: o.title || label, disabled: !!o.disabled, onClick, style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '.45em', height: '2.7em', minWidth: '2.7em', padding: label ? '0 1.2em 0 .95em' : 0, boxSizing: 'border-box', borderRadius: 999, border: `1px solid ${o.primary ? acc : o.on ? accT : hexA(ink, 0.34)}`, background: o.primary ? acc : o.on ? hexA(acc, 0.24) : hexA(ink, 0.1), color: o.primary ? accInk : ink, font, cursor: 'pointer', boxShadow: o.primary ? `0 6px 22px ${hexA(acc, 0.35)}${accEdge}` : 'none', whiteSpace: 'nowrap' } },
         icon ? E('span', { style: { ...ICON, fontSize: '1.35em' } }, icon) : null, label ? E('span', null, label) : null);
       const row = (key, kids, extra) => E('div', { key, style: { display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '.6em', ...extra } }, kids);
       const parts = [];
       if (mode === 'timer') {
         const go = tm.done ? (st.ringing ? btn('go', 'stop', L.stopAlarm, this.stopAlarm, { primary: true }) : btn('go', 'replay', L.again, this.tmAgain, { primary: true }))
           : btn('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : paused ? L.resume : L.start, this.tmToggle, { primary: true, disabled: !tmRun && tm.left <= 0 && tm.dur <= 0 });
+        // le navigateur bloque le son tant qu'on n'a pas cliqué sur la page (ex. minuteur retrouvé après un rechargement)
+        if (audioLocked) parts.push(E('button', { key: 'unlock', type: 'button', onClick: this.unlockAudio, style: { display: 'inline-flex', alignItems: 'center', gap: '.5em', marginBottom: '.8em', padding: '.55em 1em', borderRadius: 999, border: 0, background: '#ffd166', color: '#2a1d00', font: `600 ${Math.round(bfs * 0.86)}px/1.25 ${stack(df)}`, cursor: 'pointer', boxShadow: '0 6px 18px rgba(0,0,0,.25)' } }, E('span', { style: { ...ICON, fontSize: '1.3em' } }, 'notifications_off'), L.alarmUnlock));
         parts.push(row('r1', [btn('m1', 'remove', '', () => this.tmAdd(-60000), { title: '−1 min', disabled: tmLeft <= 1000 && !tm.done }), go, btn('p1', 'add', '', () => this.tmAdd(60000), { title: '+1 min' }), btn('rs', 'replay', '', this.tmReset, { title: L.reset + ' (R)', disabled: !tmRun && !tm.done && tm.left === tm.dur }), btn('vis', 'pie_chart', '', () => this.setS({ tmVisual: !visual }), { title: L.tmVisual, on: visual }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('timer'), { title: s.pinTimer ? L.unpin : L.pinClock, on: s.pinTimer })]));
-        if (!tmRun) parts.push(row('r2', TIMER_PRESETS.map(m => { const on = tm.dur === m * 60000; return E('button', { key: 'p' + m, type: 'button', className: 'fh-btn', onClick: () => this.tmSet(m), style: { height: '2.1em', padding: '0 .9em', borderRadius: 999, border: `1px solid ${on ? acc : hexA(ink, 0.2)}`, background: on ? hexA(acc, 0.22) : 'transparent', color: ink, font: `500 ${Math.round(bfs * 0.86)}px/1 ${stack(df)}`, cursor: 'pointer', fontVariantNumeric: 'tabular-nums' } }, `${num(m, false)} min`); }), { marginTop: '.8em', gap: '.45em', maxWidth: '36em' }));
+        if (!tmRun) {
+          const chip = (key, label, on, onClick, title) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { display: 'inline-flex', alignItems: 'center', gap: '.3em', height: '2.1em', padding: '0 .9em', borderRadius: 999, border: `1px solid ${on ? accT : hexA(ink, 0.3)}`, background: on ? hexA(acc, 0.24) : 'transparent', color: ink, font: `500 ${Math.round(bfs * 0.86)}px/1 ${stack(df)}`, cursor: 'pointer', fontVariantNumeric: 'tabular-nums', whiteSpace: 'nowrap' } }, label);
+          parts.push(row('r2', TIMER_PRESETS.map(m => chip('p' + m, `${num(m, false)} min`, tm.dur === m * 60000, () => this.tmSet(m))), { marginTop: '.8em', gap: '.45em', maxWidth: '36em' }));
+          // sonnerie de fin : choix du son (un clic le fait entendre), volume, écoute
+          const kind = this.alarmKind();
+          parts.push(row('r3', [
+            E('span', { key: 'ic', title: L.alarmSnd, style: { ...ICON, fontSize: Math.round(bfs * 1.3) + 'px', color: hexA(ink, 0.85) } }, 'notifications_active'),
+            ...ALARMS.map(a => chip('a' + a, L['al_' + a], kind === a, () => this.setAlarm({ alarmSnd: a }, true), L.alarmSnd)),
+            E('label', { key: 'vol', title: L.alarmVol, style: { display: 'inline-flex', alignItems: 'center', gap: '.3em', marginLeft: '.2em', color: hexA(ink, 0.85) } }, E('span', { style: { ...ICON, fontSize: Math.round(bfs * 1.25) + 'px' } }, 'volume_up'), E('input', { type: 'range', min: 10, max: 100, step: 5, value: s.alarmVol, 'aria-label': L.alarmVol, onChange: (e) => this.setAlarm({ alarmVol: +e.target.value }), style: { width: 92, accentColor: accT, cursor: 'pointer' } })),
+            chip('test', [E('span', { key: 'i', style: { ...ICON, fontSize: '1.3em' } }, st.testing ? 'stop' : 'play_arrow'), E('span', { key: 't' }, L.alarmTest)], st.testing, () => this.testAlarm(), L.alarmTest),
+          ], { marginTop: '.7em', gap: '.45em', alignItems: 'center', maxWidth: '46em' }));
+        }
       } else if (mode === 'sound') {
         const on = st.snd.on, slider = (key, label, k, min, max) => E('label', { key, style: { display: 'inline-flex', alignItems: 'center', gap: '.6em', font: `500 ${Math.round(bfs * 0.9)}px/1 ${stack(df)}`, color: ink } },
-          E('span', null, label), E('input', { type: 'range', min, max, value: s[k], onChange: (e) => this.setS({ [k]: +e.target.value }), style: { width: 150, accentColor: acc, cursor: 'pointer' } }), E('span', { style: { minWidth: '2ch', fontVariantNumeric: 'tabular-nums', opacity: 0.8 } }, s[k]));
+          E('span', null, label), E('input', { type: 'range', min, max, value: s[k], onChange: (e) => this.setS({ [k]: +e.target.value }), style: { width: 150, accentColor: accT, cursor: 'pointer' } }), E('span', { style: { minWidth: '2ch', fontVariantNumeric: 'tabular-nums', opacity: 0.85 } }, s[k]));
         parts.push(row('r1', [btn('go', on ? 'mic_off' : 'mic', on ? L.sndOff : L.sndOn, this.sndToggle, { primary: !on }), btn('beep', s.sndBeep ? 'notifications' : 'notifications_off', '', () => this.setS({ sndBeep: !s.sndBeep }), { title: L.sndBeep, on: s.sndBeep }), btn('rs', 'replay', '', () => this.setState(x => ({ snd: { ...x.snd, count: 0 } })), { title: L.sndReset, disabled: !st.snd.count }), btn('pin', 'picture_in_picture_alt', '', () => this.pinTool('sound'), { title: s.pinSnd ? L.unpin : L.pinClock, on: s.pinSnd })]));
         parts.push(row('r2', [slider('thr', L.sndThr, 'sndThr', 20, 95), slider('sens', L.sndSens, 'sndSens', 0, 100)], { marginTop: '1em', gap: '1em 2em' }));
-        parts.push(E('div', { key: 'info', style: { marginTop: '1em', font: `500 ${Math.round(bfs * 0.85)}px/1.4 ${stack(df)}`, color: st.snd.err ? '#ef4444' : hexA(ink, 0.75), textAlign: P[2], maxWidth: '34em' } },
+        parts.push(E('div', { key: 'info', style: { marginTop: '1em', font: `500 ${Math.round(bfs * 0.85)}px/1.4 ${stack(df)}`, color: st.snd.err ? (glassDark ? '#ffa8a8' : '#b91c1c') : hexA(ink, 0.82), textAlign: P[2], maxWidth: '34em' } },
           st.snd.err || (on ? `${L.sndCount} : ${num(st.snd.count, false)} · ${L.sndPrivacy}` : `${L.sndAsk} ${L.sndPrivacy}`)));
       } else {
         parts.push(row('r1', sw.start
@@ -1758,16 +1894,16 @@ class Component extends DCLogic {
           const best = splits.length > 1 ? Math.min(...splits) : -1, worst = splits.length > 1 ? Math.max(...splits) : -1;
           const rows = splits.map((d, i) => ({ i, d, t: sw.laps[i] })).reverse().slice(0, 5);
           parts.push(E('div', { key: 'laps', style: { display: 'grid', gridTemplateColumns: 'auto auto auto', gap: '.4em 1.8em', marginTop: '1.1em', justifyContent: P[1], font: `500 ${Math.round(bfs * 0.95)}px/1.2 ${stack(df)}`, color: ink, fontVariantNumeric: 'tabular-nums' } },
-            rows.flatMap((r, k) => { const c = r.d === best ? acc : r.d === worst ? hexA(ink, 0.5) : hexA(ink, 0.88), x = { color: c, opacity: 1 - k * 0.15, animation: k === 0 ? 'fh-rise .4s ease both' : undefined }; return [E('span', { key: 'a' + r.i, style: x }, `${L.lap} ${num(r.i + 1, false)}`), E('span', { key: 'b' + r.i, style: x }, fmtT(r.d)), E('span', { key: 'c' + r.i, style: { ...x, color: hexA(ink, 0.55) } }, fmtT(r.t))]; })));
+            rows.flatMap((r, k) => { const c = r.d === best ? accT : r.d === worst ? hexA(ink, 0.62) : hexA(ink, 0.92), x = { color: c, opacity: 1 - k * 0.12, animation: k === 0 ? 'fh-rise .4s ease both' : undefined }; return [E('span', { key: 'a' + r.i, style: x }, `${L.lap} ${num(r.i + 1, false)}`), E('span', { key: 'b' + r.i, style: x }, fmtT(r.d)), E('span', { key: 'c' + r.i, style: { ...x, color: hexA(ink, 0.66) } }, fmtT(r.t))]; })));
         }
       }
-      toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px' } }, parts);
+      toolsEl = E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: P[1], marginTop: Math.round(dPx * 0.9) + 'px', padding: '.9em 1.1em', borderRadius: Math.round(bfs * 1.6), background: glassDark ? 'rgba(16,14,20,.7)' : 'rgba(255,255,255,.82)', border: `1px solid ${glassDark ? 'rgba(255,255,255,.12)' : 'rgba(0,0,0,.1)'}`, boxShadow: '0 14px 40px rgba(0,0,0,.18)', fontSize: bfs + 'px' } }, parts);
     }
 
     // minuteur / chrono / sonomètre épinglés : cartes déplaçables et redimensionnables sur l'écran de l'heure
     let pinsEl = null;
     if (pinView(mode) && (s.pinTimer || s.pinSw || s.pinSnd)) {
-      const ink = ui.fg, acc = s.accent, accInk = lum(acc) > 0.45 ? '#141210' : '#ffffff', ff = stack(f);
+      const ink = ui.fg, acc = s.accent, accInk = bestInk(acc), ff = stack(f);
       const pinPos = s.pinPos || {}, kOf = (id) => Math.max(PIN_K[0], Math.min(PIN_K[1], +(s.pinScale || {})[id] || 1));
       const right = !/r$/.test(s.pos), top = s.pos[0] === 'b';
       const ib = (key, icon, title, onClick, primary, k) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: Math.round(34 * k), height: Math.round(34 * k), padding: 0, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: primary ? 0 : `1px solid ${ui.border}`, background: primary ? acc : 'transparent', color: primary ? accInk : ui.fg2, cursor: 'pointer' } }, E('span', { style: { ...ICON, fontSize: Math.round(19 * k) } }, icon));
@@ -1776,7 +1912,7 @@ class Component extends DCLogic {
         const drag = st.pinDrag && st.pinDrag.id === id ? st.pinDrag : null, saved = pinPos[id];
         const free = drag || (saved ? { x: saved.x * st.vw, y: saved.y * st.vh } : null);
         return E('div', { key: id, className: 'fh-card', title: L.pinMoveHint, onPointerDown: (e) => this.pinDown(e, id), onPointerMove: this.pinMove, onPointerUp: this.pinUp, onPointerCancel: this.pinUp, onDoubleClick: (e) => { if (!(e.target.closest && e.target.closest('button'))) this.pinReset(id); },
-          style: { position: free ? 'absolute' : 'relative', left: free ? Math.max(0, Math.min(st.vw - 80, free.x)) : undefined, top: free ? Math.max(0, Math.min(st.vh - 40, free.y)) : undefined, zIndex: drag ? 2 : 1, display: 'flex', alignItems: 'center', gap: Math.round(12 * k), padding: `${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(12 * k)}px`, borderRadius: Math.round(14 + 4 * k), background: ui.bar, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+          style: { position: free ? 'absolute' : 'relative', left: free ? Math.max(0, Math.min(st.vw - 80, free.x)) : undefined, top: free ? Math.max(0, Math.min(st.vh - 40, free.y)) : undefined, zIndex: drag ? 2 : 1, display: 'flex', alignItems: 'center', gap: Math.round(12 * k), padding: `${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(12 * k)}px`, borderRadius: Math.round(14 + 4 * k), background: ui.panel, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
           lead,
           E('div', { style: { display: 'flex', flexDirection: 'column', gap: Math.round(4 * k), minWidth: 0 } },
             E('div', { style: { font: `${clampW(f, Math.max(400, wt))} ${Math.round(32 * k)}px/1 ${ff}`, fontFeatureSettings: '"tnum" 1', whiteSpace: 'nowrap', direction: 'ltr' } }, big),
@@ -1791,12 +1927,12 @@ class Component extends DCLogic {
         const k = kOf('pt'), go = tm.done ? (st.ringing ? ib('go', 'stop', L.stopAlarm, this.stopAlarm, true, k) : ib('go', 'replay', L.again, this.tmAgain, true, k))
           : ib('go', tmRun ? 'pause' : 'play_arrow', tmRun ? L.pause : tmPaused ? L.resume : L.start, this.tmToggle, true, k);
         cards.push(card('pt', k, E('div', { style: { flexShrink: 0, opacity: tmPaused ? 0.75 : 1 } }, discSvg(Math.round(52 * k), ink, false)), hms(tmLeft, true, tm.dur >= 3600000).join(tsep),
-          tm.done ? L.done : tmRun ? `${L.md_timer} · ${L.endsAt} ${endStr}` : L.md_timer,
+          tm.done ? L.done : audioLocked ? L.alarmUnlock : tmRun ? `${L.md_timer} · ${L.endsAt} ${endStr}` : L.md_timer,
           [go, ib('open', 'open_in_full', L.openFull, () => this.setMode('timer'), false, k), ib('x', 'close', L.unpin, () => this.setS({ pinTimer: false }), false, k)], tm.done && st.ringing));
       }
       if (s.pinSw) {
         const k = kOf('ps');
-        cards.push(card('ps', k, disk(k, E('span', { style: { ...ICON, fontSize: Math.round(28 * k) } }, 'timer'), { background: hexA(acc, 0.18), color: acc }),
+        cards.push(card('ps', k, disk(k, E('span', { style: { ...ICON, fontSize: Math.round(28 * k) } }, 'timer'), { background: hexA(acc, 0.18), color: accUi }),
           `${hms(swEl, false, false).join(tsep)}.${num(Math.floor(swEl / 100) % 10, false)}`,
           sw.laps.length ? `${L.md_sw} · ${L.lap} ${sw.laps.length + 1}` : L.md_sw,
           [ib('go', sw.start ? 'pause' : 'play_arrow', sw.start ? L.pause : swEl ? L.resume : L.start, this.swToggle, true, k), sw.start ? ib('lap', 'flag', L.lap, this.swLap, false, k) : null, ib('open', 'open_in_full', L.openFull, () => this.setMode('stopwatch'), false, k), ib('x', 'close', L.unpin, () => this.setS({ pinSw: false }), false, k)], false));
@@ -1873,8 +2009,10 @@ class Component extends DCLogic {
         const size = Math.max(28, Math.min(220, +s.showSize || 64)), apC = s.hour12 && s.ampm ? dayPeriod(locale, now, tz, p.h) : '';
         const cw = size * 3.4, ch = size * 1.6, pos = st.showDrag || (s.showPos ? { x: s.showPos.x * st.vw, y: s.showPos.y * st.vh } : { x: st.vw - cw - 28, y: st.vh - ch - 28 });
         const cx = Math.max(0, Math.min(st.vw - 90, pos.x)), cy = Math.max(0, Math.min(st.vh - 50, pos.y));
-        const tfill = s.gradText && !s.outline ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : { color: s.color };
-        const card = E('div', { key: 'card', className: 'fh-card', onPointerDown: this.cardDown, onPointerMove: this.cardMove, onPointerUp: this.cardUp, onPointerCancel: this.cardUp, title: '', style: { position: 'absolute', left: cx, top: cy, zIndex: 2, padding: `${Math.round(size * 0.16)}px ${Math.round(size * 0.3)}px ${Math.round(size * 0.2)}px`, borderRadius: Math.round(14 + size * 0.12), background: ui.bar, border: `1px solid ${ui.border}`, backdropFilter: 'blur(18px) saturate(1.4)', WebkitBackdropFilter: 'blur(18px) saturate(1.4)', boxShadow: ui.shadow, cursor: this.cardDrag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+        // couleurs du thème gardées seulement si elles se voient sur la carte (sinon le texte de l'interface)
+        const gradOk = s.gradText && !s.outline && Math.min(contrast(s.grad1, ui.solid), contrast(s.grad2, ui.solid)) >= 2;
+        const tfill = gradOk ? { backgroundImage: `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)`, WebkitBackgroundClip: 'text', backgroundClip: 'text', WebkitTextFillColor: 'transparent' } : { color: readable(s.color, ui.solid, ui.fg, 2.5) };
+        const card = E('div', { key: 'card', className: 'fh-card', onPointerDown: this.cardDown, onPointerMove: this.cardMove, onPointerUp: this.cardUp, onPointerCancel: this.cardUp, title: '', style: { position: 'absolute', left: cx, top: cy, zIndex: 2, padding: `${Math.round(size * 0.16)}px ${Math.round(size * 0.3)}px ${Math.round(size * 0.2)}px`, borderRadius: Math.round(14 + size * 0.12), background: ui.panel, border: `1px solid ${ui.border}`, backdropFilter: 'blur(18px) saturate(1.4)', WebkitBackdropFilter: 'blur(18px) saturate(1.4)', boxShadow: ui.shadow, cursor: this.cardDrag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
           E('div', { style: { display: 'flex', alignItems: 'flex-start', gap: '.08em', font: `${s.italic ? 'italic ' : ''}${wt} ${size}px/1 ${stack(f)}`, letterSpacing: ls + 'em', fontFeatureSettings: s.fixedDigits ? '"tnum" 1' : undefined, whiteSpace: 'nowrap', direction: 'ltr' } },
             E('span', { style: tfill }, `${hStr}${sep1 === ' ' ? ':' : sep1}${mStr}`),
             s.seconds !== 'off' ? E('span', { style: { ...tfill, fontSize: '.42em', marginTop: '.12em', opacity: 0.85 } }, sStr) : null,
@@ -1920,8 +2058,8 @@ class Component extends DCLogic {
       clock: { el: clockEl, gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: hexA(s.dateColor, Math.min(1, s.dateOpacity / 100 + 0.15)), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
-      cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor } },
-      prog: mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', track: hexA(s.color, 0.12), fill: s.accent, labelColor: hexA(s.color, 0.6), label: `${new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }).format(dayPct)} ${L.ofDay}` },
+      cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, textShadow: legib } },
+      prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
       chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, stopEv: this.stopEv, gridRef: this.gridRef,
