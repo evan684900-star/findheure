@@ -168,21 +168,21 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; right: 14px; bottom: 11px; padding: 5px 8px; border-radius: 8px; background: {{ prog.labelBg }}; font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ prog.labelColor }}; pointer-events: none;">{{ prog.label }}</div>
   </sc-if>
 
-  <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1240px, calc(100% - 24px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: {{ chrome.pe }}; transition: opacity .5s ease;">
-    <div style="display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }};">
+  <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1360px, calc(100% - 24px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: {{ chrome.pe }}; transition: opacity .5s ease;">
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 6px; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }};">
       <div style="display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 10px 0 9px; flex-shrink: 0;">
         <sc-if value="{{ chrome.pumpkin }}" hint-placeholder-val="{{ false }}"><div style="font-size: 17px; line-height: 1; animation: fh-wobble 3.2s ease-in-out infinite;">🎃</div></sc-if>
         <sc-if value="{{ !chrome.pumpkin }}" hint-placeholder-val="{{ true }}"><img src="./favicon.svg" alt="" width="20" height="20" style="display: block; border-radius: 5px;"></sc-if>
         <sc-if value="{{ chrome.brand }}" hint-placeholder-val="{{ true }}"><div style="font-weight: 600; font-size: 14.5px; letter-spacing: -.01em;">findheure</div></sc-if>
       </div>
-      <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0;"></div>
-      <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;">
+      <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0; display: {{ chrome.sepDisplay }};"></div>
+      <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; flex: {{ chrome.tabsFlex }}; order: {{ chrome.tabsOrder }}; min-width: 0; overflow-x: auto; scrollbar-width: none;">
         <div style="position: absolute; top: 0; left: 0; height: 36px; width: {{ ind.w }}; transform: translateX({{ ind.x }}); border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.ring }}; opacity: {{ ind.op }}; transition: {{ ind.tr }}; pointer-events: none;"></div>
         <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
           <button ref="{{ t.ref }}" data-tour="{{ t.tour }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
         </sc-for>
       </div>
-      <div style="display: flex; gap: 2px; flex-shrink: 0; padding-right: 6px; margin-right: 2px; border-right: 1px solid {{ ui.border }};">
+      <div style="display: flex; gap: 2px; flex-shrink: 0; margin-left: auto; padding-right: 6px; margin-right: 2px; border-right: 1px solid {{ ui.border }};">
         <div data-tour="modes" style="display: flex; gap: 2px;">
         <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
           <button title="{{ m.title }}" onClick="{{ m.pick }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; transition: background .25s, color .25s, box-shadow .25s;" style-hover="background: {{ m.hover }}; color: {{ ui.fg }};">
@@ -216,7 +216,7 @@ a{color:inherit}a:hover{opacity:.8}
 
     <sc-if value="{{ panel.open }}" hint-placeholder-val="{{ false }}">
       <div style="border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden; transform-origin: 50% 0; animation: fh-panel-open .38s cubic-bezier(.2,.9,.25,1.1) both;">
-        <div key="{{ panel.key }}" style="max-height: calc(100vh - 96px); overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin; animation: {{ panel.anim }};">
+        <div key="{{ panel.key }}" style="max-height: {{ panel.maxH }}; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin; animation: {{ panel.anim }};">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -8px 14px 0;">
             <div style="font: 600 15px/1.2 Geist, system-ui, sans-serif; letter-spacing: -.01em;">{{ panel.title }}</div>
             <button title="{{ L.close }}" onClick="{{ closePanel }}" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: {{ ui.field }}; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.active }};">
@@ -893,6 +893,15 @@ const DB = {
 class Component extends DCLogic {
   state = (() => {
     const s = { ...DEFAULTS, ...(loadJSON(SKEY, {}) || {}) };
+    // réglages abîmés (ou d'une vieille version) : une valeur du mauvais type reprend sa valeur par défaut au lieu de faire planter la page
+    for (const k in DEFAULTS) {
+      const d = DEFAULTS[k], v = s[k];
+      if (d === null) continue;
+      const bad = Array.isArray(d) ? !Array.isArray(v) : typeof d === 'object' ? !v || typeof v !== 'object' || Array.isArray(v) : typeof v !== typeof d || (typeof d === 'number' && !Number.isFinite(v));
+      if (bad) s[k] = d;
+    }
+    if (s.showPos && !(Number.isFinite(s.showPos.x) && Number.isFinite(s.showPos.y))) s.showPos = null;
+    s.cities = s.cities.filter(z => typeof z === 'string');
     if (!FONT_BY[s.font]) s.font = DEFAULTS.font;
     if (s.dateFont !== 'same' && !FONT_BY[s.dateFont]) s.dateFont = 'same';
     if (!Array.isArray(s.cities)) s.cities = [];
@@ -908,8 +917,12 @@ class Component extends DCLogic {
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
     if (!Array.isArray(sw.laps)) sw.laps = [];
+    // minuteur / chrono abîmés : on repart de valeurs sûres
+    const fin = (v, d) => (Number.isFinite(v) ? v : d);
+    tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
+    sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m) : [], picDrag: '', tm, sw, ringing: false, testing: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -938,7 +951,8 @@ class Component extends DCLogic {
     this.activity();
     this.checkTimer();
     // minuteur retrouvé en cours après un rechargement : on reprogramme sa sonnerie (le son se débloque au premier clic)
-    if (this.state.tm.endAt) this.planAlarm(this.state.tm.endAt);
+    // (seulement s'il n'est pas déjà fini : sinon une vieille sonnerie partirait au premier clic, des heures plus tard)
+    if (this.state.tm.endAt && this.state.tm.endAt > Date.now()) this.planAlarm(this.state.tm.endAt);
     this.applyAuto();
     if (!loadJSON(TOURKEY, false)) this.tourT = setTimeout(this.startTour, 1200);
     if (this.state.notes.length) this.ensureFont('Caveat');
@@ -1019,7 +1033,7 @@ class Component extends DCLogic {
       if (!this.ac) {
         const ac = this.ac = new AC();
         // le navigateur n'autorise le son qu'après un clic : on suit l'état pour afficher l'aide et reprogrammer la sonnerie
-        ac.onstatechange = () => { this.setState({ acState: ac.state }); if (ac.state === 'running' && this.state.tm.endAt) this.planAlarm(this.state.tm.endAt); };
+        ac.onstatechange = () => { this.setState({ acState: ac.state }); const end = this.state.tm.endAt; if (ac.state === 'running' && end && end > Date.now()) this.planAlarm(end); };
         this.setState({ acState: ac.state });
       }
       const ac = this.ac; if (ac.state !== 'running' && ac.state !== 'closed') { const r = ac.resume(); if (r && r.catch) r.catch(() => {}); }
@@ -1415,7 +1429,13 @@ class Component extends DCLogic {
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
     else if (k === 'i') { e.preventDefault(); this.pickPic(); }
-    else if (e.key === ' ' && ((mode !== 'clock' && mode !== 'show') || this.state.s.pinTimer || this.state.s.pinSw)) { e.preventDefault(); const t = mode === 'timer' || (pinView(mode) && this.state.s.pinTimer); if (t) { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); } else this.swToggle(); }
+    else if (e.key === ' ' && (mode === 'timer' || mode === 'stopwatch' || mode === 'sound' || this.state.s.pinTimer || this.state.s.pinSw)) {
+      // Espace : micro sur le sonomètre, sinon minuteur (affiché ou épinglé) ou chrono
+      e.preventDefault();
+      if (mode === 'sound') this.sndToggle();
+      else if (mode === 'timer' || (pinView(mode) && this.state.s.pinTimer)) { if (this.state.ringing) this.stopAlarm(); else this.tmToggle(); }
+      else this.swToggle();
+    }
     else if (k === 'r' && mode === 'timer') this.tmReset();
     else if (k === 'r' && mode === 'stopwatch') this.swReset();
     else if (k === 'l' && mode === 'stopwatch') this.swLap();
@@ -2078,8 +2098,8 @@ class Component extends DCLogic {
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, textShadow: legib } },
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
-      chrome: { opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
-      tabs, ind, modes, panel: { open: !!st.tab, title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      chrome: { tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
+      tabs, ind, modes, panel: { open: !!st.tab, maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
