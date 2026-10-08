@@ -26,6 +26,7 @@ La **barre du haut** ne garde que l’essentiel : horloge, minuteur, chrono, son
 - **Tuto** à la première visite : cinq étapes pour comprendre le principe (cliquer sur l’heure, sur le fond, la barre, les Paramètres).
 - **Guide complet** (bouton « ? ») : 28 étapes ; à certaines, c’est toi qui fais (« À toi : clique sur l’heure… ») et le guide passe à la suite tout seul quand c’est fait.
 - Quand le fond est une de tes photos (par exemple après « Surprends-moi »), un bouton **Supprimer cette image** apparaît en bas à gauche, avec annulation possible.
+- **Salutations** au-dessus de l’heure (clic sur l’heure ou la date → Message → Salutation) : plus de 70 en français et plus de 50 en anglais, espagnol et allemand, selon le moment (petit matin, matinée, midi, après-midi, fin de journée, soirée, nuit) et le jour (bon lundi, bon mercredi, bientôt le week-end le vendredi, bon samedi…). Elle change toutes les demi-heures et d’un jour à l’autre.
 - **Notes autocollantes** (menu du fond ou touche `N`) : on les glisse par leur barre du haut et on change leur taille avec la poignée bien visible dans leur coin en bas à droite (ou Agrandir / Réduire dans leur menu).
 - **Images à côté de l’heure** (menu du fond ou touche `I`) : une image de l’ordinateur posée sur l’écran, pas en fond. On la glisse où on veut, on tire le coin pour changer sa taille (ou − / +), elle reste enregistrée.
 - **Taille de l’heure et de la date** dans leur menu (clic sur l’heure ou sur la date).

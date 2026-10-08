@@ -459,8 +459,6 @@ const T_RAW = {
   above: "Au-dessus|Above|Encima|Oben", below: "En dessous|Below|Debajo|Unten", gap: "Espace heure – date|Time–date spacing|Espacio hora–fecha|Abstand Uhrzeit–Datum",
   message: "Message au-dessus de l’heure|Message above the time|Mensaje sobre la hora|Nachricht über der Uhrzeit",
   m_none: "Aucun|None|Ninguno|Keine", m_greet: "Salutation|Greeting|Saludo|Begrüßung", m_custom: "Mon texte|My text|Mi texto|Eigener Text", msgPh: "Votre texte…|Your text…|Tu texto…|Dein Text…",
-  g_morning: "Bonjour|Good morning|Buenos días|Guten Morgen", g_afternoon: "Bon après-midi|Good afternoon|Buenas tardes|Guten Tag",
-  g_evening: "Bonsoir|Good evening|Buenas noches|Guten Abend", g_night: "Bonne nuit|Good night|Buenas noches|Gute Nacht",
   cities: "Autres villes (4 max.)|Other cities (up to 4)|Otras ciudades (máx. 4)|Weitere Städte (max. 4)", progress: "Progression de la journée|Day progress|Progreso del día|Tagesfortschritt",
   ofDay: "de la journée|of the day|del día|des Tages", uiTheme: "Thème de l’interface|Interface theme|Tema de la interfaz|Oberflächen-Thema",
   th_auto: "Auto|Auto|Auto|Auto", th_dark: "Sombre|Dark|Oscuro|Dunkel", th_light: "Clair|Light|Claro|Hell",
@@ -713,6 +711,76 @@ const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 
 const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
 const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', holo: '🛰️', trippy: '🌀' };
 const TOUR = [['clock'], ['bgspot'], ['modes'], ['settings'], ['help']];
+// Salutations (option « Salutation » du message au-dessus de l'heure) : selon le moment de la journée et le jour,
+// tirées d'une réserve et changées toutes les demi-heures (stables entre-temps). Une liste par langue de l'interface.
+const GREETS = [
+  { // français
+    early: ['Bonjour !', 'Bien le bonjour ☀️', 'Bonjour, lève-tôt !', 'Un bon café et c’est parti ☕', 'Belle journée qui commence', 'Le soleil se lève, nous aussi 🌅', 'Bonjour à tous, bien réveillés ?', 'Debout les champions !'],
+    morning: ['Bonjour à tous !', 'Bonjour la classe !', 'Bienvenue en classe 👋', 'Belle matinée à tous', 'Prêts pour une belle journée ?', 'On s’installe calmement', 'Bonne matinée ☀️', 'Bonjour, on se met au travail !', 'Hello tout le monde !', 'Une nouvelle journée pour apprendre ✨', 'Bonjour ! On sort ses affaires 📚', 'Bonne journée à tous', 'Content de vous voir !', 'En avant pour une belle journée 🚀'],
+    lunch: ['Bon appétit ! 🍽️', 'C’est bientôt l’heure de manger', 'Bon appétit à tous', 'Pause déjeuner bien méritée', 'Bonne pause de midi 🥪', 'On reprend des forces !'],
+    afternoon: ['Bon après-midi !', 'Bon après-midi à tous', 'Rebonjour ! 👋', 'Bon retour en classe', 'On garde le rythme 💪', 'Encore un petit effort !', 'Bon courage pour cet après-midi', 'Concentration maximale 🎯', 'On y est presque !', 'Belle fin de journée en vue 🌤️', 'Allez, on s’accroche !'],
+    late: ['Bonne fin de journée !', 'À demain ! 👋', 'Bravo pour aujourd’hui 👏', 'Merci pour cette belle journée', 'Bonne soirée !', 'Bien joué aujourd’hui ⭐', 'Reposez-vous bien', 'Encore une belle journée de faite'],
+    evening: ['Bonsoir !', 'Bonne soirée ✨', 'Bonsoir à tous', 'Belle soirée !', 'Encore au travail ? Bravo !', 'Une bonne soirée bien calme'],
+    night: ['Bonne nuit 🌙', 'Il se fait tard…', 'Doux rêves ✨', 'Bonne nuit, à demain !', 'L’heure de dormir 😴', 'Les étoiles sont de sortie ⭐'],
+    mon: ['Bon lundi !', 'Bonne semaine à tous !', 'Bon début de semaine 🚀', 'Nouvelle semaine, nouveaux défis'],
+    wed: ['Bon mercredi !', 'Mercredi : déjà la moitié de la semaine'],
+    fri: ['Bon vendredi !', 'Bientôt le week-end 🎉', 'Dernier effort avant le week-end', 'Vivement le week-end !'], friEnd: ['Bon week-end à tous !', 'Bon week-end ! 🎉', 'À lundi ! 👋', 'Profitez bien du week-end'],
+    weekend: ['Bon week-end !', 'Profitez bien du week-end ☀️', 'Repos bien mérité', 'Belle journée de repos'], sat: ['Bon samedi !'], sun: ['Bon dimanche !'],
+  },
+  { // English
+    early: ['Good morning!', 'Rise and shine ☀️', 'Morning, early birds!', 'Coffee first, then let’s go ☕', 'A brand new day', 'Up with the sun 🌅'],
+    morning: ['Good morning, everyone!', 'Good morning, class!', 'Welcome to class 👋', 'Have a lovely morning', 'Ready for a great day?', 'Let’s settle in calmly', 'Hello, everyone!', 'A new day to learn ✨', 'Books out, let’s start 📚', 'Have a great day', 'Great to see you!', 'Let’s make it a great day 🚀'],
+    lunch: ['Enjoy your lunch! 🍽️', 'Almost lunchtime', 'Lunch break, well earned', 'Enjoy the break 🥪', 'Time to recharge!'],
+    afternoon: ['Good afternoon!', 'Good afternoon, everyone', 'Welcome back! 👋', 'Keep it up 💪', 'Just a little more effort!', 'Stay focused 🎯', 'Almost there!', 'You’ve got this!'],
+    late: ['Have a nice evening!', 'See you tomorrow! 👋', 'Well done today 👏', 'Thanks for a great day', 'Great work today ⭐', 'Rest well'],
+    evening: ['Good evening!', 'Have a lovely evening ✨', 'Good evening, everyone', 'Still working? Well done!'],
+    night: ['Good night 🌙', 'It’s getting late…', 'Sweet dreams ✨', 'Good night, see you tomorrow!', 'Time to sleep 😴'],
+    mon: ['Happy Monday!', 'Have a great week!', 'New week, new goals 🚀'],
+    wed: ['Happy Wednesday!', 'Halfway through the week!'],
+    fri: ['Happy Friday!', 'The weekend is near 🎉', 'One last push before the weekend'], friEnd: ['Have a great weekend!', 'See you on Monday! 👋', 'Enjoy your weekend 🎉'],
+    weekend: ['Happy weekend!', 'Enjoy your weekend ☀️', 'Time to relax'], sat: ['Happy Saturday!'], sun: ['Happy Sunday!'],
+  },
+  { // español
+    early: ['¡Buenos días!', '¡Arriba, que sale el sol! ☀️', '¡Buenos días, madrugadores!', 'Primero un café y a empezar ☕', 'Empieza un nuevo día 🌅'],
+    morning: ['¡Buenos días a todos!', '¡Buenos días, clase!', 'Bienvenidos a clase 👋', 'Que tengáis una buena mañana', '¿Listos para un gran día?', 'Nos sentamos con calma', '¡Hola a todos!', 'Un nuevo día para aprender ✨', 'Sacamos las cosas y empezamos 📚', '¡Qué alegría veros!'],
+    lunch: ['¡Buen provecho! 🍽️', 'Ya casi es hora de comer', 'Pausa merecida', '¡Recargamos energía! 🥪'],
+    afternoon: ['¡Buenas tardes!', 'Buenas tardes a todos', '¡Bienvenidos de nuevo! 👋', 'Seguimos con ritmo 💪', '¡Un último esfuerzo!', 'Máxima concentración 🎯', '¡Ya casi estamos!'],
+    late: ['¡Buen final de día!', '¡Hasta mañana! 👋', 'Bravo por hoy 👏', 'Gracias por este gran día', '¡Buen trabajo hoy! ⭐', 'Descansad bien'],
+    evening: ['¡Buenas noches!', 'Que tengáis buena noche ✨', '¿Todavía trabajando? ¡Bravo!'],
+    night: ['Buenas noches 🌙', 'Se hace tarde…', 'Dulces sueños ✨', 'Hora de dormir 😴'],
+    mon: ['¡Feliz lunes!', '¡Buena semana a todos!', 'Nueva semana, nuevos retos 🚀'],
+    wed: ['¡Feliz miércoles!', '¡Ya estamos a mitad de semana!'],
+    fri: ['¡Feliz viernes!', 'Ya llega el fin de semana 🎉', '¡Un último esfuerzo antes del finde!'], friEnd: ['¡Buen fin de semana!', '¡Hasta el lunes! 👋', 'Disfrutad del finde 🎉'],
+    weekend: ['¡Buen fin de semana!', 'Disfrutad del fin de semana ☀️', 'Descanso merecido'], sat: ['¡Feliz sábado!'], sun: ['¡Feliz domingo!'],
+  },
+  { // Deutsch
+    early: ['Guten Morgen!', 'Aufstehen, die Sonne scheint ☀️', 'Morgen, Frühaufsteher!', 'Erst Kaffee, dann los ☕', 'Ein neuer Tag beginnt 🌅'],
+    morning: ['Guten Morgen zusammen!', 'Guten Morgen, Klasse!', 'Willkommen im Unterricht 👋', 'Einen schönen Vormittag', 'Bereit für einen tollen Tag?', 'Wir kommen in Ruhe an', 'Hallo zusammen!', 'Ein neuer Tag zum Lernen ✨', 'Sachen raus, es geht los 📚', 'Schön, euch zu sehen!'],
+    lunch: ['Guten Appetit! 🍽️', 'Gleich gibt es Mittagessen', 'Wohlverdiente Mittagspause', 'Kraft tanken! 🥪'],
+    afternoon: ['Guten Tag!', 'Einen schönen Nachmittag', 'Willkommen zurück! 👋', 'Dranbleiben 💪', 'Noch ein kleiner Endspurt!', 'Volle Konzentration 🎯', 'Fast geschafft!'],
+    late: ['Einen schönen Feierabend!', 'Bis morgen! 👋', 'Toll gemacht heute 👏', 'Danke für den schönen Tag', 'Gute Arbeit heute ⭐', 'Erholt euch gut'],
+    evening: ['Guten Abend!', 'Einen schönen Abend ✨', 'Noch fleißig? Bravo!'],
+    night: ['Gute Nacht 🌙', 'Es wird spät …', 'Süße Träume ✨', 'Zeit zum Schlafen 😴'],
+    mon: ['Einen guten Start in die Woche!', 'Schöne Woche allen!', 'Neue Woche, neue Ziele 🚀'],
+    wed: ['Schönen Mittwoch!', 'Bergfest – die halbe Woche ist geschafft!'],
+    fri: ['Schönen Freitag!', 'Bald ist Wochenende 🎉', 'Letzter Endspurt vor dem Wochenende'], friEnd: ['Schönes Wochenende!', 'Bis Montag! 👋', 'Genießt das Wochenende 🎉'],
+    weekend: ['Schönes Wochenende!', 'Genießt das Wochenende ☀️', 'Zeit zum Ausruhen'], sat: ['Schönen Samstag!'], sun: ['Schönen Sonntag!'],
+  },
+];
+function greeting(li, p) {
+  const G = GREETS[li] || GREETS[0], t = p.h * 60 + p.m, day = Date.UTC(p.y, p.mo - 1, p.d), dow = new Date(day).getUTCDay();
+  const slot = t < 300 ? 'night' : t < 480 ? 'early' : t < 705 ? 'morning' : t < 810 ? 'lunch' : t < 1020 ? 'afternoon' : t < 1140 ? 'late' : t < 1320 ? 'evening' : 'night';
+  const daytime = t >= 300 && t < 1140, weekend = dow === 0 || dow === 6;
+  let pool = G[slot];
+  if (weekend && daytime) { const d1 = dow === 6 ? G.sat : G.sun; pool = [...G.weekend, ...d1, ...d1]; }
+  else if (dow === 1 && t >= 300 && t < 705) pool = [...G.mon, ...G.mon, ...pool];
+  else if (dow === 3 && daytime) pool = [...G.wed, ...G.wed, ...pool];
+  else if (dow === 5 && t >= 810 && t < 1020) pool = [...G.fri, ...G.fri, ...pool];
+  else if (dow === 5 && t >= 1020 && t < 1320) pool = [...G.friEnd, ...G.friEnd, ...pool];
+  // même salutation pendant une demi-heure, une autre la demi-heure suivante et le lendemain
+  const k = Math.floor(day / 864e5) * 53 + p.h * 7 + (p.m >= 30 ? 3 : 0);
+  return pool[((k % pool.length) + pool.length) % pool.length];
+}
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
 // act(st, b) : vrai quand l'action demandée est faite (b = état au début de l'étape). prep(app) : remet le décor si on revient en arrière.
@@ -1910,7 +1978,7 @@ class Component extends DCLogic {
     // opacité sur tout l'élément (texte + ombre) : avec seulement une couleur transparente, l'ombre noire restait visible
     const dateColor = s.dateColor, dateOp = s.dateOpacity / 100;
     const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, opacity: dateOp, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: [g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : '', legib || ''].filter(Boolean).join(', ') || undefined, transition: 'color .4s ease, opacity .3s ease' };
-    const greet = p.h < 5 ? L.g_night : p.h < 12 ? L.g_morning : p.h < 18 ? L.g_afternoon : p.h < 22 ? L.g_evening : L.g_night;
+    const greet = greeting(li, p);
     const endStr = tmRun ? fmt(locale, { hour: '2-digit', minute: '2-digit', hour12: !!s.hour12, timeZone: tz }).format(new Date(tm.endAt)) : '';
     const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
       : mode === 'stopwatch' ? (sw.laps.length ? `${L.lap} ${sw.laps.length + 1}` : L.md_sw)
