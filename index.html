@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,image,landscape,link,mic,mic_off,more_vert,music_note,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,touch_app,translate,tune,upload_file,volume_up,wallpaper,web,zoom_in,zoom_out&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,image,landscape,link,mic,mic_off,more_vert,music_note,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,touch_app,translate,tune,upload_file,volume_up,wallpaper,web,zoom_in,zoom_out&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -36,9 +36,9 @@ a{color:inherit}a:hover{opacity:.8}
 .fh-btn:disabled{opacity:.55;cursor:default;transform:none;filter:none}
 .fh-note textarea::placeholder{color:currentColor;opacity:.55}
 .fh-note textarea:focus{outline:none}
-.fh-note textarea::-webkit-resizer{background:transparent}
+.fh-note .fh-grip{opacity:.75;transition:opacity .2s ease,background .2s ease}.fh-note:hover .fh-grip{opacity:1}.fh-note .fh-grip:hover{background:rgba(42,33,19,.12)}
 .fh-dot{transition:transform .15s ease}.fh-dot:hover{transform:scale(1.25)}
-.fh-card .fh-card-tools{opacity:0;transition:opacity .2s ease}.fh-card:hover .fh-card-tools{opacity:1}
+.fh-card .fh-card-tools{opacity:0;transition:opacity .2s ease}.fh-card [data-resize]{opacity:.6}.fh-card:hover .fh-card-tools{opacity:1}
 .fh-input::placeholder{color:currentColor;opacity:.58}
 @keyframes fh-zoom{from{opacity:0;transform:perspective(2em) translateZ(-6em)}to{opacity:1;transform:none}}
 @keyframes fh-spin{from{opacity:0;transform:perspective(4em) rotateY(-280deg)}to{opacity:1;transform:none}}
@@ -521,6 +521,7 @@ const T_RAW = {
   mBigger: "Plus grand|Bigger|Más grande|Größer", mSmaller: "Plus petit|Smaller|Más pequeño|Kleiner", mFront: "Mettre devant|Bring to front|Traer al frente|Nach vorne", mCorner: "Ranger dans le coin|Back to the corner|Volver a la esquina|Zurück in die Ecke",
   mOpen: "Ouvrir en grand|Open full size|Abrir en grande|Groß öffnen", mDelete: "Supprimer|Delete|Eliminar|Löschen", mDuration: "Durée|Duration|Duración|Dauer", mH12: "Format 12 h (AM/PM)|12-hour (AM/PM)|Formato 12 h (AM/PM)|12-Stunden (AM/PM)",
   mAutoTheme: "Thème selon la date|Theme by date|Tema según la fecha|Thema nach Datum", mFormat: "Format|Format|Formato|Format", mDateHead: "La date|The date|La fecha|Das Datum",
+  noteResize: "Tirer pour changer la taille de la note|Drag to resize the note|Arrastra para cambiar el tamaño de la nota|Ziehen, um die Notiz zu vergrößern", mNoteBig: "Agrandir la note|Bigger note|Nota más grande|Notiz vergrößern", mNoteSmall: "Réduire la note|Smaller note|Nota más pequeña|Notiz verkleinern",
   picBtn: "Image à côté de l’heure (I)|Image next to the time (I)|Imagen junto a la hora (I)|Bild neben der Uhrzeit (I)", picsH: "Images à côté de l’heure|Images next to the time|Imágenes junto a la hora|Bilder neben der Uhrzeit",
   picAdd: "Ajouter une image|Add an image|Añadir una imagen|Bild hinzufügen", picN: "Image|Image|Imagen|Bild", picDel: "Retirer l’image|Remove the image|Quitar la imagen|Bild entfernen",
   picSmaller: "Image plus petite|Smaller image|Imagen más pequeña|Kleineres Bild", picBigger: "Image plus grande|Bigger image|Imagen más grande|Größeres Bild", picResize: "Tirer pour changer la taille|Drag to resize|Arrastra para cambiar el tamaño|Ziehen, um die Größe zu ändern",
@@ -740,7 +741,7 @@ const LONG_TOUR = [
   { t: ['menu1'], h: 'Choisis un thème', x: 'Chaque thème change d’un coup la police, les couleurs et le décor. Le menu reste ouvert : essaie-en plusieurs.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: prepSub('bg', 'bgspot', 'theme') },
   { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres.', prep: prepRoot('bg', 'bgspot') },
   { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepRoot('bg', 'bgspot') },
-  { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut ; un clic sur cette barre ouvre son menu : couleur, taille du texte, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
+  { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut. Pour changer sa taille, tire les petits traits dans son coin en bas à droite. Un clic sur la barre ouvre son menu : couleur, taille, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
   { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, il ne reste que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['tm-10'], h: 'Une durée toute prête', x: 'Ces pastilles mettent le minuteur à une durée en un clic.', act: (st) => st.tm.dur === 600000, d: 'Clique sur « 10 min ».', prep: prepMode('timer') },
   { t: ['tm-custom', 'tm-ok'], h: 'Ta propre durée', x: 'Besoin de 7 min 30 ? « Personnaliser » te laisse taper les heures, minutes et secondes, puis OK (ou Entrée).', act: (st, b) => st.tm.dur !== b.tm.dur && !st.tmEdit, d: 'Clique sur « Personnaliser », tape par exemple 2 min, puis OK.', prep: prepMode('timer') },
@@ -1407,6 +1408,21 @@ class Component extends DCLogic {
     this.setState({ notes: [...st.notes, { id, x, y, w, h, c: NOTE_C[i % NOTE_C.length], r: +((Math.random() - 0.5) * 6).toFixed(1), z: ++this.zTop, t: '' }] }, this.saveNotes);
   };
   noteFs = (id, d) => { const n = this.state.notes.find(x => x.id === id); if (!n) return; const v = n.fs || 23; this.patchNote(id, { fs: Math.max(NOTE_FS[0], Math.min(NOTE_FS[1], v + d * (v >= 32 ? 6 : 3))) }); };
+  // taille d'une note : une vraie poignée dans le coin (souris et doigt), ou Agrandir / Réduire dans son menu
+  noteResDown = (e, id) => {
+    if (e.button !== 0) return; const n = this.state.notes.find(x => x.id === id); if (!n) return;
+    e.preventDefault(); e.stopPropagation();
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
+    this.nres = { id, sx: e.clientX, sy: e.clientY, w: n.w || 240, h: n.h || 170 };
+    this.raiseNote(id);
+  };
+  noteResMove = (e) => {
+    const d = this.nres; if (!d) return; const st = this.state;
+    const w = Math.round(Math.max(150, Math.min(st.vw * 0.8, d.w + e.clientX - d.sx))), h = Math.round(Math.max(80, Math.min(st.vh * 0.7, d.h + e.clientY - d.sy)));
+    this.setState({ notes: st.notes.map(n => (n.id === d.id ? { ...n, w, h } : n)) });
+  };
+  noteResUp = () => { if (!this.nres) return; this.nres = null; this.saveNotes(); };
+  noteScale = (id, k) => { const st = this.state, n = st.notes.find(x => x.id === id); if (!n) return; this.patchNote(id, { w: Math.round(Math.max(150, Math.min(st.vw * 0.8, (n.w || 240) * k))), h: Math.round(Math.max(80, Math.min(st.vh * 0.7, (n.h || 170) * k))) }); };
   delNote = (id) => { this.setState(st => ({ notes: st.notes.filter(n => n.id !== id) }), this.saveNotes); };
   raiseNote = (id) => { const n = this.state.notes.find(x => x.id === id); if (n && n.z !== this.zTop) this.patchNote(id, { z: ++this.zTop }, true); };
   noteDown = (e, id) => {
@@ -1428,7 +1444,6 @@ class Component extends DCLogic {
     if (!d.moved && e && e.clientX != null) { this.openMenu('note', e.clientX, e.clientY, d.id); return; }
     this.saveNotes();
   };
-  noteSize = (id, e) => { const el = e.currentTarget, n = this.state.notes.find(x => x.id === id); if (n && el && (el.offsetWidth !== n.w || el.offsetHeight !== n.h)) this.patchNote(id, { w: el.offsetWidth, h: el.offsetHeight }); };
 
   // Images posées à côté de l'heure (pas en fond) : on les glisse, on tire le coin pour la taille ; position en fraction de l'écran
   picRef = React.createRef();
@@ -2288,6 +2303,8 @@ class Component extends DCLogic {
         { key: 'nc', icon: 'palette', label: L.color, sub: () => [{ key: 'sw-note', swatches: NOTE_C, cur: note.c, noCustom: true, pick: (c) => this.patchNote(note.id, { c }) }] },
         { key: 'nb', icon: 'zoom_in', label: L.noteBigger, act: () => this.noteFs(note.id, 1), keep: true },
         { key: 'ns', icon: 'zoom_out', label: L.noteSmaller, act: () => this.noteFs(note.id, -1), keep: true },
+        { key: 'nB', icon: 'open_in_full', label: L.mNoteBig, act: () => this.noteScale(note.id, 1.2), keep: true },
+        { key: 'nS', icon: 'close_fullscreen', label: L.mNoteSmall, act: () => this.noteScale(note.id, 1 / 1.2), keep: true },
         sep, { key: 'nd', icon: 'delete', label: L.noteDel, danger: true, act: () => this.delNote(note.id) }] : []);
       const picItems = () => (pic ? [
         { key: 'pb', icon: 'zoom_in', label: L.picBigger, act: () => this.picZoom(pic.id, 1.2), keep: true },
@@ -2407,7 +2424,10 @@ class Component extends DCLogic {
           E('div', { style: { flex: 1 } }),
           ...[[-1, L.noteSmaller, 13], [1, L.noteBigger, 18]].map(([d, title, z]) => E('button', { key: 'fs' + d, type: 'button', title, disabled: d < 0 ? nfs <= NOTE_FS[0] : nfs >= NOTE_FS[1], onClick: () => this.patchNote(n.id, { fs: Math.max(NOTE_FS[0], Math.min(NOTE_FS[1], nfs + d * (nfs >= 32 ? 6 : 3))) }), style: { height: 24, minWidth: 26, padding: '0 4px', border: 0, borderRadius: 6, background: 'transparent', color: 'rgba(42,33,19,.75)', cursor: 'pointer', font: `700 ${z}px/1 Geist, system-ui, sans-serif`, opacity: (d < 0 ? nfs <= NOTE_FS[0] : nfs >= NOTE_FS[1]) ? 0.3 : 1 } }, 'A')),
           E('button', { type: 'button', title: L.noteDel, onClick: () => this.delNote(n.id), style: { width: 24, height: 24, padding: 0, border: 0, borderRadius: 6, background: 'transparent', color: 'rgba(42,33,19,.7)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 18 } }, 'close'))),
-        E('textarea', { value: n.t || '', placeholder: L.notePh, autoFocus: n.id === this.newNoteId, spellCheck: false, onChange: (e) => this.patchNote(n.id, { t: e.target.value.slice(0, 2000) }, true), onMouseUp: (e) => this.noteSize(n.id, e), onPointerUp: (e) => this.noteSize(n.id, e), style: { display: 'block', width: w, height: h, minWidth: 150, minHeight: 80, maxWidth: '80vw', maxHeight: '70vh', boxSizing: 'border-box', resize: 'both', border: 0, margin: 0, background: 'transparent', color: 'inherit', padding: '0 14px 14px', font: `600 ${nfs}px/1.2 'Caveat', 'Comic Sans MS', cursive`, userSelect: 'text', overflow: 'auto' } }));
+        E('textarea', { value: n.t || '', placeholder: L.notePh, autoFocus: n.id === this.newNoteId, spellCheck: false, onChange: (e) => this.patchNote(n.id, { t: e.target.value.slice(0, 2000) }, true), style: { display: 'block', width: w, height: h, minWidth: 150, minHeight: 80, maxWidth: '80vw', maxHeight: '70vh', boxSizing: 'border-box', resize: 'none', border: 0, margin: 0, background: 'transparent', color: 'inherit', padding: '0 14px 14px', font: `600 ${nfs}px/1.2 'Caveat', 'Comic Sans MS', cursive`, userSelect: 'text', overflow: 'auto' } }),
+        E('div', { className: 'fh-grip', title: L.noteResize, onPointerDown: (e) => this.noteResDown(e, n.id), onPointerMove: this.noteResMove, onPointerUp: this.noteResUp, onPointerCancel: this.noteResUp,
+          style: { position: 'absolute', right: 0, bottom: 0, width: 34, height: 34, padding: 7, boxSizing: 'border-box', display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end', borderRadius: '10px 0 3px 0', cursor: 'nwse-resize', touchAction: 'none' } },
+          E('svg', { width: 17, height: 17, viewBox: '0 0 17 17', style: { display: 'block' } }, E('path', { d: 'M15.5 2L2 15.5M15.5 7.5L7.5 15.5M15.5 13L13 15.5', stroke: 'rgba(42,33,19,.78)', strokeWidth: 2.2, strokeLinecap: 'round', fill: 'none' }))));
     });
 
     // mode « site ou image »

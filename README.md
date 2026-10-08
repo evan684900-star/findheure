@@ -26,7 +26,7 @@ La **barre du haut** ne garde que l’essentiel : horloge, minuteur, chrono, son
 - **Tuto** à la première visite : cinq étapes pour comprendre le principe (cliquer sur l’heure, sur le fond, la barre, les Paramètres).
 - **Guide complet** (bouton « ? ») : 28 étapes ; à certaines, c’est toi qui fais (« À toi : clique sur l’heure… ») et le guide passe à la suite tout seul quand c’est fait.
 - Quand le fond est une de tes photos (par exemple après « Surprends-moi »), un bouton **Supprimer cette image** apparaît en bas à gauche, avec annulation possible.
-- **Notes autocollantes** (menu du fond ou touche `N`) déplaçables et redimensionnables.
+- **Notes autocollantes** (menu du fond ou touche `N`) : on les glisse par leur barre du haut et on change leur taille avec la poignée bien visible dans leur coin en bas à droite (ou Agrandir / Réduire dans leur menu).
 - **Images à côté de l’heure** (menu du fond ou touche `I`) : une image de l’ordinateur posée sur l’écran, pas en fond. On la glisse où on veut, on tire le coin pour changer sa taille (ou − / +), elle reste enregistrée.
 - **Taille de l’heure et de la date** dans leur menu (clic sur l’heure ou sur la date).
 - **Icône du site** (onglet, favoris, écran d’accueil) : on peut aussi « installer » le site comme une appli depuis le navigateur.
