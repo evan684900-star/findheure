@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,bookmark_add,casino,check,close,delete,edit,flag,fullscreen,fullscreen_exit,help,hourglass_top,link,mic,mic_off,notifications,notifications_active,notifications_off,open_in_full,open_in_new,pause,picture_in_picture_alt,pie_chart,play_arrow,remove,replay,restart_alt,schedule,sticky_note_2,stop,swap_horiz,timer,upload_file,volume_up,web&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,image,landscape,link,mic,mic_off,more_vert,music_note,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,touch_app,translate,tune,upload_file,volume_up,wallpaper,web,zoom_in,zoom_out&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -58,6 +58,9 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fhx-holo{0%,100%{opacity:.92;transform:none}4%{opacity:.55}5%{opacity:.95}38%{opacity:.85;transform:none}39%{opacity:.45;transform:skewX(-7deg) translateX(.025em)}40%{opacity:.92;transform:none}68%{opacity:.8}69%{opacity:.35}70%{opacity:.9}}
 @keyframes fhx-spin{from{transform:perspective(14em) rotateY(0)}to{transform:perspective(14em) rotateY(360deg)}}
 @media (prefers-reduced-motion:reduce){.fh-ind{transition:none!important}}
+@keyframes fh-menu-in{from{opacity:0;transform:scale(.97) translateY(-3px)}to{opacity:1;transform:none}}
+.fh-mi:hover{background:var(--mh)!important}
+.fh-menu::-webkit-scrollbar{width:8px}.fh-menu::-webkit-scrollbar-thumb{background:var(--mh);border-radius:8px}
 @keyframes fh-tabpop{0%{transform:scale(1)}35%{transform:scale(1.14) translateY(-1px)}65%{transform:scale(.96)}100%{transform:scale(1)}}
 @keyframes fh-panel-open{from{opacity:0;transform:translateY(-12px) scale(.985)}to{opacity:1;transform:none}}
 @keyframes fh-pin-r{from{opacity:0;transform:translateX(34px)}}
@@ -92,7 +95,7 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-aurora{0%{transform:translate3d(-6%,-4%,0) rotate(0deg) scale(1)}50%{transform:translate3d(5%,3%,0) rotate(10deg) scale(1.12)}100%{transform:translate3d(-2%,6%,0) rotate(-8deg) scale(1.04)}}
 </style>
 </helmet>
-<div style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
+<div onContextMenu="{{ onCtx }}" style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
   <div style="position: absolute; inset: 0; background: {{ bg.base }};"></div>
   <sc-if value="{{ bg.isAurora }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.aurora }}</div>
@@ -126,23 +129,23 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ alarm.bg }}; animation: fh-alarm 1.2s ease-in-out infinite;"></div>
   </sc-if>
 
-  <div onClick="{{ onStage }}" onDoubleClick="{{ toggleFs }}" style="position: absolute; inset: 0; box-sizing: border-box; display: {{ stageDisplay }}; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
-    <div style="position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%;">
+  <div onClick="{{ onStage }}" style="position: absolute; inset: 0; box-sizing: border-box; display: {{ stageDisplay }}; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
+    <div ref="{{ blockRef }}" onPointerDown="{{ clockDown }}" style="position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%; touch-action: none; cursor: {{ clock.cursor }};">
       <sc-if value="{{ halo.on }}" hint-placeholder-val="{{ false }}">
         <div style="position: absolute; left: -16%; right: -16%; top: -20%; bottom: -20%; z-index: -1; pointer-events: none; background: {{ halo.bg }};"></div>
       </sc-if>
       <sc-if value="{{ msg.show }}" hint-placeholder-val="{{ false }}">
-        <div style="{{ msg.style }}">{{ msg.text }}</div>
+        <div data-menu="date" style="{{ msg.style }}">{{ msg.text }}</div>
       </sc-if>
-      <div style="order: 1; max-width: 100%;">{{ clock.el }}</div>
+      <div data-menu="time" style="order: 1; max-width: 100%;">{{ clock.el }}</div>
       <sc-if value="{{ date.show }}" hint-placeholder-val="{{ true }}">
-        <div dir="auto" style="{{ date.style }}">
+        <div dir="auto" data-menu="date" style="{{ date.style }}">
           <sc-if value="{{ date.hasText }}" hint-placeholder-val="{{ true }}"><div>{{ date.text }}</div></sc-if>
           <sc-if value="{{ date.hasZone }}" hint-placeholder-val="{{ false }}"><div style="font-size: .72em; opacity: .8; margin-top: .45em; letter-spacing: .06em;">{{ date.zone }}</div></sc-if>
         </div>
       </sc-if>
       <sc-if value="{{ cities.show }}" hint-placeholder-val="{{ false }}">
-        <div style="{{ cities.style }}">
+        <div data-menu="date" style="{{ cities.style }}">
           <sc-for list="{{ cities.list }}" as="c" hint-placeholder-count="0">
             <div style="display: flex; flex-direction: column; gap: .4em; align-items: {{ pos.ai }};">
               <div style="font-size: .62em; letter-spacing: .14em; text-transform: uppercase; opacity: .7;">{{ c.name }}</div>
@@ -152,7 +155,7 @@ a{color:inherit}a:hover{opacity:.8}
         </div>
       </sc-if>
       <sc-if value="{{ tools.show }}" hint-placeholder-val="{{ false }}">
-        <div onClick="{{ stopEv }}" onDoubleClick="{{ stopEv }}" style="order: 2; max-width: 94vw;">{{ tools.el }}</div>
+        <div data-tools data-menu="time" onClick="{{ stopEv }}" style="order: 2; max-width: 94vw; cursor: default;">{{ tools.el }}</div>
       </sc-if>
     </div>
   </div>
@@ -170,64 +173,46 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; right: 14px; bottom: 11px; padding: 5px 8px; border-radius: 8px; background: {{ prog.labelBg }}; font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ prog.labelColor }}; pointer-events: none;">{{ prog.label }}</div>
   </sc-if>
 
-  <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1360px, calc(100% - 24px)); display: flex; flex-direction: column; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: {{ chrome.pe }}; transition: opacity .5s ease;">
-    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 6px; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }};">
-      <div style="display: flex; align-items: center; gap: 9px; height: 36px; padding: 0 10px 0 9px; flex-shrink: 0;">
-        <sc-if value="{{ chrome.pumpkin }}" hint-placeholder-val="{{ false }}"><div style="font-size: 17px; line-height: 1; animation: fh-wobble 3.2s ease-in-out infinite;">🎃</div></sc-if>
-        <sc-if value="{{ !chrome.pumpkin }}" hint-placeholder-val="{{ true }}"><img src="./favicon.svg" alt="" width="20" height="20" style="display: block; border-radius: 5px;"></sc-if>
-        <sc-if value="{{ chrome.brand }}" hint-placeholder-val="{{ true }}"><div style="font-weight: 600; font-size: 14.5px; letter-spacing: -.01em;">findheure</div></sc-if>
-      </div>
-      <div style="width: 1px; height: 20px; background: {{ ui.border }}; flex-shrink: 0; display: {{ chrome.sepDisplay }};"></div>
-      <div class="fh-tabs" style="position: relative; display: flex; gap: 2px; padding: 6px; margin: -6px; flex: {{ chrome.tabsFlex }}; order: {{ chrome.tabsOrder }}; min-width: 0; overflow-x: auto; scrollbar-width: none;">
-        <div class="fh-ind" ref="{{ indRef }}" style="position: absolute; top: 0; left: 0; height: 36px; pointer-events: none;">
-          <div style="position: absolute; inset: 0; border-radius: 10px; box-shadow: {{ ind.ringC }}; opacity: 0;"></div>
-          <div style="position: absolute; inset: 0; border-radius: 10px; background: {{ ind.bg }}; box-shadow: {{ ind.shadow }};"></div>
-        </div>
-        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="8">
-          <button ref="{{ t.ref }}" data-tour="{{ t.tour }}" onClick="{{ t.pick }}" style="position: relative; flex-shrink: 0; border: 0; cursor: pointer; height: 36px; padding: 0 12px; border-radius: 10px; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; background: transparent; color: {{ t.fg }}; transition: background .15s, color .25s;" style-hover="background: {{ t.hover }}; color: {{ ui.fg }};"><span style="display: inline-block; animation: {{ t.anim }};">{{ t.label }}</span></button>
-        </sc-for>
-      </div>
-      <div style="display: flex; gap: 2px; flex-shrink: 0; margin-left: auto; padding-right: 6px; margin-right: 2px; border-right: 1px solid {{ ui.border }};">
-        <div data-tour="modes" style="display: flex; gap: 2px;">
-        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
-          <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; transition: background .25s, color .25s, box-shadow .25s;" style-hover="background: {{ m.hover }}; color: {{ ui.fg }};">
-            <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; animation: {{ m.anim }};">{{ m.icon }}</span>
+  <div data-menu="none" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1180px, calc(100% - 24px)); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: none; transition: opacity .5s ease;">
+    <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="display: flex; align-items: center; gap: 4px; padding: 6px; max-width: 100%; box-sizing: border-box; overflow-x: auto; scrollbar-width: none; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }}; pointer-events: {{ chrome.pe }};">
+      <div data-tour="modes" style="display: flex; gap: 2px; flex-shrink: 0;">
+        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="5">
+          <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 11px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; transition: background .15s, color .15s;" style-hover="background: {{ m.hover }};">
+            <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px; animation: {{ m.anim }};">{{ m.icon }}</span>
+            <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span>{{ m.label }}</span></sc-if>
           </button>
         </sc-for>
-        </div>
-        <button data-tour="note" title="{{ L.noteNew }}" onClick="{{ addNote }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
-          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">sticky_note_2</span>
-        </button>
-        <button data-tour="img" title="{{ L.picBtn }}" onClick="{{ pickPic }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg2 }}; cursor: pointer;" style-hover="background: {{ ui.hover }}; color: {{ ui.fg }};">
-          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">add_photo_alternate</span>
-        </button>
       </div>
-      <div style="display: flex; gap: 2px; flex-shrink: 0;">
-        <button data-tour="surprise" title="{{ L.surpriseK }}" onClick="{{ surprise }}" style="height: 36px; min-width: 36px; padding: {{ chrome.surprisePad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif;" style-hover="background: {{ ui.hover }};">
-          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">casino</span>
-          <sc-if value="{{ chrome.wide }}" hint-placeholder-val="{{ true }}"><span>{{ L.surprise }}</span></sc-if>
-        </button>
-        <button data-tour="fs" title="{{ L.fullscreen }}" onClick="{{ toggleFs }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
-          <span style="font-family: 'Material Symbols Rounded'; font-size: 21px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">{{ chrome.fsIcon }}</span>
-        </button>
-        <button data-tour="reset" title="{{ L.reset }}" onClick="{{ reset }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
-          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">restart_alt</span>
-        </button>
-        <button data-tour="help" title="{{ L.help }}" onClick="{{ startTour }}" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 10px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
-          <span style="font-family: 'Material Symbols Rounded'; font-size: 20px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">help</span>
-        </button>
-      </div>
+      <div style="width: 1px; height: 22px; background: {{ ui.border }}; margin: 0 4px; flex-shrink: 0;"></div>
+      <button data-tour="settings" title="{{ L.settings }}" onClick="{{ openSettings }}" style="height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; border: 0; border-radius: 11px; background: {{ chrome.setBg }}; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap;" style-hover="background: {{ ui.hover }};">
+        <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px;">settings</span>
+        <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span>{{ L.settings }}</span></sc-if>
+      </button>
+      <button data-tour="fs" title="{{ L.fullscreen }}" onClick="{{ toggleFs }}" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 0; border-radius: 11px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
+        <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 21px;">{{ chrome.fsIcon }}</span>
+      </button>
+      <button data-tour="help" title="{{ L.help }}" onClick="{{ startTour }}" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 0; border-radius: 11px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
+        <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px;">help</span>
+      </button>
     </div>
 
     <sc-if value="{{ panel.open }}" hint-placeholder-val="{{ false }}">
-      <div style="border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden; transform-origin: 50% 0; animation: fh-panel-open .38s cubic-bezier(.2,.9,.25,1.1) both;">
+      <div style="width: 100%; box-sizing: border-box; pointer-events: auto; border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden; transform-origin: 50% 0; animation: fh-panel-open .38s cubic-bezier(.2,.9,.25,1.1) both;">
         <div key="{{ panel.key }}" style="max-height: {{ panel.maxH }}; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin; animation: {{ panel.anim }};">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -8px 14px 0;">
-            <div style="font: 600 15px/1.2 Geist, system-ui, sans-serif; letter-spacing: -.01em;">{{ panel.title }}</div>
+            <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
+              <sc-if value="{{ panel.back }}" hint-placeholder-val="{{ false }}">
+                <button title="{{ L.settings }}" onClick="{{ openSettings }}" style="height: 32px; padding: 0 12px 0 6px; display: flex; align-items: center; gap: 4px; border: 0; border-radius: 9px; background: {{ ui.field }}; color: {{ ui.fg }}; cursor: pointer; font: 500 13px/1 Geist, system-ui, sans-serif;" style-hover="background: {{ ui.active }};"><span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 19px;">arrow_back</span><span>{{ L.settings }}</span></button>
+              </sc-if>
+              <div style="font: 600 15px/1.2 Geist, system-ui, sans-serif; letter-spacing: -.01em;">{{ panel.title }}</div>
+            </div>
             <button data-tour="close" title="{{ L.close }}" onClick="{{ closePanel }}" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border: 0; border-radius: 9px; background: {{ ui.field }}; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.active }};">
               <span style="font-family: 'Material Symbols Rounded'; font-size: 19px; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga';">close</span>
             </button>
           </div>
+          <sc-if value="{{ panel.tip }}" hint-placeholder-val="{{ false }}">
+            <div style="display: flex; align-items: center; gap: 10px; margin: -4px 0 18px; padding: 10px 14px; border-radius: 12px; background: {{ ui.field }}; font: 400 13.5px/1.45 Geist, system-ui, sans-serif; color: {{ ui.fg2 }};"><span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px; color: {{ ui.fg }};">touch_app</span><span>{{ L.mTip }}</span></div>
+          </sc-if>
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 18px 26px; align-items: end;">
             <sc-for list="{{ controls }}" as="c" hint-placeholder-count="6">
               <div style="grid-column: {{ c.span }}; display: flex; flex-direction: column; gap: 9px; min-width: 0; opacity: {{ c.op }}; padding-top: {{ c.padTop }}; animation: fh-rise .5s cubic-bezier(.2,.8,.2,1) both; animation-delay: {{ c.delay }};">
@@ -387,6 +372,9 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; inset: 12px; z-index: 30; border-radius: 22px; border: 2px dashed rgba(255,255,255,.75); background: rgba(10,10,10,.55); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; pointer-events: none; color: #fff; font: 500 22px/1.2 Geist, system-ui, sans-serif; text-align: center; padding: 24px; box-sizing: border-box;">{{ L.dropHere }}</div>
   </sc-if>
 
+  <div data-tour="bgspot" style="position: absolute; left: 7vw; top: 70vh; width: 84px; height: 84px; border-radius: 50%; pointer-events: none;"></div>
+  <sc-if value="{{ zones.on }}" hint-placeholder-val="{{ false }}">{{ zones.el }}</sc-if>
+  <sc-if value="{{ menuUi.on }}" hint-placeholder-val="{{ false }}">{{ menuUi.el }}</sc-if>
   <sc-if value="{{ tour.show }}" hint-placeholder-val="{{ false }}">{{ tour.el }}</sc-if>
 
   <sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
@@ -522,6 +510,13 @@ const T_RAW = {
   tmCustom: "Personnaliser|Custom|Personalizar|Eigene Zeit", tmOk: "OK|OK|OK|OK",
   tourDo: "À toi|Your turn|Tu turno|Du bist dran", tourDone: "Bravo !|Well done!|¡Bien hecho!|Super!", tourSkipStep: "Passer cette étape|Skip this step|Saltar este paso|Schritt überspringen",
   bgPicDel: "Supprimer cette image|Delete this image|Eliminar esta imagen|Dieses Bild löschen", bgPicGone: "Image supprimée|Image deleted|Imagen eliminada|Bild gelöscht", bgPicHint: "Fond : ta photo|Background: your photo|Fondo: tu foto|Hintergrund: dein Foto",
+  settings: "Paramètres|Settings|Ajustes|Einstellungen", mMove: "Déplacer|Move|Mover|Verschieben",
+  mMoveDrag: "Lâche l’heure sur un emplacement|Drop the clock on a spot|Suelta la hora en un sitio|Lass die Uhr auf einem Platz los", mMovePick: "Clique sur l’emplacement voulu pour l’heure|Click where the clock should go|Haz clic donde quieres la hora|Klicke dorthin, wo die Uhr hin soll",
+  mCancel: "Annuler|Cancel|Cancelar|Abbrechen", mBgColors: "Couleurs du fond|Background colors|Colores del fondo|Hintergrundfarben", mBgPhoto: "Mettre ma photo en fond…|Use my photo as background…|Poner mi foto de fondo…|Eigenes Foto als Hintergrund…",
+  mAdvanced: "Réglages avancés|Advanced settings|Ajustes avanzados|Erweiterte Einstellungen", mTip: "Astuce : clique directement sur l’heure, la date ou le fond pour les modifier (le clic droit marche aussi).|Tip: click the time, the date or the background to change them (right-click works too).|Consejo: haz clic en la hora, la fecha o el fondo para cambiarlos (también con clic derecho).|Tipp: Klicke auf Uhrzeit, Datum oder Hintergrund, um sie zu ändern (Rechtsklick geht auch).",
+  mBigger: "Plus grand|Bigger|Más grande|Größer", mSmaller: "Plus petit|Smaller|Más pequeño|Kleiner", mFront: "Mettre devant|Bring to front|Traer al frente|Nach vorne", mCorner: "Ranger dans le coin|Back to the corner|Volver a la esquina|Zurück in die Ecke",
+  mOpen: "Ouvrir en grand|Open full size|Abrir en grande|Groß öffnen", mDelete: "Supprimer|Delete|Eliminar|Löschen", mDuration: "Durée|Duration|Duración|Dauer", mH12: "Format 12 h (AM/PM)|12-hour (AM/PM)|Formato 12 h (AM/PM)|12-Stunden (AM/PM)",
+  mAutoTheme: "Thème selon la date|Theme by date|Tema según la fecha|Thema nach Datum", mFormat: "Format|Format|Formato|Format", mDateHead: "La date|The date|La fecha|Das Datum",
   picBtn: "Image à côté de l’heure (I)|Image next to the time (I)|Imagen junto a la hora (I)|Bild neben der Uhrzeit (I)", picsH: "Images à côté de l’heure|Images next to the time|Imágenes junto a la hora|Bilder neben der Uhrzeit",
   picAdd: "Ajouter une image|Add an image|Añadir una imagen|Bild hinzufügen", picN: "Image|Image|Imagen|Bild", picDel: "Retirer l’image|Remove the image|Quitar la imagen|Bild entfernen",
   picSmaller: "Image plus petite|Smaller image|Imagen más pequeña|Kleineres Bild", picBigger: "Image plus grande|Bigger image|Imagen más grande|Größeres Bild", picResize: "Tirer pour changer la taille|Drag to resize|Arrastra para cambiar el tamaño|Ziehen, um die Größe zu ändern",
@@ -539,26 +534,18 @@ const T_RAW = {
   autoTheme: "Changer de thème tout seul selon la date|Change theme automatically by date|Cambiar de tema solo según la fecha|Thema automatisch nach Datum wechseln",
   today: "aujourd’hui|today|hoy|heute", autoOff: "Thème automatique désactivé|Automatic theme turned off|Tema automático desactivado|Automatisches Thema ausgeschaltet",
   autoOn: "Thème du jour :|Today’s theme:|Tema del día:|Thema des Tages:", tmVisual: "Disque visuel|Visual disc|Disco visual|Visuelle Scheibe",
-  help: "Revoir le tuto|Show the tour again|Ver el tutorial|Tour erneut ansehen",
+  help: "Aide et guide|Help and guide|Ayuda y guía|Hilfe und Anleitung",
   tourNext: "Suivant|Next|Siguiente|Weiter", tourPrev: "Précédent|Back|Anterior|Zurück", tourSkip: "Passer le tuto|Skip the tour|Saltar el tutorial|Tour überspringen", tourEnd: "C’est parti !|Let’s go!|¡Vamos!|Los geht’s!",
-  tour1t: "Votre horloge|Your clock|Tu reloj|Deine Uhr",
-  tour1: "Elle s’adapte à l’écran et au vidéoprojecteur. Double-cliquez dessus pour passer en plein écran.|It fits any screen or projector. Double-click it to go fullscreen.|Se adapta a la pantalla y al proyector. Haz doble clic para verla en pantalla completa.|Sie passt sich Bildschirm und Beamer an. Doppelklick für Vollbild.",
-  tour2t: "Thèmes|Themes|Temas|Themen",
-  tour2: "Des thèmes tout prêts : saisons, fêtes, Halloween… et un bouton pour changer de thème tout seul selon la date.|Ready-made themes: seasons, holidays, Halloween… plus a switch to change theme automatically by date.|Temas listos: estaciones, fiestas, Halloween… y un botón para cambiar de tema solo según la fecha.|Fertige Themen: Jahreszeiten, Feste, Halloween … und ein Schalter, der das Thema automatisch nach Datum wechselt.",
-  tour3t: "Personnaliser|Customize|Personalizar|Anpassen",
-  tour3: "Police, couleurs, fond (images, décors animés…) et effets : tout se règle dans ces onglets.|Font, colors, background (images, animated scenery…) and effects: it’s all in these tabs.|Fuente, colores, fondo (imágenes, decorados animados…) y efectos: todo está en estas pestañas.|Schrift, Farben, Hintergrund (Bilder, animierte Kulissen …) und Effekte: alles in diesen Tabs.",
-  tour4t: "Réglages|Settings|Ajustes|Einstellungen",
-  tour4: "Format 12 h ou 24 h, secondes, langue et format de la date, position à l’écran, message au-dessus de l’heure…|12 or 24 h, seconds, date language and format, position on screen, message above the time…|12 o 24 h, segundos, idioma y formato de la fecha, posición en pantalla, mensaje sobre la hora…|12 oder 24 h, Sekunden, Sprache und Format des Datums, Position, Nachricht über der Uhrzeit …",
-  tour5t: "Horloge, minuteur, chrono, sonomètre|Clock, timer, stopwatch, sound meter|Reloj, temporizador, cronómetro, sonómetro|Uhr, Timer, Stoppuhr, Lärmampel",
-  tour5: "Le minuteur affiche un disque qui se vide et passe du vert à l’orange puis au rouge. Le chrono garde les tours. Le sonomètre montre le bruit de la classe. Le dernier bouton affiche un site ou une image avec l’heure par-dessus.|The timer shows a disc that empties and turns from green to orange to red. The stopwatch keeps laps. The sound meter shows how noisy the class is. The last button shows a website or an image with the time on top.|El temporizador muestra un disco que se vacía y pasa de verde a naranja y a rojo. El cronómetro guarda las vueltas. El sonómetro muestra el ruido de la clase. El último botón muestra un sitio o una imagen con la hora encima.|Der Timer zeigt eine Scheibe, die sich leert und von Grün über Orange zu Rot wechselt. Die Stoppuhr speichert Runden. Die Lärmampel zeigt, wie laut die Klasse ist. Der letzte Knopf zeigt eine Website oder ein Bild mit der Uhrzeit darüber.",
-  tour6t: "Notes et images|Notes and images|Notas e imágenes|Notizen und Bilder",
-  tour6: "Une note pour une consigne ou les devoirs (touche N), ou une image de votre ordinateur à poser à côté de l’heure (touche I). Glissez-les où vous voulez et changez leur taille : elles restent enregistrées.|A note for instructions or homework (N key), or an image from your computer placed next to the time (I key). Drag them anywhere and resize them: they stay saved.|Una nota para una consigna o los deberes (tecla N), o una imagen de tu ordenador junto a la hora (tecla I). Muévelas y cambia su tamaño: se quedan guardadas.|Eine Notiz für Aufgaben oder Hausaufgaben (Taste N) oder ein Bild von deinem Computer neben der Uhrzeit (Taste I). Verschiebe sie und ändere ihre Größe: Sie bleiben gespeichert.",
-  tour7t: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich",
-  tour7: "Un style au hasard à chaque clic (touche S).|A random style with every click (S key).|Un estilo al azar con cada clic (tecla S).|Bei jedem Klick ein zufälliger Stil (Taste S).",
-  tour8t: "Plein écran|Fullscreen|Pantalla completa|Vollbild",
-  tour8: "Pour projeter au tableau (touche F, ou double-clic sur l’heure).|To project on the board (F key, or double-click the time).|Para proyectar en la pizarra (tecla F o doble clic en la hora).|Zum Projizieren an die Tafel (Taste F oder Doppelklick auf die Uhrzeit).",
-  tour9t: "Besoin d’aide ?|Need help?|¿Necesitas ayuda?|Hilfe gebraucht?",
-  tour9: "Ce bouton lance le guide complet, où tu essaies chaque fonction toi-même. Bonne classe !|This button replays the tour anytime. Have a great class!|Este botón vuelve a mostrar el tutorial cuando quieras. ¡Buena clase!|Dieser Knopf zeigt die Tour jederzeit erneut. Viel Spaß im Unterricht!",
+  tour1t: "Clique sur l’heure|Click the time|Haz clic en la hora|Klicke auf die Uhrzeit",
+  tour1: "Un menu s’ouvre : police, couleur, taille, format… Pour la déplacer, appuie dessus et glisse-la.|A menu opens: font, color, size, format… To move it, press and drag it.|Se abre un menú: fuente, color, tamaño, formato… Para moverla, mantén pulsado y arrástrala.|Ein Menü öffnet sich: Schrift, Farbe, Größe, Format … Zum Verschieben gedrückt halten und ziehen.",
+  tour2t: "Clique sur le fond|Click the background|Haz clic en el fondo|Klicke auf den Hintergrund",
+  tour2: "Thèmes, décor, couleurs, ta photo, notes, images, plein écran : tout est dans le menu du fond. Le clic droit marche aussi partout.|Themes, scenery, colors, your photo, notes, images, fullscreen: it’s all in the background menu. Right-click works everywhere too.|Temas, decorado, colores, tu foto, notas, imágenes, pantalla completa: todo está en el menú del fondo. El clic derecho también funciona.|Themen, Kulisse, Farben, dein Foto, Notizen, Bilder, Vollbild: alles im Menü des Hintergrunds. Rechtsklick geht überall.",
+  tour3t: "Minuteur, chrono…|Timer, stopwatch…|Temporizador, cronómetro…|Timer, Stoppuhr …",
+  tour3: "En haut : l’horloge, le minuteur, le chrono, le sonomètre et l’affichage d’un site ou d’une image.|At the top: clock, timer, stopwatch, sound meter and showing a website or an image.|Arriba: reloj, temporizador, cronómetro, sonómetro y mostrar un sitio o una imagen.|Oben: Uhr, Timer, Stoppuhr, Lärmampel und Anzeige einer Website oder eines Bildes.",
+  tour4t: "Paramètres|Settings|Ajustes|Einstellungen",
+  tour4: "Format de l’heure, date, langue, position… et, tout en bas, les réglages avancés.|Time format, date, language, position… and advanced settings at the bottom.|Formato de la hora, fecha, idioma, posición… y abajo, los ajustes avanzados.|Zeitformat, Datum, Sprache, Position … und ganz unten die erweiterten Einstellungen.",
+  tour5t: "Besoin d’aide ?|Need help?|¿Necesitas ayuda?|Hilfe gebraucht?",
+  tour5: "Ce bouton lance le guide complet, où tu essaies tout toi-même. Bonne classe !|This button starts the full guide, where you try everything yourself. Have a great class!|Este botón inicia la guía completa, donde lo pruebas todo tú. ¡Buena clase!|Dieser Knopf startet die ganze Anleitung, in der du alles selbst ausprobierst. Viel Spaß im Unterricht!",
 };
 const T = {}; for (const k in T_RAW) T[k] = four(T_RAW[k]);
 
@@ -712,7 +699,7 @@ function renderAlarm(kind, sr) {
     });
   } catch (e) { return Promise.resolve(null); }
 }
-const TAB_IDS = ['presets', 'font', 'colors', 'bg', 'fx', 'clock', 'date', 'layout'];
+const TAB_IDS = ['display', 'presets', 'font', 'colors', 'bg', 'fx'];
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
 const SCENE_FETES = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
@@ -720,42 +707,46 @@ const SCENE_FETES = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentin
 const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'london', 'holo', 'trippy'];
 const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
 const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', holo: '🛰️', trippy: '🌀' };
-const TOUR = [['clock'], ['tab-presets'], ['tab-font', 'tab-colors', 'tab-bg', 'tab-fx'], ['tab-clock', 'tab-date', 'tab-layout'], ['modes'], ['note', 'img'], ['surprise'], ['fs'], ['help']];
+const TOUR = [['clock'], ['bgspot'], ['modes'], ['settings'], ['help']];
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
 // act(st, b) : vrai quand l'action demandée est faite (b = état au début de l'étape). prep(app) : remet le décor si on revient en arrière.
-const tabIs = (id) => (st) => st.tab === id, modeIs = (m) => (st) => st.s.mode === m;
-const prepTab = (id) => (a) => { if (a.state.tab !== id) a.openTab(id); };
-const prepMode = (m, close = true) => (a) => { if (close && a.state.tab) a.setState({ tab: null }); a.setMode(m); };
+const modeIs = (m) => (st) => st.s.mode === m;
+const prepMode = (m, close = true) => (a) => { if (close && a.state.tab) a.setState({ tab: null }); a.closeMenu(); a.setMode(m); };
+// ouvre le menu d'un élément (au milieu de cet élément) pour l'étape du guide
+const tourSpot = (sel) => { const el = document.querySelector(`[data-tour="${sel}"]`), r = el ? el.getBoundingClientRect() : null; return r && r.width ? [r.left + r.width / 2, r.top + r.height / 2] : [window.innerWidth / 2, window.innerHeight / 2]; };
+const prepMenu = (kind, sel) => (a) => { if (a.state.tab) a.setState({ tab: null }); const m = a.state.menu; if (!m || m.kind !== kind) { const [x, y] = tourSpot(sel); a.openMenu(kind, x, y); } };
+const prepSub = (kind, sel, key) => (a) => {
+  prepMenu(kind, sel)(a);
+  setTimeout(() => { const m = a.state.menu, el = document.querySelector(`[data-tour="mi-${key}"]`); if (m && el && !(m.open[0] && m.open[0].key === key)) { const r = el.getBoundingClientRect(); a.menuOpenSub(0, key, { left: r.left, right: r.right, top: r.top }); } }, 80);
+};
 const LONG_TOUR = [
-  { t: ['clock'], h: 'Bienvenue !', x: 'Voici la visite complète de Findheure. Je te montre chaque bouton avec une flèche, et parfois c’est toi qui fais : suis simplement les consignes « À toi ». Tu peux passer une étape ou quitter à tout moment (Échap).', prep: prepMode('clock') },
-  { t: ['tab-presets'], h: 'Les thèmes', x: 'En haut, ces onglets règlent tout l’apparence de l’horloge. On commence par les thèmes tout prêts.', act: tabIs('presets'), d: 'Clique sur l’onglet « Thèmes ».', prep: (a) => { if (a.state.tab && a.state.tab !== 'presets') a.setState({ tab: null }); } },
-  { t: ['card-autumn', 'card-spring'], h: 'Choisis un thème', x: 'Chaque carte change d’un coup la police, les couleurs et le décor animé. Tu pourras toujours revenir en arrière.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur une carte, par exemple « Automne » ou « Printemps ».', prep: prepTab('presets') },
-  { t: ['tog-auto'], h: 'Thème automatique', x: 'Avec cet interrupteur, l’horloge change de thème toute seule selon la date : Rentrée en septembre, Halloween fin octobre, Noël en décembre… Pratique si tu ne veux plus y penser. Plus bas, tu peux aussi enregistrer ton propre style pour le retrouver.', prep: prepTab('presets') },
-  { t: ['tab-font'], h: 'La police', x: 'Ouvrons maintenant le choix de la police des chiffres.', act: tabIs('font'), d: 'Clique sur l’onglet « Police ».' },
-  { t: ['fontgrid'], h: 'Choisis une police', x: 'Chaque case montre l’heure avec la police. Sous la grille, tu règles l’épaisseur, l’italique et l’espacement des chiffres.', act: (st, b) => st.s.font !== b.s.font, d: 'Clique sur une police qui te plaît.', prep: prepTab('font') },
-  { t: ['tab-colors'], h: 'Les couleurs', x: 'Couleur des chiffres, de la date et couleur d’accent (boutons, minuteur). Le contraste reste lisible quoi qu’il arrive.', act: tabIs('colors'), d: 'Ouvre l’onglet « Couleurs » et essaie une couleur.' },
-  { t: ['tab-bg'], h: 'Le fond', x: 'Couleur unie, dégradé, décor animé, ta propre image ou vidéo depuis ton ordinateur, ou une image en ligne.', act: tabIs('bg'), d: 'Ouvre l’onglet « Fond » pour voir les choix.' },
-  { t: ['tab-fx'], h: 'Les effets', x: 'Ombre, contour, lueur, reflet… pour faire ressortir les chiffres sur un fond chargé.', prep: (a) => { if (a.state.tab !== 'bg' && a.state.tab !== 'fx') a.openTab('bg'); } },
-  { t: ['tab-clock', 'tab-date', 'tab-layout'], h: 'Horloge, date et disposition', x: '« Horloge » : 12 h ou 24 h, secondes, séparateur, autre fuseau horaire. « Date » : langue, format, message au-dessus de l’heure. « Disposition » : position à l’écran, taille de l’heure et barre de progression de la journée.' },
-  { t: ['close'], h: 'Fermer le panneau', x: 'Quand c’est réglé, on ferme le panneau. Tout est enregistré automatiquement dans ce navigateur.', act: (st) => !st.tab, d: 'Clique sur la croix pour fermer le panneau.', prep: (a) => { if (!a.state.tab) a.openTab('layout'); } },
-  { t: ['mode-timer'], h: 'Le minuteur', x: 'Ces boutons changent ce qui s’affiche au centre : horloge, minuteur, chronomètre, sonomètre et mode présentation.', act: modeIs('timer'), d: 'Clique sur l’icône du minuteur (le sablier).', prep: (a) => { if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['clock'], h: 'Bienvenue !', x: 'Le principe est simple : tu cliques sur ce que tu veux changer (l’heure, la date, le fond…) et un menu apparaît, comme le clic droit sur Windows. Je te montre, et parfois c’est toi qui fais : suis les consignes « À toi ». Échap pour quitter.', prep: prepMode('clock') },
+  { t: ['clock'], h: 'Clique sur l’heure', x: 'Un clic sur l’heure ouvre son menu : déplacer, taille, police, couleur, effets, format…', act: (st) => !!(st.menu && st.menu.kind === 'time'), d: 'Clique sur les chiffres de l’heure.', prep: prepMode('clock') },
+  { t: ['mi-font'], h: 'Les sous-menus', x: 'Les lignes avec une flèche › ouvrent un sous-menu : passe la souris dessus, ou clique (pratique sur un tableau tactile).', act: (st) => !!(st.menu && st.menu.open[0] && st.menu.open[0].key === 'font'), d: 'Clique sur « Police ».', prep: prepMenu('time', 'clock') },
+  { t: ['menu1'], h: 'Choisis une police', x: 'Chaque nom est écrit dans sa police. Le menu reste ouvert : tu peux en essayer plusieurs.', act: (st, b) => st.s.font !== b.s.font, d: 'Clique sur une police qui te plaît.', prep: prepSub('time', 'clock', 'font') },
+  { t: ['mi-color'], h: 'La couleur', x: 'Même principe pour la couleur des chiffres. La pastille arc-en-ciel donne n’importe quelle couleur.', act: (st, b) => st.s.color !== b.s.color, d: 'Ouvre « Couleur » et clique une couleur.', prep: prepMenu('time', 'clock') },
+  { t: ['clock'], h: 'Fermer un menu', x: 'Pour fermer un menu : clique à côté, ou appuie sur Échap. Tout est enregistré tout seul.', act: (st) => !st.menu, d: 'Clique à côté du menu.' },
+  { t: ['clock'], h: 'Déplace l’heure', x: 'Appuie sur l’heure et glisse-la : neuf emplacements apparaissent, lâche-la dans celui que tu veux. (« Déplacer » dans son menu fait pareil.)', act: (st, b) => st.s.pos !== b.s.pos, d: 'Glisse l’heure vers un coin de l’écran.', prep: prepMode('clock') },
+  { t: ['bgspot'], h: 'Clique sur le fond', x: 'Le fond a son menu à lui : thèmes, décor, couleurs, ta photo, notes, images…', act: (st) => !!(st.menu && st.menu.kind === 'bg'), d: 'Clique sur le fond, là où il n’y a rien.', prep: prepMode('clock') },
+  { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Ouvre « Thèmes » et choisis-en un.', prep: prepMenu('bg', 'bgspot') },
+  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres.', prep: prepMenu('bg', 'bgspot') },
+  { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepMenu('bg', 'bgspot') },
+  { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut ; un clic sur cette barre ouvre son menu : couleur, taille du texte, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
+  { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, il ne reste que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['tm-10'], h: 'Une durée toute prête', x: 'Ces pastilles mettent le minuteur à une durée en un clic.', act: (st) => st.tm.dur === 600000, d: 'Clique sur « 10 min ».', prep: prepMode('timer') },
-  { t: ['tm-custom', 'tm-ok'], h: 'Ta propre durée', x: 'Besoin de 7 min 30 ? Le bouton « Personnaliser » te laisse taper les heures, minutes et secondes, puis OK (ou Entrée).', act: (st, b) => st.tm.dur !== b.tm.dur && !st.tmEdit, d: 'Clique sur « Personnaliser », tape par exemple 2 min, puis OK.', prep: prepMode('timer') },
+  { t: ['tm-custom', 'tm-ok'], h: 'Ta propre durée', x: 'Besoin de 7 min 30 ? « Personnaliser » te laisse taper les heures, minutes et secondes, puis OK (ou Entrée).', act: (st, b) => st.tm.dur !== b.tm.dur && !st.tmEdit, d: 'Clique sur « Personnaliser », tape par exemple 2 min, puis OK.', prep: prepMode('timer') },
   { t: ['tm-go'], h: 'Lance-le !', x: 'Le disque se vide et passe du vert à l’orange puis au rouge. La barre d’espace démarre et met en pause aussi.', act: (st) => !!st.tm.endAt, d: 'Clique sur « Démarrer ».', prep: prepMode('timer') },
-  { t: ['tm-go', 'tm-pin'], h: 'Pendant qu’il tourne', x: 'Les boutons − et + retirent ou ajoutent une minute, la flèche ronde remet à zéro, le camembert passe à un affichage en chiffres seuls. Quand il est arrêté, tu choisis aussi la sonnerie de fin : elle sonne une fois, fort, et un bouton permet de la tester.', prep: prepMode('timer') },
+  { t: ['clock'], h: 'Son menu à lui', x: 'Un clic sur le minuteur ouvre son menu : pause, durée, sonnerie de fin (elle sonne une fois, fort), épingler sur l’horloge…', prep: prepMode('timer') },
   { t: ['tm-pin'], h: 'Épingle-le', x: 'Épingler garde le minuteur dans un coin de l’écran, même quand tu reviens à l’horloge.', act: (st) => !!st.s.pinTimer, d: 'Clique sur le bouton « épingler ».', prep: prepMode('timer') },
-  { t: ['mode-stopwatch'], h: 'Le chronomètre', x: 'Le chrono compte vers le haut et garde les tours (bouton « Tour »). On peut aussi l’épingler.', act: modeIs('stopwatch'), d: 'Ouvre le chronomètre.' },
-  { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. Le dernier bouton affiche un site, une vidéo ou une image en grand, avec l’heure par-dessus.' },
-  { t: ['mode-clock'], h: 'Retour à l’horloge', x: 'On revient à l’heure.', act: modeIs('clock'), d: 'Clique sur l’icône de l’horloge.' },
-  { t: ['pin-pt'], h: 'Ton minuteur épinglé', x: 'Il continue de tourner ici. Glisse-le où tu veux, change sa taille avec ses petits boutons + et −, double-clique pour le ranger dans le coin. Le bouton « épingler » du minuteur le retire.', prep: prepMode('clock') },
-  { t: ['note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou un mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur ce bouton pour créer une note.', prep: prepMode('clock') },
-  { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre, change sa taille par le coin, choisis sa couleur, et la poubelle la supprime. Elle reste enregistrée.' },
-  { t: ['img'], h: 'Une image', x: 'Ce bouton pose une image de ton ordinateur à côté de l’heure (touche I) : un logo, une photo de la classe… Glisse-la pour la déplacer et tire son coin en bas à droite pour la taille.' },
-  { t: ['surprise'], h: 'Surprends-moi', x: 'Un style au hasard à chaque clic (touche S). Si ça ne te plaît pas, reclique !', act: (st, b) => st.s.font !== b.s.font || st.s.accent !== b.s.accent, d: 'Clique sur « Surprends-moi ».' },
-  { t: ['reset'], h: 'Tout remettre à zéro', x: 'Ce bouton remet le style de départ. Un message te laisse annuler pendant quelques secondes si tu t’es trompé.' },
-  { t: ['fs'], h: 'Plein écran', x: 'Pour projeter au tableau : ce bouton, la touche F ou un double-clic sur l’heure. Les boutons se cachent tout seuls quand la souris ne bouge plus.' },
-  { t: ['help'], h: 'C’est toi qui joues !', x: 'Tu sais tout. Ce bouton relance ce guide quand tu veux. Bonne classe !' },
+  { t: ['mode-stopwatch'], h: 'Le chronomètre', x: 'Le chrono compte vers le haut et garde les tours.', act: modeIs('stopwatch'), d: 'Ouvre le chronomètre.' },
+  { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. « Site ou image » affiche une page, une vidéo ou une image en grand, avec l’heure par-dessus.' },
+  { t: ['mode-clock'], h: 'Retour à l’horloge', x: 'On revient à l’heure.', act: modeIs('clock'), d: 'Clique sur « Horloge ».' },
+  { t: ['pin-pt'], h: 'Ton minuteur épinglé', x: 'Il continue de tourner ici. Glisse-le où tu veux ; un clic dessus ouvre son menu : taille, ranger dans le coin, ouvrir en grand, retirer.', prep: prepMode('clock') },
+  { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, boutons qui se cachent… Tout en bas : les réglages avancés.', act: (st) => st.tab === 'display', d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['close'], h: 'Ferme les paramètres', x: 'Tout est enregistré automatiquement dans ce navigateur.', act: (st) => !st.tab, d: 'Clique sur la croix.', prep: (a) => { if (a.state.tab !== 'display') a.openTab('display'); } },
+  { t: ['fs'], h: 'Plein écran', x: 'Pour projeter au tableau : ce bouton ou la touche F. Les boutons se cachent tout seuls quand la souris ne bouge plus.' },
+  { t: ['help'], h: 'C’est toi qui joues !', x: 'Retiens juste ceci : clique sur ce que tu veux changer. Ce bouton relance ce guide quand tu veux. Bonne classe !' },
 ];
 
 const NOTE_FS = [14, 80], PIN_K = [0.6, 3], PIC_W = [0.04, 0.9];
@@ -967,14 +958,12 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
   loaded = new Set(['Geist', 'Bricolage Grotesque', 'Creepster', 'Griffy', 'Caveat']);
   offs = [];
-  tabEls = {};
-  tabRefs = {};
   cells = new Map();
   zTop = 10;
 
@@ -985,7 +974,8 @@ class Component extends DCLogic {
     const loop = () => { this.tick(); this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10); };
     this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10);
     const on = (t, ev, fn, o) => { t.addEventListener(ev, fn, o); this.offs.push(() => t.removeEventListener(ev, fn, o)); };
-    on(window, 'resize', () => this.setState({ vw: window.innerWidth, vh: window.innerHeight }));
+    on(window, 'resize', () => this.setState({ vw: window.innerWidth, vh: window.innerHeight, menu: null }));
+    on(window, 'pointermove', this.clockMove); on(window, 'pointerup', this.clockUp); on(window, 'pointercancel', this.clockUp);
     ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => on(window, ev, this.activity, { passive: true }));
     on(window, 'keydown', this.onKey);
     on(document, 'fullscreenchange', () => this.setState({ fs: !!document.fullscreenElement }));
@@ -1015,8 +1005,9 @@ class Component extends DCLogic {
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
     if (key !== this.mKey) { this.mKey = key; this.measure(); }
     if (this.titleStr && this.titleStr !== this.lastTitle) { this.lastTitle = this.titleStr; document.title = this.titleStr; }
-    this.syncInd();
     this.syncFast();
+    this.placeMenu();
+    this.runFlip();
     this.tourMeasure();
     this.tourCheck();
     if (this.snd && s.mode !== 'sound' && !s.pinSnd) this.sndStop();
@@ -1057,27 +1048,6 @@ class Component extends DCLogic {
   };
   pickPreset = (ps) => { const was = this.state.s.autoTheme; this.setS({ ...ps, autoTheme: false }); if (was) this.toast(this.L().autoOff); };
   // Pastille animée sous l'onglet actif de la barre du haut
-  // repère sous l'onglet actif : on le déplace directement, sans relancer le rendu de toute la page
-  indRef = React.createRef();
-  syncInd = () => {
-    const st = this.state, el = st.tab && this.tabEls[st.tab], ind = this.indRef.current; if (!ind) return;
-    const k = el ? [st.tab, el.offsetLeft, el.offsetTop, el.offsetWidth].join(',') : '';
-    if (k === this.indK) return; this.indK = k;
-    const prev = this.indTab; this.indTab = el ? st.tab : null;
-    if (!el) { ind.style.transition = 'opacity .25s ease'; ind.style.opacity = '0'; return; }
-    const ease = 'cubic-bezier(.3,1.25,.45,1)', slide = !!prev;
-    ind.style.transition = slide ? `transform .5s ${ease}, width .5s ${ease}, opacity .2s ease` : 'opacity .25s ease';
-    Object.assign(ind.style, { width: el.offsetWidth + 'px', transform: `translate(${el.offsetLeft}px, ${el.offsetTop}px)`, opacity: '1' });
-    if (prev === st.tab || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) return;
-    // petit rebond en arrivant et une onde
-    const [ring, body] = ind.children;
-    body.animate(slide
-      ? [{ transform: 'scale(1)' }, { transform: 'scale(1.14,.86)', offset: 0.25 }, { transform: 'scale(.93,1.08)', offset: 0.55 }, { transform: 'scale(1.03,.97)', offset: 0.75 }, { transform: 'scale(1)' }]
-      : [{ transform: 'scale(.5,.4)', opacity: 0 }, { transform: 'scale(1.06,1.08)', opacity: 1, offset: 0.6 }, { transform: 'scale(1)', opacity: 1 }],
-      { duration: slide ? 700 : 500, easing: slide ? 'ease-out' : 'cubic-bezier(.3,1.5,.5,1)' });
-    ring.animate([{ transform: 'scale(1)', opacity: 0.75 }, { transform: 'scale(1.22,1.3)', opacity: 0 }], { duration: 750, delay: 300, easing: 'cubic-bezier(.15,.7,.3,1)', fill: 'both' });
-  };
-  tabRef = (id) => this.tabRefs[id] || (this.tabRefs[id] = (el) => { this.tabEls[id] = el; });
   // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
   syncFast = () => {
     const st = this.state, m = st.s.mode;
@@ -1243,8 +1213,9 @@ class Component extends DCLogic {
     d.moved = true; const st = this.state;
     this.setState({ pinDrag: { id: d.id, x: Math.max(0, Math.min(st.vw - d.w, e.clientX - d.dx)), y: Math.max(0, Math.min(st.vh - d.h, e.clientY - d.dy)) } });
   };
-  pinUp = () => {
+  pinUp = (e) => {
     const d = this.pinD; if (!d) return; this.pinD = null;
+    if (!d.moved && e && e.clientX != null) { this.openMenu('pin', e.clientX, e.clientY, d.id); return; }
     const st = this.state, p = st.pinDrag;
     if (d.moved && p) this.setS({ pinPos: { ...(st.s.pinPos || {}), [d.id]: { x: p.x / st.vw, y: p.y / st.vh } } });
     this.setState({ pinDrag: null });
@@ -1311,6 +1282,108 @@ class Component extends DCLogic {
   };
   stopEv = (e) => { e.stopPropagation(); };
 
+  // ---------- menus comme le clic droit de Windows : sur l'heure, la date, le fond, une note, une image, une carte ----------
+  menuEls = [];
+  menuRefs = [];
+  menuRef = (i) => this.menuRefs[i] || (this.menuRefs[i] = (el) => { this.menuEls[i] = el; });
+  openMenu = (kind, x, y, id) => {
+    clearTimeout(this.menuT);
+    this.setState({ menu: { kind, x, y, id: id || '', open: [] }, tab: null, idle: false });
+  };
+  closeMenu = () => { clearTimeout(this.menuT); if (this.state.menu) this.setState({ menu: null }); this.activity(); };
+  // quel menu ouvrir pour l'élément cliqué (attribut data-menu, sinon celui du fond)
+  menuAt = (x, y, target) => {
+    const el = target && target.closest ? target.closest('[data-menu]') : null, k = el ? el.getAttribute('data-menu') : 'bg';
+    if (k === 'none') return false;
+    const [kind, id] = k.split(':'); this.openMenu(kind, x, y, id); return true;
+  };
+  onCtx = (e) => {
+    const tg = e.target;
+    if (tg && tg.closest && tg.closest('input, textarea, select, [contenteditable="true"]')) return; // menu habituel pour copier-coller
+    if (this.state.ringing) { e.preventDefault(); this.stopAlarm(); return; }
+    if (this.menuAt(e.clientX, e.clientY, tg)) e.preventDefault();
+  };
+  // clic droit pendant qu'un menu est ouvert : on le rouvre là où on a cliqué (comme Windows)
+  menuReopen = (e) => {
+    e.preventDefault();
+    const all = document.elementsFromPoint(e.clientX, e.clientY);
+    if (all[0] && all[0].closest('.fh-menu')) return;
+    const el = all.find(n => !n.closest('[data-menu-layer]'));
+    this.closeMenu(); if (el) this.menuAt(e.clientX, e.clientY, el);
+  };
+  // sous-menus : ouverts au survol (souris) ou au clic (tableau tactile)
+  menuOpenSub = (level, key, rect) => {
+    const m = this.state.menu; if (!m) return;
+    const open = m.open.slice(0, level); if (key) open.push({ key, rect });
+    if (key && /font/i.test(key)) this.ensureFonts(FONTS.map(f => f.name));
+    this.setState({ menu: { ...m, open } });
+  };
+  menuHover = (level, key, el) => {
+    clearTimeout(this.menuT);
+    const m = this.state.menu; if (!m) return;
+    const cur = m.open[level];
+    if (key ? cur && cur.key === key : m.open.length <= level) return;
+    const r = el.getBoundingClientRect(), rect = { left: r.left, right: r.right, top: r.top };
+    this.menuT = setTimeout(() => this.menuOpenSub(level, key, rect), key ? 140 : 280);
+  };
+  menuClick = (level, it, el) => {
+    clearTimeout(this.menuT);
+    if (it.sub) { const r = el.getBoundingClientRect(); this.menuOpenSub(level, it.key, { left: r.left, right: r.right, top: r.top }); return; }
+    if (it.disabled) return;
+    if (it.act) it.act();
+    if (!it.keep) this.closeMenu();
+  };
+  // place chaque menu : au clic pour le premier, à côté de la ligne pour les sous-menus, toujours dans l'écran
+  placeMenu = () => {
+    const m = this.state.menu; if (!m) return;
+    const vw = window.innerWidth, vh = window.innerHeight, pad = 8;
+    this.menuEls.forEach((el, i) => {
+      if (!el || !el.isConnected) return;
+      const w = el.offsetWidth, h = el.offsetHeight; let x, y;
+      if (i === 0) { x = m.x; y = m.y; if (x + w > vw - pad) x = Math.max(pad, m.x - w); }
+      else { const a = (m.open[i - 1] || {}).rect; if (!a) return; x = a.right - 3; if (x + w > vw - pad) x = Math.max(pad, a.left - w + 3); y = a.top - 5; }
+      if (y + h > vh - pad) y = Math.max(pad, vh - pad - h);
+      el.style.left = Math.round(x) + 'px'; el.style.top = Math.round(y) + 'px';
+    });
+  };
+
+  // ---------- l'heure se glisse d'un emplacement à l'autre (9 emplacements aimantés) ----------
+  blockRef = React.createRef();
+  zoneAt = (x, y) => { const st = this.state, c = Math.max(0, Math.min(2, Math.floor(x / (st.vw / 3)))), r = Math.max(0, Math.min(2, Math.floor(y / (st.vh / 3)))); return POSK[r * 3 + c]; };
+  clockDown = (e) => {
+    if (e.button !== 0 || this.state.menu || this.state.moveMode || (e.target.closest && e.target.closest('[data-tools], button, input, a, textarea'))) return;
+    this.cd = { sx: e.clientX, sy: e.clientY, moved: false };
+  };
+  clockMove = (e) => {
+    const d = this.cd; if (!d) return;
+    const dx = e.clientX - d.sx, dy = e.clientY - d.sy, el = this.blockRef.current;
+    if (!d.moved) { if (Math.hypot(dx, dy) < 8) return; d.moved = true; this.setState({ moveMode: 'drag', dropZone: this.state.s.pos }); }
+    if (el) { el.style.transition = 'none'; el.style.transform = `translate(${Math.round(dx)}px, ${Math.round(dy)}px)`; }
+    const z = this.zoneAt(e.clientX, e.clientY); if (z !== this.state.dropZone) this.setState({ dropZone: z });
+  };
+  clockUp = () => {
+    const d = this.cd; if (!d) return; this.cd = null; if (!d.moved) return;
+    // le clic qui suit le lâcher ne doit pas ouvrir de menu
+    this.noClick = true; setTimeout(() => { this.noClick = false; }, 0);
+    this.placeClock(this.state.dropZone);
+  };
+  // pose l'heure à l'emplacement choisi : elle glisse doucement depuis là où elle était
+  placeClock = (z) => {
+    const el = this.blockRef.current, pos = z || this.state.s.pos;
+    if (el) this.flip = { el, from: el.getBoundingClientRect(), pos };
+    this.setState({ moveMode: null, dropZone: null });
+    if (pos !== this.state.s.pos) this.setS({ pos });
+  };
+  runFlip = () => {
+    const f = this.flip; if (!f || this.state.moveMode || this.state.s.pos !== f.pos) return; this.flip = null;
+    const el = f.el; el.style.transition = 'none'; el.style.transform = '';
+    const to = el.getBoundingClientRect(), dx = f.from.left - to.left, dy = f.from.top - to.top;
+    if (Math.abs(dx) + Math.abs(dy) < 2) return;
+    el.style.transform = `translate(${Math.round(dx)}px, ${Math.round(dy)}px)`; el.getBoundingClientRect();
+    el.style.transition = 'transform .5s cubic-bezier(.2,.9,.3,1.12)'; el.style.transform = '';
+  };
+  openSettings = () => { this.closeMenu(); this.openTab('display'); };
+
   // Notes autocollantes
   saveNotes = () => { try { localStorage.setItem(NKEY, JSON.stringify(this.state.notes)); } catch (e) {} };
   saveNotesSoon = () => { clearTimeout(this.noteT); this.noteT = setTimeout(this.saveNotes, 300); };
@@ -1323,6 +1396,7 @@ class Component extends DCLogic {
     this.ensureFont('Caveat'); this.newNoteId = id;
     this.setState({ notes: [...st.notes, { id, x, y, w, h, c: NOTE_C[i % NOTE_C.length], r: +((Math.random() - 0.5) * 6).toFixed(1), z: ++this.zTop, t: '' }] }, this.saveNotes);
   };
+  noteFs = (id, d) => { const n = this.state.notes.find(x => x.id === id); if (!n) return; const v = n.fs || 23; this.patchNote(id, { fs: Math.max(NOTE_FS[0], Math.min(NOTE_FS[1], v + d * (v >= 32 ? 6 : 3))) }); };
   delNote = (id) => { this.setState(st => ({ notes: st.notes.filter(n => n.id !== id) }), this.saveNotes); };
   raiseNote = (id) => { const n = this.state.notes.find(x => x.id === id); if (n && n.z !== this.zTop) this.patchNote(id, { z: ++this.zTop }, true); };
   noteDown = (e, id) => {
@@ -1330,14 +1404,20 @@ class Component extends DCLogic {
     const n = this.state.notes.find(x => x.id === id); if (!n) return;
     e.preventDefault();
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
-    this.drag = { id, dx: e.clientX - n.x, dy: e.clientY - n.y };
+    this.drag = { id, dx: e.clientX - n.x, dy: e.clientY - n.y, sx: e.clientX, sy: e.clientY, moved: false };
   };
   noteMove = (e) => {
     const d = this.drag; if (!d) return;
+    if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 5) return;
+    d.moved = true;
     const st = this.state, x = Math.max(-120, Math.min(st.vw - 80, e.clientX - d.dx)), y = Math.max(0, Math.min(st.vh - 40, e.clientY - d.dy));
     this.setState({ notes: st.notes.map(n => (n.id === d.id ? { ...n, x, y } : n)) });
   };
-  noteUp = () => { if (!this.drag) return; this.drag = null; this.saveNotes(); };
+  noteUp = (e) => {
+    const d = this.drag; if (!d) return; this.drag = null;
+    if (!d.moved && e && e.clientX != null) { this.openMenu('note', e.clientX, e.clientY, d.id); return; }
+    this.saveNotes();
+  };
   noteSize = (id, e) => { const el = e.currentTarget, n = this.state.notes.find(x => x.id === id); if (n && el && (el.offsetWidth !== n.w || el.offsetHeight !== n.h)) this.patchNote(id, { w: el.offsetWidth, h: el.offsetHeight }); };
 
   // Images posées à côté de l'heure (pas en fond) : on les glisse, on tire le coin pour la taille ; position en fraction de l'écran
@@ -1376,10 +1456,16 @@ class Component extends DCLogic {
   picMove = (e) => {
     const d = this.picD; if (!d) return;
     const st = this.state, dx = (e.clientX - d.sx) / st.vw, dy = (e.clientY - d.sy) / st.vh;
+    if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 5) return;
+    d.moved = true;
     const patch = d.resize ? { w: Math.max(PIC_W[0], Math.min(PIC_W[1], d.w + dx)) } : { x: d.x + dx, y: d.y + dy };
     this.setState({ pics: st.pics.map(q => (q.id === d.id ? { ...q, ...patch } : q)) });
   };
-  picUp = () => { if (!this.picD) return; this.picD = null; this.setState({ picDrag: '' }); this.savePics(); };
+  picUp = (e) => {
+    const d = this.picD; if (!d) return; this.picD = null; this.setState({ picDrag: '' });
+    if (!d.moved && !d.resize && e && e.clientX != null) { this.openMenu('pic', e.clientX, e.clientY, d.id); return; }
+    this.savePics();
+  };
 
   // Fond « grille » : plan en perspective dont les cases s'allument derrière la souris
   gridRef = (el) => { this.gridEl = el; if (el) this.gridStart(); else this.gridStop(); };
@@ -1505,12 +1591,14 @@ class Component extends DCLogic {
   activity = () => {
     if (this.state.idle) this.setState({ idle: false });
     clearTimeout(this.idleT);
-    this.idleT = setTimeout(() => { if (!this.state.tab && !this.overBar && this.state.tour == null) this.setState({ idle: true }); }, (this.state.s.hideDelay || 4) * 1000);
+    this.idleT = setTimeout(() => { if (!this.state.tab && !this.overBar && this.state.tour == null && !this.state.menu && !this.state.moveMode) this.setState({ idle: true }); }, (this.state.s.hideDelay || 4) * 1000);
   };
   barEnter = () => { this.overBar = true; };
   barLeave = () => { this.overBar = false; this.activity(); };
   onKey = (e) => {
     const tg = e.target, tn = tg && tg.tagName;
+    // Échap ferme toujours un menu ou annule le déplacement, même si le curseur est dans un champ
+    if (e.key === 'Escape' && (this.state.menu || this.state.moveMode)) { this.closeMenu(); if (this.state.moveMode) this.placeClock(null); return; }
     if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable) || e.metaKey || e.ctrlKey || e.altKey) return;
     const k = e.key.toLowerCase(), mode = this.state.s.mode;
     if (this.state.tour != null) {
@@ -1522,7 +1610,7 @@ class Component extends DCLogic {
         return;
       }
     }
-    if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); }
+    if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); this.closeMenu(); if (this.state.moveMode) this.placeClock(null); }
     else if (k === 'f') this.toggleFs();
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
@@ -1616,15 +1704,19 @@ class Component extends DCLogic {
   openTab = (id) => {
     const prev = this.state.tab, tab = prev === id ? null : id;
     const panelDir = !prev || !tab ? 'd' : TAB_IDS.indexOf(tab) > TAB_IDS.indexOf(prev) ? 'r' : 'l';
-    this.setState({ tab, panelDir });
+    this.setState({ tab, panelDir, menu: null });
     // Thèmes : seulement les polices des cartes ; Police : toutes
     if (tab === 'font') this.ensureFonts(FONTS.map(f => f.name));
     else if (tab === 'presets') this.ensureFonts([...PRESETS, ...this.state.styles].map(x => x.s.font));
     if (!tab) this.activity();
-    else requestAnimationFrame(() => { const el = this.tabEls[tab]; if (el && el.scrollIntoView) el.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' }); });
   };
   closePanel = () => { if (this.state.tab) this.setState({ tab: null }); this.activity(); };
-  onStage = () => { if (this.state.ringing) this.stopAlarm(); if (this.state.tab) this.closePanel(); };
+  onStage = (e) => {
+    if (this.state.ringing) { this.stopAlarm(); return; }
+    if (this.state.tab) { this.closePanel(); return; }
+    if (this.noClick) return;
+    this.menuAt(e.clientX, e.clientY, e.target);
+  };
   L() { const li = Math.max(0, LANGS.indexOf(this.state.s.uiLang)); if (this._li !== li) { this._li = li; const o = {}; for (const k in T) o[k] = T[k][li]; this._L = o; } return this._L; }
   cardText(ps) {
     const pf = FONT_BY[ps.font] || FONTS[0], g = ps.glow / 100, sh = [];
@@ -1839,13 +1931,12 @@ class Component extends DCLogic {
     const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`, ringSoft = `inset 0 0 0 1.5px ${hexA(ui.fg, 0.4)}`;
     const swRing = (c, on) => (on ? ringOn : contrast(c, ui.solid) < 1.6 ? ringSoft : ringOff);
     const accUi = readable(s.accent, ui.solid, ui.fg);
-    const TABS = [['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['clock', L.tClock], ['date', L.tDate], ['layout', L.tLayout]];
-    const tabs = TABS.map(([id, label]) => ({ label, tour: 'tab-' + id, ref: this.tabRef(id), pick: () => this.openTab(id), fg: st.tab === id ? ui.fg : ui.fg2, hover: st.tab === id ? 'transparent' : ui.hover, anim: st.tab === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const TABS = [['display', L.settings], ['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx]];
     // repère de l'onglet actif, dans le même style que les boutons de mode : seule sa place change
     const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -1930,7 +2021,8 @@ class Component extends DCLogic {
         if (s.weird !== 'none' && s.weird !== 'mirror') rng('weirdSpeed', L.weirdSpeed, 10, 100, 1, raw);
         H(L.hAtmos); rng('vignette', L.vignette, 0, 100, 1, raw); rng('grain', L.grain, 0, 100, 1, raw); tog('scanlines', L.scanlines); tog('tick', L.tick);
       }
-      if (t === 'clock') {
+      const disp = t === 'display';
+      if (disp) {
         H(L.hFormat);
         seg('hour12', L.format, [[false, '24 h'], [true, '12 h']]);
         if (s.hour12) tog('ampm', L.ampm);
@@ -1942,7 +2034,7 @@ class Component extends DCLogic {
         sel('digits', L.digits, NUMS.map(([v, n]) => [v, n[li]]));
         tog('showZone', L.showZone);
       }
-      if (t === 'date') {
+      if (disp) {
         H(L.hLang);
         seg('uiLang', L.uiLang, [['fr', 'Français'], ['en', 'English'], ['es', 'Español'], ['de', 'Deutsch']]);
         sel('locale', L.dateLang, [['auto', L.sameUi], ...LOCALES]);
@@ -1952,7 +2044,7 @@ class Component extends DCLogic {
         sel('calendar', L.calendar, CALS.map(([v, n]) => [v, n[li]]));
         tog('weekNum', L.weekNum); tog('dateUpper', L.upper);
       }
-      if (t === 'layout') {
+      if (disp) {
         H(L.hPlace);
         add({ isPos: true, label: L.position, cells: POSK.map(k => ({ pick: () => this.setS({ pos: k }), bg: s.pos === k ? ui.invBg : 'transparent', dot: s.pos === k ? ui.invFg : ui.fg3 })) });
         rng('size', L.size, 30, 130, 1, pct);
@@ -1971,6 +2063,8 @@ class Component extends DCLogic {
         tog('autoHide', L.autoHide);
         if (s.autoHide) rng('hideDelay', L.hideDelay, 2, 20, 1, v => v + ' s');
         tog('hideCursor', L.hideCursor);
+        H(L.mAdvanced);
+        add({ isChips: true, hasLabel: false, span: '1 / -1', options: TABS.slice(1).map(([id, label]) => ({ label: label + ' ›', pick: () => this.openTab(id), bg: 'transparent', fg: ui.fg, border: ui.border })) });
       }
     }
     const mine = {
@@ -2055,7 +2149,7 @@ class Component extends DCLogic {
       const card = (id, k, lead, big, label, btns, alarm) => {
         const drag = st.pinDrag && st.pinDrag.id === id ? st.pinDrag : null, saved = pinPos[id];
         const free = drag || (saved ? { x: saved.x * st.vw, y: saved.y * st.vh } : null);
-        return E('div', { key: id, 'data-tour': 'pin-' + id, className: 'fh-card', title: L.pinMoveHint, onPointerDown: (e) => this.pinDown(e, id), onPointerMove: this.pinMove, onPointerUp: this.pinUp, onPointerCancel: this.pinUp, onDoubleClick: (e) => { if (!(e.target.closest && e.target.closest('button'))) this.pinReset(id); },
+        return E('div', { key: id, 'data-tour': 'pin-' + id, 'data-menu': 'pin:' + id, className: 'fh-card', title: L.pinMoveHint, onPointerDown: (e) => this.pinDown(e, id), onPointerMove: this.pinMove, onPointerUp: this.pinUp, onPointerCancel: () => this.pinUp(null), onDoubleClick: (e) => { if (!(e.target.closest && e.target.closest('button'))) this.pinReset(id); },
           style: { position: free ? 'absolute' : 'relative', left: free ? Math.max(0, Math.min(st.vw - 80, free.x)) : undefined, top: free ? Math.max(0, Math.min(st.vh - 40, free.y)) : undefined, zIndex: drag ? 2 : 1, display: 'flex', alignItems: 'center', gap: Math.round(12 * k), padding: `${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(10 * k)}px ${Math.round(12 * k)}px`, borderRadius: Math.round(14 + 4 * k), background: ui.panel, border: `1px solid ${alarm ? '#ef4444' : ui.border}`, backdropFilter: 'blur(22px) saturate(1.5)', WebkitBackdropFilter: 'blur(22px) saturate(1.5)', boxShadow: alarm ? '0 0 0 3px rgba(239,68,68,.35), 0 18px 50px rgba(0,0,0,.35)' : ui.shadow, color: ink, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: alarm ? 'fh-ring .8s ease-in-out infinite' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
           lead,
           E('div', { style: { display: 'flex', flexDirection: 'column', gap: Math.round(4 * k), minWidth: 0 } },
@@ -2093,6 +2187,159 @@ class Component extends DCLogic {
       pinsEl = E('div', { style: { position: 'absolute', inset: 0, zIndex: 6, display: 'flex', flexDirection: 'column', justifyContent: top ? 'flex-start' : 'flex-end', alignItems: right ? 'flex-end' : 'flex-start', gap: 10, padding: top ? '72px 18px 0' : '0 18px 34px', boxSizing: 'border-box', pointerEvents: 'none' } }, cards);
     }
 
+    // ---------- menus « clic droit » : une liste simple, des sous-menus en cascade ----------
+    let menuUi = { on: false, el: null };
+    if (st.menu) {
+      const M = st.menu, ink = ui.fg, fCur = FONT_BY[s.font] || FONTS[0];
+      const head = (label) => ({ head: label }), sep = { sep: true };
+      const pctM = (v) => Math.round(v) + ' %';
+      const radio = (k, opts, setter) => opts.map(([v, label]) => ({ key: k + '=' + v, label, check: s[k] === v, act: () => (setter || this.setS)({ [k]: v }), keep: true }));
+      const tog = (k, label, icon) => ({ key: 't-' + k, icon, label, check: !!s[k], act: () => this.setS({ [k]: !s[k] }), keep: true });
+      const sw = (k, cols) => ({ key: 'sw-' + k, swatches: cols, cur: String(s[k] || '').toLowerCase(), pick: (c) => this.setS({ [k]: c }) });
+      const sl = (k, label, min, max, step, fmt, setter) => ({ key: 'sl-' + k, slider: true, label, min, max, step, value: +s[k] || 0, fmt: fmt || String, onInput: (v) => (setter || this.setS)({ [k]: v }) });
+      const move = { key: 'move', icon: 'open_with', label: L.mMove, act: () => this.setState({ moveMode: 'pick', dropZone: null }) };
+      const settings = { key: 'set', icon: 'settings', label: L.settings + '…', act: this.openSettings };
+      // polices : chaque nom écrit dans sa police, rangées par famille
+      const fonts = (k, same) => () => [...(same ? [{ key: k + '=same', label: L.sameFont, check: s[k] === 'same', act: () => this.setS({ [k]: 'same' }), keep: true }] : []),
+        ...CATS.slice(1).flatMap(c => [head(L['cat_' + c]), ...FONTS.filter(f => f.cat === c).map(f => ({ key: k + '=' + f.name, label: f.name, font: stack(f), check: s[k] === f.name, act: () => this.setS(k === 'font' ? { font: f.name, weight: f.dw } : { [k]: f.name }), keep: true }))])];
+      const msgItems = () => [...radio('msg', [['none', L.m_none], ['greet', L.m_greet], ['theme', L.m_theme], ['custom', L.m_custom]]),
+        ...(s.msg === 'custom' ? [{ key: 'msgt', input: true, value: s.msgText, ph: L.msgPh, onText: (v) => this.setS({ msgText: v.slice(0, 80) }) }] : [])];
+      const themes = () => {
+        const it = (pr) => { const ps = { ...VDEF, ...pr.s }; return { key: 'th=' + (pr.id || pr.s.scene || pr.n[0]), label: pr.n[li], thumb: preview(ps), emoji: DECO[pr.id || pr.s.scene] || '', check: VKEYS.every(k => s[k] === ps[k]), act: () => this.pickPreset(ps), keep: true }; };
+        return [head(L.hSeasons), ...PRESETS.filter(x => x.fete).map(it), head(L.hStyles), ...PRESETS.filter(x => !x.fete).map(it),
+          ...(st.styles.length ? [head(L.hMine), ...st.styles.map((x, i) => ({ key: 'my=' + i, label: x.name, thumb: preview({ ...VDEF, ...x.s }), act: () => this.applyStyle(x), keep: true }))] : [])];
+      };
+      const scenes = () => SCENE_IDS.filter(id => !window.FHScenes || FHScenes.has(id)).map(id => {
+        const pr = PRESETS.find(x => x.id === id || x.s.scene === id);
+        return { key: 'sc=' + id, label: pr ? pr.n[li] : id, emoji: DECO[id] || '', thumb: pr ? preview({ ...VDEF, ...pr.s }) : undefined, check: s.bgType === 'scene' && s.scene === id, act: () => this.setS({ bgType: 'scene', scene: id }), keep: true };
+      });
+      const hasPics = st.media.some(m => m.type !== 'pdf');
+      const bgCols = () => {
+        const T = s.bgType;
+        if (T === 'solid') return [sw('bgColor', SW_BG)];
+        if (T === 'grid') return [head(L.bgColor), sw('bgColor', SW_BG), head(L.gridLit), sw('gridLit', SW_INK), head(L.gridLine), sw('gridLine', SW_INK)];
+        if (T === 'image') return [sl('bgDim', L.dim, 0, 85, 1, pctM), sl('bgBlur', L.blur, 0, 40, 1, v => v + ' px'), sl('bgSat', L.saturation, 0, 200, 1, pctM)];
+        const keys = T === 'gradient' ? ['bg1', 'bg2'] : ['bg1', 'bg2', 'bg3'], names = T === 'spooky' ? [L.sky, L.deep, L.horizon] : keys.map((k, i) => L.color + ' ' + (i + 1));
+        return [...keys.flatMap((k, i) => [head(names[i]), sw(k, SW_BG)]), ...(T === 'gradient' ? [sep, ...radio('bgShape', [['linear', L.linear], ['radial', L.radial]])] : [])];
+      };
+      const toolItems = mode === 'timer' ? [
+        tm.done && st.ringing ? { key: 'tstop', icon: 'stop', label: L.stopAlarm, act: this.stopAlarm } : { key: 'tgo', icon: tmRun ? 'pause' : 'play_arrow', label: tmRun ? L.pause : L.start, act: this.tmToggle },
+        { key: 'trs', icon: 'replay', label: L.reset, act: this.tmReset },
+        { key: 'tdur', icon: 'hourglass_top', label: L.mDuration, sub: () => [...TIMER_PRESETS.map(m => ({ key: 'd' + m, label: `${num(m, false)} min`, check: tm.dur === m * 60000, act: () => this.tmSet(m) })), sep, { key: 'dcu', icon: 'edit', label: L.tmCustom + '…', act: () => { if (!this.state.tmEdit) this.tmEditOpen(); } }] },
+        { key: 'tsnd', icon: 'notifications', label: L.alarmSnd, sub: () => [...radio('alarmSnd', ALARMS.map(a => [a, L['al_' + a]]), this.setAlarm), sep, sl('alarmVol', L.alarmVol, 10, 100, 5, pctM, this.setAlarm), { key: 'ttest', icon: 'volume_up', label: L.alarmTest, act: () => this.testAlarm(), keep: true }] },
+        tog('tmVisual', L.tmVisual, 'pie_chart'),
+        { key: 'tpin', icon: 'push_pin', label: s.pinTimer ? L.unpin : L.pinClock, act: () => this.pinTool('timer') }, sep]
+      : mode === 'stopwatch' ? [
+        { key: 'sgo', icon: sw.start ? 'pause' : 'play_arrow', label: sw.start ? L.pause : L.start, act: this.swToggle },
+        { key: 'slap', icon: 'flag', label: L.lap, act: this.swLap, disabled: !sw.start },
+        { key: 'srs', icon: 'replay', label: L.reset, act: this.swReset },
+        { key: 'spin', icon: 'push_pin', label: s.pinSw ? L.unpin : L.pinClock, act: () => this.pinTool('sw') }, sep] : [];
+      const timeItems = () => [...toolItems, move,
+        { key: 'size', icon: 'format_size', label: L.size, sub: () => [sl('size', L.size, 30, 130, 1, pctM), sl('letterSpacing', L.spacing, -10, 30, 1, v => (v > 0 ? '+' : '') + v), ...(fCur.wmin !== fCur.wmax ? [sl('weight', L.weight, fCur.wmin, fCur.wmax, 10)] : []), tog('italic', L.italic, 'format_italic')] },
+        { key: 'font', icon: 'text_fields', label: L.tFont, hint: s.font, sub: fonts('font') },
+        { key: 'color', icon: 'palette', label: L.color, sub: () => [sw('color', SW_INK), tog('gradText', L.gradText, 'gradient'), ...(s.gradText ? [head(L.gradTop), sw('grad1', SW_INK), head(L.gradBottom), sw('grad2', SW_INK)] : []), head(L.accent), sw('accent', SW_INK), tog('sepAccent', L.sepAccent, 'more_vert')] },
+        { key: 'fx', icon: 'auto_awesome', label: L.tFx, sub: () => [sl('shadow', L.shadow, 0, 100, 1), sl('glow', L.glow, 0, 100, 1), ...(s.glow > 0 ? [head(L.glowColor), sw('glowColor', SW_INK)] : []), tog('outline', L.outline, 'border_style'), ...(s.outline ? [sl('outlineW', L.outlineW, 1, 12, 0.5, v => v + ' px')] : []), tog('breathe', L.breathe, 'air'), head(L.weird), ...radio('weird', WEIRDS.map(w => [w, L['w_' + w]]))] },
+        { key: 'anim', icon: 'animation', label: L.anim, sub: () => radio('anim', ANIMS.map(a => [a, L['a_' + a]])) },
+        sep,
+        { key: 'sec', icon: 'timer', label: L.seconds, sub: () => radio('seconds', [['off', L.secOff], ['same', L.secSame], ['small', L.secSmall]]) },
+        { key: 'hfmt', icon: 'schedule', label: L.mFormat, sub: () => [{ key: 'h24', label: '24 h', check: !s.hour12, act: () => this.setS({ hour12: false }), keep: true }, { key: 'h12', label: L.mH12, check: !!s.hour12, act: () => this.setS({ hour12: true }), keep: true }, sep, tog('leadingZero', L.leadingZero, 'exposure_zero'), tog('blink', L.blink, 'more_vert'), head(L.separator), ...radio('sep', [[':', ':'], ['.', '.'], ['·', '·'], ['h', 'h'], [' ', '␣']])] },
+        sep, tog('showDate', L.showDate, 'calendar_today'), { key: 'msg', icon: 'chat', label: L.message, sub: msgItems }, sep, settings];
+      const dateItems = () => [
+        tog('showDate', L.showDate, 'calendar_today'),
+        { key: 'dfmt', icon: 'event', label: L.dateFormat, sub: () => radio('dateFmt', DFS.map(k => [k, L['df_' + k]])) },
+        { key: 'dlang', icon: 'translate', label: L.dateLang, sub: () => radio('locale', [['auto', L.sameUi], ...LOCALES]) },
+        { key: 'dfont', icon: 'text_fields', label: L.dateFont, sub: fonts('dateFont', true) },
+        { key: 'dcol', icon: 'palette', label: L.dateColor, sub: () => [sw('dateColor', SW_INK), sl('dateOpacity', L.dateOpacity, 10, 100, 1, pctM)] },
+        { key: 'dsize', icon: 'format_size', label: L.dateSize, sub: () => [sl('dateSize', L.dateSize, 50, 220, 1, pctM), tog('dateUpper', L.upper, 'title'), head(L.datePos), ...radio('datePos', [['above', L.above], ['below', L.below]])] },
+        sep, { key: 'msg', icon: 'chat', label: L.message, sub: msgItems },
+        { key: 'cities', icon: 'public', label: L.cities, sub: () => ZONES.map(([z, nm]) => { const on = s.cities.includes(z); return { key: 'c=' + z, label: nm[li], check: on, act: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), keep: true }; }) },
+        sep, move, settings];
+      const bgItems = () => [
+        { key: 'theme', icon: 'palette', label: L.tPresets, sub: themes },
+        { key: 'auto', icon: 'autorenew', label: L.mAutoTheme, check: !!s.autoTheme, act: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.setS({ autoTheme: true, autoId: '' }); setTimeout(() => this.applyAuto(true), 0); } }, keep: true },
+        sep,
+        { key: 'bgtype', icon: 'wallpaper', label: L.bgType, sub: () => [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['scene', L.scene], ['spooky', L.spooky], ['image', L.image]].map(([v, label]) => ({ key: 'bt=' + v, label, check: s.bgType === v, act: () => (v === 'image' && !hasPics ? this.pickFiles() : this.setS({ bgType: v })), keep: v !== 'image' || hasPics })) },
+        { key: 'scene', icon: 'landscape', label: L.sceneDecor, sub: scenes },
+        { key: 'bgcol', icon: s.bgType === 'image' ? 'tune' : 'format_color_fill', label: s.bgType === 'image' ? L.image : L.mBgColors, sub: bgCols },
+        { key: 'photo', icon: 'add_photo_alternate', label: L.mBgPhoto, act: this.pickFiles },
+        ...(s.bgType === 'image' && st.media.some(m => m.id === s.bgImage) ? [{ key: 'delbg', icon: 'delete', label: L.bgPicDel, act: this.dropBgPic }] : []),
+        { key: 'atmo', icon: 'blur_on', label: L.hAtmos, sub: () => [sl('vignette', L.vignette, 0, 100, 1), sl('grain', L.grain, 0, 100, 1), tog('scanlines', L.scanlines, 'reorder'), tog('tick', L.tick, 'music_note')] },
+        sep,
+        { key: 'note', icon: 'sticky_note_2', label: L.noteNew, act: this.addNote },
+        { key: 'pic', icon: 'image', label: L.picBtn, act: this.pickPic },
+        { key: 'surprise', icon: 'casino', label: L.surpriseK, act: this.surprise, keep: true },
+        sep,
+        { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: L.fullscreen, act: this.toggleFs },
+        settings,
+        { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) },
+        { key: 'reset', icon: 'restart_alt', label: L.reset, act: this.reset }];
+      const note = M.kind === 'note' && st.notes.find(x => x.id === M.id), pic = M.kind === 'pic' && st.pics.find(x => x.id === M.id);
+      const noteItems = () => (note ? [
+        { key: 'nc', icon: 'palette', label: L.color, sub: () => [{ key: 'sw-note', swatches: NOTE_C, cur: note.c, noCustom: true, pick: (c) => this.patchNote(note.id, { c }) }] },
+        { key: 'nb', icon: 'zoom_in', label: L.noteBigger, act: () => this.noteFs(note.id, 1), keep: true },
+        { key: 'ns', icon: 'zoom_out', label: L.noteSmaller, act: () => this.noteFs(note.id, -1), keep: true },
+        sep, { key: 'nd', icon: 'delete', label: L.noteDel, danger: true, act: () => this.delNote(note.id) }] : []);
+      const picItems = () => (pic ? [
+        { key: 'pb', icon: 'zoom_in', label: L.picBigger, act: () => this.picZoom(pic.id, 1.2), keep: true },
+        { key: 'ps', icon: 'zoom_out', label: L.picSmaller, act: () => this.picZoom(pic.id, 1 / 1.2), keep: true },
+        { key: 'pf', icon: 'flip_to_front', label: L.mFront, act: () => this.patchPic(pic.id, { z: ++this.zTop }) },
+        sep, { key: 'pd', icon: 'delete', label: L.picDel, danger: true, act: () => this.delPic(pic.id) }] : []);
+      const pinItems = () => {
+        const which = M.id === 'pt' ? 'timer' : M.id === 'pn' ? 'sound' : 'sw', full = M.id === 'pt' ? 'timer' : M.id === 'pn' ? 'sound' : 'stopwatch';
+        return [{ key: 'kb', icon: 'zoom_in', label: L.mBigger, act: () => this.pinZoom(M.id, 0.2), keep: true },
+          { key: 'ks', icon: 'zoom_out', label: L.mSmaller, act: () => this.pinZoom(M.id, -0.2), keep: true },
+          { key: 'kc', icon: 'picture_in_picture_alt', label: L.mCorner, act: () => this.pinReset(M.id) },
+          { key: 'ko', icon: 'open_in_full', label: L.mOpen, act: () => this.setMode(full) },
+          sep, { key: 'ku', icon: 'close', label: L.unpin, act: () => this.pinTool(which) }];
+      };
+      const items0 = M.kind === 'time' ? timeItems() : M.kind === 'date' ? dateItems() : M.kind === 'note' ? noteItems() : M.kind === 'pic' ? picItems() : M.kind === 'pin' ? pinItems() : bgItems();
+      const levels = [items0];
+      M.open.forEach((o, i) => { const it = (levels[i] || []).find(x => x.key === o.key); if (it && it.sub) levels.push(it.sub()); });
+      const panelBg = dark ? 'rgba(31,30,29,.97)' : 'rgba(251,250,248,.98)';
+      const ico = (name, size, color) => E('span', { style: { ...ICON, fontSize: size || 18, width: 20, flexShrink: 0, textAlign: 'center', color } }, name || '');
+      const ring = (on) => (on ? `0 0 0 2px ${panelBg}, 0 0 0 4px ${ink}` : `inset 0 0 0 1px ${hexA(ink, 0.22)}`);
+      const rowEl = (it, i, level) => {
+        if (it.sep) return E('div', { key: 'sep' + i, style: { height: 1, margin: '5px 8px', background: ui.border } });
+        if (it.head) return E('div', { key: 'h' + i, style: { padding: '10px 12px 5px', font: '600 10.5px/1 Geist, system-ui, sans-serif', letterSpacing: '.1em', textTransform: 'uppercase', color: ui.fg3 } }, it.head);
+        if (it.swatches) return E('div', { key: it.key, style: { display: 'flex', flexWrap: 'wrap', gap: 7, padding: '8px 10px 10px', maxWidth: 236 } },
+          ...it.swatches.map(c => E('button', { key: c, type: 'button', title: c, onClick: () => it.pick(c), style: { width: 26, height: 26, padding: 0, border: 0, borderRadius: '50%', background: c, cursor: 'pointer', boxShadow: ring(it.cur === c.toLowerCase()) } })),
+          it.noCustom ? null : E('label', { key: 'cu', title: L.custom, style: { position: 'relative', width: 26, height: 26, borderRadius: '50%', cursor: 'pointer', background: 'conic-gradient(#f43f5e, #f59e0b, #84cc16, #06b6d4, #6366f1, #d946ef, #f43f5e)', boxShadow: ring(!it.swatches.some(c => c.toLowerCase() === it.cur)) } },
+            E('input', { type: 'color', value: /^#[0-9a-f]{6}$/.test(it.cur) ? it.cur : '#ffffff', onChange: (e) => it.pick(e.target.value), style: { position: 'absolute', inset: 0, width: '100%', height: '100%', padding: 0, border: 0, opacity: 0, cursor: 'pointer' } })));
+        if (it.slider) return E('div', { key: it.key, style: { padding: '8px 12px 10px', minWidth: 214 } },
+          E('div', { style: { display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8, font: '500 12.5px/1 Geist, system-ui, sans-serif', color: ui.fg2 } }, E('span', null, it.label), E('span', { style: { color: ink, fontVariantNumeric: 'tabular-nums' } }, it.fmt(it.value))),
+          E('input', { type: 'range', min: it.min, max: it.max, step: it.step, value: it.value, 'aria-label': it.label, onChange: (e) => it.onInput(+e.target.value), style: { width: '100%', margin: 0, accentColor: accUi } }));
+        if (it.input) return E('div', { key: it.key, style: { padding: '6px 10px 8px' } },
+          E('input', { type: 'text', value: it.value || '', placeholder: it.ph, autoFocus: true, onChange: (e) => it.onText(e.target.value), onKeyDown: (e) => { if (e.key === 'Enter') this.closeMenu(); }, style: { width: '100%', height: 32, boxSizing: 'border-box', padding: '0 10px', borderRadius: 8, border: `1px solid ${ui.border}`, background: ui.field, color: ink, font: '500 13.5px/1 Geist, system-ui, sans-serif', userSelect: 'text' } }));
+        const opened = !!(M.open[level] && M.open[level].key === it.key);
+        const lead = it.thumb ? E('span', { style: { width: 30, height: 20, flexShrink: 0, borderRadius: 5, background: it.thumb, backgroundSize: 'cover', boxShadow: `inset 0 0 0 1px ${hexA(ink, 0.15)}` } })
+          : it.icon ? ico(it.icon, 18, it.danger ? '#e5484d' : ui.fg2) : ico(it.check ? 'check' : '', 18, ink);
+        return E('div', { key: it.key || 'k' + i, role: 'menuitem', 'data-tour': 'mi-' + it.key, className: 'fh-mi', onPointerEnter: (e) => this.menuHover(level, it.sub ? it.key : null, e.currentTarget), onClick: (e) => this.menuClick(level, it, e.currentTarget),
+          style: { display: 'flex', alignItems: 'center', gap: 10, minHeight: 34, padding: '0 10px', borderRadius: 7, cursor: it.disabled ? 'default' : 'pointer', opacity: it.disabled ? 0.45 : 1, background: opened ? ui.active : 'transparent', color: it.danger ? '#e5484d' : ink, font: '500 13.5px/1.25 Geist, system-ui, sans-serif', whiteSpace: 'nowrap' } },
+          lead,
+          E('span', { style: { flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', ...(it.font ? { fontFamily: it.font, fontSize: 16 } : null) } }, it.label),
+          it.emoji ? E('span', { style: { fontSize: 15, lineHeight: 1 } }, it.emoji) : null,
+          it.hint ? E('span', { style: { maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', color: ui.fg3, fontSize: 12 } }, it.hint) : null,
+          (it.icon || it.thumb) && it.check != null ? ico(it.check ? 'check' : '', 17, ink) : null,
+          it.sub ? ico('chevron_right', 18, ui.fg3) : null);
+      };
+      if (items0.length) menuUi = { on: true, el: E('div', { key: 'menus', 'data-menu-layer': '', onClick: (e) => { if (e.target === e.currentTarget) this.closeMenu(); }, onContextMenu: this.menuReopen, style: { position: 'fixed', inset: 0, zIndex: 70 } },
+        levels.map((items, level) => E('div', { key: 'm' + level, ref: this.menuRef(level), role: 'menu', className: 'fh-menu', 'data-tour': 'menu' + level,
+          style: { position: 'fixed', left: -9999, top: 0, minWidth: 236, maxWidth: 340, maxHeight: 'calc(100vh - 16px)', overflowY: 'auto', overscrollBehavior: 'contain', boxSizing: 'border-box', padding: 5, borderRadius: 12, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: '0 18px 50px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18)', color: ink, backdropFilter: 'blur(18px)', scrollbarWidth: 'thin', colorScheme: ui.scheme, '--mh': ui.hover, animation: 'fh-menu-in .14s ease-out both', transformOrigin: '0 0' } },
+          items.map((it, i) => rowEl(it, i, level))))) };
+    }
+
+    // ---------- déplacer l'heure : neuf emplacements aimantés ----------
+    let zones = { on: false, el: null };
+    if (st.moveMode) {
+      const pick = st.moveMode === 'pick', cur = st.dropZone || s.pos;
+      zones = { on: true, el: E('div', { key: 'zones', 'data-menu': 'none', style: { position: 'absolute', inset: 0, zIndex: 9, display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gridTemplateRows: 'repeat(3, 1fr)', gap: 14, padding: 14, boxSizing: 'border-box', pointerEvents: pick ? 'auto' : 'none', background: 'rgba(0,0,0,.22)', animation: 'fh-fade .2s ease both' } },
+        ...POSK.map(k => E('div', { key: k, 'data-zone': k, onClick: pick ? () => this.placeClock(k) : undefined, onPointerEnter: pick ? () => this.setState({ dropZone: k }) : undefined,
+          style: { borderRadius: 22, border: `2px dashed ${k === cur ? accUi : 'rgba(255,255,255,.5)'}`, background: k === cur ? hexA(accUi, 0.24) : 'rgba(255,255,255,.04)', cursor: pick ? 'pointer' : 'default', transition: 'background .15s, border-color .15s' } })),
+        E('div', { key: 'hint', style: { position: 'absolute', left: '50%', bottom: 26, transform: 'translateX(-50%)', display: 'flex', alignItems: 'center', gap: 12, padding: pick ? '8px 8px 8px 16px' : '10px 18px 10px 14px', borderRadius: 999, background: 'rgba(14,12,20,.88)', color: '#fff', font: '500 14px/1.2 Geist, system-ui, sans-serif', whiteSpace: 'nowrap', pointerEvents: 'auto', boxShadow: '0 8px 30px rgba(0,0,0,.35)' } },
+          E('span', { style: { ...ICON, fontSize: 20 } }, 'open_with'), E('span', null, pick ? L.mMovePick : L.mMoveDrag),
+          pick ? E('button', { type: 'button', onClick: (e) => { e.stopPropagation(); this.placeClock(null); }, style: { border: 0, borderRadius: 999, padding: '8px 14px', background: 'rgba(255,255,255,.16)', color: '#fff', font: '600 13px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, L.mCancel) : null)) };
+    }
+
     // tuto : projecteur sur l'élément, flèche dessinée à la main et texte juste dessous
     let tourEl = null;
     if (st.tour != null && st.tourRect) {
@@ -2101,11 +2348,13 @@ class Component extends DCLogic {
       const arrowH = 78, need = arrowH + 200, textW = Math.min(420, st.vw - 32);
       // si la place manque (grosse horloge), la flèche remonte un peu sur l'élément
       const tipY = below ? Math.max(r.y + 24, Math.min(r.y + r.h + pad + 6, st.vh - need)) : Math.min(r.y + r.h - 24, Math.max(r.y - pad - 6, need));
-      const tx = Math.max(16, Math.min(st.vw - 16 - textW, cx - textW / 2)), gold = '#ffcf5c';
+      // élément très haut (une longue liste) : la bulle se met à côté au lieu de le recouvrir
+      const roomL = r.x - pad - 24, roomR = st.vw - (r.x + r.w) - pad - 24, side = r.h > st.vh * 0.5 && Math.max(roomL, roomR) >= textW ? (roomL >= textW ? 'l' : 'r') : '';
+      const tx = side === 'l' ? r.x - pad - 20 - textW : side === 'r' ? r.x + r.w + pad + 20 : Math.max(16, Math.min(st.vw - 16 - textW, cx - textW / 2)), gold = '#ffcf5c';
       const curve = step % 2 ? 'M22 74 C 50 56, 10 32, 30 8' : 'M38 74 C 10 56, 50 32, 30 8';
       const sp = (e) => e.stopPropagation();
       const tbtn = (key, label, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', onClick: (e) => { sp(e); onClick(); }, style: { height: 38, padding: '0 16px', borderRadius: 999, border: primary ? 0 : '1px solid rgba(255,255,255,.35)', background: primary ? '#ffffff' : 'transparent', color: primary ? '#141210' : '#ffffff', font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, label);
-      const text = E('div', { key: 'txt' + step, onClick: sp, style: { position: 'absolute', pointerEvents: 'auto', boxSizing: 'border-box', padding: '16px 20px 14px', borderRadius: 20, background: 'rgba(14,10,22,.8)', boxShadow: '0 12px 40px rgba(0,0,0,.4)', left: tx, width: textW, [below ? 'top' : 'bottom']: below ? tipY + arrowH + 4 : st.vh - (tipY - arrowH - 4), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
+      const text = E('div', { key: 'txt' + step, onClick: sp, style: { position: 'absolute', pointerEvents: 'auto', boxSizing: 'border-box', padding: '16px 20px 14px', borderRadius: 20, background: 'rgba(14,10,22,.8)', boxShadow: '0 12px 40px rgba(0,0,0,.4)', left: tx, width: textW, ...(side ? { top: Math.max(16, Math.min(st.vh - 340, r.y + r.h / 2 - 150)) } : { [below ? 'top' : 'bottom']: below ? tipY + arrowH + 4 : st.vh - (tipY - arrowH - 4) }), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
         E('div', { style: { font: "700 34px/1.05 'Caveat', cursive", color: gold, marginBottom: 6 } }, cur.h),
         E('div', { style: { font: '400 15.5px/1.5 Geist, system-ui, sans-serif', textWrap: 'pretty', textShadow: '0 1px 8px rgba(0,0,0,.5)' } }, cur.x),
         // étape où l'utilisateur fait lui-même : consigne bien visible, puis « Bravo » quand c'est fait
@@ -2117,9 +2366,9 @@ class Component extends DCLogic {
         E('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginTop: 12, font: '500 12.5px/1 Geist, system-ui, sans-serif', color: 'rgba(255,255,255,.6)' } },
           E('span', null, `${step + 1} / ${n}`),
           last ? null : E('button', { type: 'button', onClick: (e) => { sp(e); this.endTour(); }, style: { border: 0, padding: 4, background: 'transparent', color: 'rgba(255,255,255,.75)', font: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' } }, L.tourSkip)));
-      tourEl = E('div', { onClick: act ? undefined : () => this.tourGo(1), style: { position: 'absolute', inset: 0, zIndex: 60, cursor: act ? 'default' : 'pointer', pointerEvents: act ? 'none' : 'auto' } },
+      tourEl = E('div', { onClick: act ? undefined : () => this.tourGo(1), style: { position: 'absolute', inset: 0, zIndex: 75, cursor: act ? 'default' : 'pointer', pointerEvents: act ? 'none' : 'auto' } },
         E('div', { style: { position: 'absolute', left: r.x - pad, top: r.y - pad, width: r.w + pad * 2, height: r.h + pad * 2, borderRadius: 16, pointerEvents: 'none', boxShadow: `0 0 0 3000px rgba(6,3,12,.68), 0 0 0 2px ${gold}, 0 0 26px 6px ${hexA(gold, 0.45)}`, transition: 'left .5s cubic-bezier(.3,1.2,.4,1), top .5s cubic-bezier(.3,1.2,.4,1), width .5s cubic-bezier(.3,1.2,.4,1), height .5s cubic-bezier(.3,1.2,.4,1)' } }),
-        E('div', { key: 'arrow' + step, style: { position: 'absolute', left: cx - 30, top: below ? tipY : tipY - arrowH, width: 60, height: arrowH, pointerEvents: 'none', animation: 'fh-tour-in .4s ease both' } },
+        side ? null : E('div', { key: 'arrow' + step, style: { position: 'absolute', left: cx - 30, top: below ? tipY : tipY - arrowH, width: 60, height: arrowH, pointerEvents: 'none', animation: 'fh-tour-in .4s ease both' } },
           E('svg', { viewBox: '0 0 60 78', width: 60, height: arrowH, style: { display: 'block', overflow: 'visible', animation: below ? 'fh-nudge 1.3s ease-in-out infinite' : 'fh-nudge-up 1.3s ease-in-out infinite' } },
             E('path', { d: curve, stroke: gold, strokeWidth: 3.5, fill: 'none', strokeLinecap: 'round' }),
             E('path', { d: 'M18 20 L30 6 L43 18', stroke: gold, strokeWidth: 3.5, fill: 'none', strokeLinecap: 'round', strokeLinejoin: 'round' }))),
@@ -2131,7 +2380,7 @@ class Component extends DCLogic {
       const m = st.media.find(x => x.id === q.m); if (!m) return null;
       const w = Math.max(40, q.w * st.vw), x = Math.max(60 - w, Math.min(st.vw - 60, q.x * st.vw)), y = Math.max(0, Math.min(st.vh - 50, q.y * st.vh)), drag = st.picDrag === q.id;
       const tb = (key, icon, title, onClick) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 28, height: 28, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: `1px solid ${ui.border}`, background: ui.panel, color: ui.fg, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.25)' } }, E('span', { style: { ...ICON, fontSize: 16 } }, icon));
-      return E('div', { key: q.id, className: 'fh-card', title: L.picHint, onPointerDown: (e) => this.picDown(e, q.id, false), onPointerMove: this.picMove, onPointerUp: this.picUp, onPointerCancel: this.picUp, style: { position: 'absolute', left: x, top: y, width: w, zIndex: q.z || 1, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+      return E('div', { key: q.id, 'data-menu': 'pic:' + q.id, className: 'fh-card', title: L.picHint, onPointerDown: (e) => this.picDown(e, q.id, false), onPointerMove: this.picMove, onPointerUp: this.picUp, onPointerCancel: () => this.picUp(null), style: { position: 'absolute', left: x, top: y, width: w, zIndex: q.z || 1, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
         E('img', { src: m.url, alt: m.name || '', draggable: false, style: { display: 'block', width: '100%', height: 'auto', borderRadius: 8, filter: 'drop-shadow(0 10px 18px rgba(0,0,0,.35))', pointerEvents: 'none' } }),
         E('div', { className: 'fh-card-tools', style: { position: 'absolute', top: -14, right: -8, display: 'flex', gap: 4 } },
           tb('sm', 'remove', L.picSmaller, () => this.picZoom(q.id, 1 / 1.2)), tb('bg', 'add', L.picBigger, () => this.picZoom(q.id, 1.2)), tb('x', 'close', L.picDel, () => this.delPic(q.id))),
@@ -2142,8 +2391,8 @@ class Component extends DCLogic {
     // notes autocollantes (déplaçables, redimensionnables, enregistrées dans le navigateur)
     const notesEl = st.notes.map(n => {
       const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y)), nfs = n.fs || 23;
-      return E('div', { key: n.id, 'data-tour': 'notecard', className: 'fh-note', onPointerDown: () => this.raiseNote(n.id), style: { position: 'absolute', left: x, top: y, zIndex: n.z || 1, pointerEvents: 'auto', color: '#2a2113', background: `linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 40px), ${n.c}`, borderRadius: '3px 3px 3px 22px', boxShadow: '0 14px 30px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)', transform: `rotate(${n.r || 0}deg)`, animation: 'fh-note-in .5s cubic-bezier(.2,.9,.3,1.25) both' } },
-        E('div', { onPointerDown: (e) => this.noteDown(e, n.id), onPointerMove: this.noteMove, onPointerUp: this.noteUp, onPointerCancel: this.noteUp, style: { height: 30, display: 'flex', alignItems: 'center', gap: 5, padding: '0 6px 0 10px', cursor: 'grab', touchAction: 'none' } },
+      return E('div', { key: n.id, 'data-tour': 'notecard', 'data-menu': 'note:' + n.id, className: 'fh-note', onPointerDown: () => this.raiseNote(n.id), style: { position: 'absolute', left: x, top: y, zIndex: n.z || 1, pointerEvents: 'auto', color: '#2a2113', background: `linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 40px), ${n.c}`, borderRadius: '3px 3px 3px 22px', boxShadow: '0 14px 30px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)', transform: `rotate(${n.r || 0}deg)`, animation: 'fh-note-in .5s cubic-bezier(.2,.9,.3,1.25) both' } },
+        E('div', { onPointerDown: (e) => this.noteDown(e, n.id), onPointerMove: this.noteMove, onPointerUp: this.noteUp, onPointerCancel: () => this.noteUp(null), style: { height: 30, display: 'flex', alignItems: 'center', gap: 5, padding: '0 6px 0 10px', cursor: 'grab', touchAction: 'none' } },
           NOTE_C.map(c => E('button', { key: c, type: 'button', className: 'fh-dot', title: L.color, onClick: () => this.patchNote(n.id, { c }), style: { width: 12, height: 12, padding: 0, borderRadius: '50%', border: '1.5px solid rgba(42,33,19,.45)', background: c, cursor: 'pointer', boxShadow: n.c === c ? '0 0 0 2px rgba(42,33,19,.7)' : 'none' } })),
           E('div', { style: { flex: 1 } }),
           ...[[-1, L.noteSmaller, 13], [1, L.noteBigger, 18]].map(([d, title, z]) => E('button', { key: 'fs' + d, type: 'button', title, disabled: d < 0 ? nfs <= NOTE_FS[0] : nfs >= NOTE_FS[1], onClick: () => this.patchNote(n.id, { fs: Math.max(NOTE_FS[0], Math.min(NOTE_FS[1], nfs + d * (nfs >= 32 ? 6 : 3))) }), style: { height: 24, minWidth: 26, padding: '0 4px', border: 0, borderRadius: 6, background: 'transparent', color: 'rgba(42,33,19,.75)', cursor: 'pointer', font: `700 ${z}px/1 Geist, system-ui, sans-serif`, opacity: (d < 0 ? nfs <= NOTE_FS[0] : nfs >= NOTE_FS[1]) ? 0.3 : 1 } }, 'A')),
@@ -2217,13 +2466,14 @@ class Component extends DCLogic {
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
       // voile doux derrière l'heure sur les décors : les chiffres restent lisibles même devant un dessin chargé
       halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
-      clock: { el: clockEl, gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
+      clock: { el: clockEl, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : st.moveMode === 'drag' ? 'grabbing' : 'pointer', gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: s.dateColor, opacity: Math.min(1, dateOp + 0.15), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, opacity: dateOp, textShadow: legib } },
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
-      chrome: { tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
-      tabs, ind, indRef: this.indRef, modes, panel: { open: !!st.tab, maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      chrome: { labels: st.vw > 820, btnPad: st.vw > 820 ? '0 13px 0 10px' : '0', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
+      menuUi, zones, blockRef: this.blockRef, clockDown: this.clockDown, onCtx: this.onCtx, openSettings: this.openSettings,
+      modes, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);
