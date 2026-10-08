@@ -58,6 +58,10 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fhx-holo{0%,100%{opacity:.92;transform:none}4%{opacity:.55}5%{opacity:.95}38%{opacity:.85;transform:none}39%{opacity:.45;transform:skewX(-7deg) translateX(.025em)}40%{opacity:.92;transform:none}68%{opacity:.8}69%{opacity:.35}70%{opacity:.9}}
 @keyframes fhx-spin{from{transform:perspective(14em) rotateY(0)}to{transform:perspective(14em) rotateY(360deg)}}
 @media (prefers-reduced-motion:reduce){.fh-ind{transition:none!important}}
+@keyframes fh-bar-out{0%{transform:none;opacity:1}28%{transform:translateY(3px) scale(1.02,.93)}85%{opacity:1}100%{transform:translateY(calc(-100% - 24px)) scale(.84,1.06);opacity:0}}
+@keyframes fh-bar-in{0%{transform:translateY(calc(-100% - 24px)) scale(.84,1.1);opacity:0}14%{opacity:1}58%{transform:translateY(6px) scale(1.035,.94)}78%{transform:translateY(-2px) scale(.992,1.015)}100%{transform:none;opacity:1}}
+@keyframes fh-bar-fadeout{to{opacity:0}}
+@keyframes fh-bar-fadein{from{opacity:0}}
 @keyframes fh-menu-in{from{opacity:0;transform:scale(.97) translateY(-3px)}to{opacity:1;transform:none}}
 .fh-mi:hover{background:var(--mh)!important}
 .fh-menu::-webkit-scrollbar{width:8px}.fh-menu::-webkit-scrollbar-thumb{background:var(--mh);border-radius:8px}
@@ -173,8 +177,8 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; right: 14px; bottom: 11px; padding: 5px 8px; border-radius: 8px; background: {{ prog.labelBg }}; font: 500 12px/1 'Geist Mono', ui-monospace, monospace; color: {{ prog.labelColor }}; pointer-events: none;">{{ prog.label }}</div>
   </sc-if>
 
-  <div data-menu="none" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1180px, calc(100% - 24px)); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 10; color: {{ ui.fg }}; opacity: {{ chrome.opacity }}; pointer-events: none; transition: opacity .5s ease;">
-    <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="display: flex; align-items: center; gap: 4px; padding: 6px; max-width: 100%; box-sizing: border-box; overflow-x: auto; scrollbar-width: none; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }}; pointer-events: {{ chrome.pe }};">
+  <div data-menu="none" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1180px, calc(100% - 24px)); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 10; color: {{ ui.fg }}; pointer-events: none;">
+    <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="display: flex; align-items: center; gap: 4px; padding: 6px; max-width: 100%; box-sizing: border-box; overflow-x: auto; scrollbar-width: none; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }}; pointer-events: {{ chrome.pe }}; transform-origin: 50% 0; animation: {{ chrome.barAnim }};">
       <div data-tour="modes" style="display: flex; gap: 2px; flex-shrink: 0;">
         <sc-for list="{{ modes }}" as="m" hint-placeholder-count="5">
           <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 11px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; transition: background .15s, color .15s;" style-hover="background: {{ m.hover }};">
@@ -716,6 +720,8 @@ const prepMode = (m, close = true) => (a) => { if (close && a.state.tab) a.setSt
 // ouvre le menu d'un élément (au milieu de cet élément) pour l'étape du guide
 const tourSpot = (sel) => { const el = document.querySelector(`[data-tour="${sel}"]`), r = el ? el.getBoundingClientRect() : null; return r && r.width ? [r.left + r.width / 2, r.top + r.height / 2] : [window.innerWidth / 2, window.innerHeight / 2]; };
 const prepMenu = (kind, sel) => (a) => { if (a.state.tab) a.setState({ tab: null }); const m = a.state.menu; if (!m || m.kind !== kind) { const [x, y] = tourSpot(sel); a.openMenu(kind, x, y); } };
+const prepRoot = (kind, sel) => (a) => { prepMenu(kind, sel)(a); setTimeout(() => { const m = a.state.menu; if (m && m.open.length) a.setState({ menu: { ...m, open: [] } }); }, 80); };
+const subIs = (key) => (st) => !!(st.menu && st.menu.open[0] && st.menu.open[0].key === key);
 const prepSub = (kind, sel, key) => (a) => {
   prepMenu(kind, sel)(a);
   setTimeout(() => { const m = a.state.menu, el = document.querySelector(`[data-tour="mi-${key}"]`); if (m && el && !(m.open[0] && m.open[0].key === key)) { const r = el.getBoundingClientRect(); a.menuOpenSub(0, key, { left: r.left, right: r.right, top: r.top }); } }, 80);
@@ -723,15 +729,17 @@ const prepSub = (kind, sel, key) => (a) => {
 const LONG_TOUR = [
   { t: ['clock'], h: 'Bienvenue !', x: 'Le principe est simple : tu cliques sur ce que tu veux changer (l’heure, la date, le fond…) et un menu apparaît, comme le clic droit sur Windows. Je te montre, et parfois c’est toi qui fais : suis les consignes « À toi ». Échap pour quitter.', prep: prepMode('clock') },
   { t: ['clock'], h: 'Clique sur l’heure', x: 'Un clic sur l’heure ouvre son menu : déplacer, taille, police, couleur, effets, format…', act: (st) => !!(st.menu && st.menu.kind === 'time'), d: 'Clique sur les chiffres de l’heure.', prep: prepMode('clock') },
-  { t: ['mi-font'], h: 'Les sous-menus', x: 'Les lignes avec une flèche › ouvrent un sous-menu : passe la souris dessus, ou clique (pratique sur un tableau tactile).', act: (st) => !!(st.menu && st.menu.open[0] && st.menu.open[0].key === 'font'), d: 'Clique sur « Police ».', prep: prepMenu('time', 'clock') },
+  { t: ['mi-font'], h: 'Les sous-menus', x: 'Les lignes avec une flèche › ouvrent un sous-menu : passe la souris dessus, ou clique (pratique sur un tableau tactile).', act: subIs('font'), d: 'Clique sur « Police ».', prep: prepRoot('time', 'clock') },
   { t: ['menu1'], h: 'Choisis une police', x: 'Chaque nom est écrit dans sa police. Le menu reste ouvert : tu peux en essayer plusieurs.', act: (st, b) => st.s.font !== b.s.font, d: 'Clique sur une police qui te plaît.', prep: prepSub('time', 'clock', 'font') },
-  { t: ['mi-color'], h: 'La couleur', x: 'Même principe pour la couleur des chiffres. La pastille arc-en-ciel donne n’importe quelle couleur.', act: (st, b) => st.s.color !== b.s.color, d: 'Ouvre « Couleur » et clique une couleur.', prep: prepMenu('time', 'clock') },
+  { t: ['mi-color'], h: 'La couleur', x: 'Même principe pour la couleur des chiffres.', act: subIs('color'), d: 'Clique sur « Couleur ».', prep: prepRoot('time', 'clock') },
+  { t: ['menu1'], h: 'Choisis une couleur', x: 'Clique une pastille. L’arc-en-ciel donne n’importe quelle couleur ; plus bas, le dégradé et la couleur d’accent.', act: (st, b) => st.s.color !== b.s.color || st.s.gradText !== b.s.gradText || st.s.grad1 !== b.s.grad1 || st.s.grad2 !== b.s.grad2, d: 'Clique une couleur.', prep: prepSub('time', 'clock', 'color') },
   { t: ['clock'], h: 'Fermer un menu', x: 'Pour fermer un menu : clique à côté, ou appuie sur Échap. Tout est enregistré tout seul.', act: (st) => !st.menu, d: 'Clique à côté du menu.' },
   { t: ['clock'], h: 'Déplace l’heure', x: 'Appuie sur l’heure et glisse-la : neuf emplacements apparaissent, lâche-la dans celui que tu veux. (« Déplacer » dans son menu fait pareil.)', act: (st, b) => st.s.pos !== b.s.pos, d: 'Glisse l’heure vers un coin de l’écran.', prep: prepMode('clock') },
   { t: ['bgspot'], h: 'Clique sur le fond', x: 'Le fond a son menu à lui : thèmes, décor, couleurs, ta photo, notes, images…', act: (st) => !!(st.menu && st.menu.kind === 'bg'), d: 'Clique sur le fond, là où il n’y a rien.', prep: prepMode('clock') },
-  { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Ouvre « Thèmes » et choisis-en un.', prep: prepMenu('bg', 'bgspot') },
-  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres.', prep: prepMenu('bg', 'bgspot') },
-  { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepMenu('bg', 'bgspot') },
+  { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres.', act: subIs('theme'), d: 'Clique sur « Thèmes ».', prep: prepRoot('bg', 'bgspot') },
+  { t: ['menu1'], h: 'Choisis un thème', x: 'Chaque thème change d’un coup la police, les couleurs et le décor. Le menu reste ouvert : essaie-en plusieurs.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: prepSub('bg', 'bgspot', 'theme') },
+  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres.', prep: prepRoot('bg', 'bgspot') },
+  { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepRoot('bg', 'bgspot') },
   { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut ; un clic sur cette barre ouvre son menu : couleur, taille du texte, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
   { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, il ne reste que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['tm-10'], h: 'Une durée toute prête', x: 'Ces pastilles mettent le minuteur à une durée en un clic.', act: (st) => st.tm.dur === 600000, d: 'Clique sur « 10 min ».', prep: prepMode('timer') },
@@ -739,10 +747,10 @@ const LONG_TOUR = [
   { t: ['tm-go'], h: 'Lance-le !', x: 'Le disque se vide et passe du vert à l’orange puis au rouge. La barre d’espace démarre et met en pause aussi.', act: (st) => !!st.tm.endAt, d: 'Clique sur « Démarrer ».', prep: prepMode('timer') },
   { t: ['clock'], h: 'Son menu à lui', x: 'Un clic sur le minuteur ouvre son menu : pause, durée, sonnerie de fin (elle sonne une fois, fort), épingler sur l’horloge…', prep: prepMode('timer') },
   { t: ['tm-pin'], h: 'Épingle-le', x: 'Épingler garde le minuteur dans un coin de l’écran, même quand tu reviens à l’horloge.', act: (st) => !!st.s.pinTimer, d: 'Clique sur le bouton « épingler ».', prep: prepMode('timer') },
+  { t: ['pin-pt'], h: 'Ton minuteur épinglé', x: 'Il continue de tourner ici. Glisse-le où tu veux ; un clic dessus ouvre son menu : taille, ranger dans le coin, ouvrir en grand, retirer.', prep: (a) => { a.closeMenu(); if (a.state.s.mode !== 'clock') a.setMode('clock'); } },
   { t: ['mode-stopwatch'], h: 'Le chronomètre', x: 'Le chrono compte vers le haut et garde les tours.', act: modeIs('stopwatch'), d: 'Ouvre le chronomètre.' },
   { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. « Site ou image » affiche une page, une vidéo ou une image en grand, avec l’heure par-dessus.' },
   { t: ['mode-clock'], h: 'Retour à l’horloge', x: 'On revient à l’heure.', act: modeIs('clock'), d: 'Clique sur « Horloge ».' },
-  { t: ['pin-pt'], h: 'Ton minuteur épinglé', x: 'Il continue de tourner ici. Glisse-le où tu veux ; un clic dessus ouvre son menu : taille, ranger dans le coin, ouvrir en grand, retirer.', prep: prepMode('clock') },
   { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, boutons qui se cachent… Tout en bas : les réglages avancés.', act: (st) => st.tab === 'display', d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['close'], h: 'Ferme les paramètres', x: 'Tout est enregistré automatiquement dans ce navigateur.', act: (st) => !st.tab, d: 'Clique sur la croix.', prep: (a) => { if (a.state.tab !== 'display') a.openTab('display'); } },
   { t: ['fs'], h: 'Plein écran', x: 'Pour projeter au tableau : ce bouton ou la touche F. Les boutons se cachent tout seuls quand la souris ne bouge plus.' },
@@ -1030,8 +1038,10 @@ class Component extends DCLogic {
     const step = LONG_TOUR[st.tour]; if (!step || !step.act || !step.act(st, this.tourBase)) return;
     this.setState({ tourOk: true }); clearTimeout(this.tourAdvT); this.tourAdvT = setTimeout(() => this.tourGo(1), 1100);
   };
+  tourBoxRef = (el) => { this.tourBoxEl = el; };
   tourMeasure = () => {
     const st = this.state; if (st.tour == null) return;
+    const bx = this.tourBoxEl; if (bx && bx.isConnected && Math.abs(bx.offsetHeight - (st.tourBoxH || 0)) > 2) this.setState({ tourBoxH: bx.offsetHeight });
     const step = this.tourSteps()[st.tour]; if (!step) return;
     let rects = step.t.flatMap(k => Array.from(document.querySelectorAll(`[data-tour="${k}"]`))).map(el => el.getBoundingClientRect()).filter(r => r.width && r.height);
     // élément absent (étape passée, carte fermée…) : bulle au centre
@@ -2237,7 +2247,7 @@ class Component extends DCLogic {
       const timeItems = () => [...toolItems, move,
         { key: 'size', icon: 'format_size', label: L.size, sub: () => [sl('size', L.size, 30, 130, 1, pctM), sl('letterSpacing', L.spacing, -10, 30, 1, v => (v > 0 ? '+' : '') + v), ...(fCur.wmin !== fCur.wmax ? [sl('weight', L.weight, fCur.wmin, fCur.wmax, 10)] : []), tog('italic', L.italic, 'format_italic')] },
         { key: 'font', icon: 'text_fields', label: L.tFont, hint: s.font, sub: fonts('font') },
-        { key: 'color', icon: 'palette', label: L.color, sub: () => [sw('color', SW_INK), tog('gradText', L.gradText, 'gradient'), ...(s.gradText ? [head(L.gradTop), sw('grad1', SW_INK), head(L.gradBottom), sw('grad2', SW_INK)] : []), head(L.accent), sw('accent', SW_INK), tog('sepAccent', L.sepAccent, 'more_vert')] },
+        { key: 'color', icon: 'palette', label: L.color, sub: () => [{ ...sw('color', SW_INK), cur: s.gradText ? '-' : String(s.color || '').toLowerCase(), pick: (c) => this.setS({ color: c, gradText: false }) }, tog('gradText', L.gradText, 'gradient'), ...(s.gradText ? [head(L.gradTop), { ...sw('grad1', SW_INK), pick: (c) => this.setS({ grad1: c, gradText: true }) }, head(L.gradBottom), { ...sw('grad2', SW_INK), pick: (c) => this.setS({ grad2: c, gradText: true }) }] : []), head(L.accent), sw('accent', SW_INK), tog('sepAccent', L.sepAccent, 'more_vert')] },
         { key: 'fx', icon: 'auto_awesome', label: L.tFx, sub: () => [sl('shadow', L.shadow, 0, 100, 1), sl('glow', L.glow, 0, 100, 1), ...(s.glow > 0 ? [head(L.glowColor), sw('glowColor', SW_INK)] : []), tog('outline', L.outline, 'border_style'), ...(s.outline ? [sl('outlineW', L.outlineW, 1, 12, 0.5, v => v + ' px')] : []), tog('breathe', L.breathe, 'air'), head(L.weird), ...radio('weird', WEIRDS.map(w => [w, L['w_' + w]]))] },
         { key: 'anim', icon: 'animation', label: L.anim, sub: () => radio('anim', ANIMS.map(a => [a, L['a_' + a]])) },
         sep,
@@ -2303,7 +2313,7 @@ class Component extends DCLogic {
         if (it.head) return E('div', { key: 'h' + i, style: { padding: '10px 12px 5px', font: '600 10.5px/1 Geist, system-ui, sans-serif', letterSpacing: '.1em', textTransform: 'uppercase', color: ui.fg3 } }, it.head);
         if (it.swatches) return E('div', { key: it.key, style: { display: 'flex', flexWrap: 'wrap', gap: 7, padding: '8px 10px 10px', maxWidth: 236 } },
           ...it.swatches.map(c => E('button', { key: c, type: 'button', title: c, onClick: () => it.pick(c), style: { width: 26, height: 26, padding: 0, border: 0, borderRadius: '50%', background: c, cursor: 'pointer', boxShadow: ring(it.cur === c.toLowerCase()) } })),
-          it.noCustom ? null : E('label', { key: 'cu', title: L.custom, style: { position: 'relative', width: 26, height: 26, borderRadius: '50%', cursor: 'pointer', background: 'conic-gradient(#f43f5e, #f59e0b, #84cc16, #06b6d4, #6366f1, #d946ef, #f43f5e)', boxShadow: ring(!it.swatches.some(c => c.toLowerCase() === it.cur)) } },
+          it.noCustom ? null : E('label', { key: 'cu', title: L.custom, style: { position: 'relative', width: 26, height: 26, borderRadius: '50%', cursor: 'pointer', background: 'conic-gradient(#f43f5e, #f59e0b, #84cc16, #06b6d4, #6366f1, #d946ef, #f43f5e)', boxShadow: ring(it.cur !== '-' && !it.swatches.some(c => c.toLowerCase() === it.cur)) } },
             E('input', { type: 'color', value: /^#[0-9a-f]{6}$/.test(it.cur) ? it.cur : '#ffffff', onChange: (e) => it.pick(e.target.value), style: { position: 'absolute', inset: 0, width: '100%', height: '100%', padding: 0, border: 0, opacity: 0, cursor: 'pointer' } })));
         if (it.slider) return E('div', { key: it.key, style: { padding: '8px 12px 10px', minWidth: 214 } },
           E('div', { style: { display: 'flex', justifyContent: 'space-between', gap: 12, marginBottom: 8, font: '500 12.5px/1 Geist, system-ui, sans-serif', color: ui.fg2 } }, E('span', null, it.label), E('span', { style: { color: ink, fontVariantNumeric: 'tabular-nums' } }, it.fmt(it.value))),
@@ -2345,7 +2355,7 @@ class Component extends DCLogic {
     if (st.tour != null && st.tourRect) {
       const steps = this.tourSteps(), r = st.tourRect, step = Math.min(st.tour, steps.length - 1), cur = steps[step], n = steps.length, pad = 8, last = step === n - 1, act = !!(st.tourLong && cur.act);
       const below = r.y + r.h / 2 < st.vh * 0.55, cx = Math.max(30, Math.min(st.vw - 30, r.x + r.w / 2));
-      const arrowH = 78, need = arrowH + 200, textW = Math.min(420, st.vw - 32);
+      const arrowH = 78, boxH = Math.min(st.vh - 24, st.tourBoxH || 300), need = arrowH + boxH + 20, textW = Math.min(420, st.vw - 32);
       // si la place manque (grosse horloge), la flèche remonte un peu sur l'élément
       const tipY = below ? Math.max(r.y + 24, Math.min(r.y + r.h + pad + 6, st.vh - need)) : Math.min(r.y + r.h - 24, Math.max(r.y - pad - 6, need));
       // élément très haut (une longue liste) : la bulle se met à côté au lieu de le recouvrir
@@ -2354,7 +2364,7 @@ class Component extends DCLogic {
       const curve = step % 2 ? 'M22 74 C 50 56, 10 32, 30 8' : 'M38 74 C 10 56, 50 32, 30 8';
       const sp = (e) => e.stopPropagation();
       const tbtn = (key, label, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', onClick: (e) => { sp(e); onClick(); }, style: { height: 38, padding: '0 16px', borderRadius: 999, border: primary ? 0 : '1px solid rgba(255,255,255,.35)', background: primary ? '#ffffff' : 'transparent', color: primary ? '#141210' : '#ffffff', font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, label);
-      const text = E('div', { key: 'txt' + step, onClick: sp, style: { position: 'absolute', pointerEvents: 'auto', boxSizing: 'border-box', padding: '16px 20px 14px', borderRadius: 20, background: 'rgba(14,10,22,.8)', boxShadow: '0 12px 40px rgba(0,0,0,.4)', left: tx, width: textW, ...(side ? { top: Math.max(16, Math.min(st.vh - 340, r.y + r.h / 2 - 150)) } : { [below ? 'top' : 'bottom']: below ? tipY + arrowH + 4 : st.vh - (tipY - arrowH - 4) }), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
+      const text = E('div', { key: 'txt' + step, ref: this.tourBoxRef, onClick: sp, style: { position: 'absolute', pointerEvents: 'auto', boxSizing: 'border-box', padding: '16px 20px 14px', borderRadius: 20, background: 'rgba(14,10,22,.8)', boxShadow: '0 12px 40px rgba(0,0,0,.4)', left: tx, width: textW, top: Math.max(12, Math.min(st.vh - boxH - 12, side ? r.y + r.h / 2 - boxH / 2 : below ? tipY + arrowH + 4 : tipY - arrowH - 4 - boxH)), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
         E('div', { style: { font: "700 34px/1.05 'Caveat', cursive", color: gold, marginBottom: 6 } }, cur.h),
         E('div', { style: { font: '400 15.5px/1.5 Geist, system-ui, sans-serif', textWrap: 'pretty', textShadow: '0 1px 8px rgba(0,0,0,.5)' } }, cur.x),
         // étape où l'utilisateur fait lui-même : consigne bien visible, puis « Bravo » quand c'est fait
@@ -2471,7 +2481,7 @@ class Component extends DCLogic {
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, opacity: dateOp, textShadow: legib } },
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
-      chrome: { labels: st.vw > 820, btnPad: st.vw > 820 ? '0 13px 0 10px' : '0', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
+      chrome: { barAnim: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? (hidden ? 'fh-bar-fadeout .4s ease forwards' : 'fh-bar-fadein .3s ease both') : hidden ? 'fh-bar-out .5s cubic-bezier(.5,0,.75,.3) forwards' : 'fh-bar-in .72s cubic-bezier(.22,.8,.3,1) both', labels: st.vw > 820, btnPad: st.vw > 820 ? '0 13px 0 10px' : '0', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       menuUi, zones, blockRef: this.blockRef, clockDown: this.clockDown, onCtx: this.onCtx, openSettings: this.openSettings,
       modes, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,

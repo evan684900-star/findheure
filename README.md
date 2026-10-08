@@ -11,7 +11,7 @@ Horloge plein écran personnalisable, en une seule page (`index.html` + `support
 Les lignes avec une flèche › ouvrent un sous-menu au survol ou au clic (pratique sur un tableau tactile) ; Échap ou un clic à côté ferme le menu.
 **Pour déplacer l’heure**, on appuie dessus et on la glisse : neuf emplacements apparaissent, elle s’aimante à celui où on la lâche.
 
-La **barre du haut** ne garde que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, **Paramètres** (format de l’heure, date, langue, position, autres villes, boutons qui se cachent… et, tout en bas, les réglages avancés), plein écran et aide.
+La **barre du haut** ne garde que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, **Paramètres** (format de l’heure, date, langue, position, autres villes, boutons qui se cachent… et, tout en bas, les réglages avancés), plein écran et aide. Quand la souris ne bouge plus, elle remonte et s’aspire dans le haut de l’écran comme une notification, puis redescend avec un petit rebond dès qu’on bouge.
 
 - **Thème par défaut : Halloween** — cimetière, citrouilles, chauves-souris, fantôme, lune et brume.
 - **Saisons & fêtes**, chacune avec son vrai décor animé : Rentrée (tableau noir à la craie), Automne (forêt, feuilles qui tombent), Halloween, Hiver (montagnes, aurore boréale, chalet), Noël (village enneigé, sapin illuminé, traîneau), Nouvel An (ville et feux d’artifice), Saint-Valentin, Printemps (cerisiers, papillons), Poisson d’avril (fond marin), Pâques (lapin, poussins, œufs), Fête de la musique (concert), Été (plage, voilier, vagues), 14 Juillet (tour Eiffel qui scintille) — et un bouton pour **changer de thème tout seul selon la date**.
@@ -24,7 +24,7 @@ La **barre du haut** ne garde que l’essentiel : horloge, minuteur, chrono, son
 - **Afficher sur l’horloge** : le minuteur, le chrono et le sonomètre restent sur l’écran de l’heure, dans des cartes qu’on déplace à la souris ; un clic dessus ouvre leur menu (taille, ranger dans le coin, ouvrir en grand, retirer).
 - **Site ou image** : afficher un site (YouTube, Google Slides, Canva…) ou un fichier de l’ordinateur (image, vidéo, PDF) en plein écran, avec l’heure dans une carte qu’on déplace et qu’on agrandit. Certains sites (Pronote, ENT, Google) refusent d’être affichés dans un autre site.
 - **Tuto** à la première visite : cinq étapes pour comprendre le principe (cliquer sur l’heure, sur le fond, la barre, les Paramètres).
-- **Guide complet** (bouton « ? ») : 26 étapes ; à certaines, c’est toi qui fais (« À toi : clique sur l’heure… ») et le guide passe à la suite tout seul quand c’est fait.
+- **Guide complet** (bouton « ? ») : 28 étapes ; à certaines, c’est toi qui fais (« À toi : clique sur l’heure… ») et le guide passe à la suite tout seul quand c’est fait.
 - Quand le fond est une de tes photos (par exemple après « Surprends-moi »), un bouton **Supprimer cette image** apparaît en bas à gauche, avec annulation possible.
 - **Notes autocollantes** (menu du fond ou touche `N`) déplaçables et redimensionnables.
 - **Images à côté de l’heure** (menu du fond ou touche `I`) : une image de l’ordinateur posée sur l’écran, pas en fond. On la glisse où on veut, on tire le coin pour changer sa taille (ou − / +), elle reste enregistrée.
