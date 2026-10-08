@@ -79,6 +79,11 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-twinkle{0%,100%{opacity:.2}50%{opacity:1}}
 @keyframes fh-batfly{0%{transform:translate3d(-14vw,0,0)}20%{transform:translate3d(14vw,-5vh,0)}40%{transform:translate3d(40vw,2vh,0)}60%{transform:translate3d(66vw,-4vh,0)}80%{transform:translate3d(92vw,3vh,0)}100%{transform:translate3d(118vw,-2vh,0)}}
 @keyframes fh-flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.2)}}
+@keyframes fh-tp{0%{transform:translate(0,0) scale(.3) rotate(0deg);opacity:0;animation-timing-function:cubic-bezier(.2,.7,.3,1)}12%{opacity:1}40%{transform:translate(var(--mx),var(--my)) scale(1) rotate(calc(var(--r) * .4));animation-timing-function:cubic-bezier(.45,0,.75,.6)}78%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(var(--s)) rotate(var(--r));opacity:0}}
+@keyframes fh-tp-glow{0%{transform:scale(.4);opacity:0}18%{transform:scale(1.06);opacity:1}100%{transform:scale(1.3);opacity:0}}
+@keyframes fh-tp-flick{0%{opacity:0}8%{opacity:1}18%{opacity:.62}26%{opacity:1}44%{opacity:.8}52%{opacity:1}70%{opacity:.86}100%{opacity:0}}
+@keyframes fh-tp-ring{0%{transform:scale(.15);opacity:.95}100%{transform:scale(1);opacity:0}}
+@keyframes fh-tp-shoot{0%{transform:translateX(0) scaleX(.2);opacity:0}15%{opacity:1}100%{transform:translateX(var(--dx)) scaleX(1);opacity:0}}
 @keyframes fh-ghost{0%{transform:translate3d(-14vw,0,0)}100%{transform:translate3d(118vw,-8vh,0)}}
 @keyframes fh-bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-16px) rotate(5deg)}}
 @keyframes fh-fog{0%{transform:translate3d(-7%,0,0)}100%{transform:translate3d(7%,-3%,0)}}
@@ -120,6 +125,9 @@ a{color:inherit}a:hover{opacity:.8}
   <sc-if value="{{ bg.isSpooky }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.spooky }}</div>
   </sc-if>
+  <sc-if value="{{ taps.on }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ taps.el }}</div>
+  </sc-if>
   <sc-if value="{{ fx.hasVignette }}" hint-placeholder-val="{{ true }}">
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ fx.vignette }};"></div>
   </sc-if>
@@ -136,7 +144,7 @@ a{color:inherit}a:hover{opacity:.8}
     <div style="position: absolute; inset: 0; pointer-events: none; background: {{ alarm.bg }}; animation: fh-alarm 1.2s ease-in-out infinite;"></div>
   </sc-if>
 
-  <div onClick="{{ onStage }}" style="position: absolute; inset: 0; box-sizing: border-box; display: {{ stageDisplay }}; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
+  <div onClick="{{ onStage }}" onPointerMove="{{ onStageMove }}" style="position: absolute; inset: 0; box-sizing: border-box; display: {{ stageDisplay }}; flex-direction: column; justify-content: {{ pos.jc }}; align-items: {{ pos.ai }}; padding: {{ pos.pad }};">
     <div ref="{{ blockRef }}" onPointerDown="{{ clockDown }}" style="position: relative; isolation: isolate; display: flex; flex-direction: column; align-items: {{ pos.ai }}; text-align: {{ pos.ta }}; gap: {{ clock.gap }}; max-width: 100%; touch-action: none; cursor: {{ clock.cursor }};">
       <sc-if value="{{ halo.on }}" hint-placeholder-val="{{ false }}">
         <div style="position: absolute; left: -16%; right: -16%; top: -20%; bottom: -20%; z-index: -1; pointer-events: none; background: {{ halo.bg }};"></div>
@@ -445,6 +453,7 @@ const T_RAW = {
   a_flip: "Bascule|Flip|Giro|Kippen", a_blur: "Flou|Blur|Desenfoque|Unschärfe", a_pop: "Pop|Pop|Pop|Pop",
   breathe: "Respiration lente|Slow breathing|Respiración lenta|Langsames Atmen", vignette: "Vignettage|Vignette|Viñeta|Vignette", grain: "Grain|Grain|Grano|Körnung",
   scanlines: "Lignes d’écran cathodique|CRT scanlines|Líneas de pantalla CRT|Röhren-Scanlines", tick: "Son tic-tac|Ticking sound|Sonido tic-tac|Tick-Tack-Geräusch",
+  decoTap: "Décor qui réagit au toucher|Scenery reacts to touch|Decorado que reacciona al tocarlo|Kulisse reagiert auf Berührung", boo: "Bouh !|Boo!|¡Bu!|Buh!",
   clockType: "Type d’horloge|Clock type|Tipo de reloj|Uhrentyp", ct_digital: "Chiffres|Digital|Digital|Digital", ct_analog: "À aiguilles|Analog|Analógico|Analog", ct_both: "Aiguilles et chiffres|Analog + digital|Agujas y cifras|Zeiger und Ziffern",
   anaNums: "Nombres de 1 à 12|Numbers 1 to 12|Números del 1 al 12|Zahlen 1 bis 12", anaMins: "Minutes autour (5, 10, 15…)|Minutes around (5, 10, 15…)|Minutos alrededor (5, 10, 15…)|Minuten außen (5, 10, 15…)", anaColor: "Aiguilles en couleur (pour apprendre)|Coloured hands (for learning)|Agujas de colores (para aprender)|Farbige Zeiger (zum Lernen)", anaSec: "Trotteuse (aiguille des secondes)|Second hand|Segundero|Sekundenzeiger",
   skyH: "Ciel selon l’heure|Sky follows the time|Cielo según la hora|Himmel nach Uhrzeit", sky_auto: "Suit l’heure réelle|Follows the real time|Sigue la hora real|Folgt der echten Uhrzeit", sky_day: "Toujours le jour|Always daytime|Siempre de día|Immer Tag", sky_dawn: "Aube|Dawn|Amanecer|Morgendämmerung", sky_gold: "Lumière dorée|Golden light|Luz dorada|Goldenes Licht", sky_sunset: "Coucher de soleil|Sunset|Atardecer|Sonnenuntergang", sky_night: "Nuit étoilée|Starry night|Noche estrellada|Sternennacht",
@@ -824,6 +833,163 @@ const SKY_STARS = (() => {
   const url = (n) => `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 500" preserveAspectRatio="none">${dots(n)}</svg>`)}")`;
   return [url(70), url(50)];
 })();
+// ---------- décor qui réagit au toucher ----------
+// zones à toucher : [x, y, rayon, effet, couleur] dans le dessin du décor (1600 × 900) ;
+// Halloween : dans le bas du cimetière (1600 × 320), et 'moon' pour sa lune
+const DECO_TAP = {
+  spooky: [['moon', 0, 0, 'moonBats'], [300, 266, 34, 'pumpkin'], [378, 276, 26, 'pumpkin'], [1320, 258, 30, 'pumpkin'], [1200, 150, 95, 'bats'], [540, 246, 30, 'boo'], [614, 251, 24, 'boo'], [698, 245, 30, 'boo'], [1409, 244, 28, 'boo'], [775, 226, 28, 'boo'], [1495, 231, 28, 'boo']],
+  winter: [[1290, 138, 50, 'moon'], [1248, 708, 80, 'warm'], [84, 728, 100, 'snow'], [1504, 668, 110, 'snow'], [200, 790, 70, 'snow']],
+  xmas: [[298, 166, 70, 'moon'], [1318, 676, 120, 'twinkle'], [1318, 476, 40, 'gold'], [298, 716, 70, 'snow'], [1328, 856, 60, 'confetti'], [592, 556, 40, 'bigben']],
+  autumn: [[84, 496, 150, 'leaves'], [1504, 556, 140, 'leaves'], [300, 686, 80, 'leaves'], [1004, 576, 60, 'sun']],
+  newyear: [[798, 570, 40, 'fw'], [798, 660, 50, 'fw'], [450, 680, 110, 'fw'], [1150, 680, 110, 'fw']],
+  bastille: [[1248, 300, 55, 'fwFr'], [1248, 520, 75, 'fwFr'], [1248, 700, 110, 'fwFr'], [478, 628, 45, 'confettiFr']],
+  spring: [[234, 460, 180, 'petals'], [1424, 580, 110, 'petals'], [1298, 140, 60, 'sun'], [1080, 604, 25, 'hearts']],
+  easter: [[240, 732, 120, 'eggs'], [1328, 752, 90, 'hearts'], [258, 128, 55, 'sun']],
+  summer: [[1288, 148, 70, 'sun'], [594, 538, 45, 'ripple'], [234, 408, 100, 'palm'], [1384, 448, 90, 'palm'], [680, 858, 35, 'bubbles'], [1114, 628, 70, 'confetti'], [324, 848, 35, 'bubbles']],
+  valentine: [[188, 526, 110, 'hearts'], [800, 656, 80, 'sunPink'], [1328, 596, 40, 'warm'], [1224, 766, 50, 'hearts']],
+  rentree: [[208, 172, 70, 'chalk'], [192, 498, 90, 'chalk'], [1480, 688, 50, 'chalk'], [1342, 468, 90, 'chalk'], [1372, 148, 60, 'chalk'], [148, 688, 50, 'chalk']],
+  april: [[192, 712, 100, 'bubbles'], [332, 752, 70, 'bubbles'], [1252, 732, 100, 'bubbles'], [1422, 712, 90, 'bubbles'], [1016, 812, 45, 'bubbles'], [468, 848, 40, 'bubbles'], [1106, 842, 40, 'bubbles']],
+  music: [[124, 592, 95, 'boom'], [1474, 592, 95, 'boom'], [254, 262, 50, 'flash'], [1354, 262, 50, 'flash']],
+  paper: [[328, 300, 40, 'ink'], [1340, 166, 50, 'ink'], [1296, 584, 50, 'ink'], [328, 730, 60, 'ink'], [1124, 820, 60, 'ink'], [1378, 716, 50, 'ink']],
+  neon: [[1418, 420, 55, 'neon', '#ff3d7f'], [142, 574, 70, 'neon', '#ff4fd8'], [292, 310, 80, 'neon', '#38e8ff'], [1352, 254, 60, 'neon', '#ffd23f'], [1362, 620, 55, 'neon', '#ff9f1c'], [1372, 556, 40, 'neon', '#4ade80']],
+  terminal: [[258, 726, 90, 'digits'], [1358, 236, 90, 'digits'], [272, 816, 40, 'digits']],
+  sunset: [[800, 496, 110, 'sunPink'], [224, 376, 90, 'stars'], [1384, 376, 90, 'stars']],
+  candy: [[188, 520, 115, 'sprinkles'], [1428, 480, 125, 'sprinkles'], [328, 700, 55, 'sprinkles'], [1268, 700, 50, 'sprinkles'], [1298, 830, 45, 'sprinkles'], [638, 810, 45, 'hearts']],
+  brutal: [[1350, 178, 100, 'shapes'], [1124, 682, 40, 'shapes'], [220, 146, 100, 'shapes'], [164, 612, 70, 'shapes']],
+  cosmos: [[240, 720, 150, 'planet', '#ffb36b'], [1420, 760, 90, 'planet', '#5ab0ff'], [470, 560, 30, 'moon'], [1154, 294, 55, 'stars'], [496, 160, 50, 'radar'], [1328, 156, 90, 'shoot']],
+  arcade: [[722, 192, 200, 'pixels'], [1408, 168, 45, 'moon'], [486, 742, 40, 'pixels']],
+  luxe: [[274, 688, 35, 'gold'], [1324, 688, 35, 'gold'], [800, 788, 150, 'gold'], [94, 78, 60, 'gold'], [1494, 78, 60, 'gold']],
+  matrix: [[300, 146, 110, 'led'], [1300, 146, 110, 'led'], [300, 796, 110, 'led'], [1300, 796, 110, 'led']],
+  glacier: [[1422, 718, 55, 'snow'], [552, 758, 60, 'ripple'], [958, 798, 50, 'ripple'], [118, 838, 60, 'ripple'], [252, 648, 90, 'ice'], [1232, 608, 80, 'ice'], [1250, 170, 60, 'sun']],
+  iso: [[1284, 154, 45, 'confetti'], [792, 760, 200, 'twinkle']],
+  gothic: [[798, 168, 120, 'rainbow'], [418, 712, 70, 'warm'], [1178, 712, 70, 'warm'], [332, 392, 60, 'rainbow'], [1268, 392, 60, 'rainbow']],
+  london: [[330, 254, 35, 'bigben'], [330, 480, 45, 'bigben'], [1340, 470, 200, 'twinkle'], [1470, 790, 50, 'ripple', '#ef4444'], [470, 166, 30, 'moon'], [150, 680, 30, 'warm'], [88, 280, 30, 'confettiUk']],
+  holo: [[1400, 702, 120, 'radar'], [194, 222, 120, 'neon', '#38e8ff'], [1404, 222, 110, 'neon', '#38e8ff']],
+  trippy: [[140, 178, 60, 'rainbow'], [1298, 158, 70, 'rainbow'], [1378, 398, 60, 'rainbow'], [220, 448, 60, 'rainbow'], [1458, 638, 50, 'rainbow'], [298, 704, 50, 'rainbow'], [800, 818, 50, 'rainbow']],
+};
+const TAP_PAL = {
+  party: ['#ff4d6d', '#ffd23f', '#3ddc97', '#4cc9f0', '#b388ff', '#ff9f1c'], pinks: ['#ffc2dd', '#ff9ec7', '#ffe0ee', '#f472b6', '#fbcfe8'],
+  fall: ['#e8590c', '#f59f00', '#c2410c', '#facc15', '#b91c1c', '#d97706'], greens: ['#2f9e44', '#51cf66', '#2b8a3e', '#8ce99a'],
+  reds: ['#ff4d6d', '#ff8fab', '#e11d48', '#ffb3c6', '#ff6b9a'], neon: ['#ff4fd8', '#38e8ff', '#ffd23f', '#7cff6b', '#b388ff'],
+  gold: ['#ffd76a', '#ffe9a8', '#ffbf3f', '#fff4cc'], ice: ['#ffffff', '#d6f0ff', '#a5d8ff', '#e7f5ff'],
+  candy: ['#ff4f9a', '#ffd23f', '#5ec8ff', '#7cf29c', '#b388ff', '#ffffff'], pastel: ['#ffadad', '#ffd6a5', '#fdffb6', '#caffbf', '#9bf6ff', '#bdb2ff', '#ffc6ff'],
+  arcade: ['#38e8ff', '#ff4fd8', '#7cff6b', '#ffd23f'], led: ['#ff3b1f', '#ff7a1f', '#ffb01f'],
+  chalk: ['rgba(255,255,255,.85)', 'rgba(255,244,170,.85)', 'rgba(255,190,220,.85)', 'rgba(180,225,255,.85)'], rainbow: ['#ff4d6d', '#ff9f1c', '#ffd23f', '#3ddc97', '#4cc9f0', '#b388ff'],
+};
+const TAP_STAR = 'M0 -10 L2.9 -3.1 L9.5 -3.1 L4.2 1.4 L6.2 8.6 L0 4.6 L-6.2 8.6 L-4.2 1.4 L-9.5 -3.1 L-2.9 -3.1Z', TAP_SPARK = 'M0 -10 L2.2 -2.2 L10 0 L2.2 2.2 L0 10 L-2.2 2.2 L-10 0 L-2.2 -2.2Z';
+const TAP_HEART = 'M10 18C2 12 0.5 7 3 4C5.8 0.8 9 2 10 5C11 2 14.2 0.8 17 4C19.5 7 18 12 10 18Z';
+// une réaction = quelques éléments qui ne bougent qu'en transform / opacity, puis disparaissent
+function tapParts(E, tp, booText) {
+  let a = tp.seed | 0; const R = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const u = tp.u, out = [], rr = (x, y) => x + R() * (y - x), pick = (l) => l[Math.floor(R() * l.length)], P = TAP_PAL;
+  let n = 0;
+  const part = (w, h, kid, m, dur, dl, x0, y0, extra) => out.push(E('div', { key: 'p' + n++, style: { position: 'absolute', left: (x0 || 0) - w / 2, top: (y0 || 0) - h / 2, width: w, height: h, '--mx': m[0].toFixed(1) + 'px', '--my': m[1].toFixed(1) + 'px', '--dx': m[2].toFixed(1) + 'px', '--dy': m[3].toFixed(1) + 'px', '--r': m[4].toFixed(0) + 'deg', '--s': m[5] || 1, animation: `fh-tp ${dur.toFixed(2)}s ${dl.toFixed(2)}s both`, ...extra } }, kid));
+  // trajectoires : éclat tout autour, fontaine qui retombe, ou montée
+  const move = (mode, d0, d1) => {
+    const d = rr(d0, d1) * u;
+    if (mode === 'pop') { const t = R() * 6.283; return [Math.cos(t) * d * 0.7, Math.sin(t) * d * 0.7, Math.cos(t) * d, Math.sin(t) * d + 30 * u, rr(-200, 200)]; }
+    if (mode === 'fall') { const t = -1.571 + rr(-1.1, 1.1), mx = Math.cos(t) * d, my = Math.sin(t) * d; return [mx, my, mx * 1.5 + rr(-40, 40) * u, my + rr(200, 340) * u, rr(-360, 360)]; }
+    const t = -1.571 + rr(-0.7, 0.7), mx = Math.cos(t) * d * 0.35, my = Math.sin(t) * d * 0.35; return [mx, my, mx * 2 + rr(-50, 50) * u, -rr(1, 1.6) * d, rr(-40, 40)];
+  };
+  const burst = (k, mode, mk, d0, d1, dur) => { for (let i = 0; i < k; i++) { const [w, h, kid, extra] = mk(i); part(w * u * 1.25, h * u * 1.25, kid, move(mode, d0, d1), rr(dur * 0.8, dur * 1.2), rr(0, 0.18), 0, 0, extra); } };
+  const svgK = (vb, ...k) => E('svg', { viewBox: vb, width: '100%', height: '100%', style: { display: 'block', overflow: 'visible' } }, ...k);
+  const star = (c) => [16, 16, svgK('-10 -10 20 20', E('path', { d: TAP_STAR, fill: c }))];
+  const spark = (c) => [14, 14, svgK('-10 -10 20 20', E('path', { d: TAP_SPARK, fill: c }))];
+  const heart = (c) => [18, 17, svgK('0 0 20 19', E('path', { d: TAP_HEART, fill: c }))];
+  const petal = (c) => [18, 12, svgK('0 0 20 14', E('ellipse', { cx: 10, cy: 7, rx: 9.5, ry: 6, fill: c }), E('ellipse', { cx: 7, cy: 5.5, rx: 4, ry: 2.2, fill: '#ffffff', opacity: 0.45 }))];
+  const leaf = (c) => [22, 13, svgK('0 0 24 14', E('path', { d: 'M1 7C5 0 16 -1 23 6C16 13 6 14 1 7Z', fill: c }), E('path', { d: 'M2 7L21 6', stroke: 'rgba(0,0,0,.25)', strokeWidth: 1 }))];
+  const egg = (c) => [16, 20, svgK('0 0 16 20', E('ellipse', { cx: 8, cy: 10.5, rx: 7.5, ry: 9.5, fill: c }), E('path', { d: 'M1 9.5Q4.5 6.5 8 9.5T15 9.5', stroke: '#ffffff', strokeWidth: 2.2, fill: 'none' }))];
+  const dot = (c, z) => [z, z, null, { borderRadius: '50%', background: c, boxShadow: `0 0 ${(6 * u).toFixed(1)}px ${c}` }];
+  const snow = (z) => [z, z, null, { borderRadius: '50%', background: 'radial-gradient(circle, #ffffff 0 45%, rgba(255,255,255,0) 72%)' }];
+  const bubble = (z) => [z, z, null, { borderRadius: '50%', border: '1.5px solid rgba(255,255,255,.85)', background: 'radial-gradient(circle at 34% 30%, rgba(255,255,255,.8) 0 14%, rgba(255,255,255,.1) 42%, rgba(255,255,255,.04))' }];
+  const conf = (c) => [8, 13, null, { background: c, borderRadius: 2 }];
+  const sprinkle = (c) => [4.5, 14, null, { background: c, borderRadius: 3 }];
+  const pixel = (c) => [10, 10, null, { background: c, boxShadow: `0 0 ${(6 * u).toFixed(1)}px ${c}` }];
+  const txt = (w, h, s, st) => [w, h, E('span', null, s), { textAlign: 'center', whiteSpace: 'nowrap', ...st }];
+  const note = (c) => txt(18, 22, pick(['♪', '♫', '♬']), { color: c, font: `700 ${(22 * u).toFixed(1)}px/1 system-ui, sans-serif`, textShadow: `0 0 8px ${c}` });
+  const digit = () => txt(14, 20, R() < 0.5 ? '0' : '1', { color: '#39ff88', font: `700 ${(20 * u).toFixed(1)}px/1 ui-monospace, monospace`, textShadow: '0 0 8px #39ff88' });
+  const shape = () => [16, 16, null, { background: pick(['#111111', '#ff3b30', '#111111', '#ffffff']), borderRadius: R() < 0.4 ? '50%' : 0, border: '2px solid #111111' }];
+  const ink = (i) => [18, 18, svgK('-10 -10 20 20', E('path', { d: i % 2 ? TAP_STAR : 'M0 8C-8 2 -9.5 -3 -7 -6C-4.2 -9.2 -1 -8 0 -5C1 -8 4.2 -9.2 7 -6C9.5 -3 8 2 0 8Z', fill: 'none', stroke: '#2b4ea2', strokeWidth: 1.6, strokeLinejoin: 'round' }))];
+  const glow = (c, sz, dur, anim) => { const d = Math.min(tp.r * sz, 520 * u); out.push(E('div', { key: 'g' + n++, style: { position: 'absolute', left: -d / 2, top: -d / 2, width: d, height: d, borderRadius: '50%', background: `radial-gradient(circle, ${hexA(c, 0.95)} 0, ${hexA(c, 0.5)} 28%, ${hexA(c, 0)} 68%)`, animation: `${anim || 'fh-tp-glow'} ${dur}s ease-out both` } })); };
+  const rings = (c, k, sz) => { const d = Math.min(tp.r * sz, 560 * u); for (let i = 0; i < k; i++) out.push(E('div', { key: 'r' + n++, style: { position: 'absolute', left: -d / 2, top: -d / 2, width: d, height: d, borderRadius: '50%', border: `${(3 / Math.max(0.3, d / 400)).toFixed(1)}px solid ${c}`, animation: `fh-tp-ring 1.7s cubic-bezier(.2,.6,.3,1) ${(i * 0.28).toFixed(2)}s both` } })); };
+  const fireworks = (pal) => {
+    for (let b = 0; b < 3; b++) {
+      const bx = rr(-240, 240) * u, by = -rr(160, 340) * u, c = pick(pal), dl = b * 0.32;
+      part(4 * u, 12 * u, null, [bx * 0.7, by * 0.7, bx, by, 0, 1], 0.45, dl, 0, 0, { background: '#fff6d0', borderRadius: 3 });
+      out.push(E('div', { key: 'f' + n++, style: { position: 'absolute', left: bx - 45 * u, top: by - 45 * u, width: 90 * u, height: 90 * u, borderRadius: '50%', background: `radial-gradient(circle, ${hexA(c, 0.9)}, ${hexA(c, 0)} 70%)`, animation: `fh-tp-glow 1.2s ease-out ${(dl + 0.4).toFixed(2)}s both` } }));
+      for (let i = 0; i < 20; i++) { const t = i / 20 * 6.283 + rr(-0.1, 0.1), d = rr(90, 140) * u; part(6 * u, 6 * u, null, [Math.cos(t) * d * 0.85, Math.sin(t) * d * 0.85, Math.cos(t) * d, Math.sin(t) * d + 40 * u, 0], rr(1.3, 1.6), dl + 0.4, bx, by, { borderRadius: '50%', background: i % 3 ? c : '#ffffff', boxShadow: `0 0 ${(6 * u).toFixed(1)}px ${c}` }); }
+    }
+  };
+  const bats = (k) => {
+    for (let i = 0; i < k; i++) {
+      const t = -1.571 + rr(-1.25, 1.25), d = rr(280, 460) * u, w = rr(34, 56) * u;
+      part(w, w * 0.42, E('svg', { viewBox: '0 0 120 50', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible', animation: `fh-flap ${rr(0.18, 0.28).toFixed(2)}s ease-in-out infinite` } }, E('path', { d: BAT_D, fill: '#0b0412' })),
+        [Math.cos(t) * d * 0.4, Math.sin(t) * d * 0.4 - 20 * u, Math.cos(t) * d * 1.5, Math.sin(t) * d * 1.3 - 80 * u, rr(-20, 20), 1.7], rr(2, 2.6), rr(0, 0.25));
+    }
+  };
+  const shoot = (k) => {
+    for (let i = 0; i < k; i++) out.push(E('div', { key: 's' + n++, style: { position: 'absolute', left: rr(-60, 60) * u, top: rr(-40, 20) * u, width: 0, height: 0, transform: `rotate(${rr(148, 168).toFixed(0)}deg)` } },
+      E('div', { style: { position: 'absolute', left: 0, top: -1.5 * u, width: 200 * u, height: 3 * u, borderRadius: 3 * u, background: 'linear-gradient(90deg, rgba(255,255,255,0), #ffffff)', transformOrigin: '100% 50%', '--dx': (520 * u).toFixed(0) + 'px', animation: `fh-tp-shoot 1.1s ease-in ${(i * 0.35).toFixed(2)}s both` } })));
+  };
+  const c0 = tp.c;
+  switch (tp.fx) {
+    case 'moon': glow('#fff3cf', 4.2, 2.6); burst(8, 'pop', () => spark('#fffbe6'), 60, 130, 1.6); break;
+    case 'moonBats': {
+      // des chauves-souris passent devant la lune : leur silhouette se découpe dessus
+      glow('#fff3cf', 3.4, 2.6);
+      const r0 = tp.r;
+      for (let i = 0; i < 4; i++) {
+        const w = rr(40, 60) * u, y0 = rr(-0.5, 0.5) * r0;
+        part(w, w * 0.42, E('svg', { viewBox: '0 0 120 50', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible', animation: `fh-flap ${rr(0.18, 0.26).toFixed(2)}s ease-in-out infinite` } }, E('path', { d: BAT_D, fill: '#0b0412' })),
+          [1.7 * r0, rr(-0.3, 0.3) * r0, 3.6 * r0, rr(-1.2, 0.2) * r0, rr(-10, 10), 1.3], rr(2, 2.6), i * 0.22, -1.8 * r0, y0);
+      }
+      break;
+    }
+    case 'sun': glow('#fff1a0', 3.2, 2.4); burst(10, 'pop', () => spark(pick(P.gold)), 70, 150, 1.6); break;
+    case 'sunPink': glow('#ff9ad5', 2.6, 2.4); burst(10, 'pop', () => spark(pick(['#ffd36e', '#ff6ec7', '#ffa6e8'])), 80, 170, 1.6); break;
+    case 'pumpkin': glow('#ff8c1a', 3.6, 3.2, 'fh-tp-flick'); burst(10, 'rise', () => dot(pick(['#ffb347', '#ffd36e', '#ff7a18']), 5), 120, 220, 2); break;
+    case 'bats': bats(8); break;
+    case 'boo':
+      part(64 * u, 75 * u, svgK('0 0 60 70', E('path', { d: 'M10 66 V30 A20 20 0 0 1 50 30 V66 L43 59 L37 66 L30 59 L23 66 L17 59 Z', fill: 'rgba(244,240,255,.95)' }), E('ellipse', { cx: 23, cy: 31, rx: 3.6, ry: 5.2, fill: '#1a0b2e' }), E('ellipse', { cx: 37, cy: 31, rx: 3.6, ry: 5.2, fill: '#1a0b2e' }), E('ellipse', { cx: 30, cy: 44, rx: 3, ry: 4.2, fill: '#1a0b2e' })),
+        [rr(-10, 10) * u, -90 * u, rr(-40, 40) * u, -230 * u, rr(-8, 8), 1.15], 2.6, 0, 0, -10 * u, { filter: 'drop-shadow(0 0 10px rgba(230,220,255,.7))' });
+      part(130 * u, 40 * u, E('span', null, booText), [0, -150 * u, 0, -200 * u, 0, 1.1], 2.2, 0.25, 0, -40 * u, { textAlign: 'center', whiteSpace: 'nowrap', font: `400 ${(32 * u).toFixed(1)}px/1.2 Creepster, fantasy`, color: '#f4efff', textShadow: '0 0 10px rgba(168,85,247,.9)' });
+      break;
+    case 'petals': burst(18, 'fall', () => petal(pick(P.pinks)), 60, 160, 2.6); break;
+    case 'leaves': burst(16, 'fall', () => leaf(pick(P.fall)), 60, 160, 2.8); break;
+    case 'palm': burst(10, 'fall', () => leaf(pick(P.greens)), 50, 130, 2.6); break;
+    case 'snow': burst(22, 'fall', () => snow(rr(6, 12)), 40, 140, 2.8); break;
+    case 'hearts': burst(12, 'rise', () => heart(pick(P.reds)), 140, 260, 2.4); break;
+    case 'boom': rings(c0 || '#ff4fd8', 3, 3); burst(10, 'rise', () => note(pick(P.neon)), 160, 280, 2.4); break;
+    case 'flash': glow('#fff8d8', 3.6, 1.6); break;
+    case 'bubbles': burst(14, 'rise', () => bubble(rr(8, 20)), 160, 300, 2.8); break;
+    case 'stars': burst(14, 'pop', () => star(pick(P.gold)), 70, 170, 1.8); break;
+    case 'gold': glow('#ffd76a', 2.4, 2); burst(16, 'pop', () => spark(pick(P.gold)), 60, 160, 1.8); break;
+    case 'ice': glow('#e6f6ff', 2, 2); burst(14, 'pop', () => spark(pick(P.ice)), 60, 150, 1.8); break;
+    case 'twinkle': glow('#fff3c4', 1.6, 1.8); burst(22, 'pop', () => dot(pick(P.party), 9), 60, 190, 1.9); break;
+    case 'confetti': burst(26, 'fall', () => conf(pick(P.party)), 80, 200, 2.6); break;
+    case 'confettiFr': burst(26, 'fall', () => conf(pick(['#1d4ed8', '#ffffff', '#e11d48'])), 80, 200, 2.6); break;
+    case 'confettiUk': burst(26, 'fall', () => conf(pick(['#1e3a8a', '#ffffff', '#dc2626'])), 80, 200, 2.6); break;
+    case 'sprinkles': burst(24, 'fall', () => sprinkle(pick(P.candy)), 70, 180, 2.6); break;
+    case 'eggs': burst(9, 'fall', () => egg(pick(P.pastel)), 90, 200, 2.6); break;
+    case 'chalk': glow('#ffffff', 1.6, 1.6); burst(18, 'pop', () => dot(pick(P.chalk), rr(5, 9)), 40, 140, 1.8); break;
+    case 'ink': burst(10, 'pop', ink, 60, 150, 2); break;
+    case 'fw': fireworks(P.party); break;
+    case 'fwFr': fireworks(['#3b82f6', '#ffffff', '#ef4444']); break;
+    case 'ripple': rings(c0 || 'rgba(255,255,255,.9)', 3, 3); break;
+    case 'radar': rings(c0 || '#38e8ff', 3, 3.4); break;
+    case 'neon': glow(c0 || '#ff4fd8', 2.6, 2.6, 'fh-tp-flick'); break;
+    case 'warm': glow('#ffc56b', 2.8, 3, 'fh-tp-flick'); break;
+    case 'pixels': burst(20, 'pop', () => pixel(pick(P.arcade)), 70, 200, 1.8); break;
+    case 'led': burst(20, 'pop', () => dot(pick(P.led), 8), 60, 180, 1.8); break;
+    case 'digits': burst(16, 'rise', digit, 120, 260, 2.4); break;
+    case 'shapes': burst(12, 'pop', shape, 80, 200, 1.8); break;
+    case 'rainbow': glow('#ffffff', 1.6, 1.6); burst(18, 'pop', () => star(pick(P.rainbow)), 70, 190, 1.9); break;
+    case 'planet': glow(c0 || '#ffb36b', 2, 2.4); burst(10, 'pop', () => spark('#ffffff'), 90, 200, 1.8); break;
+    case 'shoot': shoot(2); burst(8, 'pop', () => spark('#ffffff'), 40, 110, 1.4); break;
+    case 'bigben': glow('#ffd76a', 2.4, 2.2); rings('#ffd76a', 3, 4); break;
+  }
+  return out;
+}
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
 // act(st, b) : vrai quand l'action demandée est faite (b = état au début de l'étape). prep(app) : remet le décor si on revient en arrière.
@@ -850,7 +1016,7 @@ const LONG_TOUR = [
   { t: ['bgspot'], h: 'Clique sur le fond', x: 'Le fond a son menu à lui : thèmes, décor, couleurs, ta photo, notes, images…', act: (st) => !!(st.menu && st.menu.kind === 'bg'), d: 'Clique sur le fond, là où il n’y a rien.', prep: prepMode('clock') },
   { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres.', act: subIs('theme'), d: 'Clique sur « Thèmes ».', prep: prepRoot('bg', 'bgspot') },
   { t: ['menu1'], h: 'Choisis un thème', x: 'Chaque thème change d’un coup la police, les couleurs et le décor. Le menu reste ouvert : essaie-en plusieurs.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: prepSub('bg', 'bgspot', 'theme') },
-  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres.', prep: prepRoot('bg', 'bgspot') },
+  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres. Astuce : dans les décors, touche la lune, le soleil, un arbre ou une citrouille : le décor réagit !', prep: prepRoot('bg', 'bgspot') },
   { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepRoot('bg', 'bgspot') },
   { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut. Pour changer sa taille, tire les petits traits dans son coin en bas à droite. Un clic sur la barre ouvre son menu : couleur, taille, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
   { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, il ne reste que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
@@ -888,7 +1054,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
+  decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
   scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false, alarmSnd: 'chime', alarmVol: 90,
 };
 // Thème par défaut : Halloween
@@ -1081,7 +1247,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, taps: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -1855,7 +2021,41 @@ class Component extends DCLogic {
     if (this.state.ringing) { this.stopAlarm(); return; }
     if (this.state.tab) { this.closePanel(); return; }
     if (this.noClick) return;
+    // un objet du décor (lune, citrouille, arbre…) réagit au lieu d'ouvrir le menu du fond
+    const h = this.onBg(e) && this.decoHit(e.clientX, e.clientY);
+    if (h) { this.decoTap(h); return; }
     this.menuAt(e.clientX, e.clientY, e.target);
+  };
+  // ---------- décor qui réagit au toucher ----------
+  decoSpots = () => {
+    const st = this.state, s = st.s, vw = st.vw, vh = st.vh;
+    const id = s.bgType === 'spooky' ? 'spooky' : s.bgType === 'scene' ? s.scene : '', list = DECO_TAP[id];
+    if (!list || s.decoTap === false || st.tour != null || st.moveMode) return [];
+    const key = id + '|' + vw + '|' + vh;
+    if (this.spotKey !== key) {
+      let map;
+      if (id === 'spooky') { const k = Math.max(vw / 1600, vh * 0.34 / 320); map = ([x, y, r]) => [vw / 2 + (x - 800) * k, vh - (320 - y) * k, r * k]; }
+      else { const sw = Math.round(Math.max(vw, vh * 16 / 9)), k = sw / 1600; map = ([x, y, r]) => [vw / 2 + (x - 800) * k, vh - Math.round(sw * 9 / 16) + y * k, r * k]; }
+      const vm = Math.min(vw, vh) / 100;
+      this.spots = list.map(h => { const [x, y, r] = h[0] === 'moon' ? [vw * 0.89 - 7.5 * vm, vh * 0.09 + 7.5 * vm, 7.5 * vm] : map(h); return { x, y, r, fx: h[3], c: h[4] }; });
+      this.spotKey = key;
+    }
+    return this.spots;
+  };
+  // le clic tombe sur le fond lui-même (ou sur un vide du bloc de l'heure), pas sur l'heure, la date ou un bouton
+  onBg = (e) => e.target === e.currentTarget || e.target === this.blockRef.current;
+  decoHit = (x, y) => this.decoSpots().find(h => (x - h.x) ** 2 + (y - h.y) ** 2 <= (h.r * 1.1) ** 2) || null;
+  decoTap = (h) => {
+    const st = this.state, id = (this.tapN = (this.tapN || 0) + 1), tz = st.s.tz === 'local' ? undefined : st.s.tz, sk = skyLight(st.s, new Date(), tz);
+    const fx = h.fx === 'sun' && sk && sk.night > 0.55 ? 'moon' : h.fx, u = Math.max(0.55, Math.min(1.6, Math.max(st.vw, st.vh * 16 / 9) / 1600));
+    this.setState(s0 => ({ taps: [...s0.taps.slice(-5), { id, fx, x: h.x, y: h.y, r: h.r, c: h.c, u, seed: (Date.now() * 7919 + id * 104729) | 0 }] }));
+    setTimeout(() => this.setState(s0 => ({ taps: s0.taps.filter(x => x.id !== id) })), 4200);
+  };
+  // petite main au survol d'un objet qui réagit
+  onStageMove = (e) => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    const on = this.onBg(e) && !!this.decoHit(e.clientX, e.clientY);
+    if (on !== !!this.hotOn) { this.hotOn = on; e.currentTarget.style.cursor = on ? 'pointer' : ''; }
   };
   L() { const li = Math.max(0, LANGS.indexOf(this.state.s.uiLang)); if (this._li !== li) { this._li = li; const o = {}; for (const k in T) o[k] = T[k][li]; this._L = o; } return this._L; }
   cardText(ps) {
@@ -2470,7 +2670,7 @@ class Component extends DCLogic {
         { key: 'bgcol', icon: s.bgType === 'image' ? 'tune' : 'format_color_fill', label: s.bgType === 'image' ? L.image : L.mBgColors, sub: bgCols },
         { key: 'photo', icon: 'add_photo_alternate', label: L.mBgPhoto, act: this.pickFiles },
         ...(s.bgType === 'image' && st.media.some(m => m.id === s.bgImage) ? [{ key: 'delbg', icon: 'delete', label: L.bgPicDel, act: this.dropBgPic }] : []),
-        { key: 'atmo', icon: 'blur_on', label: L.hAtmos, sub: () => [sl('vignette', L.vignette, 0, 100, 1), sl('grain', L.grain, 0, 100, 1), tog('scanlines', L.scanlines, 'reorder'), tog('tick', L.tick, 'music_note')] },
+        { key: 'atmo', icon: 'blur_on', label: L.hAtmos, sub: () => [sl('vignette', L.vignette, 0, 100, 1), sl('grain', L.grain, 0, 100, 1), tog('scanlines', L.scanlines, 'reorder'), tog('tick', L.tick, 'music_note'), tog('decoTap', L.decoTap, 'touch_app')] },
         sep,
         { key: 'note', icon: 'sticky_note_2', label: L.noteNew, act: () => this.addNote(M.x, M.y) },
         { key: 'pic', icon: 'image', label: L.picBtn, act: this.pickPic },
@@ -2678,6 +2878,7 @@ class Component extends DCLogic {
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
       // voile doux derrière l'heure sur les décors : les chiffres restent lisibles même devant un dessin chargé
       sky: { on: !!skyL, el: skyEl },
+      taps: { on: st.taps.length > 0, el: st.taps.map(tp => E('div', { key: tp.id, style: { position: 'absolute', left: tp.x, top: tp.y, width: 0, height: 0 } }, tapParts(E, tp, L.boo))) }, onStageMove: this.onStageMove,
       halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : st.moveMode === 'drag' ? 'grabbing' : 'pointer', gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: s.dateColor, opacity: Math.min(1, dateOp + 0.15), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
