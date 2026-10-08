@@ -1424,6 +1424,201 @@
 
   // rendu React d'un décor, cadré « cover » et ancré en bas (mis en cache : même arbre tant que rien ne change)
   const RENDERED = new Map();
+  // ---------------- LONDRES : Big Ben doré au crépuscule, grande roue qui tourne, pont de Westminster, bus rouge, crachin ----------------
+  Object.assign(SP, {
+    // drapeau britannique (construction officielle : diagonales rouges décalées)
+    ukflag: () => svg('0 0 60 30', '<defs><clipPath id="u"><rect width="60" height="30"/></clipPath><clipPath id="t"><path d="M30 15h30v15zv15h-30zh-30v-15zv-15h30z"/></clipPath></defs><g clip-path="url(#u)">'
+      + rect(0, 0, 60, 30, '#012169') + path('M0 0L60 30M60 0L0 30', 'none', ' stroke="#ffffff" stroke-width="6"') + path('M0 0L60 30M60 0L0 30', 'none', ' stroke="#c8102e" stroke-width="4" clip-path="url(#t)"')
+      + path('M30 0V30M0 15H60', 'none', ' stroke="#ffffff" stroke-width="10"') + path('M30 0V30M0 15H60', 'none', ' stroke="#c8102e" stroke-width="6"') + '</g>'),
+    // bus rouge à impériale (l'avant est à droite)
+    bus: () => svg('0 0 120 64', `<defs>${lg('b', [[0, '#e8443a'], [0.55, '#cf2a26'], [1, '#a81d1d']])}</defs>`
+      + path('M4 12Q4 4 12 4L108 4Q118 4 118 13L118 54L4 54Z', 'url(#b)') + rect(8, 5, 98, 1.6, '#ff8a7a', ' opacity=".7"')
+      + [0, 1, 2, 3, 4, 5].map((i) => rect(10 + i * 16, 10, 13, 13, '#ffe3a3', ' rx="1.5"')).join('') + rect(105, 9, 11, 7, '#1a1a1a') + rect(106.5, 11, 8, 2.5, '#ffd34d')
+      + rect(4, 27, 114, 3.2, '#f1e1bf')
+      + [0, 1, 2, 3, 4].map((i) => rect(22 + i * 16, 33, 13, 11, '#ffe3a3', ' rx="1.5"')).join('') + rect(102, 32, 9, 20, '#3a1a1a') + rect(103, 33, 7, 11, '#ffdca0', ' opacity=".55"') + rect(112, 33, 5, 11, '#ffeec8', ' opacity=".8"')
+      + rect(4, 47, 114, 7, '#8f1717') + circ(115.5, 50, 2.4, '#fff6d6') + circ(6, 50, 2, '#ff3b3b')
+      + [28, 94].map((x) => circ(x, 56, 7.5, '#141414') + circ(x, 56, 2.6, '#7a7a7a')).join('')),
+    // taxi noir (l'avant est à gauche)
+    cab: () => svg('0 0 80 42', `<defs>${rg('g', [[0, '#ffcc33', 0.9], [1, '#ffcc33', 0]])}</defs>` + ell(41, 4, 10, 5, 'url(#g)')
+      + path('M5 31Q4 19 14 17L22 9Q26 5 34 5L54 5Q62 5 66 11L72 17Q78 19 77 31L77 35L5 35Z', '#18181f') + line('M15 17L23 9Q27 6 34 6L54 6Q61 6 65 11L71 17', '#3c3c4a', 1.2)
+      + path('M24 16L33 8.5L43 8.5L43 16Z', '#ffd98a', ' opacity=".42"') + path('M47 8.5L55 8.5Q60 9.5 63 16L47 16Z', '#ffd98a', ' opacity=".42"')
+      + rect(36, 1.5, 10, 4, '#ffcc33', ' rx="1"') + circ(6, 27, 2.4, '#fff6d0') + circ(76, 27, 2, '#ff4040')
+      + [20, 62].map((x) => circ(x, 36, 6, '#0b0b0f') + circ(x, 36, 2.1, '#8a8a8a')).join('')),
+    // grande roue : jante double en treillis, câbles, capsules éclairées (tourne d'un bloc)
+    eye: () => {
+      let s = `<defs>${rg('c', [[0, '#ffffff'], [0.55, '#cfe6ff'], [1, '#8fb6ea']], 0.4, 0.35, 0.7)}</defs>`;
+      s += circ(0, 0, 220, 'none', ' stroke="#b9cdff" stroke-width="12" opacity=".12"');
+      for (let k = 0; k < 32; k++) { const a = k / 32 * Math.PI * 2; s += line(`M${N(Math.cos(a) * 16)} ${N(Math.sin(a) * 16)}L${N(Math.cos(a) * 205)} ${N(Math.sin(a) * 205)}`, '#d3defa', 0.7, ' opacity=".55"'); }
+      let z = ''; for (let k = 0; k <= 96; k++) { const a = k / 96 * Math.PI * 2, rr2 = k % 2 ? 219 : 206; z += (k ? 'L' : 'M') + N(Math.cos(a) * rr2) + ' ' + N(Math.sin(a) * rr2); }
+      s += line(z, '#e6eeff', 1.1, ' opacity=".85"') + circ(0, 0, 206, 'none', ' stroke="#eef3ff" stroke-width="2"') + circ(0, 0, 220, 'none', ' stroke="#f4f7ff" stroke-width="3.2"');
+      for (let k = 0; k < 32; k++) { const a = k / 32 * Math.PI * 2 + 0.05, x = Math.cos(a) * 232, y = Math.sin(a) * 232; s += line(`M${N(Math.cos(a) * 220)} ${N(Math.sin(a) * 220)}L${N(x)} ${N(y)}`, '#e6eeff', 1.4) + ell(x, y, 8.5, 6, 'url(#c)', ` transform="rotate(${N(a * 180 / Math.PI)} ${N(x)} ${N(y)})"`); }
+      s += circ(0, 0, 16, 'none', ' stroke="#f4f7ff" stroke-width="3"') + circ(0, 0, 7, '#f4f7ff');
+      return svg('-250 -250 500 500', s);
+    },
+  });
+  // Elizabeth Tower (Big Ben), éclairée comme le soir : pierre dorée, flèche sombre aux nervures dorées
+  function bigBen(p, cx) {
+    const L = cx - 30, R = cx + 30;
+    const gold = (id, x0, x1) => `<defs>${lg(id, [[0, '#f8d88a'], [0.5, '#e2ae58'], [1, '#9c6728']], 1, 0)}</defs>`;
+    let s = gold(p + 'g', 0, 1) + `<defs>${lg(p + 'r', [[0, '#4a4568'], [1, '#221f36']], 1, 0)}${rg(p + 'f', [[0, '#fffcef'], [0.7, '#ffefc4'], [1, '#f0cd85']])}</defs>`;
+    // fût
+    s += rect(L, 300, 60, 440, `url(#${p}g)`);
+    for (let x = L + 4; x < R - 2; x += 7) s += rect(x, 305, 1.5, 430, 'rgba(110,65,20,.32)');
+    [360, 440, 520, 600, 680].forEach((y) => { s += rect(L - 2, y, 64, 3.5, '#fbe3a4') + rect(L - 2, y + 3.5, 64, 2, 'rgba(110,65,20,.4)'); });
+    [384, 464, 544, 624].forEach((y) => [-14, 0, 14].forEach((dx) => { s += rect(cx + dx - 3, y, 6, 18, '#5b3a14') + circ(cx + dx, y, 3, '#5b3a14'); }));
+    s += rect(L, 300, 3, 440, '#fff2c8', ' opacity=".5"') + rect(R - 6, 300, 6, 440, 'rgba(80,45,10,.35)');
+    // étage de l'horloge
+    s += rect(cx - 38, 200, 76, 6, '#fbe3a4') + rect(cx - 38, 205, 76, 95, `url(#${p}g)`) + rect(cx - 38, 205, 3, 95, '#fff2c8', ' opacity=".5"');
+    s += rect(cx - 33, 221, 66, 66, '#b9803a') + rect(cx - 31, 223, 62, 62, '#f2cf86') + [[-29, -29], [29, -29], [-29, 29], [29, 29]].map(([a, b]) => circ(cx + a, 254 + b, 3.2, '#8a5a20')).join('');
+    s += glow(p + 'fg', cx, 254, 80, '#ffe08a', 0.55) + circ(cx, 254, 27, `url(#${p}f)`) + circ(cx, 254, 27, 'none', ' stroke="#3b2410" stroke-width="2.4"') + circ(cx, 254, 22.5, 'none', ' stroke="#7a5524" stroke-width=".8"');
+    for (let k = 0; k < 12; k++) { const a = k / 12 * Math.PI * 2; s += line(`M${N(cx + Math.cos(a) * 23.5)} ${N(254 + Math.sin(a) * 23.5)}L${N(cx + Math.cos(a) * 26.3)} ${N(254 + Math.sin(a) * 26.3)}`, '#3b2410', k % 3 ? 1.1 : 2); }
+    s += rect(cx - 30, 291, 60, 5, '#c48a3a');
+    s += [cx - 40, cx + 40].map((x) => path(`M${x - 4} 206L${x} 184L${x + 4} 206Z`, '#f2cf86')).join('');
+    // beffroi : trois arcades, les cloches à peine éclairées
+    s += rect(cx - 34, 146, 68, 6, '#fbe3a4') + rect(L, 151, 60, 50, `url(#${p}g)`);
+    [-15, 0, 15].forEach((dx) => { s += path(`M${cx + dx - 5.5} 197V166Q${cx + dx} 156 ${cx + dx + 5.5} 166V197Z`, '#3a2614') + path(`M${cx + dx - 5.5} 197V176Q${cx + dx} 170 ${cx + dx + 5.5} 176V197Z`, '#ffcf7a', ' opacity=".28"'); });
+    s += [L - 1, R + 1].map((x) => path(`M${x - 3.5} 148L${x} 126L${x + 3.5} 148Z`, '#f2cf86')).join('');
+    // flèche : toit d'ardoise, nervures dorées, lanterne, croix
+    s += path(`M${L - 2} 146L${R + 2} 146L${cx + 20} 98L${cx - 20} 98Z`, `url(#${p}r)`);
+    for (let i = 0; i <= 4; i++) s += line(`M${N(L - 2 + i * 16)} 146L${N(cx - 20 + i * 10)} 98`, '#e8b860', 1.2, ' opacity=".9"');
+    [cx - 12, cx + 4].forEach((x) => { s += rect(x, 118, 8, 10, '#e8b860') + rect(x + 2, 120, 4, 7, '#3a2614'); });
+    s += rect(cx - 18, 84, 36, 14, '#d9a34f') + [cx - 12, cx - 3, cx + 6].map((x) => rect(x, 87, 5, 9, '#3a2614')).join('');
+    s += path(`M${cx - 18} 84L${cx + 18} 84L${cx + 3} 50L${cx - 3} 50Z`, `url(#${p}r)`) + line(`M${cx - 10} 84L${cx - 1.5} 52M${cx + 10} 84L${cx + 1.5} 52`, '#e8b860', 1);
+    s += line(`M${cx} 51V27M${cx - 5} 35H${cx + 5}`, '#f2c766', 2.2) + circ(cx, 42, 3, '#f2c766');
+    return s;
+  }
+  // palais de Westminster (façade dorée à pinacles) et Victoria Tower au bout, avec son mât
+  function westminster(r, p) {
+    let s = `<defs>${lg(p + 'v', [[0, '#d9a85a'], [0.6, '#b8863f'], [1, '#7f5726']], 1, 0)}${lg(p + 'm', [[0, '#e6b766'], [1, '#a8762f']], 0, 1)}</defs>`;
+    // Victoria Tower
+    s += rect(-4, 360, 122, 380, `url(#${p}v)`) + rect(-8, 352, 130, 9, '#e9c27a');
+    for (let x = 2; x < 116; x += 11) s += rect(x, 372, 1.6, 360, 'rgba(90,55,20,.32)');
+    [[420, 470], [520, 570], [620, 660]].forEach(([y0, y1]) => [12, 42, 72, 102].forEach((x) => { s += path(`M${x} ${y1}V${y0 + 8}Q${x + 5} ${y0} ${x + 10} ${y0 + 8}V${y1}Z`, '#5b3a14'); }));
+    [-4, 112].forEach((x) => { s += rect(x - 2, 316, 12, 40, '#d4a356') + path(`M${x - 3} 318L${x + 4} 290L${x + 11} 318Z`, '#e9c27a'); });
+    [38, 70].forEach((x) => { s += path(`M${x - 3} 354L${x + 2} 332L${x + 7} 354Z`, '#e9c27a'); });
+    s += line('M56 352V262', '#2a2238', 2.4) + circ(56, 261, 2.6, '#e8b860');
+    // tour centrale (plus loin)
+    s += rect(176, 520, 26, 80, '#a77a3c') + path('M174 522L189 466L204 522Z', '#6e5434') + line('M189 466V452', '#c49a52', 1.6);
+    // façade
+    s += rect(88, 600, 214, 140, `url(#${p}m)`) + rect(88, 588, 214, 13, '#3d3654');
+    for (let x = 92; x < 300; x += 18) {
+      s += rect(x, 600, 3, 140, '#f5d08a', ' opacity=".55"') + path(`M${x - 2} 590L${x + 1.5} 566L${x + 5} 590Z`, '#e9c27a');
+      [[612, 636], [652, 676]].forEach(([y0, y1]) => { const lit = r() < 0.55; s += path(`M${x + 6} ${y1}V${y0 + 5}Q${x + 10} ${y0} ${x + 14} ${y0 + 5}V${y1}Z`, lit ? '#ffe2a0' : '#5b3a14', lit ? ' opacity=".9"' : ''); });
+    }
+    s += rect(88, 644, 214, 3, '#f8dc9c') + rect(88, 688, 214, 3, '#f8dc9c');
+    return s;
+  }
+  // silhouettes au loin dans la brume : Saint-Paul, le « Gherkin », The Shard et des immeubles bas
+  function farCity(r, p, c) {
+    let s = skyline(r, { x0: 380, x1: 1180, y: 706, minW: 30, maxW: 70, minH: 18, maxH: 70, fill: c, win: ['#ffd98a', '#ffe9b8'], winP: 0.1, winW: 3, winH: 4, gapX: 7, gapY: 8 });
+    // cathédrale Saint-Paul
+    s += rect(560, 664, 90, 44, c) + rect(578, 640, 54, 26, c) + path('M574 644Q574 604 605 600Q636 604 636 644Z', c) + rect(601, 584, 8, 18, c) + circ(605, 581, 3.5, c) + line('M605 578V568M601 572H609', c, 1.6);
+    s += rect(548, 652, 12, 56, c) + path('M546 654L554 636L562 654Z', c) + rect(650, 652, 12, 56, c) + path('M648 654L656 636L664 654Z', c);
+    // le « Gherkin »
+    s += path('M905 708L905 650Q905 596 928 572Q951 596 951 650L951 708Z', c);
+    for (let i = 0; i < 6; i++) s += line(`M${908 + i * 7} 704Q${910 + i * 5} 620 928 576`, '#ffffff', 0.6, ' opacity=".12"');
+    // The Shard, sa pointe éclairée
+    s += path('M1012 708L1043 470L1050 462L1056 480L1086 708Z', c) + path('M1043 470L1050 462L1056 480L1049 500Z', '#ffe7b8', ' opacity=".55"');
+    for (let i = 0; i < 18; i++) s += rect(rr(r, 1030, 1066), rr(r, 520, 700), 2, 3, '#ffe2a0', ` opacity="${N(rr(r, 0.3, 0.8))}"`);
+    return s;
+  }
+
+  def('london', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const E = t.E, eye = spr('eye'), HX = 1340, HY = 470;
+      // aiguilles de Big Ben : démarrées à l'heure qu'il est quand elles apparaissent à l'écran
+      const atNow = (period) => (n) => { if (!n) return; const d = new Date(), sec = (d.getHours() % 12) * 3600 + d.getMinutes() * 60 + d.getSeconds() + d.getMilliseconds() / 1000; n.style.animationDelay = N(-(sec % period)) + 's'; };
+      const hand = (k, len, wid, period) => (t.preview ? null : E('div', { key: k, ref: atNow(period), style: { position: 'absolute', left: em(330 - 27), top: em(254 - 27), width: em(54), height: em(54), animation: `fhs-spin ${period}s linear infinite` } },
+        E('div', { style: { position: 'absolute', left: '50%', bottom: '50%', width: em(wid), height: em(len), marginLeft: em(-wid / 2), marginBottom: em(-2), background: '#2b1a0a', borderRadius: em(wid) } })));
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.45, o.bg1], [0.77, o.bg3]]) + starsSvg(t.r('st'), 60, { y1: 300, max: 1.6 })
+          + glow(p + 'h', 980, 720, 640, o.bg3, 0.3) + moonSvg(p + 'm', 470, 168, 27, '#fff8e6', '#e9d6b0', 0.35)),
+        ...clouds(t, 'cl', [
+          { x: -260, y: 70, k: 1.15, dx: 2000, dur: 150, dl: -40, c: '#6c6191', s: '#e8a487', h: '#8a7fb0', op: 0.6 },
+          { x: -260, y: 210, k: 0.8, dx: 2000, dur: 115, dl: -85, c: '#6c6191', s: '#e8a487', h: '#8a7fb0', op: 0.5 },
+          { x: -260, y: 20, k: 0.7, dx: 2000, dur: 170, dl: -130, c: '#5d5385', s: '#c98d8f', h: '#7c71a4', op: 0.5 }]),
+        t.art('city', (p) => {
+          const r = t.r('lo');
+          let s = farCity(r, p, '#4f4778');
+          s += `<defs>${lg(p + 'fh', [[0, o.bg3, 0], [1, o.bg3, 0.35]])}</defs>` + rect(360, 600, 840, 110, `url(#${p}fh)`);
+          // pieds de la grande roue (fixes) et haubans
+          s += glow(p + 'eg', HX, HY, 300, '#a9c4ff', 0.18);
+          s += line(`M${HX} ${HY}L1475 712M${HX} ${HY}L1505 712M${HX} ${HY}L1535 712`, '#c9d6f2', 0.9, ' opacity=".6"');
+          s += path(`M${HX - 5} ${HY}L1206 712L1222 712L${HX + 5} ${HY + 4}Z`, '#d6e0f6') + path(`M${HX - 3} ${HY + 2}L1240 712L1252 712L${HX + 4} ${HY + 6}Z`, '#b3c2e2');
+          // Westminster et Big Ben, éclairés par en dessous
+          s += glow(p + 'fl', 220, 720, 420, '#ffc46b', 0.28) + westminster(r, p) + bigBen(p + 'b', 330);
+          return s;
+        }),
+        t.el('eye', t.img(eye, { left: em(HX - 250), top: em(HY - 250), width: em(500), height: em(500), animation: 'fhs-spin 160s linear infinite' })),
+        t.still(`<image href="${eye.slice(5, -2)}" x="${HX - 250}" y="${HY - 250}" width="500" height="500"/>`),
+        t.el('hub', { position: 'absolute', left: em(HX - 9), top: em(HY - 9), width: em(18), height: em(18), borderRadius: '50%', background: '#f4f7ff', boxShadow: `0 0 ${em(14)} rgba(190,215,255,.8)` }),
+        hand('hh', 15, 3.2, 43200), hand('mh', 22, 2, 3600),
+        t.still(line('M330 254L341 246M330 254L330 233', '#2b1a0a', 2.4)),
+        // drapeau sur la Victoria Tower
+        t.el('flag', { position: 'absolute', left: em(57), top: em(262), width: em(64), height: em(34), transformOrigin: '0 50%', '--a': '5deg', animation: 'fhs-rock 3.2s ease-in-out infinite' },
+          E('div', { style: t.img(spr('ukflag'), { position: 'static', width: '100%', height: '100%', borderRadius: '1px 6px 6px 1px', boxShadow: '0 .3em .8em rgba(0,0,0,.3)' }) })),
+        t.still(`<image href="${spr('ukflag').slice(5, -2)}" x="57" y="262" width="64" height="34"/>`),
+        ...drift(t, 'gl', t.n('gl', 2, (r, i) => ({ x: -100, y: rr(r, 330, 430), w: rr(r, 44, 56), h: rr(r, 20, 25), x1: 1900, y1: rr(r, -60, 60), dur: rr(r, 30, 40), dl: -i * 17, flap: rr(r, 0.7, 1), f: 0.3, img: spr('gull') }))),
+        // bus rouge et taxi noir sur le pont (le parapet passe devant)
+        t.el('bus', t.img(spr('bus'), { left: em(-160), top: em(658), width: em(110), height: em(58.7), '--x1': em(1920), animation: 'fhs-move 27s linear -9s infinite' })),
+        t.el('cab', t.img(spr('cab'), { left: em(1640), top: em(680), width: em(70), height: em(36.75), '--x1': em(-1820), animation: 'fhs-move 19s linear -3s infinite' })),
+        t.still(`<image href="${spr('bus').slice(5, -2)}" x="700" y="658" width="110" height="58.7"/>`),
+        t.art('front', (p) => {
+          const r = t.r('fr');
+          let s = `<defs>${lg(p + 'w', [[0, '#1a2246'], [1, '#070a18']])}</defs>` + rect(-20, 766, 1640, 140, `url(#${p}w)`);
+          // reflets : Big Ben et le palais en or, la roue en bleu pâle
+          for (let y = 772; y < 868; y += 6) {
+            const k = 1 - (y - 772) / 110;
+            s += rect(300 + rr(r, -6, 6), y, 60 * (0.6 + 0.4 * k), 2.6, '#f4c86c', ` opacity="${N(0.45 * k)}"`) + rect(90 + rr(r, -8, 8), y + 3, 200 * (0.7 + 0.3 * k), 2, '#e3ad5a', ` opacity="${N(0.2 * k)}"`);
+            s += rect(1150 + rr(r, -20, 20), y + 2, rr(r, 80, 300), 1.6, '#c4d6ff', ` opacity="${N(0.16 * k)}"`);
+          }
+          // pont de Westminster : parapet, tablier vert, sept arches, réverbères à trois globes
+          s += rect(-20, 696, 1640, 3, '#6f9f8b') + rect(-20, 699, 1640, 15, '#2c5446');
+          for (let x = -16; x < 1620; x += 9) s += rect(x, 702, 4, 9, '#1b382e');
+          s += rect(-20, 714, 1640, 8, '#22443a') + rect(-20, 722, 1640, 48, '#2f5e4f') + rect(-20, 722, 1640, 2, '#4f8a73');
+          for (let i = 0; i < 7; i++) {
+            const x0 = -20 + i * 234 + 18, x1 = x0 + 198, m = (x0 + x1) / 2;
+            s += path(`M${x0} 772L${x0} 758C${x0} 738 ${x1} 738 ${x1} 758L${x1} 772Z`, '#11183a') + line(`M${x0} 758C${x0} 738 ${x1} 738 ${x1} 758`, '#5f9c84', 1.4);
+            s += rect(x0 - 36, 722, 36, 50, '#655a6e') + path(`M${x0 - 36} 772L${x0 - 18} 784L${x0} 772Z`, '#4a4154') + rect(m - 50, 774, 100, 2, '#ffd98a', ' opacity=".18"');
+          }
+          for (let i = 0; i < 14; i++) {
+            const x = 50 + i * 117;
+            s += rect(x - 1.5, 668, 3, 30, '#1c2826') + line(`M${x - 7} 672H${x + 7}`, '#1c2826', 1.6);
+            s += glow(p + 'bl' + i, x, 666, 34, '#ffd98a', 0.55) + circ(x - 7, 668, 3.2, '#fff1c9') + circ(x + 7, 668, 3.2, '#fff1c9') + circ(x, 661, 3.4, '#fff1c9');
+            s += rect(x - 1, 780 + rr(r, 0, 10), 2, rr(r, 18, 40), '#ffd98a', ' opacity=".22"');
+          }
+          // quai du premier plan
+          s += rect(-20, 868, 1640, 5, '#3a3355') + rect(-20, 873, 1640, 40, '#120e20');
+          // réverbère victorien
+          const lx = 150, ink = '#231d31';
+          s += glow(p + 'lg', lx, 686, 160, '#ffd28a', 0.5);
+          s += path(`M${lx - 15} 870L${lx - 11} 842L${lx + 11} 842L${lx + 15} 870Z`, '#1d1828') + rect(lx - 7, 820, 14, 24, ink) + rect(lx - 9, 817, 18, 4, '#2d2640');
+          s += path(`M${lx - 5} 820L${lx - 3.5} 714L${lx + 3.5} 714L${lx + 5} 820Z`, ink) + line(`M${lx - 1.6} 814L${lx - 1.1} 718`, '#40385a', 1.2);
+          s += rect(lx - 8, 707, 16, 8, '#2d2640') + line(`M${lx - 17} 722H${lx + 17}`, ink, 2.4) + circ(lx - 17, 722, 2.4, ink) + circ(lx + 17, 722, 2.4, ink);
+          s += path(`M${lx - 11} 705L${lx - 15} 668L${lx + 15} 668L${lx + 11} 705Z`, '#ffe3a6') + circ(lx, 688, 8, '#fff8e2');
+          s += line(`M${lx - 11} 705L${lx - 15} 668M${lx + 11} 705L${lx + 15} 668M${lx} 705V668`, '#2d2640', 1.6) + rect(lx - 13, 702, 26, 4, '#2d2640');
+          s += path(`M${lx - 19} 670L${lx} 653L${lx + 19} 670Z`, '#2d2640') + circ(lx, 651, 3, '#2d2640') + line(`M${lx} 649V640`, '#2d2640', 1.6);
+          // cabine téléphonique rouge, allumée
+          const bx = 1440, top = 712, bot = 868;
+          s += glow(p + 'pb', bx + 30, 800, 130, '#ffcf8a', 0.3);
+          s += rect(bx, top + 14, 60, bot - top - 14, '#c8102e') + rect(bx + 52, top + 14, 8, bot - top - 14, '#8e0b21');
+          s += path(`M${bx - 3} ${top + 16}Q${bx + 30} ${top - 8} ${bx + 63} ${top + 16}Z`, '#c8102e') + rect(bx - 3, top + 12, 66, 5, '#a50d26') + circ(bx + 30, top + 1, 2.6, '#e9c46a');
+          s += rect(bx + 6, top + 20, 48, 9, '#f6f1e3') + `<text x="${bx + 30}" y="${top + 27}" font-family="Arial, sans-serif" font-size="6.4" font-weight="700" text-anchor="middle" fill="#1d1d1d" letter-spacing=".4">TELEPHONE</text>`;
+          for (let c = 0; c < 3; c++) for (let w = 0; w < 8; w++) s += rect(bx + 8 + c * 15, top + 36 + w * 14.5, 13, 12, '#ffe6b0', ' opacity=".9"');
+          s += rect(bx - 4, bot - 6, 68, 8, '#8e0b21');
+          return s;
+        }),
+        // la Tamise scintille
+        ...t.n('rf', 16, (r, i) => t.el('rf' + i, { position: 'absolute', left: em(rr(r, 0, 1560)), top: em(rr(r, 790, 860)), width: em(rr(r, 26, 70)), height: em(2.6), borderRadius: 9, background: pick(r, ['#ffd98a', '#f4c86c', '#c4d6ff']), '--o0': 0.04, '--o1': 0.5, animation: `fhs-tw ${N(rr(r, 1.8, 3.6))}s ease-in-out ${N(-r() * 4)}s infinite` })),
+        // brume qui glisse sur le fleuve
+        ...drift(t, 'mi', t.n('mi', 2, (r, i) => ({ x: -900, y: 712, w: 1000, h: 110, x1: 2600, dur: 80, dl: -i * 40, op: 0.13, fade: true, img: spr('dot', '#e9e4ff') }))),
+        // crachin
+        ...drift(t, 'rn', t.n('rn', 26, (r) => ({ x: rr(r, -100, 1650), y: -120, w: 1.6, h: rr(r, 40, 70), x1: -90, y1: 1050, r0: 5, r1: 5, dur: rr(r, 0.8, 1.2), dl: -r() * 1.2, op: rr(r, 0.14, 0.28), bg: 'linear-gradient(180deg, rgba(205,215,255,0), rgba(205,215,255,.9))' }))),
+      ];
+    },
+  });
+
   function render(id, E, o, env) {
     injectCss();
     const sc = SC[id] || SC.winter;
