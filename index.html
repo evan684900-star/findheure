@@ -393,7 +393,7 @@ a{color:inherit}a:hover{opacity:.8}
   <sc-if value="{{ tour.show }}" hint-placeholder-val="{{ false }}">{{ tour.el }}</sc-if>
 
   <sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 40; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 12px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25);">
+    <div style="position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 72; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 12px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25);">
       <span>{{ toast.msg }}</span>
       <sc-if value="{{ toast.hasUndo }}" hint-placeholder-val="{{ false }}">
         <button onClick="{{ toast.undo }}" style="border: 0; background: transparent; color: {{ ui.invFg }}; font: 600 13.5px/1 Geist, system-ui, sans-serif; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 4px;">{{ L.undo }}</button>
@@ -453,6 +453,9 @@ const T_RAW = {
   a_flip: "Bascule|Flip|Giro|Kippen", a_blur: "Flou|Blur|Desenfoque|Unschärfe", a_pop: "Pop|Pop|Pop|Pop",
   breathe: "Respiration lente|Slow breathing|Respiración lenta|Langsames Atmen", vignette: "Vignettage|Vignette|Viñeta|Vignette", grain: "Grain|Grain|Grano|Körnung",
   scanlines: "Lignes d’écran cathodique|CRT scanlines|Líneas de pantalla CRT|Röhren-Scanlines", tick: "Son tic-tac|Ticking sound|Sonido tic-tac|Tick-Tack-Geräusch",
+  themeSet: "Thème : {n}|Theme: {n}|Tema: {n}|Thema: {n}", themeSurprise: "Nouveau style surprise|New surprise style|Nuevo estilo sorpresa|Neuer Überraschungsstil", themeBack: "Thème précédent remis|Previous theme restored|Tema anterior restaurado|Vorheriges Thema wiederhergestellt",
+  hKeys: "Raccourcis clavier|Keyboard shortcuts|Atajos de teclado|Tastenkürzel", keysOn: "Activer les raccourcis clavier|Enable keyboard shortcuts|Activar los atajos de teclado|Tastenkürzel aktivieren",
+  keysList: "F plein écran · S Surprends-moi · N note · I image · Espace lancer ou arrêter le minuteur, le chrono ou le sonomètre · R remettre à zéro · L tour du chrono · Ctrl+Z annuler un changement de thème. Échap ferme toujours un menu.|F fullscreen · S surprise me · N note · I image · Space start or stop the timer, stopwatch or sound meter · R reset · L lap · Ctrl+Z undo a theme change. Esc always closes a menu.|F pantalla completa · S sorpréndeme · N nota · I imagen · Espacio iniciar o parar el temporizador, el cronómetro o el sonómetro · R reiniciar · L vuelta · Ctrl+Z deshacer un cambio de tema. Esc siempre cierra un menú.|F Vollbild · S Überrasch mich · N Notiz · I Bild · Leertaste Timer, Stoppuhr oder Lärmampel starten/stoppen · R zurücksetzen · L Runde · Strg+Z Themenwechsel rückgängig. Esc schließt immer ein Menü.",
   decoTap: "Décor qui réagit au toucher|Scenery reacts to touch|Decorado que reacciona al tocarlo|Kulisse reagiert auf Berührung", boo: "Bouh !|Boo!|¡Bu!|Buh!",
   clockType: "Type d’horloge|Clock type|Tipo de reloj|Uhrentyp", ct_digital: "Chiffres|Digital|Digital|Digital", ct_analog: "À aiguilles|Analog|Analógico|Analog", ct_both: "Aiguilles et chiffres|Analog + digital|Agujas y cifras|Zeiger und Ziffern",
   anaNums: "Nombres de 1 à 12|Numbers 1 to 12|Números del 1 al 12|Zahlen 1 bis 12", anaMins: "Minutes autour (5, 10, 15…)|Minutes around (5, 10, 15…)|Minutos alrededor (5, 10, 15…)|Minuten außen (5, 10, 15…)", anaColor: "Aiguilles en couleur (pour apprendre)|Coloured hands (for learning)|Agujas de colores (para aprender)|Farbige Zeiger (zum Lernen)", anaSec: "Trotteuse (aiguille des secondes)|Second hand|Segundero|Sekundenzeiger",
@@ -1054,7 +1057,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
+  keys: true, decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
   scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false, alarmSnd: 'chime', alarmVol: 90,
 };
 // Thème par défaut : Halloween
@@ -1337,7 +1340,26 @@ class Component extends DCLogic {
     const id = themeOfDay(new Date()); if (!force && id === s.autoId) return;
     const pr = PRESETS.find(x => x.id === id); if (pr) this.setS({ ...VDEF, ...pr.s, autoTheme: true, autoId: id });
   };
-  pickPreset = (ps) => { const was = this.state.s.autoTheme; this.setS({ ...ps, autoTheme: false }); if (was) this.toast(this.L().autoOff); };
+  // ---------- annuler un changement de thème ----------
+  // chaque changement garde les anciennes valeurs des réglages qu'il touche ; « Annuler » (ou Ctrl+Z) revient en arrière, un pas à la fois
+  themeDo = (patch, msg) => {
+    const prev = this.state.s, back = {};
+    Object.keys(patch).forEach(k => { back[k] = prev[k]; });
+    this.themeHist.push(back); if (this.themeHist.length > 20) this.themeHist.shift();
+    this.setS(patch); this.toast(msg, this.undoTheme);
+  };
+  undoTheme = () => {
+    const back = this.themeHist.pop(); if (!back) return;
+    this.setS(back); this.toast(this.L().themeBack, this.themeHist.length ? this.undoTheme : null);
+  };
+  themeHist = [];
+  pickPreset = (ps, name) => { const L = this.L(), was = this.state.s.autoTheme; this.themeDo({ ...ps, autoTheme: false }, L.themeSet.replace('{n}', name || '') + (was ? ' · ' + L.autoOff : '')); };
+  // « Thème selon la date » : on met tout de suite le thème du jour (annulable aussi)
+  autoOn = () => {
+    const id = themeOfDay(new Date()), pr = PRESETS.find(x => x.id === id);
+    if (!pr) { this.setS({ autoTheme: true, autoId: '' }); return; }
+    this.themeDo({ ...VDEF, ...pr.s, autoTheme: true, autoId: id }, this.L().themeSet.replace('{n}', pr.n[this._li || 0]));
+  };
   // Pastille animée sous l'onglet actif de la barre du haut
   // Rafraîchissement rapide pendant que le chrono ou le minuteur tournent
   syncFast = () => {
@@ -1905,8 +1927,11 @@ class Component extends DCLogic {
     const tg = e.target, tn = tg && tg.tagName;
     // Échap ferme toujours un menu ou annule le déplacement, même si le curseur est dans un champ
     if (e.key === 'Escape' && (this.state.menu || this.state.moveMode)) { this.closeMenu(); if (this.state.moveMode) this.placeClock(null); return; }
-    if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable) || e.metaKey || e.ctrlKey || e.altKey) return;
-    const k = e.key.toLowerCase(), mode = this.state.s.mode;
+    if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable)) return;
+    const k = e.key.toLowerCase(), mode = this.state.s.mode, keysOn = this.state.s.keys !== false;
+    // Ctrl+Z (⌘Z sur Mac) : annule le dernier changement de thème
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && k === 'z') { if (keysOn && this.themeHist.length && this.state.tour == null) { e.preventDefault(); this.undoTheme(); } return; }
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
     if (this.state.tour != null) {
       const doing = this.state.tourLong && (LONG_TOUR[this.state.tour] || {}).act;
       if (e.key === 'Escape') { this.endTour(); return; }
@@ -1917,6 +1942,7 @@ class Component extends DCLogic {
       }
     }
     if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); this.closeMenu(); if (this.state.moveMode) this.placeClock(null); }
+    else if (!keysOn) return; // raccourcis coupés dans les Paramètres
     else if (k === 'f') this.toggleFs();
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
@@ -1979,7 +2005,6 @@ class Component extends DCLogic {
   toast = (msg, undo) => { clearTimeout(this.toastT); this.setState({ toast: { msg, undo } }); this.toastT = setTimeout(() => this.setState({ toast: null }), undo ? 6000 : 2400); };
   reset = () => { const prev = this.state.s; this.setS({ ...DEFAULTS, uiLang: prev.uiLang, mode: prev.mode }); this.toast(this.L().resetDone, () => { this.setS(prev); this.setState({ toast: null }); }); };
   surprise = () => {
-    if (this.state.s.autoTheme) this.setS({ autoTheme: false });
     const rnd = (a, b) => a + Math.random() * (b - a), pick = (a) => a[Math.floor(Math.random() * a.length)];
     const f = pick(FONTS), h = Math.floor(rnd(0, 360)), light = Math.random() < 0.28;
     const x = { ...VDEF, font: f.name, weight: f.dw, dateFont: NODATE.has(f.name) ? 'Geist' : 'same' };
@@ -1996,7 +2021,8 @@ class Component extends DCLogic {
     x.weird = Math.random() < 0.3 ? pick(WEIRDS.slice(1)) : 'none';
     if (f.cat === 'pixel' && !light && Math.random() < 0.4) x.scanlines = true;
     if (this.state.media.length && Math.random() < 0.25) { x.bgType = 'image'; x.bgImage = pick(this.state.media).id; }
-    this.setS(x);
+    x.autoTheme = false;
+    this.themeDo(x, this.L().themeSurprise);
   };
   saveStyle = () => {
     const st = this.state, name = (st.saveName || '').trim() || `${this.L().style} ${st.styles.length + 1}`, snap = {};
@@ -2006,7 +2032,7 @@ class Component extends DCLogic {
     this.toast(this.L().saved);
   };
   delStyle = (id) => { const styles = this.state.styles.filter(x => x.id !== id); this.setState({ styles }); try { localStorage.setItem(STKEY, JSON.stringify(styles)); } catch (e) {} };
-  applyStyle = (x) => { const p = { ...VDEF, ...x.s }; if (p.bgType === 'image' && !this.state.media.some(m => m.id === p.bgImage)) p.bgImage = this.state.media[0] ? this.state.media[0].id : null; this.setS(p); };
+  applyStyle = (x) => { const p = { ...VDEF, ...x.s }; if (p.bgType === 'image' && !this.state.media.some(m => m.id === p.bgImage)) p.bgImage = this.state.media[0] ? this.state.media[0].id : null; this.themeDo(p, this.L().themeSet.replace('{n}', x.name)); };
   openTab = (id) => {
     const prev = this.state.tab, tab = prev === id ? null : id;
     const panelDir = !prev || !tab ? 'd' : TAB_IDS.indexOf(tab) > TAB_IDS.indexOf(prev) ? 'r' : 'l';
@@ -2367,10 +2393,10 @@ class Component extends DCLogic {
       const pctF = new Intl.NumberFormat(uiLoc, { style: 'percent', maximumFractionDigits: 0 }), pct = (v) => pctF.format(v / 100), raw = (v) => String(v);
       const t = st.tab;
       if (t === 'presets') {
-        const card = (pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { tour: 'card-' + (pr.id || pr.s.scene || i), name: pr.n[li], sample, deco: DECO[pr.id] || '', bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.pickPreset(ps) }; };
+        const card = (pr, i) => { const ps = { ...VDEF, ...pr.s }; const active = VKEYS.every(k => s[k] === ps[k]); return { tour: 'card-' + (pr.id || pr.s.scene || i), name: pr.n[li], sample, deco: DECO[pr.id] || '', bg: preview(ps), text: this.cardText(ps), ring: active ? ringOn : ringOff, pick: () => this.pickPreset(ps, pr.n[li]) }; };
         const todayPr = PRESETS.find(x => x.id === themeOfDay(now));
         H(L.hSeasons);
-        add({ isTog: true, tour: 'tog-auto', label: `${L.autoTheme} · ${L.today} : ${todayPr ? todayPr.n[li] : ''} ${DECO[todayPr && todayPr.id] || ''}`, span: '1 / -1', toggle: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.setS({ autoTheme: true, autoId: '' }); setTimeout(() => this.applyAuto(true), 0); } }, trackBg: s.autoTheme ? ui.invBg : ui.track, knobBg: s.autoTheme ? ui.invFg : '#ffffff', knobX: s.autoTheme ? '14px' : '0px' });
+        add({ isTog: true, tour: 'tog-auto', label: `${L.autoTheme} · ${L.today} : ${todayPr ? todayPr.n[li] : ''} ${DECO[todayPr && todayPr.id] || ''}`, span: '1 / -1', toggle: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.autoOn(); } }, trackBg: s.autoTheme ? ui.invBg : ui.track, knobBg: s.autoTheme ? ui.invFg : '#ffffff', knobX: s.autoTheme ? '14px' : '0px' });
         add({ isPresets: true, span: '1 / -1', hasLabel: false, list: PRESETS.filter(x => x.fete).map(card) });
         H(L.hStyles);
         add({ isPresets: true, span: '1 / -1', hasLabel: false, list: PRESETS.filter(x => !x.fete).map(card) });
@@ -2466,6 +2492,9 @@ class Component extends DCLogic {
         tog('autoHide', L.autoHide);
         if (s.autoHide) rng('hideDelay', L.hideDelay, 2, 20, 1, v => v + ' s');
         tog('hideCursor', L.hideCursor);
+        H(L.hKeys);
+        tog('keys', L.keysOn);
+        add({ label: L.keysList, span: '1 / -1', op: s.keys === false ? 0.5 : 1 });
         H(L.mAdvanced);
         add({ isChips: true, hasLabel: false, span: '1 / -1', options: TABS.slice(1).map(([id, label]) => ({ label: label + ' ›', pick: () => this.openTab(id), bg: 'transparent', fg: ui.fg, border: ui.border })) });
       }
@@ -2593,7 +2622,7 @@ class Component extends DCLogic {
     // ---------- menus « clic droit » : une liste simple, des sous-menus en cascade ----------
     let menuUi = { on: false, el: null };
     if (st.menu) {
-      const s = sRaw, M = st.menu, ink = ui.fg, fCur = FONT_BY[s.font] || FONTS[0];
+      const s = sRaw, M = st.menu, ink = ui.fg, kh = (x) => (s.keys === false ? x.replace(/\s*\([A-Z]\)$/, '') : x), fCur = FONT_BY[s.font] || FONTS[0];
       const head = (label) => ({ head: label }), sep = { sep: true };
       const pctM = (v) => Math.round(v) + ' %';
       const radio = (k, opts, setter) => opts.map(([v, label]) => ({ key: k + '=' + v, label, check: s[k] === v, act: () => (setter || this.setS)({ [k]: v }), keep: true }));
@@ -2608,7 +2637,7 @@ class Component extends DCLogic {
       const msgItems = () => [...radio('msg', [['none', L.m_none], ['greet', L.m_greet], ['theme', L.m_theme], ['custom', L.m_custom]]),
         ...(s.msg === 'custom' ? [{ key: 'msgt', input: true, value: s.msgText, ph: L.msgPh, onText: (v) => this.setS({ msgText: v.slice(0, 80) }) }] : [])];
       const themes = () => {
-        const it = (pr) => { const ps = { ...VDEF, ...pr.s }; return { key: 'th=' + (pr.id || pr.s.scene || pr.n[0]), label: pr.n[li], thumb: preview(ps), emoji: DECO[pr.id || pr.s.scene] || '', check: VKEYS.every(k => s[k] === ps[k]), act: () => this.pickPreset(ps), keep: true }; };
+        const it = (pr) => { const ps = { ...VDEF, ...pr.s }; return { key: 'th=' + (pr.id || pr.s.scene || pr.n[0]), label: pr.n[li], thumb: preview(ps), emoji: DECO[pr.id || pr.s.scene] || '', check: VKEYS.every(k => s[k] === ps[k]), act: () => this.pickPreset(ps, pr.n[li]), keep: true }; };
         return [head(L.hSeasons), ...PRESETS.filter(x => x.fete).map(it), head(L.hStyles), ...PRESETS.filter(x => !x.fete).map(it),
           ...(st.styles.length ? [head(L.hMine), ...st.styles.map((x, i) => ({ key: 'my=' + i, label: x.name, thumb: preview({ ...VDEF, ...x.s }), act: () => this.applyStyle(x), keep: true }))] : [])];
       };
@@ -2662,7 +2691,7 @@ class Component extends DCLogic {
         sep, move, settings];
       const bgItems = () => [
         { key: 'theme', icon: 'palette', label: L.tPresets, sub: themes },
-        { key: 'auto', icon: 'autorenew', label: L.mAutoTheme, check: !!s.autoTheme, act: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.setS({ autoTheme: true, autoId: '' }); setTimeout(() => this.applyAuto(true), 0); } }, keep: true },
+        { key: 'auto', icon: 'autorenew', label: L.mAutoTheme, check: !!s.autoTheme, act: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.autoOn(); } }, keep: true },
         sep,
         { key: 'bgtype', icon: 'wallpaper', label: L.bgType, sub: () => [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['scene', L.scene], ['spooky', L.spooky], ['image', L.image]].map(([v, label]) => ({ key: 'bt=' + v, label, check: s.bgType === v, act: () => (v === 'image' && !hasPics ? this.pickFiles() : this.setS({ bgType: v })), keep: v !== 'image' || hasPics })) },
         { key: 'scene', icon: 'landscape', label: L.sceneDecor, sub: scenes },
@@ -2672,11 +2701,11 @@ class Component extends DCLogic {
         ...(s.bgType === 'image' && st.media.some(m => m.id === s.bgImage) ? [{ key: 'delbg', icon: 'delete', label: L.bgPicDel, act: this.dropBgPic }] : []),
         { key: 'atmo', icon: 'blur_on', label: L.hAtmos, sub: () => [sl('vignette', L.vignette, 0, 100, 1), sl('grain', L.grain, 0, 100, 1), tog('scanlines', L.scanlines, 'reorder'), tog('tick', L.tick, 'music_note'), tog('decoTap', L.decoTap, 'touch_app')] },
         sep,
-        { key: 'note', icon: 'sticky_note_2', label: L.noteNew, act: () => this.addNote(M.x, M.y) },
-        { key: 'pic', icon: 'image', label: L.picBtn, act: this.pickPic },
-        { key: 'surprise', icon: 'casino', label: L.surpriseK, act: this.surprise, keep: true },
+        { key: 'note', icon: 'sticky_note_2', label: kh(L.noteNew), act: () => this.addNote(M.x, M.y) },
+        { key: 'pic', icon: 'image', label: kh(L.picBtn), act: this.pickPic },
+        { key: 'surprise', icon: 'casino', label: kh(L.surpriseK), act: this.surprise, keep: true },
         sep,
-        { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: L.fullscreen, act: this.toggleFs },
+        { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: kh(L.fullscreen), act: this.toggleFs },
         settings,
         { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) },
         { key: 'reset', icon: 'restart_alt', label: L.reset, act: this.reset }];
@@ -2870,7 +2899,7 @@ class Component extends DCLogic {
     }
 
     return {
-      s, L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
+      s, L: sRaw.keys === false ? { ...L, fullscreen: L.fullscreen.replace(/\s*\([A-Z]\)$/, '') } : L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
       bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !showing, isSpooky: spooky && !showing, spooky: spooky && !showing ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !showing, scene: s.bgType === 'scene' && !showing ? (newScene(s.scene) ? FHS.render(s.scene, E, s, { vw: st.vw, vh: st.vh }) : null) : null },
       sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (pinView(mode) && !!s.pinSnd)) },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
