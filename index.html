@@ -63,6 +63,16 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-bar-fadeout{to{opacity:0}}
 @keyframes fh-bar-fadein{from{opacity:0}}
 @keyframes fh-menu-in{from{opacity:0;transform:scale(.97) translateY(-3px)}to{opacity:1;transform:none}}
+[data-q="low"] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+[data-q="low"] .fh-still *{animation-play-state:paused!important}
+[data-q="low"] .fh-row{animation:none!important}
+@keyframes fh-amb{0%{transform:translate3d(0,0,0);opacity:0}15%{opacity:var(--a)}85%{opacity:var(--a)}100%{transform:translate3d(var(--dx),var(--dy),0);opacity:0}}
+@keyframes fh-amb-w{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(var(--dx),var(--dy),0)}}
+@keyframes fh-blink{0%,100%{opacity:.15}50%{opacity:1}}
+@keyframes fh-rays{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes fh-glint{0%{background-position:140% 0}100%{background-position:-40% 0}}
+@keyframes fh-shoot{0%{transform:translate3d(0,0,0) rotate(var(--ang));opacity:0}1%{opacity:1}6%{transform:translate3d(var(--dx),var(--dy),0) rotate(var(--ang));opacity:0}100%{transform:translate3d(var(--dx),var(--dy),0) rotate(var(--ang));opacity:0}}
+@keyframes fh-wave{0%,100%{transform:scaleY(-.9) skewX(0deg)}50%{transform:scaleY(-.94) skewX(1.6deg)}}
 @keyframes fh-mi-in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
 @keyframes fh-note-out{0%{transform:rotate(var(--r)) scale(1)}35%{transform:rotate(calc(var(--r) - 8deg)) scale(.9,.72)}100%{transform:translateY(46px) rotate(calc(var(--r) + 50deg)) scale(.12);opacity:0}}
 @keyframes fh-pic-out{0%{transform:scale(1)}30%{transform:scale(1.06)}100%{transform:scale(.2) rotate(-14deg);opacity:0}}
@@ -111,10 +121,10 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-aurora{0%{transform:translate3d(-6%,-4%,0) rotate(0deg) scale(1)}50%{transform:translate3d(5%,3%,0) rotate(10deg) scale(1.12)}100%{transform:translate3d(-2%,6%,0) rotate(-8deg) scale(1.04)}}
 </style>
 </helmet>
-<div onContextMenu="{{ onCtx }}" style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
+<div data-q="{{ q.level }}" onContextMenu="{{ onCtx }}" style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
   <div style="position: absolute; inset: 0; background: {{ bg.base }};"></div>
   <sc-if value="{{ bg.isAurora }}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.aurora }}</div>
+    <div class="fh-still" ref="{{ q.farRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.aurora }}</div>
   </sc-if>
   <sc-if value="{{ bg.isImage }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.layers }}</div>
@@ -124,13 +134,16 @@ a{color:inherit}a:hover{opacity:.8}
     <canvas ref="{{ gridRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
   </sc-if>
   <sc-if value="{{ bg.isScene }}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.scene }}</div>
+    <div class="fh-still" ref="{{ q.farRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.scene }}</div>
   </sc-if>
   <sc-if value="{{ sky.on }}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ sky.el }}</div>
+    <div class="fh-still" ref="{{ q.skyRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ sky.el }}</div>
   </sc-if>
   <sc-if value="{{ bg.isSpooky }}" hint-placeholder-val="{{ false }}">
-    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.spooky }}</div>
+    <div class="fh-still" ref="{{ q.farRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.spooky }}</div>
+  </sc-if>
+  <sc-if value="{{ q.on }}" hint-placeholder-val="{{ false }}">
+    <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ q.el }}</div>
   </sc-if>
   <sc-if value="{{ taps.on }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ taps.el }}</div>
@@ -460,6 +473,12 @@ const T_RAW = {
   a_flip: "Bascule|Flip|Giro|Kippen", a_blur: "Flou|Blur|Desenfoque|Unschärfe", a_pop: "Pop|Pop|Pop|Pop",
   breathe: "Respiration lente|Slow breathing|Respiración lenta|Langsames Atmen", vignette: "Vignettage|Vignette|Viñeta|Vignette", grain: "Grain|Grain|Grano|Körnung",
   scanlines: "Lignes d’écran cathodique|CRT scanlines|Líneas de pantalla CRT|Röhren-Scanlines", tick: "Son tic-tac|Ticking sound|Sonido tic-tac|Tick-Tack-Geräusch",
+  hQuality: "Qualité de l’image|Image quality|Calidad de imagen|Bildqualität", quality: "Qualité|Quality|Calidad|Qualität",
+  q_ultra: "Ultra|Ultra|Ultra|Ultra", q_high: "Haute|High|Alta|Hoch", q_medium: "Moyenne|Medium|Media|Mittel", q_low: "Faible|Low|Baja|Niedrig",
+  qi_ultra: "Tout au maximum : profondeur 3D qui suit la souris, reflet de l’heure dans l’eau, ombre qui suit le soleil, halo autour de la souris, étoiles filantes, deux fois plus de particules. Pour un ordinateur récent.|Everything maxed out: 3D depth following the mouse, the time reflected in water, a shadow following the sun, a glow around the mouse, shooting stars, twice as many particles. For a recent computer.|Todo al máximo: profundidad 3D que sigue al ratón, la hora reflejada en el agua, sombra que sigue al sol, halo alrededor del ratón, estrellas fugaces, el doble de partículas. Para un ordenador reciente.|Alles auf Maximum: 3D-Tiefe mit der Maus, Spiegelung der Uhrzeit im Wasser, Schatten nach dem Sonnenstand, Lichtschein um die Maus, Sternschnuppen, doppelt so viele Partikel. Für einen neueren Computer.",
+  qi_high: "Plus beau : rayons de soleil, particules d’ambiance selon le thème (poussières, lucioles, neige, braises, paillettes, bulles…), un éclat qui balaie l’heure à chaque minute.|Prettier: sun rays, ambient particles matching the theme (dust, fireflies, snow, embers, glitter, bubbles…), a gleam sweeping the time every minute.|Más bonito: rayos de sol, partículas de ambiente según el tema (polvo, luciérnagas, nieve, brasas, purpurina, burbujas…), un destello que recorre la hora cada minuto.|Schöner: Sonnenstrahlen, Stimmungspartikel passend zum Thema (Staub, Glühwürmchen, Schnee, Glut, Glitzer, Blasen…), ein Glanz, der jede Minute über die Uhrzeit gleitet.",
+  qi_medium: "L’équilibre : décors animés et effets habituels.|Balanced: animated scenery and the usual effects.|Equilibrio: decorados animados y efectos habituales.|Ausgewogen: animierte Kulissen und die üblichen Effekte.",
+  qi_low: "Pour les vieux ordinateurs : décors immobiles, pas de flou ni de lueur, changements de thème directs.|For older computers: still scenery, no blur or glow, instant theme changes.|Para ordenadores antiguos: decorados quietos, sin desenfoque ni brillo, cambios de tema directos.|Für ältere Computer: unbewegte Kulissen, keine Unschärfe und kein Leuchten, direkte Themenwechsel.",
   pipOpen: "Heure en fenêtre flottante (P)|Floating clock window (P)|Reloj en ventana flotante (P)|Uhr im schwebenden Fenster (P)", pipClose: "Fermer la fenêtre flottante|Close the floating window|Cerrar la ventana flotante|Schwebendes Fenster schließen",
   pipNo: "Ton navigateur ne sait pas ouvrir de fenêtre flottante : essaie Chrome ou Edge.|Your browser can’t open a floating window: try Chrome or Edge.|Tu navegador no puede abrir una ventana flotante: prueba Chrome o Edge.|Dein Browser kann kein schwebendes Fenster öffnen: versuche Chrome oder Edge.",
   pipHint: "La fenêtre reste par-dessus les autres applis : déplace-la et change sa taille comme tu veux.|The window stays on top of other apps: move and resize it as you like.|La ventana queda encima de las demás aplicaciones: muévela y cambia su tamaño.|Das Fenster bleibt über anderen Apps: verschiebe es und ändere die Größe.",
@@ -815,6 +834,7 @@ const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy']);
 // où se trouve le soleil de chaque décor (dessin de 1600 × 900) : la lune prend sa place la nuit
 const SKY_SUN = { spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
 const SKY_MODES = ['auto', 'day', 'dawn', 'gold', 'sunset', 'night'];
+const QUALITIES = ['ultra', 'high', 'medium', 'low'];
 const SKY_FIXED = { day: {}, dawn: { dawn: 1, night: 0.3 }, gold: { gold: 1 }, sunset: { sunset: 1, gold: 0.3, night: 0.1 }, night: { night: 1 } };
 const smoothK = (a, b, x) => { const k = Math.max(0, Math.min(1, (x - a) / (b - a))); return k * k * (3 - 2 * k); };
 function sunTimes(p, now) {
@@ -904,7 +924,7 @@ function tapParts(E, tp, booText) {
     if (mode === 'fall') { const t = -1.571 + rr(-1.1, 1.1), mx = Math.cos(t) * d, my = Math.sin(t) * d; return [mx, my, mx * 1.5 + rr(-40, 40) * u, my + rr(200, 340) * u, rr(-360, 360)]; }
     const t = -1.571 + rr(-0.7, 0.7), mx = Math.cos(t) * d * 0.35, my = Math.sin(t) * d * 0.35; return [mx, my, mx * 2 + rr(-50, 50) * u, -rr(1, 1.6) * d, rr(-40, 40)];
   };
-  const burst = (k, mode, mk, d0, d1, dur) => { for (let i = 0; i < k; i++) { const [w, h, kid, extra] = mk(i); part(w * u * 1.25, h * u * 1.25, kid, move(mode, d0, d1), rr(dur * 0.8, dur * 1.2), rr(0, 0.18), 0, 0, extra); } };
+  const burst = (k, mode, mk, d0, d1, dur) => { if (tp.lite) k = Math.ceil(k / 2); for (let i = 0; i < k; i++) { const [w, h, kid, extra] = mk(i); part(w * u * 1.25, h * u * 1.25, kid, move(mode, d0, d1), rr(dur * 0.8, dur * 1.2), rr(0, 0.18), 0, 0, extra); } };
   const svgK = (vb, ...k) => E('svg', { viewBox: vb, width: '100%', height: '100%', style: { display: 'block', overflow: 'visible' } }, ...k);
   const star = (c) => [16, 16, svgK('-10 -10 20 20', E('path', { d: TAP_STAR, fill: c }))];
   const spark = (c) => [14, 14, svgK('-10 -10 20 20', E('path', { d: TAP_SPARK, fill: c }))];
@@ -1003,6 +1023,62 @@ function tapParts(E, tp, booText) {
   }
   return out;
 }
+// ---------- qualité de l'image : effets en plus en Haute et Ultra ----------
+// particules d'ambiance selon le décor ; la nuit, les décors de jour passent aux lucioles
+const SCENE_AMB = { spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
+const AMB = {
+  dust: { c: ['255,255,255'], shape: 'dot', move: 'drift', size: [2, 4.5], a: [0.25, 0.55] },
+  pollen: { c: ['255,244,190', '255,255,255', '255,226,150'], shape: 'glow', move: 'drift', size: [7, 14], a: [0.6, 0.95] },
+  warm: { c: ['255,214,150', '255,190,110', '255,236,200'], shape: 'glow', move: 'drift', size: [7, 13], a: [0.5, 0.9] },
+  firefly: { c: ['255,236,120', '214,255,140'], shape: 'glow', move: 'wander', size: [8, 14], a: [0.7, 1], blink: true },
+  ember: { c: ['255,150,60', '255,200,90', '255,110,40'], shape: 'glow', move: 'rise', size: [9, 16], a: [0.7, 1], blink: true },
+  snow: { c: ['255,255,255'], shape: 'soft', move: 'fall', size: [5, 12], a: [0.6, 1] },
+  sparkle: { c: ['255,255,255', '255,246,200'], shape: 'spark', move: 'drift', size: [11, 19], a: [0.7, 1], blink: true },
+  glitter: { c: ['255,215,110', '255,245,200', '255,180,80'], shape: 'spark', move: 'drift', size: [9, 16], a: [0.6, 1], blink: true },
+  bubble: { c: ['255,255,255'], shape: 'ring', move: 'rise', size: [6, 16], a: [0.35, 0.75] },
+  hearts: { c: ['255,120,170', '255,180,210', '255,90,140'], shape: 'heart', move: 'rise', size: [9, 15], a: [0.35, 0.7] },
+  chalk: { c: ['255,255,255', '255,240,170', '255,200,225'], shape: 'dot', move: 'drift', size: [1.8, 3.6], a: [0.25, 0.5] },
+  pixel: { c: ['56,232,255', '255,79,216', '124,255,107', '255,210,63'], shape: 'square', move: 'rise', size: [4, 7], a: [0.45, 0.9], blink: true },
+  bokeh: { c: null, shape: 'soft', move: 'drift', size: [8, 20], a: [0.14, 0.32] },
+};
+// rayons de soleil : où est le soleil dans le dessin du décor (1600 × 900)
+const RAY_SUN = { spring: [1300, 140, '255,246,214'], easter: [260, 128, '255,246,214'], summer: [1288, 148, '255,248,220'], glacier: [1250, 170, '240,250,255'], autumn: [1004, 576, '255,200,130'], valentine: [800, 656, '255,190,200'], sunset: [800, 496, '255,150,190'] };
+// reflet de l'heure dans l'eau : hauteur de la ligne d'eau dans le dessin
+const REFLECT_Y = { summer: 586, glacier: 645, sunset: 598, london: 745 };
+// lunes dessinées dans les décors (x, y, rayon dans le dessin 1600 × 900)
+const MOON_AT = { winter: [1290, 138, 40], xmas: [298, 166, 70], london: [470, 166, 30], arcade: [1408, 168, 45], cosmos: [470, 560, 30] };
+// couleur du thème adoucie vers le blanc (pour des flous qui ne « tachent » pas)
+const softRgb = (h, k) => hexRgb(h).split(',').map(v => Math.round(+v + (255 - v) * (k == null ? 0.55 : k))).join(',');
+const hexRgb = (h) => { const x = String(h || '#ffffff').replace('#', ''); const n = parseInt(x.length === 3 ? x.split('').map(c => c + c).join('') : x.slice(0, 6), 16) || 0xffffff; return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`; };
+function ambientParts(E, kind, n, accent, big) {
+  const K = AMB[kind] || AMB.dust, cols = K.c || [hexRgb(accent), '255,255,255'];
+  let a = 9157 + n * 31 + kind.length * 101; const R = () => { a = (a * 16807) % 2147483647; return a / 2147483647; }, rr = (x, y) => x + R() * (y - x);
+  const out = [];
+  for (let i = 0; i < n; i++) {
+    const c = cols[i % cols.length], z = rr(K.size[0], K.size[1]) * (big ? 1.25 : 1), op = rr(K.a[0], K.a[1]).toFixed(2);
+    let dx = rr(-90, 90), dy = rr(-60, 50), dur = rr(16, 30);
+    if (K.move === 'fall') { dx = rr(-70, 70); dy = rr(260, 420); dur = rr(14, 24); }
+    if (K.move === 'rise') { dx = rr(-60, 60); dy = -rr(260, 420); dur = rr(12, 22); }
+    if (K.move === 'wander') { dx = rr(-140, 140); dy = rr(-90, 90); dur = rr(6, 11); }
+    const shape = K.shape === 'dot' ? { borderRadius: '50%', background: `rgb(${c})` }
+      : K.shape === 'soft' ? { borderRadius: '50%', background: `radial-gradient(circle, rgba(${c},1) 0, rgba(${c},.55) 35%, rgba(${c},0) 70%)` }
+      : K.shape === 'glow' ? { borderRadius: '50%', background: `radial-gradient(circle, rgba(${c},1) 0 18%, rgba(${c},.45) 38%, rgba(${c},0) 70%)` }
+      : K.shape === 'ring' ? { borderRadius: '50%', border: `1.5px solid rgba(${c},.9)`, background: `radial-gradient(circle at 34% 30%, rgba(${c},.75) 0 14%, rgba(${c},.08) 45%, rgba(${c},.03))`, boxSizing: 'border-box' }
+      : K.shape === 'square' ? { background: `rgb(${c})`, boxShadow: `0 0 6px rgb(${c})` } : null;
+    const kid = K.shape === 'spark' ? E('svg', { viewBox: '-10 -10 20 20', width: '100%', height: '100%', style: { display: 'block' } }, E('path', { d: TAP_SPARK, fill: `rgb(${c})` }))
+      : K.shape === 'heart' ? E('svg', { viewBox: '0 0 20 19', width: '100%', height: '100%', style: { display: 'block' } }, E('path', { d: TAP_HEART, fill: `rgb(${c})` })) : null;
+    const inner = E('div', { style: { width: '100%', height: '100%', ...shape, animation: K.blink ? `fh-blink ${rr(1.6, 3.4).toFixed(2)}s ease-in-out ${(-rr(0, 3)).toFixed(2)}s infinite` : undefined } }, kid);
+    out.push(E('div', { key: kind + i, style: { position: 'absolute', left: rr(-2, 100).toFixed(2) + '%', top: (K.move === 'fall' ? rr(-25, 70) : K.move === 'rise' ? rr(30, 105) : rr(0, 100)).toFixed(2) + '%', width: z.toFixed(1) + 'px', height: z.toFixed(1) + 'px', '--a': op, '--dx': dx.toFixed(0) + 'px', '--dy': dy.toFixed(0) + 'px',
+      animation: K.move === 'wander' ? `fh-amb-w ${dur.toFixed(1)}s ease-in-out ${(-rr(0, dur)).toFixed(1)}s infinite alternate` : `fh-amb ${dur.toFixed(1)}s linear ${(-rr(0, dur)).toFixed(1)}s infinite`, opacity: K.move === 'wander' ? op : undefined } }, inner));
+  }
+  return out;
+}
+// gros flous au premier plan (Ultra) : comme une mise au point d'appareil photo
+function frontBokeh(E, rgb) {
+  const spots = [[4, 18, 15], [88, 12, 11], [92, 72, 17], [8, 80, 13], [22, 50, 8], [74, 40, 9]];
+  const cols = Array.isArray(rgb) ? rgb : [rgb];
+  return spots.map(([x, y, z], i) => E('div', { key: 'fb' + i, style: { position: 'absolute', left: x + '%', top: y + '%', width: z + 'vmin', height: z + 'vmin', marginLeft: -z / 2 + 'vmin', marginTop: -z / 2 + 'vmin', borderRadius: '50%', background: `radial-gradient(circle, rgba(${cols[i % cols.length]},.2) 0, rgba(${cols[i % cols.length]},.12) 45%, rgba(${cols[i % cols.length]},0) 70%)`, '--a': 1, '--dx': (i % 2 ? -40 : 40) + 'px', '--dy': (i % 3 ? 30 : -30) + 'px', animation: `fh-amb-w ${30 + i * 7}s ease-in-out ${-i * 5}s infinite alternate` } }));
+}
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
 // act(st, b) : vrai quand l'action demandée est faite (b = état au début de l'étape). prep(app) : remet le décor si on revient en arrière.
@@ -1067,7 +1143,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  keys: true, decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
+  quality: 'medium', keys: true, decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
   scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false, alarmSnd: 'chime', alarmVol: 90,
 };
 // Thème par défaut : Halloween
@@ -1249,6 +1325,7 @@ class Component extends DCLogic {
     if (!SCENE_IDS.includes(s.scene)) s.scene = BASE.scene;
     if (!ALARMS.includes(s.alarmSnd)) s.alarmSnd = 'chime';
     if (!SKY_MODES.includes(s.sky)) s.sky = 'auto';
+    if (!QUALITIES.includes(s.quality)) s.quality = 'medium';
     if (!['digital', 'analog', 'both'].includes(s.clockType)) s.clockType = 'digital';
     if (s.msg === 'spooky') s.msg = 'theme';
     const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {}, pics = loadJSON(PKEY, []);
@@ -1280,6 +1357,7 @@ class Component extends DCLogic {
     on(window, 'pointermove', this.clockMove); on(window, 'pointerup', this.clockUp); on(window, 'pointercancel', this.clockUp);
     ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => on(window, ev, this.activity, { passive: true }));
     on(window, 'keydown', this.onKey);
+    on(window, 'pointermove', this.depthMove, { passive: true });
     on(window, 'pointerdown', (e) => {
       this.lastPt = { x: e.clientX, y: e.clientY, t: performance.now() };
       // pendant le cercle du changement de thème, le navigateur envoie les clics à la page entière : on finit l'animation tout de suite…
@@ -1313,7 +1391,7 @@ class Component extends DCLogic {
     }).catch(() => this.setState({ mediaReady: true }));
     this.measure();
   }
-  componentWillUnmount() { this.closePip(); [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT, this.fontT, this.warmT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { this.closePip(); cancelAnimationFrame(this.depthRaf); [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT, this.fontT, this.warmT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -1321,6 +1399,7 @@ class Component extends DCLogic {
     if (this.titleStr && this.titleStr !== this.lastTitle) { this.lastTitle = this.titleStr; document.title = this.titleStr; }
     this.syncFast();
     this.placeMenu();
+    this.depthSync(); this.placeReflect();
     this.runFlip();
     this.tourMeasure();
     this.tourCheck();
@@ -1383,7 +1462,7 @@ class Component extends DCLogic {
     let done = false;
     const doc = document, apply = () => { if (done) return; done = true; if (this.swapPending === apply) this.swapPending = null; this.vtPatch = null; this.vtNow = true; this.setS(patch); if (after) after(); };
     this.swapPending = apply;
-    if (!doc.startViewTransition || !window.ReactDOM || !ReactDOM.flushSync || doc.hidden || this.state.tour != null) { apply(); this.vtNow = false; return; }
+    if (!doc.startViewTransition || !window.ReactDOM || !ReactDOM.flushSync || doc.hidden || this.state.tour != null || this.state.s.quality === 'low') { apply(); this.vtNow = false; return; }
     this.vtPatch = { ...this.vtPatch, ...patch };
     const go = () => {
       const pt = this.lastPt && performance.now() - this.lastPt.t < 1500 ? this.lastPt : null, reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1921,6 +2000,7 @@ class Component extends DCLogic {
   };
   gridDraw = (t) => {
     const el = this.gridEl, s = this.state.s, v = this.gridView(); if (!el || !v) return;
+    if (s.quality === 'low' && this.gT && t - this.gT < 66) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(v.W * dpr), ch = Math.round(v.H * dpr);
     if (el.width !== cw || el.height !== ch) { el.width = cw; el.height = ch; this.gKey = ''; }
     const dt = this.gT ? Math.min(0.1, (t - this.gT) / 1000) : 0; this.gT = t;
@@ -2258,6 +2338,43 @@ class Component extends DCLogic {
     if (h) { this.decoTap(h); return; }
     this.menuAt(e.clientX, e.clientY, e.target);
   };
+  // ---------- Ultra : profondeur qui suit la souris (ou dérive lentement toute seule), halo, reflet ----------
+  farRef = (el) => { this.farEl = el; };
+  skyRef = (el) => { this.skyEl = el; };
+  ambRef = (el) => { this.ambEl = el; };
+  fgRef = (el) => { this.fgEl = el; };
+  lightRef = (el) => { this.lightEl = el; };
+  reflRef = (el) => { this.reflEl = el; };
+  depthSync = () => {
+    const on = this.state.s.quality === 'ultra' && this.state.s.mode !== 'show';
+    if (on && !this.depthRaf) {
+      this.dp = this.dp || { x: 0, y: 0, lx: 0, ly: 0 };
+      const frame = (t) => {
+        this.depthRaf = requestAnimationFrame(frame);
+        const d = this.dp, idle = performance.now() - (this.lastMove || 0) > 4000;
+        // sans souris (tableau, projection), la scène dérive très lentement toute seule
+        const tx = idle ? Math.sin(t / 9000) * 0.55 : d.tx, ty = idle ? Math.sin(t / 13000) * 0.4 : d.ty;
+        d.x += ((tx || 0) - d.x) * 0.05; d.y += ((ty || 0) - d.y) * 0.05;
+        const mv = (el, k, sc) => { if (el) el.style.transform = `translate3d(${(-d.x * k).toFixed(2)}px, ${(-d.y * k * 0.7).toFixed(2)}px, 0)${sc ? ' scale(' + sc + ')' : ''}`; };
+        mv(this.farEl, 9, 1.025); mv(this.skyEl, 9, 1.025); mv(this.ambEl, 22); mv(this.fgEl, 42);
+        if (this.lightEl) { this.lightEl.style.transform = `translate3d(${d.lx.toFixed(0)}px, ${d.ly.toFixed(0)}px, 0)`; this.lightEl.style.opacity = idle ? 0 : 1; }
+      };
+      this.depthRaf = requestAnimationFrame(frame);
+    } else if (!on && this.depthRaf) {
+      cancelAnimationFrame(this.depthRaf); this.depthRaf = 0;
+      [this.farEl, this.skyEl].forEach(el => { if (el) el.style.transform = ''; });
+    }
+  };
+  depthMove = (e) => {
+    if (!this.depthRaf || (e.pointerType && e.pointerType !== 'mouse')) return;
+    const d = this.dp; d.tx = (e.clientX / this.state.vw - 0.5) * 2; d.ty = (e.clientY / this.state.vh - 0.5) * 2; d.lx = e.clientX; d.ly = e.clientY; this.lastMove = performance.now();
+  };
+  // le reflet se place juste sous l'heure, à la ligne d'eau du décor
+  placeReflect = () => {
+    const r = this.reflEl, tEl = this.timeRef.current; if (!r || !tEl) return;
+    const b = tEl.getBoundingClientRect(), x = Math.round(b.left) + 'px';
+    if (r.style.left !== x) r.style.left = x;
+  };
   // ---------- décor qui réagit au toucher ----------
   decoSpots = () => {
     const st = this.state, s = st.s, vw = st.vw, vh = st.vh;
@@ -2280,7 +2397,7 @@ class Component extends DCLogic {
   decoTap = (h) => {
     const st = this.state, id = (this.tapN = (this.tapN || 0) + 1), tz = st.s.tz === 'local' ? undefined : st.s.tz, sk = skyLight(st.s, new Date(), tz);
     const fx = h.fx === 'sun' && sk && sk.night > 0.55 ? 'moon' : h.fx, u = Math.max(0.55, Math.min(1.6, Math.max(st.vw, st.vh * 16 / 9) / 1600));
-    this.setState(s0 => ({ taps: [...s0.taps.slice(-5), { id, fx, x: h.x, y: h.y, r: h.r, c: h.c, u, seed: (Date.now() * 7919 + id * 104729) | 0 }] }));
+    this.setState(s0 => ({ taps: [...s0.taps.slice(-5), { id, fx, x: h.x, y: h.y, r: h.r, c: h.c, u, lite: st.s.quality === 'low', seed: (Date.now() * 7919 + id * 104729) | 0 }] }));
     setTimeout(() => this.setState(s0 => ({ taps: s0.taps.filter(x => x.id !== id) })), 4200);
   };
   // petite main au survol d'un objet qui réagit
@@ -2380,13 +2497,18 @@ class Component extends DCLogic {
       if (trail.length) kids.push(E('div', { key: 'tr', style: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', fontSize: '.3em', lineHeight: 1, letterSpacing: ls + 'em', marginLeft: '.22em', marginTop: '.3em' } }, trail));
       return kids;
     };
-    const g = s.glow / 100, shd = s.shadow / 100, gc = s.glowColor, sh = [];
-    if (g > 0) sh.push(`0 0 ${(0.02 + g * 0.05).toFixed(3)}em ${hexA(gc, 0.9)}`, `0 0 ${(0.08 + g * 0.22).toFixed(3)}em ${hexA(gc, (0.25 + g * 0.5).toFixed(2))}`, `0 0 ${(0.25 + g * 0.6).toFixed(3)}em ${hexA(gc, (g * 0.55).toFixed(2))}`);
+    const g = s.glow / 100, shd = s.shadow / 100, gc = s.glowColor, sh = [], Q = s.quality;
+    if (g > 0 && Q !== 'low') sh.push(`0 0 ${(0.02 + g * 0.05).toFixed(3)}em ${hexA(gc, 0.9)}`, `0 0 ${(0.08 + g * 0.22).toFixed(3)}em ${hexA(gc, (0.25 + g * 0.5).toFixed(2))}`, `0 0 ${(0.25 + g * 0.6).toFixed(3)}em ${hexA(gc, (g * 0.55).toFixed(2))}`);
     if (shd > 0) sh.push(`0 ${(0.01 + shd * 0.05).toFixed(3)}em ${(0.02 + shd * 0.12).toFixed(3)}em rgba(0,0,0,${(0.2 + shd * 0.5).toFixed(2)})`);
+    // Ultra : sur les décors de jour, l'ombre de l'heure suit le soleil (longue le matin et le soir, courte à midi)
+    if (Q === 'ultra' && skyL && skyL.night < 0.5 && !s.outline) {
+      const { sr, ss } = sunTimes(p, now), fd = Math.max(0, Math.min(1, (p.h + p.m / 60 - sr) / Math.max(1, ss - sr))), low = 1 - Math.sin(Math.PI * fd);
+      sh.push(`${((fd - 0.5) * -0.16).toFixed(3)}em ${(0.03 + low * 0.07).toFixed(3)}em ${(0.05 + low * 0.04).toFixed(3)}em rgba(0,0,0,${((0.16 + low * 0.1) * (1 - skyL.night)).toFixed(3)})`);
+    }
     const useFilter = !!fill || rb;
     const ring = mode === 'timer' && tm.done;
     const timeStyle = { position: 'relative', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: clockPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, animation: ring ? 'fh-blinkfast 1s steps(1) infinite' : s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: this.vtNow ? 'none' : 'font-size .35s ease, color .4s ease' };
-    const glowEl = useFilter && sh.length ? E('div', { key: 'glow', 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: sh.join(', '), pointerEvents: 'none' } }, buildKids(true)) : null;
+    const glowEl = useFilter && sh.length && s.quality !== 'low' ? E('div', { key: 'glow', 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: sh.join(', '), pointerEvents: 'none' } }, buildKids(true)) : null;
     const timeEl = E('div', { key: 'time', ref: this.timeRef, 'data-tour': cType === 'digital' ? 'clock' : undefined, style: timeStyle, role: 'timer', 'aria-label': display }, buildKids(false));
     // effets bizarres appliqués à tout le bloc
     const wrapFx = { rainbow: `fhx-hue ${sec(5)} linear infinite`, float: `fhx-float ${sec(5)} ease-in-out infinite`, drunk: `fhx-drunk ${sec(3.4)} ease-in-out infinite`, glitch: `fhx-glitch ${sec(3)} linear infinite`, holo: `fhx-holo ${sec(4.5)} linear infinite`, liquid: `fhx-float ${sec(7)} ease-in-out infinite`, spin: `fhx-spin ${sec(12)} linear infinite` }[s.weird];
@@ -2394,7 +2516,7 @@ class Component extends DCLogic {
     // (masque fixe, sans filtre : l'effet reste fluide même devant un décor animé)
     if (s.weird === 'holo') { const m = 'repeating-linear-gradient(0deg, #000 0 .1em, rgba(0,0,0,.4) .1em .24em)'; Object.assign(wStyle, { WebkitMaskImage: m, maskImage: m }); }
     if (s.weird === 'mirror') wStyle.WebkitBoxReflect = 'below -.04em linear-gradient(transparent 35%, rgba(0,0,0,.5))';
-    if (s.weird === 'liquid') wStyle.filter = 'url(#fh-liquid)';
+    if (s.weird === 'liquid' && s.quality !== 'low') wStyle.filter = 'url(#fh-liquid)';
     const bf = (1.1 / clockPx).toFixed(4), bf2 = (1.9 / clockPx).toFixed(4);
     const liquid = s.weird === 'liquid' ? E('svg', { key: 'lq', width: 0, height: 0, 'aria-hidden': true, style: { position: 'absolute' } }, E('filter', { id: 'fh-liquid', x: '-20%', y: '-25%', width: '140%', height: '150%' },
       E('feTurbulence', { type: 'fractalNoise', baseFrequency: `${bf} ${bf2}`, numOctaves: 1, seed: 7, result: 'n' }),
@@ -2475,7 +2597,9 @@ class Component extends DCLogic {
           ...ticks, ...labels, hands(true), hands(false),
           E('circle', { r: 6.4, fill: s.anaSec ? s.accent : mCol }), E('circle', { r: 2.4, fill: lightInk ? '#0a0c1a' : '#ffffff' })));
     }
-    const inner = cType === 'analog' ? null : E('div', { key: 'w', style: wStyle }, liquid, glowEl, timeEl);
+    // Haute et Ultra : un éclat balaie l'heure à chaque nouvelle minute
+    const glintEl = (Q === 'high' || Q === 'ultra') && mode === 'clock' && !rb ? E('div', { key: 'glint' + p.h + ':' + p.m, 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: 'none', animation: 'fh-glint 1.8s cubic-bezier(.4,0,.2,1) .3s both', backgroundImage: 'linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 62%)', backgroundSize: '260% 100%', backgroundRepeat: 'no-repeat', WebkitBackgroundClip: 'text', backgroundClip: 'text', pointerEvents: 'none' } }, buildKids(true)) : null;
+    const inner = cType === 'analog' ? null : E('div', { key: 'w', style: wStyle }, liquid, glowEl, timeEl, glintEl);
     const stack2 = visual || cType === 'both';
     const clockEl = E('div', { key: 'mode-' + mode + (visual ? '-v' : '') + (cType !== 'digital' ? '-' + cType : ''), style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both', ...(stack2 ? { display: 'flex', flexDirection: 'column', alignItems: P[1], gap: Math.round(visual ? clockPx * 0.28 : clockPx * 0.22) + 'px' } : null) } }, disc, ana, inner);
 
@@ -2559,6 +2683,62 @@ class Component extends DCLogic {
       : { scheme: 'light', bar: 'rgba(252,251,249,.78)', panel: 'rgba(252,251,249,.9)', border: 'rgba(20,18,16,.14)', fg: '#191817', fg2: 'rgba(25,24,23,.7)', fg3: 'rgba(25,24,23,.58)', hover: 'rgba(0,0,0,.06)', active: 'rgba(0,0,0,.09)', field: 'rgba(0,0,0,.05)', tile: 'rgba(0,0,0,.03)', invBg: '#191817', invFg: '#fbfaf8', track: 'rgba(0,0,0,.24)', ringGap: '#fbfaf8', solid: '#f4f2ef', shadow: '0 18px 50px rgba(0,0,0,.14)' };
     // interface teintée Halloween quand le décor citrouilles est actif
     const ui = spooky && dark ? { ...ui0, bar: 'rgba(30,12,44,.7)', panel: 'rgba(24,9,36,.88)', border: 'rgba(255,140,60,.22)', hover: 'rgba(255,140,60,.1)', active: 'rgba(255,140,60,.18)', field: 'rgba(255,255,255,.07)', ringGap: '#1d0b2b', solid: '#1d0b2b', shadow: '0 18px 60px rgba(0,0,0,.5), 0 0 40px rgba(255,106,0,.08)' } : ui0;
+    // Faible : pas de flou derrière la barre et les panneaux, donc des fonds plus opaques
+    if (s.quality === 'low') Object.assign(ui, { bar: dark ? 'rgba(22,21,20,.95)' : 'rgba(252,251,249,.96)', panel: dark ? 'rgba(22,21,20,.98)' : 'rgba(252,251,249,.99)' });
+    // ---------- effets selon la qualité ----------
+    let qEl = null;
+    if ((Q === 'high' || Q === 'ultra') && mode !== 'show') {
+      const ultra = Q === 'ultra', sceneId = s.bgType === 'scene' ? s.scene : s.bgType === 'spooky' ? 'spooky' : '', nightNow = skyL ? skyL.night : 0, darkBg = bgL < 0.4 || nightNow > 0.55;
+      const sw0 = Math.max(st.vw, st.vh * 16 / 9), kk = sw0 / 1600, sy0 = st.vh - sw0 * 9 / 16, parts = [];
+      // rayons de soleil qui scintillent doucement (pas la nuit)
+      const rs = RAY_SUN[sceneId], dayK = 1 - nightNow;
+      if (rs && dayK > 0.05) {
+        const [rx, ry, rc] = rs, X = st.vw / 2 + (rx - 800) * kk, Y = sy0 + ry * kk, warm = skyL ? Math.min(1, skyL.gold + skyL.sunset) : 0, col = warm > 0.4 ? '255,206,150' : rc;
+        const ray = (k, from, dl) => E('div', { key: 'ray' + k, style: { position: 'absolute', inset: 0, background: `repeating-conic-gradient(from ${from}deg at ${X.toFixed(0)}px ${Y.toFixed(0)}px, rgba(${col},0) 0deg 4deg, rgba(${col},.3) 6.5deg 9deg, rgba(${col},0) 11.5deg 16deg)`, WebkitMaskImage: `radial-gradient(circle at ${X.toFixed(0)}px ${Y.toFixed(0)}px, #000 0, rgba(0,0,0,.6) 25%, transparent 72%)`, maskImage: `radial-gradient(circle at ${X.toFixed(0)}px ${Y.toFixed(0)}px, #000 0, rgba(0,0,0,.6) 25%, transparent 72%)`, animation: `fh-rays ${k ? 11 : 8}s ease-in-out ${dl}s infinite` } });
+        parts.push(E('div', { key: 'rays', style: { position: 'absolute', inset: 0, opacity: +(dayK * 0.9).toFixed(3), transition: 'opacity 2s ease' } },
+          ray(0, 0, 0), ultra ? ray(1, 4, -5) : null,
+          E('div', { key: 'bloom', style: { position: 'absolute', left: X - 320 * kk, top: Y - 320 * kk, width: 640 * kk, height: 640 * kk, borderRadius: '50%', background: `radial-gradient(circle, rgba(${col},.6) 0, rgba(${col},.22) 30%, rgba(${col},0) 70%)` } })));
+      }
+      // brume légère qui dérive au loin : donne de la profondeur au décor
+      if (sceneId && sceneId !== 'spooky') {
+        const mc = darkBg ? '170,190,235' : '255,255,255', ma = darkBg ? 0.13 : 0.2;
+        parts.push(E('div', { key: 'mist', style: { position: 'absolute', left: '-20%', width: '140%', bottom: '8%', height: '34%', background: `radial-gradient(40% 50% at 25% 60%, rgba(${mc},${ma}), rgba(${mc},0) 70%), radial-gradient(45% 55% at 72% 50%, rgba(${mc},${(ma * 0.85).toFixed(3)}), rgba(${mc},0) 70%)`, animation: ultra ? 'fh-fog 46s ease-in-out infinite alternate' : undefined } }));
+      }
+      // Ultra : lumières chaudes qui respirent dans les coins, comme sur une photo
+      if (ultra) parts.push(E('div', { key: 'leaks', style: { position: 'absolute', inset: 0 } },
+        E('div', { style: { position: 'absolute', left: '-18%', top: '-22%', width: '60%', height: '62%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,176,96,.16), rgba(255,176,96,0) 68%)', animation: 'fh-rays 13s ease-in-out infinite' } }),
+        E('div', { style: { position: 'absolute', right: '-16%', bottom: '-24%', width: '56%', height: '60%', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,120,170,.12), rgba(255,120,170,0) 68%)', animation: 'fh-rays 17s ease-in-out -6s infinite' } })));
+      // halo de lune qui respire doucement
+      const vm = Math.min(st.vw, st.vh) / 100, mp = sceneId === 'spooky' ? [st.vw * 0.89 - 7.5 * vm, st.vh * 0.09 + 7.5 * vm, 7.5 * vm]
+        : MOON_AT[sceneId] ? [st.vw / 2 + (MOON_AT[sceneId][0] - 800) * kk, sy0 + MOON_AT[sceneId][1] * kk, MOON_AT[sceneId][2] * kk]
+        : skyL && nightNow > 0.3 && SKY_SUN[sceneId] ? [st.vw / 2 + (SKY_SUN[sceneId][0] - 800) * kk, sy0 + SKY_SUN[sceneId][1] * kk, (SKY_SUN[sceneId][2] + 7) * kk] : null;
+      if (mp) {
+        const R = mp[2] * 6;
+        parts.push(E('div', { key: 'moonhalo', style: { position: 'absolute', left: mp[0] - R, top: mp[1] - R, width: R * 2, height: R * 2, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,250,225,.34) 0, rgba(220,230,255,.14) 22%, rgba(200,215,255,.05) 45%, rgba(200,215,255,0) 70%)', opacity: skyL ? +Math.min(1, nightNow * 1.3).toFixed(3) : 1, animation: 'fh-rays 9s ease-in-out infinite' } }));
+      }
+      // particules d'ambiance (deux fois plus en Ultra), qui bougent un peu plus que le décor : effet de profondeur
+      const kind = skyL && nightNow > 0.55 && sceneId !== 'glacier' ? 'firefly' : SCENE_AMB[sceneId] || (darkBg ? 'bokeh' : 'dust');
+      const ak = [kind, ultra, s.accent, st.vw > 900].join('|');
+      if (this.ambKey !== ak) { this.ambKey = ak; this.ambEls = ambientParts(E, kind, ultra ? 34 : 18, s.accent, st.vw > 900); }
+      parts.push(E('div', { key: 'amb', ref: this.ambRef, style: { position: 'absolute', inset: '-4%' } }, this.ambEls));
+      if (ultra) {
+        // gros flous de premier plan, étoiles filantes sur fond sombre, halo qui suit la souris
+        parts.push(E('div', { key: 'fb', ref: this.fgRef, style: { position: 'absolute', inset: '-6%' } }, frontBokeh(E, darkBg ? [softRgb(s.accent), '255,236,210', softRgb(s.glowColor || s.accent, 0.7)] : ['255,255,255', softRgb(s.accent, 0.7)])));
+        if (darkBg) {
+          parts.push(...[[18, 8, -32, 14, -11], [62, 4, -28, 21, -3], [82, 14, -36, 17, -8]].map(([x, y, a, d, dl], i) => E('div', { key: 'shoot' + i, style: { position: 'absolute', left: x + '%', top: y + '%', width: 0, height: 0, '--ang': a + 'deg', '--dx': '-34vw', '--dy': '22vh', animation: `fh-shoot ${d}s linear ${dl}s infinite` } },
+            E('div', { style: { position: 'absolute', left: 0, top: -1, width: '16vw', height: 2.5, borderRadius: 2, background: 'linear-gradient(90deg, #ffffff, rgba(255,255,255,0))', boxShadow: '0 0 8px rgba(255,255,255,.8)' } }))));
+          parts.push(E('div', { key: 'light', ref: this.lightRef, style: { position: 'absolute', left: 0, top: 0, width: '46vmin', height: '46vmin', marginLeft: '-23vmin', marginTop: '-23vmin', borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,236,200,.16) 0, rgba(255,236,200,.06) 40%, rgba(255,236,200,0) 70%)', opacity: 0, transition: 'opacity .8s ease', willChange: 'transform' } }));
+        }
+        // reflet de l'heure dans l'eau (placé sous l'heure après chaque rendu)
+        const wy = REFLECT_Y[sceneId];
+        if (wy && cType !== 'analog' && mode === 'clock') {
+          const ink = s.gradText ? s.grad2 : s.color;
+          parts.push(E('div', { key: 'refl', ref: this.reflRef, 'data-y': (sy0 + wy * kk).toFixed(0), style: { position: 'absolute', left: -9999, top: sy0 + wy * kk, opacity: 0.3 * (1 - nightNow * 0.4), WebkitMaskImage: 'linear-gradient(180deg, #000 0, rgba(0,0,0,.35) 45%, transparent 80%)', maskImage: 'linear-gradient(180deg, #000 0, rgba(0,0,0,.35) 45%, transparent 80%)' } },
+            E('div', { style: { ...timeStyle, color: ink, WebkitTextFillColor: ink, WebkitTextStroke: undefined, textShadow: 'none', animation: 'fh-wave 6s ease-in-out infinite', transformOrigin: '50% 50%' } }, buildKids(true))));
+        }
+      }
+      qEl = parts;
+    }
     const hidden = st.idle && s.autoHide && !st.tab && st.tour == null;
     // pastilles : anneau plus marqué quand la couleur se confond avec le panneau (blanc sur clair, noir sur sombre)
     const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`, ringSoft = `inset 0 0 0 1.5px ${hexA(ui.fg, 0.4)}`;
@@ -2698,6 +2878,9 @@ class Component extends DCLogic {
         tog('autoHide', L.autoHide);
         if (s.autoHide) rng('hideDelay', L.hideDelay, 2, 20, 1, v => v + ' s');
         tog('hideCursor', L.hideCursor);
+        H(L.hQuality);
+        seg('quality', L.quality, QUALITIES.map(k => [k, L['q_' + k]]), { span: '1 / -1' });
+        add({ label: L['qi_' + (s.quality || 'medium')], span: '1 / -1' });
         H(L.hKeys);
         tog('keys', L.keysOn);
         add({ label: L.keysList, span: '1 / -1', op: s.keys === false ? 0.5 : 1 });
@@ -2906,7 +3089,7 @@ class Component extends DCLogic {
         { key: 'bgcol', icon: s.bgType === 'image' ? 'tune' : 'format_color_fill', label: s.bgType === 'image' ? L.image : L.mBgColors, sub: bgCols },
         { key: 'photo', icon: 'add_photo_alternate', label: L.mBgPhoto, act: this.pickFiles },
         ...(s.bgType === 'image' && st.media.some(m => m.id === s.bgImage) ? [{ key: 'delbg', icon: 'delete', label: L.bgPicDel, act: this.dropBgPic }] : []),
-        { key: 'atmo', icon: 'blur_on', label: L.hAtmos, sub: () => [sl('vignette', L.vignette, 0, 100, 1), sl('grain', L.grain, 0, 100, 1), tog('scanlines', L.scanlines, 'reorder'), tog('tick', L.tick, 'music_note'), tog('decoTap', L.decoTap, 'touch_app')] },
+        { key: 'atmo', icon: 'blur_on', label: L.hAtmos, sub: () => [sl('vignette', L.vignette, 0, 100, 1), sl('grain', L.grain, 0, 100, 1), tog('scanlines', L.scanlines, 'reorder'), tog('tick', L.tick, 'music_note'), tog('decoTap', L.decoTap, 'touch_app'), sep, head(L.hQuality), ...radio('quality', QUALITIES.map(k => [k, L['q_' + k]]))] },
         sep,
         { key: 'note', icon: 'sticky_note_2', label: kh(L.noteNew), act: () => this.addNote(M.x, M.y) },
         { key: 'pic', icon: 'image', label: kh(L.picBtn), act: this.pickPic },
@@ -3119,6 +3302,7 @@ class Component extends DCLogic {
       pos: { jc: P[0], ai: P[1], ta: P[2], pad: s.pos === 'c' ? '0 4vw' : 'max(84px, 9vmin) 7vmin 9vmin' },
       // voile doux derrière l'heure sur les décors : les chiffres restent lisibles même devant un dessin chargé
       sky: { on: !!skyL, el: skyEl },
+      q: { level: s.quality || 'medium', on: !!qEl, el: qEl, farRef: this.farRef, skyRef: this.skyRef },
       taps: { on: st.taps.length > 0, el: st.taps.map(tp => E('div', { key: tp.id, style: { position: 'absolute', left: tp.x, top: tp.y, width: 0, height: 0 } }, tapParts(E, tp, L.boo))) }, onStageMove: this.onStageMove,
       halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : st.moveMode === 'drag' ? 'grabbing' : 'pointer', gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
