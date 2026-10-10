@@ -1386,7 +1386,7 @@ class Component extends DCLogic {
       if (vt.updateCallbackDone) vt.updateCallbackDone.catch(() => {});
       vt.finished.catch(() => {}).then(() => { this.vtNow = false; if (this.vt === vt) this.vt = null; });
       vt.ready.then(() => {
-        const vw = window.innerWidth, vh = window.innerHeight, opt = { duration: reduce ? 220 : pt ? 720 : 480, easing: 'cubic-bezier(.3,.7,.15,1)', pseudoElement: '::view-transition-new(root)' };
+        const vw = window.innerWidth, vh = window.innerHeight, opt = { duration: reduce ? 220 : pt ? 1020 : 780, easing: 'cubic-bezier(.3,.7,.15,1)', pseudoElement: '::view-transition-new(root)' };
         if (pt && !reduce) { const R = Math.hypot(Math.max(pt.x, vw - pt.x), Math.max(pt.y, vh - pt.y)); doc.documentElement.animate({ clipPath: [`circle(0px at ${pt.x}px ${pt.y}px)`, `circle(${R.toFixed(0)}px at ${pt.x}px ${pt.y}px)`] }, opt); }
         else doc.documentElement.animate({ opacity: [0, 1] }, opt);
       }).catch(() => {});
