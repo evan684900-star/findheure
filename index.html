@@ -460,9 +460,12 @@ const T_RAW = {
   a_flip: "Bascule|Flip|Giro|Kippen", a_blur: "Flou|Blur|Desenfoque|Unschärfe", a_pop: "Pop|Pop|Pop|Pop",
   breathe: "Respiration lente|Slow breathing|Respiración lenta|Langsames Atmen", vignette: "Vignettage|Vignette|Viñeta|Vignette", grain: "Grain|Grain|Grano|Körnung",
   scanlines: "Lignes d’écran cathodique|CRT scanlines|Líneas de pantalla CRT|Röhren-Scanlines", tick: "Son tic-tac|Ticking sound|Sonido tic-tac|Tick-Tack-Geräusch",
+  pipOpen: "Heure en fenêtre flottante (P)|Floating clock window (P)|Reloj en ventana flotante (P)|Uhr im schwebenden Fenster (P)", pipClose: "Fermer la fenêtre flottante|Close the floating window|Cerrar la ventana flotante|Schwebendes Fenster schließen",
+  pipNo: "Ton navigateur ne sait pas ouvrir de fenêtre flottante : essaie Chrome ou Edge.|Your browser can’t open a floating window: try Chrome or Edge.|Tu navegador no puede abrir una ventana flotante: prueba Chrome o Edge.|Dein Browser kann kein schwebendes Fenster öffnen: versuche Chrome oder Edge.",
+  pipHint: "La fenêtre reste par-dessus les autres applis : déplace-la et change sa taille comme tu veux.|The window stays on top of other apps: move and resize it as you like.|La ventana queda encima de las demás aplicaciones: muévela y cambia su tamaño.|Das Fenster bleibt über anderen Apps: verschiebe es und ändere die Größe.",
   themeSet: "Thème : {n}|Theme: {n}|Tema: {n}|Thema: {n}", themeSurprise: "Nouveau style surprise|New surprise style|Nuevo estilo sorpresa|Neuer Überraschungsstil", themeBack: "Thème précédent remis|Previous theme restored|Tema anterior restaurado|Vorheriges Thema wiederhergestellt",
   hKeys: "Raccourcis clavier|Keyboard shortcuts|Atajos de teclado|Tastenkürzel", keysOn: "Activer les raccourcis clavier|Enable keyboard shortcuts|Activar los atajos de teclado|Tastenkürzel aktivieren",
-  keysList: "F plein écran · S Surprends-moi · N note · I image · Espace lancer ou arrêter le minuteur, le chrono ou le sonomètre · R remettre à zéro · L tour du chrono · Ctrl+Z annuler un changement de thème. Échap ferme toujours un menu.|F fullscreen · S surprise me · N note · I image · Space start or stop the timer, stopwatch or sound meter · R reset · L lap · Ctrl+Z undo a theme change. Esc always closes a menu.|F pantalla completa · S sorpréndeme · N nota · I imagen · Espacio iniciar o parar el temporizador, el cronómetro o el sonómetro · R reiniciar · L vuelta · Ctrl+Z deshacer un cambio de tema. Esc siempre cierra un menú.|F Vollbild · S Überrasch mich · N Notiz · I Bild · Leertaste Timer, Stoppuhr oder Lärmampel starten/stoppen · R zurücksetzen · L Runde · Strg+Z Themenwechsel rückgängig. Esc schließt immer ein Menü.",
+  keysList: "F plein écran · P fenêtre flottante · S Surprends-moi · N note · I image · Espace lancer ou arrêter le minuteur, le chrono ou le sonomètre · R remettre à zéro · L tour du chrono · Ctrl+Z annuler un changement de thème. Échap ferme toujours un menu.|F fullscreen · P floating window · S surprise me · N note · I image · Space start or stop the timer, stopwatch or sound meter · R reset · L lap · Ctrl+Z undo a theme change. Esc always closes a menu.|F pantalla completa · P ventana flotante · S sorpréndeme · N nota · I imagen · Espacio iniciar o parar el temporizador, el cronómetro o el sonómetro · R reiniciar · L vuelta · Ctrl+Z deshacer un cambio de tema. Esc siempre cierra un menú.|F Vollbild · P schwebendes Fenster · S Überrasch mich · N Notiz · I Bild · Leertaste Timer, Stoppuhr oder Lärmampel starten/stoppen · R zurücksetzen · L Runde · Strg+Z Themenwechsel rückgängig. Esc schließt immer ein Menü.",
   decoTap: "Décor qui réagit au toucher|Scenery reacts to touch|Decorado que reacciona al tocarlo|Kulisse reagiert auf Berührung", boo: "Bouh !|Boo!|¡Bu!|Buh!",
   clockType: "Type d’horloge|Clock type|Tipo de reloj|Uhrentyp", ct_digital: "Chiffres|Digital|Digital|Digital", ct_analog: "À aiguilles|Analog|Analógico|Analog", ct_both: "Aiguilles et chiffres|Analog + digital|Agujas y cifras|Zeiger und Ziffern",
   anaNums: "Nombres de 1 à 12|Numbers 1 to 12|Números del 1 al 12|Zahlen 1 bis 12", anaMins: "Minutes autour (5, 10, 15…)|Minutes around (5, 10, 15…)|Minutos alrededor (5, 10, 15…)|Minuten außen (5, 10, 15…)", anaColor: "Aiguilles en couleur (pour apprendre)|Coloured hands (for learning)|Agujas de colores (para aprender)|Farbige Zeiger (zum Lernen)", anaSec: "Trotteuse (aiguille des secondes)|Second hand|Segundero|Sekundenzeiger",
@@ -1257,7 +1260,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -1310,7 +1313,7 @@ class Component extends DCLogic {
     }).catch(() => this.setState({ mediaReady: true }));
     this.measure();
   }
-  componentWillUnmount() { [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT, this.fontT, this.warmT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  componentWillUnmount() { this.closePip(); [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT, this.fontT, this.warmT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -1375,7 +1378,11 @@ class Component extends DCLogic {
   vtPatch = null;
   themeSwap = (patch, after) => {
     // pendant le cercle, l'heure prend tout de suite les couleurs du nouveau thème (pas de couleur intermédiaire)
-    const doc = document, apply = () => { this.vtPatch = null; this.vtNow = true; this.setS(patch); if (after) after(); };
+    // un changement encore en attente passe tout de suite : les thèmes s'appliquent toujours dans l'ordre (ex. S puis Ctrl+Z très vite)
+    if (this.swapPending) this.swapPending();
+    let done = false;
+    const doc = document, apply = () => { if (done) return; done = true; if (this.swapPending === apply) this.swapPending = null; this.vtPatch = null; this.vtNow = true; this.setS(patch); if (after) after(); };
+    this.swapPending = apply;
     if (!doc.startViewTransition || !window.ReactDOM || !ReactDOM.flushSync || doc.hidden || this.state.tour != null) { apply(); this.vtNow = false; return; }
     this.vtPatch = { ...this.vtPatch, ...patch };
     const go = () => {
@@ -2032,6 +2039,7 @@ class Component extends DCLogic {
     if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); this.closeMenu(); if (this.state.moveMode) this.placeClock(null); }
     else if (!keysOn) return; // raccourcis coupés dans les Paramètres
     else if (k === 'f') this.toggleFs();
+    else if (k === 'p') this.togglePip();
     else if (k === 's') this.surprise();
     else if (k === 'n') { e.preventDefault(); this.addNote(); }
     else if (k === 'i') { e.preventDefault(); this.pickPic(); }
@@ -2047,6 +2055,116 @@ class Component extends DCLogic {
     else if (k === 'l' && mode === 'stopwatch') this.swLap();
   };
   toggleFs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else { const r = document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } } catch (e) {} };
+  // ---------- fenêtre flottante : l'heure par-dessus les autres applis ----------
+  // Chrome / Edge : une vraie petite fenêtre ; Safari : une vidéo dessinée image par image ; sinon, un message
+  togglePip = () => { if (this.pip) this.closePip(); else this.openPip(); };
+  openPip = async () => {
+    const L = this.L();
+    try {
+      if (window.documentPictureInPicture && documentPictureInPicture.requestWindow) { this.pipDoc(await documentPictureInPicture.requestWindow({ width: 380, height: 200 })); this.toast(L.pipHint); return; }
+      if (document.pictureInPictureEnabled && HTMLCanvasElement.prototype.captureStream) { await this.pipVideo(); this.toast(L.pipHint); return; }
+    } catch (e) { this.closePip(); }
+    this.toast(L.pipNo);
+  };
+  pipDoc = (w) => {
+    const d = w.document;
+    d.title = 'findheure';
+    d.body.style.cssText = 'margin:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3vh;user-select:none;cursor:default;transition:background .6s ease';
+    const mk = (css) => { const el = d.createElement('div'); el.style.cssText = css; return el; };
+    const tx = mk('white-space:nowrap;line-height:1;font-variant-numeric:tabular-nums;transition:opacity .25s ease'), sub = mk('white-space:nowrap;line-height:1.15;max-width:92vw;overflow:hidden;text-overflow:ellipsis;font-size:min(7vw,12vh)');
+    const bar = mk('position:fixed;left:0;right:0;bottom:0;height:7px;background:rgba(127,127,127,.28)'), fill = mk('height:100%;width:0;transition:width .3s linear,background .8s ease');
+    bar.appendChild(fill); d.body.append(tx, sub, bar);
+    // quand une police arrive (dans le site ou dans la fenêtre), on refait la mise en page
+    const reKey = () => { if (this.pip) this.pip.key = ''; };
+    this.pip = { kind: 'doc', w, d, tx, sub, bar, fill, key: '', faces: new Set(), reKey };
+    if (d.fonts && d.fonts.addEventListener) d.fonts.addEventListener('loadingdone', reKey);
+    if (document.fonts && document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', reKey);
+    w.addEventListener('pagehide', () => this.closePip(true));
+    w.addEventListener('resize', () => { if (this.pip) { this.pip.key = ''; this.pipTick(); } });
+    // le rythme vient de la petite fenêtre (toujours visible) : l'heure avance même si l'onglet du site est caché
+    this.pipT = w.setInterval(this.pipTick, 250);
+    this.pipTick(); this.setState({ pip: true });
+  };
+  pipVideo = async () => {
+    const c = document.createElement('canvas'), v = document.createElement('video');
+    c.width = 640; c.height = 330; v.muted = true; v.playsInline = true;
+    v.style.cssText = 'position:fixed;left:0;top:0;width:2px;height:2px;opacity:0;pointer-events:none';
+    document.body.appendChild(v);
+    this.pip = { kind: 'video', c, v, ctx: c.getContext('2d') };
+    this.pipTick(); v.srcObject = c.captureStream(); await v.play(); await v.requestPictureInPicture();
+    v.addEventListener('leavepictureinpicture', () => this.closePip(true));
+    this.pipT = setInterval(this.pipTick, 250); this.setState({ pip: true });
+  };
+  closePip = (gone) => {
+    const P = this.pip; if (!P) return; this.pip = null;
+    if (P.kind === 'doc') { try { P.w.clearInterval(this.pipT); } catch (e) {} try { document.fonts.removeEventListener('loadingdone', P.reKey); } catch (e) {} if (!gone) try { P.w.close(); } catch (e) {} }
+    else { clearInterval(this.pipT); if (!gone && document.pictureInPictureElement) document.exitPictureInPicture().catch(() => {}); try { P.v.srcObject = null; P.v.remove(); } catch (e) {} }
+    this.setState({ pip: false });
+  };
+  // ce que montre la fenêtre : l'heure (avec la date), le minuteur ou le chrono, calculés à chaque fois (pas besoin de l'onglet du site)
+  pipInfo = () => {
+    const st = this.state, s = st.s, L = this.L(), now = new Date(), nowMs = now.getTime(), tz = s.tz === 'local' ? undefined : s.tz, p = zp(now, tz);
+    const locale = s.locale === 'auto' ? UI_LOC[s.uiLang] || 'fr-FR' : s.locale, nu = s.digits === 'auto' ? autoNu(locale) : s.digits, isRoman = nu === 'roman', dm = dmap(nu);
+    const num = (n, pad) => (isRoman ? roman(n) : conv(pad ? String(n).padStart(2, '0') : String(n), dm)), tsep = s.sep === 'h' || s.sep === ' ' ? ':' : s.sep;
+    const hms = (ms, up, forceH) => { const tot = up ? Math.ceil(ms / 1000) : Math.floor(ms / 1000), hh = Math.floor(tot / 3600), mm = Math.floor((tot % 3600) / 60), ss = tot % 60; return (hh || forceH ? [num(hh, false), num(mm, true), num(ss, true)] : [num(mm, true), num(ss, true)]).join(tsep); };
+    const hm = (q) => `${num(s.hour12 ? (q.h % 12 || 12) : q.h, s.leadingZero)}${s.sep === ' ' ? ':' : s.sep}${num(q.m, true)}`;
+    if (s.mode === 'timer') {
+      const tm = st.tm, left = tm.endAt ? Math.max(0, tm.endAt - nowMs) : tm.left, fl = tm.dur > 0 ? Math.min(1, Math.max(0, left / tm.dur)) : 0, done = tm.done || (!!tm.endAt && left <= 0);
+      return { text: hms(left, true, tm.dur >= 3600000), sub: done ? L.done : tm.endAt ? `${L.md_timer} · ${L.endsAt} ${hm(zp(new Date(tm.endAt), tz))}` : L.md_timer, prog: fl, zone: done || fl <= 0.2 ? '#ef4444' : fl <= 0.5 ? '#f59e0b' : '#22c55e', blink: done };
+    }
+    if (s.mode === 'stopwatch') { const sw = st.sw; return { text: hms(sw.acc + (sw.start ? Math.max(0, nowMs - sw.start) : 0), false, false), sub: L.md_sw, prog: null }; }
+    let text = hm(p);
+    if (s.seconds !== 'off') text += (s.sep === 'h' ? ' ' : s.sep) + num(p.s, true);
+    let sub = '';
+    if (s.showDate) { try { sub = fmt(`${locale}-u-ca-${s.calendar || 'gregory'}`, { ...(DF[s.dateFmt] || DF.full), timeZone: tz }).format(now); } catch (e) { sub = ''; } }
+    return { text, sub, prog: null };
+  };
+  pipTick = () => {
+    const P = this.pip; if (!P) return;
+    const s = this.state.s, info = this.pipInfo(), f = FONT_BY[s.font] || FONTS[0], df = s.dateFont === 'same' ? f : FONT_BY[s.dateFont] || f, wt = clampW(f, s.weight);
+    const bg = s.bgType === 'solid' || s.bgType === 'grid' ? s.bgColor : s.bgType === 'image' ? '#121212' : s.bgType === 'gradient' && s.bgShape !== 'radial' ? `linear-gradient(${s.bgAngle || 180}deg, ${s.bg1}, ${s.bg2})` : `radial-gradient(120% 140% at 50% 0%, ${s.bg1}, ${s.bg2})`;
+    const glow = s.glow > 0 ? `0 0 ${(0.04 + s.glow / 400).toFixed(3)}em ${hexA(s.glowColor, 0.9)}, 0 0 ${(0.1 + s.glow / 160).toFixed(3)}em ${hexA(s.glowColor, 0.5)}` : 'none';
+    const blinkOff = info.blink && Math.floor(Date.now() / 500) % 2 === 1;
+    if (P.kind === 'doc') {
+      const { w, d, tx, sub, bar, fill } = P, key = [s.font, wt, s.italic, s.color, s.gradText, s.grad1, s.grad2, glow, bg, s.dateColor, s.dateOpacity, s.dateFont, info.text.length, !!info.sub, w.innerWidth, w.innerHeight].join('|');
+      if (P.key !== key) {
+        P.key = key;
+        // mêmes polices que le site : celles déjà chargées passent directement dans la fenêtre (rien à retélécharger)
+        const want = new Set([f.name, df.name]);
+        if (document.fonts && d.fonts) for (const ff of document.fonts) if (ff.status === 'loaded' && want.has(ff.family.replace(/["']/g, '')) && !P.faces.has(ff)) { try { d.fonts.add(ff); P.faces.add(ff); } catch (e) {} }
+        d.body.style.background = bg;
+        Object.assign(tx.style, { fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', letterSpacing: s.letterSpacing / 100 + 'em', textShadow: s.gradText ? 'none' : glow, color: s.color, background: s.gradText ? `linear-gradient(180deg, ${s.grad1} 12%, ${s.grad2} 88%)` : 'none', webkitBackgroundClip: s.gradText ? 'text' : '', backgroundClip: s.gradText ? 'text' : '', webkitTextFillColor: s.gradText ? 'transparent' : '' });
+        Object.assign(sub.style, { fontFamily: stack(df), fontWeight: clampW(df, 500), color: s.dateColor, opacity: Math.max(0.5, s.dateOpacity / 100) });
+        // l'heure remplit la fenêtre, quelle que soit sa taille
+        tx.style.fontSize = '100px'; tx.textContent = info.text;
+        const k = tx.offsetWidth / 100 || 3;
+        tx.style.fontSize = Math.max(14, Math.min(w.innerHeight * (info.sub ? 0.5 : 0.68), (w.innerWidth * 0.9) / k)).toFixed(1) + 'px';
+      }
+      if (tx.textContent !== info.text) tx.textContent = info.text;
+      if (sub.textContent !== info.sub) sub.textContent = info.sub;
+      sub.style.display = info.sub ? '' : 'none';
+      tx.style.opacity = blinkOff ? 0.25 : 1;
+      bar.style.display = info.prog == null ? 'none' : '';
+      if (info.prog != null) { fill.style.width = (info.prog * 100).toFixed(2) + '%'; fill.style.background = info.zone; }
+      if (d.title !== info.text) d.title = info.text;
+      return;
+    }
+    // Safari : on dessine sur le canevas filmé par la vidéo flottante
+    const { c, ctx } = P, W = c.width, H = c.height;
+    if (s.bgType === 'solid' || s.bgType === 'grid' || s.bgType === 'image') ctx.fillStyle = s.bgType === 'image' ? '#121212' : s.bgColor;
+    else { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, s.bg1); g.addColorStop(1, s.bg2); ctx.fillStyle = g; }
+    ctx.fillRect(0, 0, W, H);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    const fam = stack(f), it = s.italic ? 'italic ' : '';
+    ctx.font = `${it}${wt} 100px ${fam}`;
+    const k = ctx.measureText(info.text).width / 100 || 3, fs = Math.min(H * (info.sub ? 0.5 : 0.66), (W * 0.9) / k), ty = info.sub ? H * 0.42 : H * 0.5;
+    ctx.font = `${it}${wt} ${fs.toFixed(1)}px ${fam}`;
+    if (s.gradText) { const g = ctx.createLinearGradient(0, ty - fs / 2, 0, ty + fs / 2); g.addColorStop(0.12, s.grad1); g.addColorStop(0.88, s.grad2); ctx.fillStyle = g; } else ctx.fillStyle = s.color;
+    if (s.glow > 0 && !s.gradText) { ctx.shadowColor = s.glowColor; ctx.shadowBlur = fs * (0.05 + s.glow / 500); }
+    ctx.globalAlpha = blinkOff ? 0.25 : 1; ctx.fillText(info.text, W / 2, ty); ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    if (info.sub) { ctx.font = `${clampW(df, 500)} ${Math.round(H * 0.1)}px ${stack(df)}`; ctx.fillStyle = s.dateColor; ctx.globalAlpha = Math.max(0.5, s.dateOpacity / 100); ctx.fillText(info.sub, W / 2, H * 0.8, W * 0.92); ctx.globalAlpha = 1; }
+    if (info.prog != null) { ctx.fillStyle = 'rgba(127,127,127,.3)'; ctx.fillRect(0, H - 10, W, 10); ctx.fillStyle = info.zone; ctx.fillRect(0, H - 10, W * info.prog, 10); }
+  };
   hasFiles = (e) => { const t = e.dataTransfer && e.dataTransfer.types; return !!t && Array.from(t).includes('Files'); };
   onDragEnter = (e) => { if (!this.hasFiles(e)) return; e.preventDefault(); this.dragN = (this.dragN || 0) + 1; if (!this.state.dragOver) this.setState({ dragOver: true }); };
   onDragOver = (e) => { if (this.hasFiles(e)) e.preventDefault(); };
@@ -2757,7 +2875,8 @@ class Component extends DCLogic {
       const cTypeItem = { key: 'ctype', icon: 'watch', label: L.clockType, hint: L['ct_' + s.clockType], sub: () => [...radio('clockType', [['digital', L.ct_digital], ['analog', L.ct_analog], ['both', L.ct_both]]), ...(s.clockType !== 'digital' ? [sep, tog('anaNums', L.anaNums), tog('anaMins', L.anaMins), tog('anaColor', L.anaColor), tog('anaSec', L.anaSec)] : [])] };
       // horloge à aiguilles seule : on cache ce qui ne sert qu'aux chiffres
       const anaOnly = mode === 'clock' && s.clockType === 'analog';
-      const timeItems = () => [...toolItems, ...(mode === 'clock' ? [cTypeItem] : []), move,
+      const pipItem = { key: 'pip', icon: 'picture_in_picture_alt', label: st.pip ? L.pipClose : kh(L.pipOpen), act: this.togglePip };
+      const timeItems = () => [...toolItems, ...(mode === 'clock' ? [cTypeItem] : []), move, pipItem,
         { key: 'size', icon: 'format_size', label: L.size, sub: () => anaOnly ? [sl('size', L.size, 30, 130, 1, pctM)] : [sl('size', L.size, 30, 130, 1, pctM), sl('letterSpacing', L.spacing, -10, 30, 1, v => (v > 0 ? '+' : '') + v), ...(fCur.wmin !== fCur.wmax ? [sl('weight', L.weight, fCur.wmin, fCur.wmax, 10)] : []), tog('italic', L.italic, 'format_italic')] },
         { key: 'font', icon: 'text_fields', label: L.tFont, hint: s.font, sub: fonts('font') },
         { key: 'color', icon: 'palette', label: L.color, sub: () => [{ ...sw('color', SW_INK), cur: s.gradText ? '-' : String(s.color || '').toLowerCase(), pick: (c) => this.setS({ color: c, gradText: false }) }, tog('gradText', L.gradText, 'gradient'), ...(s.gradText ? [head(L.gradTop), { ...sw('grad1', SW_INK), pick: (c) => this.setS({ grad1: c, gradText: true }) }, head(L.gradBottom), { ...sw('grad2', SW_INK), pick: (c) => this.setS({ grad2: c, gradText: true }) }] : []), head(L.accent), sw('accent', SW_INK), tog('sepAccent', L.sepAccent, 'more_vert')] },
@@ -2794,6 +2913,7 @@ class Component extends DCLogic {
         { key: 'surprise', icon: 'casino', label: kh(L.surpriseK), act: this.surprise, keep: true },
         sep,
         { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: kh(L.fullscreen), act: this.toggleFs },
+        pipItem,
         settings,
         { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) },
         { key: 'reset', icon: 'restart_alt', label: L.reset, act: this.reset }];
