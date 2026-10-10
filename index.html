@@ -1383,7 +1383,8 @@ class Component extends DCLogic {
       let vt;
       try { vt = doc.startViewTransition(() => ReactDOM.flushSync(apply)); } catch (e) { apply(); this.vtNow = false; return; }
       this.vt = vt;
-      vt.finished.finally(() => { this.vtNow = false; if (this.vt === vt) this.vt = null; });
+      if (vt.updateCallbackDone) vt.updateCallbackDone.catch(() => {});
+      vt.finished.catch(() => {}).then(() => { this.vtNow = false; if (this.vt === vt) this.vt = null; });
       vt.ready.then(() => {
         const vw = window.innerWidth, vh = window.innerHeight, opt = { duration: reduce ? 220 : pt ? 720 : 480, easing: 'cubic-bezier(.3,.7,.15,1)', pseudoElement: '::view-transition-new(root)' };
         if (pt && !reduce) { const R = Math.hypot(Math.max(pt.x, vw - pt.x), Math.max(pt.y, vh - pt.y)); doc.documentElement.animate({ clipPath: [`circle(0px at ${pt.x}px ${pt.y}px)`, `circle(${R.toFixed(0)}px at ${pt.x}px ${pt.y}px)`] }, opt); }
@@ -2848,7 +2849,8 @@ class Component extends DCLogic {
       if (items0.length) menuUi = { on: true, el: E('div', { key: 'menus', 'data-menu-layer': '', onClick: (e) => { if (e.target === e.currentTarget) this.closeMenu(); }, onContextMenu: this.menuReopen, style: { position: 'fixed', inset: 0, zIndex: 70 } },
         levels.map((items, level) => E('div', { key: 'm' + level + '-' + M.seq, ref: this.menuRef(level), role: 'menu', className: 'fh-menu', 'data-tour': 'menu' + level,
           style: { position: 'fixed', left: -9999, top: 0, minWidth: 236, maxWidth: 340, maxHeight: 'calc(100vh - 16px)', overflowY: 'auto', overscrollBehavior: 'contain', boxSizing: 'border-box', padding: 5, borderRadius: 12, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: '0 18px 50px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18)', color: ink, backdropFilter: 'blur(18px)', scrollbarWidth: 'thin', colorScheme: ui.scheme, '--mh': ui.hover, animation: 'fh-menu-in .14s ease-out both', transformOrigin: '0 0', viewTransitionName: 'fh-menu' + level } },
-          items.map((it, i) => { const el = rowEl(it, i, level); return React.cloneElement(el, { className: (el.props.className ? el.props.className + ' ' : '') + 'fh-row', style: { ...el.props.style, animation: `fh-mi-in .32s cubic-bezier(.2,.8,.2,1) ${Math.min(i, 40) * 17}ms both` } }); })))) };
+          // les lignes arrivent l'une après l'autre : 17 ms d'écart, plus 0,2 s réparties sur toute la liste
+          items.map((it, i) => { const el = rowEl(it, i, level), gap = 17 + 200 / Math.max(1, Math.min(items.length, 41) - 1); return React.cloneElement(el, { className: (el.props.className ? el.props.className + ' ' : '') + 'fh-row', style: { ...el.props.style, animation: `fh-mi-in .32s cubic-bezier(.2,.8,.2,1) ${Math.round(Math.min(i, 40) * gap)}ms both` } }); })))) };
     }
 
     // ---------- déplacer l'heure : neuf emplacements aimantés ----------
