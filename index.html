@@ -63,6 +63,13 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-bar-fadeout{to{opacity:0}}
 @keyframes fh-bar-fadein{from{opacity:0}}
 @keyframes fh-menu-in{from{opacity:0;transform:scale(.97) translateY(-3px)}to{opacity:1;transform:none}}
+@keyframes fh-mi-in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+@keyframes fh-note-out{0%{transform:rotate(var(--r)) scale(1)}35%{transform:rotate(calc(var(--r) - 8deg)) scale(.9,.72)}100%{transform:translateY(46px) rotate(calc(var(--r) + 50deg)) scale(.12);opacity:0}}
+@keyframes fh-pic-out{0%{transform:scale(1)}30%{transform:scale(1.06)}100%{transform:scale(.2) rotate(-14deg);opacity:0}}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(fh-menu0),::view-transition-old(fh-menu1),::view-transition-old(fh-menu2),::view-transition-old(fh-menu3){display:none}
+::view-transition-group(fh-menu0),::view-transition-group(fh-menu1),::view-transition-group(fh-menu2),::view-transition-group(fh-menu3),::view-transition-new(fh-menu0),::view-transition-new(fh-menu1),::view-transition-new(fh-menu2),::view-transition-new(fh-menu3){animation:none}
+@media (prefers-reduced-motion:reduce){.fh-row{animation:none!important}}
 .fh-mi:hover{background:var(--mh)!important}
 .fh-menu::-webkit-scrollbar{width:8px}.fh-menu::-webkit-scrollbar-thumb{background:var(--mh);border-radius:8px}
 @keyframes fh-tabpop{0%{transform:scale(1)}35%{transform:scale(1.14) translateY(-1px)}65%{transform:scale(.96)}100%{transform:scale(1)}}
@@ -1250,7 +1257,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, taps: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -1270,6 +1277,18 @@ class Component extends DCLogic {
     on(window, 'pointermove', this.clockMove); on(window, 'pointerup', this.clockUp); on(window, 'pointercancel', this.clockUp);
     ['pointermove', 'pointerdown', 'keydown', 'wheel', 'touchstart'].forEach(ev => on(window, ev, this.activity, { passive: true }));
     on(window, 'keydown', this.onKey);
+    on(window, 'pointerdown', (e) => {
+      this.lastPt = { x: e.clientX, y: e.clientY, t: performance.now() };
+      // pendant le cercle du changement de thème, le navigateur envoie les clics à la page entière : on finit l'animation tout de suite…
+      if (this.vt) { this.vtClick = true; try { this.vt.skipTransition(); } catch (er) {} }
+    }, { passive: true, capture: true });
+    // … et on renvoie le clic à ce qui se trouve vraiment sous le doigt
+    on(document, 'click', (e) => {
+      if (!this.vtClick) return; this.vtClick = false;
+      if (e.target !== document.documentElement) return;
+      const el = document.elementFromPoint(e.clientX, e.clientY);
+      if (el && el !== document.documentElement) { e.stopImmediatePropagation(); el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: e.clientX, clientY: e.clientY, button: 0 })); }
+    }, true);
     on(document, 'fullscreenchange', () => this.setState({ fs: !!document.fullscreenElement }));
     on(window, 'dragenter', this.onDragEnter); on(window, 'dragover', this.onDragOver); on(window, 'dragleave', this.onDragLeave); on(window, 'drop', this.onDrop);
     if (document.fonts) { on(document.fonts, 'loadingdone', this.bumpFonts); document.fonts.ready.then(() => this.bumpFonts()); }
@@ -1343,14 +1362,37 @@ class Component extends DCLogic {
   // ---------- annuler un changement de thème ----------
   // chaque changement garde les anciennes valeurs des réglages qu'il touche ; « Annuler » (ou Ctrl+Z) revient en arrière, un pas à la fois
   themeDo = (patch, msg) => {
-    const prev = this.state.s, back = {};
+    const prev = { ...this.state.s, ...this.vtPatch }, back = {};
     Object.keys(patch).forEach(k => { back[k] = prev[k]; });
     this.themeHist.push(back); if (this.themeHist.length > 20) this.themeHist.shift();
-    this.setS(patch); this.toast(msg, this.undoTheme);
+    this.themeSwap(patch, () => this.toast(msg, this.undoTheme));
   };
   undoTheme = () => {
     const back = this.themeHist.pop(); if (!back) return;
-    this.setS(back); this.toast(this.L().themeBack, this.themeHist.length ? this.undoTheme : null);
+    this.themeSwap(back, () => this.toast(this.L().themeBack, this.themeHist.length ? this.undoTheme : null));
+  };
+  // le nouveau thème s'ouvre en cercle depuis l'endroit cliqué (fondu au clavier) ; sans la fonction du navigateur : changement direct
+  vtPatch = null;
+  themeSwap = (patch, after) => {
+    // pendant le cercle, l'heure prend tout de suite les couleurs du nouveau thème (pas de couleur intermédiaire)
+    const doc = document, apply = () => { this.vtPatch = null; this.vtNow = true; this.setS(patch); if (after) after(); };
+    if (!doc.startViewTransition || !window.ReactDOM || !ReactDOM.flushSync || doc.hidden || this.state.tour != null) { apply(); this.vtNow = false; return; }
+    this.vtPatch = { ...this.vtPatch, ...patch };
+    const go = () => {
+      const pt = this.lastPt && performance.now() - this.lastPt.t < 1500 ? this.lastPt : null, reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let vt;
+      try { vt = doc.startViewTransition(() => ReactDOM.flushSync(apply)); } catch (e) { apply(); this.vtNow = false; return; }
+      this.vt = vt;
+      vt.finished.finally(() => { this.vtNow = false; if (this.vt === vt) this.vt = null; });
+      vt.ready.then(() => {
+        const vw = window.innerWidth, vh = window.innerHeight, opt = { duration: reduce ? 220 : pt ? 720 : 480, easing: 'cubic-bezier(.3,.7,.15,1)', pseudoElement: '::view-transition-new(root)' };
+        if (pt && !reduce) { const R = Math.hypot(Math.max(pt.x, vw - pt.x), Math.max(pt.y, vh - pt.y)); doc.documentElement.animate({ clipPath: [`circle(0px at ${pt.x}px ${pt.y}px)`, `circle(${R.toFixed(0)}px at ${pt.x}px ${pt.y}px)`] }, opt); }
+        else doc.documentElement.animate({ opacity: [0, 1] }, opt);
+      }).catch(() => {});
+    };
+    // la police du nouveau thème d'abord (400 ms au plus), pour qu'elle ne change pas juste après
+    const f = patch.font;
+    if (f && doc.fonts && doc.fonts.load) { this.ensureFont(f); Promise.race([doc.fonts.load(`40px "${f}"`), new Promise(r => setTimeout(r, 400))]).then(go, go); } else go();
   };
   themeHist = [];
   pickPreset = (ps, name) => { const L = this.L(), was = this.state.s.autoTheme; this.themeDo({ ...ps, autoTheme: false }, L.themeSet.replace('{n}', name || '') + (was ? ' · ' + L.autoOff : '')); };
@@ -1601,7 +1643,7 @@ class Component extends DCLogic {
   menuRef = (i) => this.menuRefs[i] || (this.menuRefs[i] = (el) => { this.menuEls[i] = el; });
   openMenu = (kind, x, y, id) => {
     clearTimeout(this.menuT);
-    this.setState({ menu: { kind, x, y, id: id || '', open: [] }, tab: null, idle: false });
+    this.setState({ menu: { kind, x, y, id: id || '', open: [], seq: (this.menuSeq = (this.menuSeq || 0) + 1) }, tab: null, idle: false });
   };
   closeMenu = () => { clearTimeout(this.menuT); if (this.state.menu) this.setState({ menu: null }); this.activity(); };
   // quel menu ouvrir pour l'élément cliqué (attribut data-menu, sinon celui du fond)
@@ -1726,26 +1768,61 @@ class Component extends DCLogic {
   };
   noteResUp = () => { if (!this.nres) return; this.nres = null; this.saveNotes(); };
   noteScale = (id, k) => { const st = this.state, n = st.notes.find(x => x.id === id); if (!n) return; this.patchNote(id, { w: Math.round(Math.max(150, Math.min(st.vw * 0.8, (n.w || 240) * k))), h: Math.round(Math.max(80, Math.min(st.vh * 0.7, (n.h || 170) * k))) }); };
-  delNote = (id) => { this.setState(st => ({ notes: st.notes.filter(n => n.id !== id) }), this.saveNotes); };
+  // supprimer : la note se froisse en boule puis disparaît
+  delNote = (id) => {
+    if (this.state.gone.includes(id)) return;
+    this.setState(st => ({ gone: [...st.gone, id] }));
+    setTimeout(() => this.setState(st => ({ gone: st.gone.filter(x => x !== id), notes: st.notes.filter(n => n.id !== id) }), this.saveNotes), 420);
+  };
+  // ---------- élan : la note ou l'image penche quand on la tire, puis glisse un peu quand on la lâche ----------
+  track = (d, e) => {
+    const now = performance.now(), dt = now - d.lt;
+    if (dt > 0) { const k = Math.min(1, dt / 40); d.vx += ((e.clientX - d.lx) / dt - d.vx) * k; d.vy += ((e.clientY - d.ly) / dt - d.vy) * k; }
+    d.lx = e.clientX; d.ly = e.clientY; d.lt = now;
+    // inclinaison selon la vitesse, qui revient à plat dès qu'on s'arrête
+    const tilt = Math.max(-11, Math.min(11, d.vx * 9));
+    clearTimeout(this.tiltT); this.tiltT = setTimeout(() => { if (this.state.lift) this.setState(st => ({ lift: st.lift && { ...st.lift, tilt: 0 } })); }, 90);
+    return tilt;
+  };
+  glide = (d, step, done) => {
+    this.stopGlide();
+    let vx = d.vx, vy = d.vy;
+    const sp = Math.hypot(vx, vy), idle = performance.now() - d.lt;
+    if (idle > 80 || sp < 0.25) { done(); return; }
+    if (sp > 2.6) { vx *= 2.6 / sp; vy *= 2.6 / sp; }
+    let t0 = performance.now();
+    this.glideDone = done;
+    const frame = (now) => {
+      const dt = Math.min(34, now - t0), f = Math.exp(-dt / 150); t0 = now; vx *= f; vy *= f;
+      if (Math.hypot(vx, vy) < 0.03) { this.stopGlide(); return; }
+      step(vx * dt, vy * dt);
+      this.glideRaf = requestAnimationFrame(frame);
+    };
+    this.glideRaf = requestAnimationFrame(frame);
+  };
+  stopGlide = () => { cancelAnimationFrame(this.glideRaf); this.glideRaf = 0; const f = this.glideDone; this.glideDone = null; if (f) f(); };
   raiseNote = (id) => { const n = this.state.notes.find(x => x.id === id); if (n && n.z !== this.zTop) this.patchNote(id, { z: ++this.zTop }, true); };
   noteDown = (e, id) => {
     if (e.button !== 0 || (e.target.closest && e.target.closest('button'))) return;
     const n = this.state.notes.find(x => x.id === id); if (!n) return;
-    e.preventDefault();
+    e.preventDefault(); this.stopGlide();
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
-    this.drag = { id, dx: e.clientX - n.x, dy: e.clientY - n.y, sx: e.clientX, sy: e.clientY, moved: false };
+    const n2 = this.state.notes.find(x => x.id === id);
+    this.drag = { id, dx: e.clientX - n2.x, dy: e.clientY - n2.y, sx: e.clientX, sy: e.clientY, moved: false, lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
   };
   noteMove = (e) => {
     const d = this.drag; if (!d) return;
     if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 5) return;
     d.moved = true;
-    const st = this.state, x = Math.max(-120, Math.min(st.vw - 80, e.clientX - d.dx)), y = Math.max(0, Math.min(st.vh - 40, e.clientY - d.dy));
-    this.setState({ notes: st.notes.map(n => (n.id === d.id ? { ...n, x, y } : n)) });
+    const st = this.state, x = Math.max(-120, Math.min(st.vw - 80, e.clientX - d.dx)), y = Math.max(0, Math.min(st.vh - 40, e.clientY - d.dy)), tilt = this.track(d, e);
+    this.setState({ notes: st.notes.map(n => (n.id === d.id ? { ...n, x, y } : n)), lift: { id: d.id, tilt } });
   };
   noteUp = (e) => {
     const d = this.drag; if (!d) return; this.drag = null;
     if (!d.moved && e && e.clientX != null) { this.openMenu('note', e.clientX, e.clientY, d.id); return; }
-    this.saveNotes();
+    if (!d.moved) return;
+    this.glide(d, (mx, my) => this.setState(st => ({ notes: st.notes.map(n => (n.id === d.id ? { ...n, x: Math.max(-120, Math.min(st.vw - 80, n.x + mx)), y: Math.max(0, Math.min(st.vh - 40, n.y + my)) } : n)) })),
+      () => { this.setState({ lift: null }); this.saveNotes(); });
   };
 
   // Images posées à côté de l'heure (pas en fond) : on les glisse, on tire le coin pour la taille ; position en fraction de l'écran
@@ -1771,14 +1848,19 @@ class Component extends DCLogic {
     }, this.savePics);
   };
   patchPic = (id, patch) => { this.setState(st => ({ pics: st.pics.map(q => (q.id === id ? { ...q, ...patch } : q)) }), this.savePics); };
-  delPic = (id) => { this.setState(st => ({ pics: st.pics.filter(q => q.id !== id) }), this.savePics); };
+  delPic = (id) => {
+    if (this.state.gone.includes(id)) return;
+    this.setState(st => ({ gone: [...st.gone, id] }));
+    setTimeout(() => this.setState(st => ({ gone: st.gone.filter(x => x !== id), pics: st.pics.filter(q => q.id !== id) }), this.savePics), 380);
+  };
   picZoom = (id, k) => { const q = this.state.pics.find(x => x.id === id); if (q) this.patchPic(id, { w: Math.max(PIC_W[0], Math.min(PIC_W[1], q.w * k)) }); };
   picDown = (e, id, resize) => {
     if (e.button !== 0 || (!resize && e.target.closest && e.target.closest('button, [data-resize]'))) return;
     const q = this.state.pics.find(x => x.id === id); if (!q) return;
-    e.preventDefault(); e.stopPropagation();
+    e.preventDefault(); e.stopPropagation(); this.stopGlide();
     try { e.currentTarget.setPointerCapture(e.pointerId); } catch (er) {}
-    this.picD = { id, resize, sx: e.clientX, sy: e.clientY, x: q.x, y: q.y, w: q.w };
+    const q2 = this.state.pics.find(x => x.id === id) || q;
+    this.picD = { id, resize, sx: e.clientX, sy: e.clientY, x: q2.x, y: q2.y, w: q2.w, lx: e.clientX, ly: e.clientY, lt: performance.now(), vx: 0, vy: 0 };
     this.setState(st => ({ picDrag: id, pics: st.pics.map(p => (p.id === id ? { ...p, z: ++this.zTop } : p)) }));
   };
   picMove = (e) => {
@@ -1787,12 +1869,15 @@ class Component extends DCLogic {
     if (!d.moved && Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 5) return;
     d.moved = true;
     const patch = d.resize ? { w: Math.max(PIC_W[0], Math.min(PIC_W[1], d.w + dx)) } : { x: d.x + dx, y: d.y + dy };
-    this.setState({ pics: st.pics.map(q => (q.id === d.id ? { ...q, ...patch } : q)) });
+    const tilt = d.resize ? 0 : this.track(d, e);
+    this.setState({ pics: st.pics.map(q => (q.id === d.id ? { ...q, ...patch } : q)), lift: d.resize ? null : { id: d.id, tilt } });
   };
   picUp = (e) => {
     const d = this.picD; if (!d) return; this.picD = null; this.setState({ picDrag: '' });
     if (!d.moved && !d.resize && e && e.clientX != null) { this.openMenu('pic', e.clientX, e.clientY, d.id); return; }
-    this.savePics();
+    if (!d.moved || d.resize) { this.savePics(); return; }
+    this.glide(d, (mx, my) => this.setState(st => ({ pics: st.pics.map(q => (q.id === d.id ? { ...q, x: Math.max(0.04 - q.w, Math.min(0.96, q.x + mx / st.vw)), y: Math.max(0, Math.min(0.95, q.y + my / st.vh)) } : q)) })),
+      () => { this.setState({ lift: null }); this.savePics(); });
   };
 
   // Fond « grille » : plan en perspective dont les cases s'allument derrière la souris
@@ -2179,7 +2264,7 @@ class Component extends DCLogic {
     if (shd > 0) sh.push(`0 ${(0.01 + shd * 0.05).toFixed(3)}em ${(0.02 + shd * 0.12).toFixed(3)}em rgba(0,0,0,${(0.2 + shd * 0.5).toFixed(2)})`);
     const useFilter = !!fill || rb;
     const ring = mode === 'timer' && tm.done;
-    const timeStyle = { position: 'relative', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: clockPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, animation: ring ? 'fh-blinkfast 1s steps(1) infinite' : s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: 'font-size .35s ease, color .4s ease' };
+    const timeStyle = { position: 'relative', display: 'flex', alignItems: 'flex-start', whiteSpace: 'nowrap', width: 'max-content', direction: 'ltr', fontFamily: stack(f), fontWeight: wt, fontStyle: s.italic ? 'italic' : 'normal', fontSize: clockPx.toFixed(1) + 'px', lineHeight: 1, letterSpacing: ls + 'em', marginRight: -ls + 'em', color: s.color, fontFeatureSettings: s.fixedDigits ? '"case" 1, "tnum" 1' : '"case" 1', WebkitTextStroke: s.outline ? `${s.outlineW}px ${s.color}` : undefined, WebkitTextFillColor: s.outline ? 'transparent' : undefined, textShadow: !useFilter && sh.length ? sh.join(', ') : undefined, animation: ring ? 'fh-blinkfast 1s steps(1) infinite' : s.breathe ? 'fh-breathe 7s ease-in-out infinite' : undefined, transition: this.vtNow ? 'none' : 'font-size .35s ease, color .4s ease' };
     const glowEl = useFilter && sh.length ? E('div', { key: 'glow', 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: sh.join(', '), pointerEvents: 'none' } }, buildKids(true)) : null;
     const timeEl = E('div', { key: 'time', ref: this.timeRef, 'data-tour': cType === 'digital' ? 'clock' : undefined, style: timeStyle, role: 'timer', 'aria-label': display }, buildKids(false));
     // effets bizarres appliqués à tout le bloc
@@ -2290,7 +2375,7 @@ class Component extends DCLogic {
     if (s.showZone) { const off = offOf(tz); zoneText = `${tzLabel(tz || localTz)}${off ? ' · ' + off : ''}`; }
     // opacité sur tout l'élément (texte + ombre) : avec seulement une couleur transparente, l'ombre noire restait visible
     const dateColor = s.dateColor, dateOp = s.dateOpacity / 100;
-    const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, opacity: dateOp, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: [g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : '', legib || ''].filter(Boolean).join(', ') || undefined, transition: 'color .4s ease, opacity .3s ease' };
+    const dateStyle = { order: s.datePos === 'above' ? 0 : 2, fontFamily: stack(df), fontWeight: clampW(df, 400), fontStyle: s.dateFont === 'same' && s.italic ? 'italic' : 'normal', fontSize: dPx + 'px', lineHeight: 1.25, color: dateColor, opacity: dateOp, letterSpacing: s.dateUpper ? '.14em' : '.01em', textTransform: s.dateUpper ? 'uppercase' : 'none', textWrap: 'balance', maxWidth: '90vw', textShadow: [g > 0 ? `0 0 .5em ${hexA(gc, (g * 0.55).toFixed(2))}` : '', legib || ''].filter(Boolean).join(', ') || undefined, transition: this.vtNow ? 'none' : 'color .4s ease, opacity .3s ease' };
     const greet = greeting(li, p);
     const endStr = tmRun ? fmt(locale, { hour: '2-digit', minute: '2-digit', hour12: !!s.hour12, timeZone: tz }).format(new Date(tm.endAt)) : '';
     const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
@@ -2761,9 +2846,9 @@ class Component extends DCLogic {
           it.sub ? ico('chevron_right', 18, ui.fg3) : null);
       };
       if (items0.length) menuUi = { on: true, el: E('div', { key: 'menus', 'data-menu-layer': '', onClick: (e) => { if (e.target === e.currentTarget) this.closeMenu(); }, onContextMenu: this.menuReopen, style: { position: 'fixed', inset: 0, zIndex: 70 } },
-        levels.map((items, level) => E('div', { key: 'm' + level, ref: this.menuRef(level), role: 'menu', className: 'fh-menu', 'data-tour': 'menu' + level,
-          style: { position: 'fixed', left: -9999, top: 0, minWidth: 236, maxWidth: 340, maxHeight: 'calc(100vh - 16px)', overflowY: 'auto', overscrollBehavior: 'contain', boxSizing: 'border-box', padding: 5, borderRadius: 12, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: '0 18px 50px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18)', color: ink, backdropFilter: 'blur(18px)', scrollbarWidth: 'thin', colorScheme: ui.scheme, '--mh': ui.hover, animation: 'fh-menu-in .14s ease-out both', transformOrigin: '0 0' } },
-          items.map((it, i) => rowEl(it, i, level))))) };
+        levels.map((items, level) => E('div', { key: 'm' + level + '-' + M.seq, ref: this.menuRef(level), role: 'menu', className: 'fh-menu', 'data-tour': 'menu' + level,
+          style: { position: 'fixed', left: -9999, top: 0, minWidth: 236, maxWidth: 340, maxHeight: 'calc(100vh - 16px)', overflowY: 'auto', overscrollBehavior: 'contain', boxSizing: 'border-box', padding: 5, borderRadius: 12, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: '0 18px 50px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18)', color: ink, backdropFilter: 'blur(18px)', scrollbarWidth: 'thin', colorScheme: ui.scheme, '--mh': ui.hover, animation: 'fh-menu-in .14s ease-out both', transformOrigin: '0 0', viewTransitionName: 'fh-menu' + level } },
+          items.map((it, i) => { const el = rowEl(it, i, level); return React.cloneElement(el, { className: (el.props.className ? el.props.className + ' ' : '') + 'fh-row', style: { ...el.props.style, animation: `fh-mi-in .32s cubic-bezier(.2,.8,.2,1) ${Math.min(i, 40) * 17}ms both` } }); })))) };
     }
 
     // ---------- déplacer l'heure : neuf emplacements aimantés ----------
@@ -2817,8 +2902,9 @@ class Component extends DCLogic {
     const picsEl = mode === 'show' ? null : st.pics.map(q => {
       const m = st.media.find(x => x.id === q.m); if (!m) return null;
       const w = Math.max(40, q.w * st.vw), x = Math.max(60 - w, Math.min(st.vw - 60, q.x * st.vw)), y = Math.max(0, Math.min(st.vh - 50, q.y * st.vh)), drag = st.picDrag === q.id;
+      const lift = st.lift && st.lift.id === q.id ? st.lift : null, gone = st.gone.includes(q.id);
       const tb = (key, icon, title, onClick) => E('button', { key, type: 'button', className: 'fh-btn', title, onClick, style: { width: 28, height: 28, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 999, border: `1px solid ${ui.border}`, background: ui.panel, color: ui.fg, cursor: 'pointer', boxShadow: '0 4px 14px rgba(0,0,0,.25)' } }, E('span', { style: { ...ICON, fontSize: 16 } }, icon));
-      return E('div', { key: q.id, 'data-menu': 'pic:' + q.id, className: 'fh-card', title: L.picHint, onPointerDown: (e) => this.picDown(e, q.id, false), onPointerMove: this.picMove, onPointerUp: this.picUp, onPointerCancel: () => this.picUp(null), style: { position: 'absolute', left: x, top: y, width: w, zIndex: q.z || 1, pointerEvents: 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', animation: 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) both' } },
+      return E('div', { key: q.id, 'data-menu': 'pic:' + q.id, className: 'fh-card', title: L.picHint, onPointerDown: (e) => this.picDown(e, q.id, false), onPointerMove: this.picMove, onPointerUp: this.picUp, onPointerCancel: () => this.picUp(null), style: { position: 'absolute', left: x, top: y, width: w, zIndex: q.z || 1, pointerEvents: gone ? 'none' : 'auto', cursor: drag ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none', transform: lift ? `rotate(${lift.tilt.toFixed(2)}deg) scale(1.04)` : 'none', transition: lift ? 'transform .16s ease-out' : 'transform .6s cubic-bezier(.34,1.56,.64,1)', animation: gone ? 'fh-pic-out .38s cubic-bezier(.5,0,.75,0) forwards' : 'fh-note-in .45s cubic-bezier(.2,.9,.3,1.25) backwards' } },
         E('img', { src: m.url, alt: m.name || '', draggable: false, style: { display: 'block', width: '100%', height: 'auto', borderRadius: 8, filter: 'drop-shadow(0 10px 18px rgba(0,0,0,.35))', pointerEvents: 'none' } }),
         E('div', { className: 'fh-card-tools', style: { position: 'absolute', top: -14, right: -8, display: 'flex', gap: 4 } },
           tb('sm', 'remove', L.picSmaller, () => this.picZoom(q.id, 1 / 1.2)), tb('bg', 'add', L.picBigger, () => this.picZoom(q.id, 1.2)), tb('x', 'close', L.picDel, () => this.delPic(q.id))),
@@ -2829,7 +2915,9 @@ class Component extends DCLogic {
     // notes autocollantes (déplaçables, redimensionnables, enregistrées dans le navigateur)
     const notesEl = st.notes.map(n => {
       const w = n.w || 240, h = n.h || 170, x = Math.max(-w + 80, Math.min(st.vw - 80, n.x)), y = Math.max(0, Math.min(st.vh - 44, n.y)), nfs = n.fs || 23;
-      return E('div', { key: n.id, 'data-tour': 'notecard', 'data-menu': 'note:' + n.id, className: 'fh-note', onPointerDown: () => this.raiseNote(n.id), style: { position: 'absolute', left: x, top: y, zIndex: n.z || 1, pointerEvents: 'auto', color: '#2a2113', background: `linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 40px), ${n.c}`, borderRadius: '3px 3px 3px 22px', boxShadow: '0 14px 30px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)', transform: `rotate(${n.r || 0}deg)`, animation: 'fh-note-in .5s cubic-bezier(.2,.9,.3,1.25) both' } },
+      // soulevée pendant qu'on la déplace (penchée selon la vitesse), puis reposée avec un petit rebond
+      const lift = st.lift && st.lift.id === n.id ? st.lift : null, gone = st.gone.includes(n.id);
+      return E('div', { key: n.id, 'data-tour': 'notecard', 'data-menu': 'note:' + n.id, className: 'fh-note', onPointerDown: () => this.raiseNote(n.id), style: { position: 'absolute', left: x, top: y, zIndex: n.z || 1, pointerEvents: gone ? 'none' : 'auto', color: '#2a2113', background: `linear-gradient(180deg, rgba(255,255,255,.32), rgba(255,255,255,0) 40px), ${n.c}`, borderRadius: '3px 3px 3px 22px', boxShadow: lift ? '0 26px 46px rgba(0,0,0,.34), 0 6px 14px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)' : '0 14px 30px rgba(0,0,0,.32), 0 2px 6px rgba(0,0,0,.2), inset 0 -10px 18px rgba(0,0,0,.06)', '--r': (n.r || 0) + 'deg', transform: `rotate(${((n.r || 0) + (lift ? lift.tilt : 0)).toFixed(2)}deg)${lift ? ' scale(1.04)' : ''}`, transition: lift ? 'transform .16s ease-out, box-shadow .2s ease' : 'transform .6s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease', animation: gone ? 'fh-note-out .42s cubic-bezier(.5,0,.75,0) forwards' : 'fh-note-in .5s cubic-bezier(.2,.9,.3,1.25) backwards' } },
         E('div', { onPointerDown: (e) => this.noteDown(e, n.id), onPointerMove: this.noteMove, onPointerUp: this.noteUp, onPointerCancel: () => this.noteUp(null), style: { height: 30, display: 'flex', alignItems: 'center', gap: 5, padding: '0 6px 0 10px', cursor: 'grab', touchAction: 'none' } },
           NOTE_C.map(c => E('button', { key: c, type: 'button', className: 'fh-dot', title: L.color, onClick: () => this.patchNote(n.id, { c }), style: { width: 12, height: 12, padding: 0, borderRadius: '50%', border: '1.5px solid rgba(42,33,19,.45)', background: c, cursor: 'pointer', boxShadow: n.c === c ? '0 0 0 2px rgba(42,33,19,.7)' : 'none' } })),
           E('div', { style: { flex: 1 } }),
