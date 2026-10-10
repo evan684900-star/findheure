@@ -1393,7 +1393,9 @@ class Component extends DCLogic {
     };
     // la police du nouveau thème d'abord (400 ms au plus), pour qu'elle ne change pas juste après
     const f = patch.font;
-    if (f && doc.fonts && doc.fonts.load) { this.ensureFont(f); Promise.race([doc.fonts.load(`40px "${f}"`), new Promise(r => setTimeout(r, 400))]).then(go, go); } else go();
+    const spec = f && `${patch.weight || 400} 40px "${f}"`;
+    if (!f || !doc.fonts || !doc.fonts.load || doc.fonts.check(spec)) { go(); return; }
+    this.ensureFont(f); Promise.race([doc.fonts.load(spec), new Promise(r => setTimeout(r, 300))]).then(go, go);
   };
   themeHist = [];
   pickPreset = (ps, name) => { const L = this.L(), was = this.state.s.autoTheme; this.themeDo({ ...ps, autoTheme: false }, L.themeSet.replace('{n}', name || '') + (was ? ' · ' + L.autoOff : '')); };
