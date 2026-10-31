@@ -758,9 +758,9 @@ const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'ima
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
 const SCENE_FETES = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
 // décors des autres thèmes (dessinés dans scenes.js)
-const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'london', 'holo', 'trippy'];
+const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'london', 'gotham', 'holo', 'trippy'];
 const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
-const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', holo: '🛰️', trippy: '🌀' };
+const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', gotham: '🦇', holo: '🛰️', trippy: '🌀' };
 const TOUR = [['clock'], ['bgspot'], ['modes'], ['settings'], ['help']];
 // Salutations (option « Salutation » du message au-dessus de l'heure) : selon le moment de la journée et le jour,
 // tirées d'une réserve et changées toutes les demi-heures (stables entre-temps). Une liste par langue de l'interface.
@@ -901,6 +901,7 @@ const DECO_TAP = {
   iso: [[1284, 154, 45, 'confetti'], [792, 760, 200, 'twinkle']],
   gothic: [[798, 168, 120, 'rainbow'], [418, 712, 70, 'warm'], [1178, 712, 70, 'warm'], [332, 392, 60, 'rainbow'], [1268, 392, 60, 'rainbow']],
   london: [[330, 254, 35, 'bigben'], [330, 480, 45, 'bigben'], [1340, 470, 200, 'twinkle'], [1470, 790, 50, 'ripple', '#ef4444'], [470, 166, 30, 'moon'], [150, 680, 30, 'warm'], [88, 280, 30, 'confettiUk']],
+  gotham: [[1250, 165, 130, 'batsig'], [1385, 640, 45, 'flash'], [300, 300, 60, 'twinkle'], [690, 520, 60, 'warm'], [135, 625, 45, 'bats']],
   holo: [[1400, 702, 120, 'radar'], [194, 222, 120, 'neon', '#38e8ff'], [1404, 222, 110, 'neon', '#38e8ff']],
   trippy: [[140, 178, 60, 'rainbow'], [1298, 158, 70, 'rainbow'], [1378, 398, 60, 'rainbow'], [220, 448, 60, 'rainbow'], [1458, 638, 50, 'rainbow'], [298, 704, 50, 'rainbow'], [800, 818, 50, 'rainbow']],
 };
@@ -986,6 +987,8 @@ function tapParts(E, tp, booText) {
     case 'sunPink': glow('#ff9ad5', 2.6, 2.4); burst(10, 'pop', () => spark(pick(['#ffd36e', '#ff6ec7', '#ffa6e8'])), 80, 170, 1.6); break;
     case 'pumpkin': glow('#ff8c1a', 3.6, 3.2, 'fh-tp-flick'); burst(10, 'rise', () => dot(pick(['#ffb347', '#ffd36e', '#ff7a18']), 5), 120, 220, 2); break;
     case 'bats': bats(8); break;
+    // le Bat-Signal s'allume plus fort et des chauves-souris s'envolent du disque
+    case 'batsig': glow('#ffe58a', 2.6, 2.4); rings('#ffe58a', 2, 3.2); bats(6); break;
     case 'boo':
       part(64 * u, 75 * u, svgK('0 0 60 70', E('path', { d: 'M10 66 V30 A20 20 0 0 1 50 30 V66 L43 59 L37 66 L30 59 L23 66 L17 59 Z', fill: 'rgba(244,240,255,.95)' }), E('ellipse', { cx: 23, cy: 31, rx: 3.6, ry: 5.2, fill: '#1a0b2e' }), E('ellipse', { cx: 37, cy: 31, rx: 3.6, ry: 5.2, fill: '#1a0b2e' }), E('ellipse', { cx: 30, cy: 44, rx: 3, ry: 4.2, fill: '#1a0b2e' })),
         [rr(-10, 10) * u, -90 * u, rr(-40, 40) * u, -230 * u, rr(-8, 8), 1.15], 2.6, 0, 0, -10 * u, { filter: 'drop-shadow(0 0 10px rgba(230,220,255,.7))' });
@@ -1029,7 +1032,7 @@ function tapParts(E, tp, booText) {
 }
 // ---------- qualité de l'image : effets en plus en Haute et Ultra ----------
 // particules d'ambiance selon le décor ; la nuit, les décors de jour passent aux lucioles
-const SCENE_AMB = { spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
+const SCENE_AMB = { spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', gotham: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
 const AMB = {
   dust: { c: ['255,255,255'], shape: 'dot', move: 'drift', size: [2, 4.5], a: [0.25, 0.55] },
   pollen: { c: ['255,244,190', '255,255,255', '255,226,150'], shape: 'glow', move: 'drift', size: [7, 14], a: [0.6, 0.95] },
@@ -1050,7 +1053,7 @@ const RAY_SUN = { spring: [1300, 140, '255,246,214'], easter: [260, 128, '255,24
 // reflet de l'heure dans l'eau : hauteur de la ligne d'eau dans le dessin
 const REFLECT_Y = { summer: 586, glacier: 645, sunset: 598, london: 745 };
 // lunes dessinées dans les décors (x, y, rayon dans le dessin 1600 × 900)
-const MOON_AT = { winter: [1290, 138, 40], xmas: [298, 166, 70], london: [470, 166, 30], arcade: [1408, 168, 45], cosmos: [470, 560, 30] };
+const MOON_AT = { winter: [1290, 138, 40], xmas: [298, 166, 70], london: [470, 166, 30], gotham: [190, 120, 22], arcade: [1408, 168, 45], cosmos: [470, 560, 30] };
 // couleur du thème adoucie vers le blanc (pour des flous qui ne « tachent » pas)
 const softRgb = (h, k) => hexRgb(h).split(',').map(v => Math.round(+v + (255 - v) * (k == null ? 0.55 : k))).join(',');
 const hexRgb = (h) => { const x = String(h || '#ffffff').replace('#', ''); const n = parseInt(x.length === 3 ? x.split('').map(c => c + c).join('') : x.slice(0, 6), 16) || 0xffffff; return `${(n >> 16) & 255},${(n >> 8) & 255},${n & 255}`; };
@@ -1246,6 +1249,7 @@ const PRESETS = [
   { n: 'Iso 3D|Iso 3D|Iso 3D|Iso 3D', s: { font: 'Nabla', dateFont: 'Fredoka', weight: 400, color: '#ffffff', dateColor: '#ffe8b3', dateOpacity: 85, accent: '#ffb84d', glowColor: '#ffb84d', bgType: 'scene', scene: 'iso', bg1: '#2b1a4a', bg2: '#0e0a1a', bg3: '#3a2466', vignette: 30, anim: 'pop' } },
   { n: 'Gothique|Gothic|Gótico|Gotisch', s: { font: 'UnifrakturMaguntia', dateFont: 'Cormorant Garamond', weight: 400, color: '#ece3d0', dateColor: '#ece3d0', dateOpacity: 65, accent: '#c0352b', glowColor: '#c0352b', bgType: 'scene', scene: 'gothic', bgColor: '#120d0b', bg1: '#2a1e18', bg2: '#120d0b', bg3: '#0a0706', grain: 25, vignette: 50, anim: 'fade', sepAccent: true } },
   { n: 'Londres|London|Londres|London', s: { font: 'Playfair Display', dateFont: 'Cormorant Garamond', weight: 600, color: '#fff4de', dateColor: '#f7e3c4', dateOpacity: 85, accent: '#d4213d', glowColor: '#ffcf7a', shadow: 45, sepAccent: true, bgType: 'scene', scene: 'london', bgColor: '#121a36', bg1: '#3d3a6b', bg2: '#121a36', bg3: '#e9976b', vignette: 30, anim: 'fade' } },
+  { n: 'Gotham City|Gotham City|Gotham City|Gotham City', s: { font: 'Bebas Neue', dateFont: 'Bebas Neue', weight: 400, letterSpacing: 4, color: '#f2ecdc', dateColor: '#cfd5e2', dateOpacity: 80, accent: '#f5c518', glowColor: '#ffd84a', shadow: 55, sepAccent: true, bgType: 'scene', scene: 'gotham', bgColor: '#05070d', bg1: '#1b2436', bg2: '#05070d', bg3: '#56463f', vignette: 45, grain: 14, anim: 'fade', dateUpper: true } },
   // saisons & fêtes
   { id: 'rentree', n: 'Rentrée|Back to school|Vuelta al cole|Schulstart', s: { font: 'Caveat', weight: 600, color: '#f6f6ef', dateColor: '#ecece2', dateOpacity: 80, accent: '#ffe066', bgType: 'scene', scene: 'rentree', bg1: '#24452f', bg2: '#1c3a29', bg3: '#3c6b4c', vignette: 35, grain: 40, anim: 'fade' } },
   { id: 'autumn', n: 'Automne|Autumn|Otoño|Herbst', s: { font: 'Righteous', weight: 400, color: '#ffe8cc', dateColor: '#ffd9ae', dateOpacity: 80, accent: '#ff8c42', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'autumn', bg1: '#b24a2b', bg2: '#3a1f3f', bg3: '#ffbe6b', vignette: 40, anim: 'swirl' } },

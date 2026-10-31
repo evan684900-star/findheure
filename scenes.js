@@ -179,6 +179,7 @@
     '@keyframes fhs-shoot{0%{transform:translate3d(0,0,0) rotate(var(--ang,20deg));opacity:0}1.5%{opacity:1}6%{transform:translate3d(var(--x1,40em),var(--y1,15em),0) rotate(var(--ang,20deg));opacity:0}100%{transform:translate3d(var(--x1,40em),var(--y1,15em),0) rotate(var(--ang,20deg));opacity:0}}',
     '@keyframes fhs-hop{0%,40%,100%{transform:translate3d(0,0,0) scale(1,1)}10%{transform:translate3d(0,0,0) scale(1.08,.9)}22%{transform:translate3d(0,var(--hy,-2em),0) scale(.96,1.05)}34%{transform:translate3d(0,0,0) scale(1.06,.92)}}',
     '@keyframes fhs-blink{0%,49%{opacity:1}50%,100%{opacity:0}}',
+    '@keyframes fhs-storm{0%,86%,100%{opacity:0}87%{opacity:.34}89%{opacity:.08}90.5%{opacity:.24}94%{opacity:0}}',
     '@keyframes fhs-fw{0%,29%{transform:scale(.03);opacity:0}30%{transform:scale(.06);opacity:1}46%{transform:scale(.92);opacity:1}62%{opacity:.85}80%{transform:scale(1) translate3d(0,1em,0);opacity:0}100%{transform:scale(1) translate3d(0,1em,0);opacity:0}}',
     '@keyframes fhs-rk{0%{transform:translate3d(0,0,0);opacity:0}2%{opacity:1}27%{opacity:1}29.5%{transform:translate3d(0,var(--ry,-30em),0);opacity:0}100%{transform:translate3d(0,var(--ry,-30em),0);opacity:0}}',
     '@keyframes fhs-flash{0%,29%{opacity:0}32%{opacity:var(--o1,.7)}55%,100%{opacity:0}}',
@@ -1615,6 +1616,101 @@
         ...drift(t, 'mi', t.n('mi', 2, (r, i) => ({ x: -900, y: 712, w: 1000, h: 110, x1: 2600, dur: 80, dl: -i * 40, op: 0.13, fade: true, img: spr('dot', '#e9e4ff') }))),
         // crachin
         ...drift(t, 'rn', t.n('rn', 26, (r) => ({ x: rr(r, -100, 1650), y: -120, w: 1.6, h: rr(r, 40, 70), x1: -90, y1: 1050, r0: 5, r1: 5, dur: rr(r, 0.8, 1.2), dl: -r() * 1.2, op: rr(r, 0.14, 0.28), bg: 'linear-gradient(180deg, rgba(205,215,255,0), rgba(205,215,255,.9))' }))),
+      ];
+    },
+  });
+
+  // ---------------- GOTHAM CITY : ville gothique sous l'orage, le Bat-Signal projeté sur les nuages ----------------
+  const BAT = 'M54 20 L56 11 L59 17 L61 17 L64 11 L66 20 C74 14 90 8 116 16 C106 20 102 26 104 34 C96 28 88 30 84 38 C78 32 72 34 68 40 L60 47 L52 40 C48 34 42 32 36 38 C32 30 24 28 16 34 C18 26 14 20 4 16 C30 8 46 14 54 20 Z';
+  SP.bat = (c) => svg('0 0 120 50', path(BAT, c));
+  // le faisceau du projecteur et le disque de lumière sur les nuages, avec la chauve-souris au milieu
+  function batSignal(p, LX, LY, SX, SY) {
+    const dx = SX - LX, dy = SY - LY, len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len, w0 = 13, w1 = 108;
+    const pts = [[LX + nx * w0, LY + ny * w0], [SX + nx * w1, SY + ny * w1], [SX - nx * w1, SY - ny * w1], [LX - nx * w0, LY - ny * w0]];
+    const core = [[LX + nx * 5, LY + ny * 5], [SX + nx * 52, SY + ny * 52], [SX - nx * 52, SY - ny * 52], [LX - nx * 5, LY - ny * 5]];
+    const k = 1.55, rot = -10;
+    let s = `<defs><linearGradient id="${p}bm" gradientUnits="userSpaceOnUse" x1="${LX}" y1="${LY}" x2="${SX}" y2="${SY}">${stp([0, '#fff3c4', 0.8])}${stp([0.5, '#ffe9a0', 0.3])}${stp([1, '#ffe08a', 0.16])}</linearGradient>`;
+    s += `<radialGradient id="${p}dk" cx="0.5" cy="0.5" r="0.5">${stp([0, '#fffbe6', 0.97])}${stp([0.62, '#ffe896', 0.88])}${stp([0.86, '#ffd65c', 0.55])}${stp([1, '#ffd25a', 0])}</radialGradient></defs>`;
+    s += path('M' + P(pts) + 'Z', `url(#${p}bm)`) + path('M' + P(core) + 'Z', `url(#${p}bm)`, ' opacity=".7"');
+    s += glow(p + 'hl', SX, SY, 250, '#ffe9a8', 0.32);
+    s += `<g transform="rotate(${rot} ${SX} ${SY})">${ell(SX, SY, 150, 98, `url(#${p}dk)`)}<g transform="translate(${N(SX - 60 * k)} ${N(SY - 27.5 * k)}) scale(${k})">${path(BAT, '#10121a', ' opacity=".93"')}</g></g>`;
+    s += glow(p + 'lp', LX, LY, 60, '#fff3c4', 0.8);
+    return s;
+  }
+  // grande tour Art déco à gradins (coiffée d'une flèche), éclairée par en dessous
+  function decoTower(p, x, w, top, c, win) {
+    let s = '';
+    const steps = [[w, top + 150], [w * 0.8, top + 105], [w * 0.6, top + 65], [w * 0.4, top + 32], [w * 0.22, top]];
+    steps.forEach(([sw, y], i) => { s += rect(x - sw / 2, y, sw, 900 - y, c); if (i) s += rect(x - sw / 2, y, sw, 3, '#3a3f52', ' opacity=".7"'); });
+    s += path(`M${x - 6} ${top}L${x} ${top - 92}L${x + 6} ${top}Z`, c) + circ(x, top - 96, 2.6, '#ff5d4a') + glow(p + 'av', x, top - 96, 14, '#ff5d4a', 0.7);
+    s += glow(p + 'fl', x, top + 120, 190, '#ffd27a', 0.22);
+    for (let y = top + 160; y < 880; y += 15) for (let k = -3; k <= 3; k++) if ((y * 7 + k * 13) % 5 < 2) s += rect(x + k * w / 8 - 3, y, 6, 8, win, ` opacity="${N(0.45 + ((y + k * 31) % 7) / 14)}"`);
+    return s;
+  }
+  // cathédrale gothique : flèches pointues, grande rosace
+  function cathedral(p, x, c) {
+    let s = rect(x, 520, 260, 400, c);
+    [[x + 10, 470, 46], [x + 204, 470, 46]].forEach(([tx, ty, tw]) => { s += rect(tx, ty, tw, 450, c) + path(`M${tx - 4} ${ty}L${tx + tw / 2} ${ty - 150}L${tx + tw + 4} ${ty}Z`, c); });
+    s += path(`M${x + 60} 520L${x + 130} 400L${x + 200} 520Z`, c) + path(`M${x + 126} 404L${x + 130} 330L${x + 134} 404Z`, c);
+    s += glow(p + 'ro', x + 130, 575, 60, '#ff8a4a', 0.35) + circ(x + 130, 575, 30, '#3a1f22') + circ(x + 130, 575, 26, '#c2563a', ' opacity=".55"');
+    for (let i = 0; i < 8; i++) s += line(`M${x + 130} 575L${N(x + 130 + Math.cos(i * Math.PI / 4) * 26)} ${N(575 + Math.sin(i * Math.PI / 4) * 26)}`, '#1d1216', 2.2);
+    for (let i = 0; i < 4; i++) s += path(`M${x + 34 + i * 58} 760L${x + 34 + i * 58} 690Q${x + 46 + i * 58} 664 ${x + 58 + i * 58} 690L${x + 58 + i * 58} 760Z`, '#2a1c20') + rect(x + 37 + i * 58, 700, 18, 56, '#d79b52', ' opacity=".35"');
+    return s;
+  }
+  def('gotham', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const LX = 1385, LY = 650, SX = 1215, SY = 165;
+      // calque du signal limité à sa zone (faisceau + disque + halo) : bien plus léger qu'un plein écran qui tourne
+      const X0 = SX - 260, Y0 = SY - 260, BW = LX + 70 - X0, BH = LY + 70 - Y0;
+      const sig = cached('gsig', () => svg(`${X0} ${Y0} ${BW} ${BH}`, batSignal('gs', LX, LY, SX, SY)));
+      return [
+        // ciel d'orage : nuit bleu-noir, smog orange au ras des toits
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.5, o.bg1], [0.84, o.bg3]]) + glow(p + 'cg', 800, 930, 950, '#e08a3c', 0.24) + glow(p + 'mo', 190, 120, 110, '#c9d3f0', 0.16) + circ(190, 120, 22, '#cfd6ea', ' opacity=".4"')),
+        // nuages bas, très sombres, éclairés par la ville par en dessous
+        ...clouds(t, 'cl', [
+          { x: -320, y: 40, k: 2.2, dx: 2100, dur: 260, dl: -60, c: '#1f2431', s: '#10131b', h: '#3a3a44', op: 0.8 },
+          { x: -320, y: 150, k: 1.7, dx: 2100, dur: 210, dl: -150, c: '#232836', s: '#12151e', h: '#463f40', op: 0.75 },
+          { x: -320, y: 0, k: 1.9, dx: 2100, dur: 300, dl: -230, c: '#1c202c', s: '#0e1118', h: '#36363f', op: 0.75 },
+          { x: -320, y: 240, k: 1.3, dx: 2100, dur: 180, dl: -20, c: '#252a37', s: '#13161f', h: '#4a4242', op: 0.65 }]),
+        // éclairs lointains, de temps en temps
+        t.el('storm', { position: 'absolute', inset: 0, background: 'radial-gradient(70% 60% at 35% 10%, rgba(200,215,255,.9), rgba(160,180,240,.25) 45%, rgba(0,0,0,0) 75%)', opacity: 0, animation: 'fhs-storm 15s linear -6s infinite' }),
+        // la ville : loin, des tours dans le smog ; plus près, la grande tour à gradins et la cathédrale
+        t.art('city', (p) => {
+          const r = t.r('gc');
+          let s = skyline(r, { y: 700, minW: 40, maxW: 90, minH: 120, maxH: 330, fill: '#1c2231', roofs: true, win: ['#e8b45a', '#f0cf8a'], winP: 0.07, winW: 4, winH: 6, gapX: 7, gapY: 9 });
+          s += `<defs>${lg(p + 'sm', [[0, o.bg3, 0], [1, o.bg3, 0.5]])}</defs>` + rect(0, 560, W, 180, `url(#${p}sm)`);
+          s += cathedral(p, 560, '#11151f') + decoTower(p + 't', 300, 150, 175, '#0f131c', '#ffcf6b');
+          s += skyline(r, { y: 760, minW: 60, maxW: 130, minH: 80, maxH: 220, fill: '#0b0e16', roofs: true, win: ['#ffcf6b', '#ffe3a1', '#f7b955'], winP: 0.2, winW: 5, winH: 8, gapX: 6, gapY: 8 });
+          s += rect(0, 784, W, 120, '#090c13');
+          return s;
+        }),
+        // le Bat-Signal : il oscille un peu, comme un projecteur qu'on tient braqué
+        t.el('sig', t.img(sig, { left: em(X0), top: em(Y0), width: em(BW), height: em(BH), transformOrigin: `${em(LX - X0)} ${em(LY - Y0)}`, '--a': '1.3deg', animation: 'fhs-rock 11s ease-in-out infinite' })),
+        t.still(batSignal('gst', LX, LY, SX, SY)),
+        // fenêtres qui clignotent
+        ...t.n('wf', 12, (r, i) => t.el('wf' + i, { position: 'absolute', left: em(rr(r, 40, 1560)), top: em(rr(r, 600, 760)), width: em(5), height: em(8), background: '#ffd27a', boxShadow: `0 0 ${em(6)} #ffb84a`, animation: `fhs-flick ${N(rr(r, 4, 9))}s linear ${N(-rr(r, 0, 9))}s infinite` })),
+        // premier plan : toit du commissariat avec le projecteur, château d'eau, gargouille
+        t.art('front', (p) => {
+          let s = rect(1260, 700, 360, 210, '#07090f') + rect(1250, 692, 380, 10, '#151925') + rect(1250, 690, 380, 2, '#2c3244');
+          // le projecteur : socle, tambour braqué vers le ciel, lueur
+          s += path(`M${LX - 28} 700L${LX - 14} 668L${LX + 14} 668L${LX + 28} 700Z`, '#1a1f2c') + rect(LX - 4, 652, 8, 20, '#1a1f2c');
+          s += `<g transform="rotate(-28 ${LX} ${LY})">${rect(LX - 26, LY - 22, 52, 40, '#232a3a')}${ell(LX, LY - 22, 26, 7, '#fff3c4')}${rect(LX - 26, LY - 2, 52, 4, '#0f121a')}</g>`;
+          // château d'eau sur un toit voisin
+          s += rect(1080, 735, 280, 175, '#090b12') + line('M1150 735L1162 640M1230 735L1218 640M1150 690L1230 690', '#141824', 3);
+          s += rect(1146, 600, 88, 44, '#141824') + path('M1140 602L1190 568L1240 602Z', '#141824') + line('M1146 612H1234M1146 624H1234', '#1f2433', 1.4);
+          // à gauche : corniche et gargouille accroupie qui regarde la ville
+          s += rect(-20, 690, 300, 220, '#06080d') + rect(-20, 682, 310, 10, '#141824');
+          const rim = ' stroke="#56607a" stroke-width="2" stroke-linejoin="round"';
+          s += path('M118 612 Q92 590 60 598 Q86 606 100 622 Z', '#0c0f17', rim) + path('M70 682 L74 650 Q76 628 96 620 L118 612 Q126 596 140 600 L150 590 L152 604 Q164 608 162 622 L176 630 Q186 632 184 642 L168 644 Q158 652 146 650 L140 666 Q154 664 166 676 L170 682 Z', '#0c0f17', rim) + circ(146, 612, 2.2, '#ff6b4a', ' opacity=".8"');
+          return s;
+        }),
+        // chauves-souris qui passent devant le signal
+        ...drift(t, 'bt', t.n('bt', 3, (r, i) => ({ x: 1700, y: rr(r, 120, 320), w: rr(r, 30, 46), h: rr(r, 13, 19), x1: -1900, y1: rr(r, -80, 80), dur: rr(r, 16, 24), dl: -i * 8, flap: rr(r, 0.22, 0.3), f: 0.25, img: spr('bat', '#07080d') }))),
+        // brume au ras des rues
+        ...drift(t, 'mi', t.n('mi', 2, (r, i) => ({ x: -900, y: 690, w: 1100, h: 120, x1: 2700, dur: 90, dl: -i * 45, op: 0.12, fade: true, img: spr('dot', '#d6d9e6') }))),
+        // pluie fine et oblique
+        ...drift(t, 'rn', t.n('rn', 34, (r) => ({ x: rr(r, -100, 1700), y: -120, w: 1.5, h: rr(r, 44, 76), x1: -150, y1: 1050, r0: 9, r1: 9, dur: rr(r, 0.7, 1.05), dl: -r() * 1.1, op: rr(r, 0.12, 0.26), bg: 'linear-gradient(180deg, rgba(190,205,240,0), rgba(190,205,240,.9))' }))),
       ];
     },
   });
