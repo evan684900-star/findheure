@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,image,landscape,link,mic,mic_off,more_vert,music_note,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,touch_app,translate,tune,upload_file,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,image,landscape,link,mic,mic_off,more_vert,music_note,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,upload_file,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -530,6 +530,8 @@ const T_RAW = {
   endsAt: "Fin à|Ends at|Termina a las|Endet um", timerDone: "Minuteur terminé|Timer finished|Temporizador terminado|Timer abgelaufen",
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
+  md_coin: "Pile ou face|Heads or tails|Cara o cruz|Kopf oder Zahl", coinFace: "Face|Heads|Cara|Kopf", coinPile: "Pile|Tails|Cruz|Zahl", coinFlip: "Lancer la pièce|Flip the coin|Lanzar la moneda|Münze werfen",
+  coinMenu: "Ce que veut dire chaque côté|What each side means|Qué significa cada lado|Was jede Seite bedeutet", coinPh: "à écrire (facultatif)|type here (optional)|escribe aquí (opcional)|hier eintippen (optional)", coinAir: "La pièce est en l’air…|The coin is in the air…|La moneda está en el aire…|Die Münze fliegt…", coinSound: "Son de la pièce|Coin sound|Sonido de la moneda|Münzgeräusch",
   md_show: "Site ou image|Website or image|Sitio o imagen|Website oder Bild",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
   showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
@@ -674,7 +676,7 @@ const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
 const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop', 'zoom', 'spin', 'swirl', 'melt', 'bounce', 'jelly', 'glitch', 'slot'];
 const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .85, glitch: .55, slot: .7 };
 const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
-const MODES = ['clock', 'timer', 'stopwatch', 'sound', 'show'];
+const MODES = ['clock', 'timer', 'stopwatch', 'coin', 'sound', 'show'];
 const pinView = (m) => m === 'clock' || m === 'show';
 // adresse tapée → adresse affichable (YouTube et Google Docs/Slides convertis en liens « intégrables »)
 function showUrl(u, forTab) {
@@ -1143,7 +1145,7 @@ const BASE = {
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
   pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
-  quality: 'medium', keys: true, decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
+  coinFace: '', coinPile: '', coinSound: true, quality: 'medium', keys: true, decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
   scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false, alarmSnd: 'chime', alarmVol: 90,
 };
 // Thème par défaut : Halloween
@@ -1326,6 +1328,7 @@ class Component extends DCLogic {
     if (!ALARMS.includes(s.alarmSnd)) s.alarmSnd = 'chime';
     if (!SKY_MODES.includes(s.sky)) s.sky = 'auto';
     if (!QUALITIES.includes(s.quality)) s.quality = 'medium';
+    ['coinFace', 'coinPile'].forEach(k => { if (typeof s[k] !== 'string') s[k] = ''; });
     if (!['digital', 'analog', 'both'].includes(s.clockType)) s.clockType = 'digital';
     if (s.msg === 'spooky') s.msg = 'theme';
     const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {}, pics = loadJSON(PKEY, []);
@@ -1337,7 +1340,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -2135,6 +2138,55 @@ class Component extends DCLogic {
     else if (k === 'l' && mode === 'stopwatch') this.swLap();
   };
   toggleFs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else { const r = document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } } catch (e) {} };
+  // ---------- pile ou face : le moteur de la pièce ----------
+  // 50/50 strict (hasard « cryptographique » du navigateur), angle toujours cumulé (jamais immobile ni à l'envers),
+  // la pièce monte, tourne sur elle-même, retombe, rebondit un peu ; le résultat n'apparaît qu'à l'atterrissage
+  coinAng = 0;
+  coinSpinRef = (el) => { this.coinSpin = el; };
+  coinTossRef = (el) => { this.coinToss = el; };
+  coinShRef = (el) => { this.coinSh = el; };
+  flipCoin = () => {
+    const spin = this.coinSpin, toss = this.coinToss, sh = this.coinSh; if (this.state.coinBusy || !spin || !toss) return;
+    const rnd = (n) => { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } };
+    const res = rnd(2) ? 'pile' : 'face', reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const from = this.coinAng, base = from - (((from % 360) + 360) % 360), to = base + (reduce ? 1 : 5 + rnd(3)) * 360 + (res === 'pile' ? 180 : 0);
+    // hauteur du lancer selon la place au-dessus de la pièce (elle ne sort jamais de l'écran) ; peu de place : elle vient plutôt vers nous
+    const D = toss.offsetHeight || 200, room = toss.getBoundingClientRect().top - 76, H = Math.max(D * 0.25, Math.min(D * 1.1, room)), zoom = 1.1 + Math.max(0, Math.min(0.28, (D * 1.1 - H) / D * 0.35));
+    const F = reduce ? 420 : 1250, L2 = reduce ? F : F / 0.8;
+    this.setState({ coinBusy: true });
+    const anims = [], go = (el, kf, o) => { if (el && el.animate) anims.push(el.animate(kf, { fill: 'forwards', ...o })); };
+    // rotation : vite au départ, puis ralentit jusqu'à se poser à plat
+    go(spin, [{ transform: `rotateX(${from}deg)` }, { transform: `rotateX(${to}deg)` }], { duration: F, easing: 'cubic-bezier(.32,.56,.42,1)' });
+    if (!reduce) {
+      // trajectoire : monte (en se rapprochant un peu), retombe, petit rebond
+      go(toss, [
+        { transform: 'translate3d(0,0,0) scale(1)', easing: 'cubic-bezier(.2,.65,.35,1)' },
+        { transform: `translate3d(0,${(-H).toFixed(0)}px,0) scale(${zoom.toFixed(3)})`, offset: 0.46, easing: 'cubic-bezier(.6,0,.85,.4)' },
+        { transform: 'translate3d(0,0,0) scale(1)', offset: 0.8, easing: 'cubic-bezier(.2,.6,.4,1)' },
+        { transform: `translate3d(0,${(-H * 0.07).toFixed(0)}px,0) scale(1.01)`, offset: 0.9, easing: 'cubic-bezier(.6,0,.8,.4)' },
+        { transform: 'translate3d(0,0,0) scale(1)' }], { duration: L2 });
+      go(sh, [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(.5)', opacity: 0.3, offset: 0.46 }, { transform: 'scale(1)', opacity: 1, offset: 0.8 }, { transform: 'scale(.94)', opacity: 0.9, offset: 0.9 }, { transform: 'scale(1)', opacity: 1 }], { duration: L2 });
+      // en touchant la table, elle oscille un peu avant de s'immobiliser
+      setTimeout(() => go(spin, [{ transform: `rotateX(${to}deg)` }, { transform: `rotateX(${to + 9}deg)` }, { transform: `rotateX(${to - 4}deg)` }, { transform: `rotateX(${to + 1.5}deg)` }, { transform: `rotateX(${to}deg)` }], { duration: 480, easing: 'ease-out' }), F);
+      setTimeout(() => this.coinTing(1), F);
+      setTimeout(() => this.coinTing(0.4), L2);
+    } else setTimeout(() => this.coinTing(0.8), F);
+    setTimeout(() => {
+      anims.forEach(a => { try { a.cancel(); } catch (e) {} });
+      this.coinAng = to; spin.style.transform = `rotateX(${to}deg)`;
+      this.setState(s0 => ({ coinBusy: false, coinRes: res, coinN: s0.coinN + 1 }));
+    }, reduce ? F + 40 : F + 500);
+  };
+  // le « ting » de la pièce sur la table : quelques notes aiguës qui ne s'accordent pas, comme du métal
+  coinTing = (k) => {
+    if (this.state.s.coinSound === false) return;
+    try {
+      const ac = this.audio(); if (!ac) return;
+      const t = ac.currentTime, g = ac.createGain(); g.connect(ac.destination);
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.2 * k, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      [[2380, 1], [3570, 0.5], [5230, 0.28], [6890, 0.14]].forEach(([fq, a]) => { const o = ac.createOscillator(), og = ac.createGain(); o.type = 'sine'; o.frequency.value = fq * (0.985 + Math.random() * 0.03); og.gain.value = a; o.connect(og); og.connect(g); o.start(t); o.stop(t + 0.6); });
+    } catch (e) {}
+  };
   // ---------- fenêtre flottante : l'heure par-dessus les autres applis ----------
   // Chrome / Edge : une vraie petite fenêtre ; Safari : une vidéo dessinée image par image ; sinon, un message
   togglePip = () => { if (this.pip) this.closePip(); else this.openPip(); };
@@ -2599,9 +2651,52 @@ class Component extends DCLogic {
     }
     // Haute et Ultra : un éclat balaie l'heure à chaque nouvelle minute
     const glintEl = (Q === 'high' || Q === 'ultra') && mode === 'clock' && !rb ? E('div', { key: 'glint' + p.h + ':' + p.m, 'aria-hidden': true, style: { ...timeStyle, position: 'absolute', left: 0, top: 0, color: 'transparent', WebkitTextFillColor: 'transparent', WebkitTextStroke: undefined, textShadow: 'none', animation: 'fh-glint 1.8s cubic-bezier(.4,0,.2,1) .3s both', backgroundImage: 'linear-gradient(105deg, rgba(255,255,255,0) 38%, rgba(255,255,255,.7) 50%, rgba(255,255,255,0) 62%)', backgroundSize: '260% 100%', backgroundRepeat: 'no-repeat', WebkitBackgroundClip: 'text', backgroundClip: 'text', pointerEvents: 'none' } }, buildKids(true)) : null;
+    // ---------- pile ou face : une pièce en relief, aux couleurs du thème ----------
+    let coinEl = null;
+    if (mode === 'coin') {
+      const D = Math.round(Math.max(140, Math.min(st.vh * 0.33, st.vw * 0.28, 400)) * s.size / 100), T = Math.max(7, Math.round(D * 0.07)), R = D / 2;
+      const mixHex = (a, b, k) => '#' + hexRgb(a).split(',').map((v, i) => Math.round(+v + (+hexRgb(b).split(',')[i] - v) * k).toString(16).padStart(2, '0')).join('');
+      const acc = s.accent, hi = mixHex(acc, '#ffffff', 0.55), lo = mixHex(acc, '#000000', 0.38), engr = lum(acc) > 0.42 ? mixHex(acc, '#000000', 0.74) : mixHex(acc, '#ffffff', 0.88);
+      const dfC = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f), fs = Math.round(Math.max(14, Math.min(dPx * 0.8, 18)));
+      // une face : disque bombé, liseré, petite étoile et le mot gravé
+      const side = (txt, back) => E('div', { key: back ? 'back' : 'front', style: { position: 'absolute', inset: 0, borderRadius: '50%', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: `${back ? 'rotateX(180deg) ' : ''}translateZ(${(T / 2).toFixed(1)}px)`, background: `radial-gradient(circle at 34% 28%, ${hi} 0, ${acc} 50%, ${lo} 100%)`, boxShadow: `inset 0 0 0 ${Math.round(D * 0.03)}px ${hexA(lo, 0.55)}, inset 0 ${Math.round(D * 0.02)}px ${Math.round(D * 0.05)}px ${hexA(hi, 0.5)}`, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
+        E('div', { style: { position: 'absolute', inset: '10%', borderRadius: '50%', border: `${Math.max(2, Math.round(D * 0.012))}px dashed ${hexA(engr, 0.4)}` } }),
+        E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: Math.round(D * 0.02) } },
+          E('span', { style: { fontSize: Math.round(D * 0.1), lineHeight: 1, color: hexA(engr, 0.7) } }, '★'),
+          E('span', { style: { font: `${clampW(f, 800)} ${Math.round(D * 0.19)}px/1 ${stack(f)}`, letterSpacing: '.04em', color: engr, textShadow: `0 1px 0 ${hexA(hi, 0.6)}, 0 -1px 0 ${hexA(lo, 0.6)}` } }, txt.toUpperCase())));
+      // la tranche : une couronne de petites bandes, striée comme une vraie pièce
+      const N = 40, segW = Math.ceil(Math.PI * D / N) + 1, edges = [];
+      for (let i = 0; i < N; i++) edges.push(E('div', { key: 'e' + i, style: { position: 'absolute', left: R - segW / 2, top: R - T / 2, width: segW, height: T, background: i % 2 ? mixHex(acc, '#000000', 0.5) : mixHex(acc, '#000000', 0.32), transform: `rotateZ(${(i * 360 / N).toFixed(2)}deg) translateY(${(-R + 0.5).toFixed(1)}px) rotateX(90deg)` } }));
+      const coinBox = E('div', { key: 'cbox', 'data-tools': '', 'data-menu': 'none', 'data-tour': 'coin', role: 'button', 'aria-label': L.coinFlip, title: L.coinFlip, onClick: this.flipCoin, style: { position: 'relative', width: D, height: D, cursor: st.coinBusy ? 'default' : 'pointer', perspective: D * 5 + 'px' } },
+        E('div', { key: 'sh', ref: this.coinShRef, style: { position: 'absolute', left: '10%', right: '10%', bottom: -Math.round(D * 0.1), height: Math.round(D * 0.16), borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(0,0,0,.4), rgba(0,0,0,0))' } }),
+        E('div', { key: 'toss', ref: this.coinTossRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d' } },
+          E('div', { key: 'spin', ref: this.coinSpinRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d', transform: `rotateX(${this.coinAng}deg)` } }, ...edges, side(L.coinFace, false), side(L.coinPile, true))));
+      // résultat : le côté tombé, et ce qu'il veut dire si le prof l'a écrit
+      const res = st.coinRes, said = res ? (res === 'face' ? s.coinFace : s.coinPile).trim() : '', ink = s.gradText ? s.grad2 : s.color;
+      const resultEl = E('div', { key: 'res', 'aria-live': 'polite', style: { minHeight: Math.round(D * 0.42), marginTop: Math.round(D * 0.16), display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: Math.max(D * 1.6, 320) } },
+        st.coinBusy ? E('div', { key: 'air', style: { font: `500 ${Math.round(dPx * 1.1)}px/1.2 ${stack(dfC)}`, color: s.dateColor, opacity: 0.8, textShadow: legib } }, L.coinAir)
+          : res ? E('div', { key: 'r' + st.coinN, style: { animation: 'fh-pop .55s cubic-bezier(.2,.9,.3,1.3) both' } },
+            E('div', { style: { font: `${clampW(f, 800)} ${Math.round(D * 0.24)}px/1 ${stack(f)}`, color: ink, textShadow: legib } }, (res === 'face' ? L.coinFace : L.coinPile).toUpperCase()),
+            said ? E('div', { style: { marginTop: '.35em', font: `600 ${Math.round(dPx * 1.25)}px/1.25 ${stack(dfC)}`, color: s.dateColor, textShadow: legib } }, said) : null) : null);
+      const accInk = bestInk(acc);
+      const buttons = E('div', { key: 'btns', 'data-tools': '', 'data-menu': 'none', style: { display: 'flex', alignItems: 'center', gap: '.6em' } },
+        E('button', { key: 'go', type: 'button', className: 'fh-btn', 'data-tour': 'coin-go', disabled: st.coinBusy, onClick: this.flipCoin, style: { display: 'inline-flex', alignItems: 'center', gap: '.5em', height: '2.8em', padding: '0 1.4em', borderRadius: 999, border: 0, background: acc, color: accInk, font: `700 ${fs}px/1 ${stack(dfC)}`, cursor: st.coinBusy ? 'default' : 'pointer', opacity: st.coinBusy ? 0.6 : 1, boxShadow: `0 8px 24px ${hexA(acc, 0.35)}` } }, E('span', { style: { ...ICON, fontSize: '1.3em' } }, 'toll'), E('span', null, L.coinFlip)),
+        E('button', { key: 'snd', type: 'button', className: 'fh-btn', title: L.coinSound, 'aria-pressed': s.coinSound !== false, onClick: () => this.setS({ coinSound: s.coinSound === false }), style: { width: '2.8em', height: '2.8em', padding: 0, borderRadius: 999, border: `1px solid ${hexA(s.dateColor, 0.35)}`, background: hexA(lum(s.dateColor) > 0.3 ? '#000000' : '#ffffff', 0.35), color: s.dateColor, cursor: 'pointer', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: fs } }, E('span', { style: { ...ICON, fontSize: '1.4em' } }, s.coinSound === false ? 'volume_off' : 'volume_up')));
+      // le menu à côté : ce que veut dire chaque côté
+      const glassDark = lum(s.dateColor) > 0.3, pInk = glassDark ? '#f4f2ee' : '#1b1917';
+      const field = (k, label, on) => E('label', { key: k, style: { display: 'flex', alignItems: 'center', gap: '.7em', padding: '.35em .4em .35em .7em', borderRadius: 12, background: on ? hexA(acc, 0.22) : 'transparent', boxShadow: on ? `inset 0 0 0 1.5px ${hexA(acc, 0.8)}` : 'none', transition: 'background .3s ease, box-shadow .3s ease' } },
+        E('span', { style: { minWidth: '3.3em', font: `700 ${fs}px/1 ${stack(dfC)}`, color: pInk } }, label + ' :'),
+        E('input', { type: 'text', value: s[k] || '', maxLength: 60, placeholder: L.coinPh, 'aria-label': label, onChange: (e) => this.setS({ [k]: e.target.value.slice(0, 60) }), style: { flex: 1, minWidth: 0, height: '2.4em', padding: '0 .8em', borderRadius: 10, border: `1px solid ${hexA(pInk, 0.22)}`, background: hexA(pInk, 0.07), color: pInk, font: `500 ${fs}px/1 Geist, system-ui, sans-serif`, outline: 'none', userSelect: 'text' } }));
+      const menuEl = E('div', { key: 'cmenu', 'data-tools': '', 'data-menu': 'none', 'data-tour': 'coin-menu', style: { width: Math.round(Math.min(380, Math.max(260, st.vw * 0.27))), boxSizing: 'border-box', padding: '1em 1em 1.1em', borderRadius: 18, background: glassDark ? 'rgba(16,14,20,.72)' : 'rgba(255,255,255,.88)', border: `1px solid ${glassDark ? 'rgba(255,255,255,.14)' : 'rgba(0,0,0,.1)'}`, boxShadow: '0 14px 40px rgba(0,0,0,.25)', backdropFilter: 'blur(14px)', display: 'flex', flexDirection: 'column', gap: '.5em', textAlign: 'left' } },
+        E('div', { style: { padding: '0 .2em .2em', font: `600 ${Math.round(fs * 0.75)}px/1.2 Geist, system-ui, sans-serif`, letterSpacing: '.1em', textTransform: 'uppercase', color: hexA(pInk, 0.6) } }, L.coinMenu),
+        field('coinFace', L.coinFace, !st.coinBusy && res === 'face'), field('coinPile', L.coinPile, !st.coinBusy && res === 'pile'));
+      const sideBySide = st.vw >= 820;
+      coinEl = E('div', { key: 'mode-coin', style: { display: 'flex', flexDirection: sideBySide ? 'row' : 'column', alignItems: 'center', gap: Math.round(sideBySide ? D * 0.4 : D * 0.15), animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both' } },
+        E('div', { key: 'col', style: { display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: Math.round(D * 0.08) } }, coinBox, resultEl, buttons), menuEl);
+    }
     const inner = cType === 'analog' ? null : E('div', { key: 'w', style: wStyle }, liquid, glowEl, timeEl, glintEl);
     const stack2 = visual || cType === 'both';
-    const clockEl = E('div', { key: 'mode-' + mode + (visual ? '-v' : '') + (cType !== 'digital' ? '-' + cType : ''), style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both', ...(stack2 ? { display: 'flex', flexDirection: 'column', alignItems: P[1], gap: Math.round(visual ? clockPx * 0.28 : clockPx * 0.22) + 'px' } : null) } }, disc, ana, inner);
+    const clockEl = coinEl || E('div', { key: 'mode-' + mode + (visual ? '-v' : '') + (cType !== 'digital' ? '-' + cType : ''), style: { animation: 'fh-mode-in .6s cubic-bezier(.2,.8,.2,1) both', ...(stack2 ? { display: 'flex', flexDirection: 'column', alignItems: P[1], gap: Math.round(visual ? clockPx * 0.28 : clockPx * 0.22) + 'px' } : null) } }, disc, ana, inner);
 
     // date, message, zone, cities
     const df = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f);
@@ -2626,6 +2721,7 @@ class Component extends DCLogic {
     const msgText = mode === 'timer' ? (tm.done ? L.done : tmRun ? `${L.endsAt} ${endStr}` : L.md_timer)
       : mode === 'stopwatch' ? (sw.laps.length ? `${L.lap} ${sw.laps.length + 1}` : L.md_sw)
       : mode === 'sound' ? L.md_snd
+      : mode === 'coin' ? L.md_coin
       : s.msg === 'greet' ? greet : s.msg === 'custom' ? s.msgText : s.msg === 'theme' ? (s.bgType === 'spooky' ? L.happyHalloween : s.bgType === 'scene' ? L['g_' + s.scene] || '' : '') : '';
     const citiesList = (s.cities || []).slice(0, 4).map(z => { const q = zp(now, z); const hh = s.hour12 ? (q.h % 12 || 12) : q.h; return { name: tzLabel(z), time: `${num(hh, s.leadingZero)}${sep1}${num(q.m, true)}${s.hour12 ? ' ' + dayPeriod(locale, now, z, q.h) : ''}` }; });
 
@@ -2749,7 +2845,7 @@ class Component extends DCLogic {
     const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -2900,7 +2996,7 @@ class Component extends DCLogic {
 
     // minuteur / chrono : boutons dessinés avec la police et les couleurs du style choisi
     let toolsEl = null;
-    if (mode !== 'clock') {
+    if (mode !== 'clock' && mode !== 'coin') {
       const bfs = Math.round(Math.max(13, Math.min(dPx * 0.8, 19)));
       // boutons posés sur une plaque sombre (texte clair) ou claire (texte foncé) : lisibles sur n'importe quel décor
       const ink = s.dateColor, glassDark = lum(ink) > 0.3, glassC = glassDark ? '#17151b' : '#f6f4f1';
