@@ -73,6 +73,8 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-glint{0%{background-position:140% 0}100%{background-position:-40% 0}}
 @keyframes fh-shoot{0%{transform:translate3d(0,0,0) rotate(var(--ang));opacity:0}1%{opacity:1}6%{transform:translate3d(var(--dx),var(--dy),0) rotate(var(--ang));opacity:0}100%{transform:translate3d(var(--dx),var(--dy),0) rotate(var(--ang));opacity:0}}
 @keyframes fh-wave{0%,100%{transform:scaleY(-.9) skewX(0deg)}50%{transform:scaleY(-.94) skewX(1.6deg)}}
+.fh-coin:not(.fh-live) .fh-edge{visibility:hidden}
+@keyframes fh-coin-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
 @keyframes fh-mi-in{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
 @keyframes fh-note-out{0%{transform:rotate(var(--r)) scale(1)}35%{transform:rotate(calc(var(--r) - 8deg)) scale(.9,.72)}100%{transform:translateY(46px) rotate(calc(var(--r) + 50deg)) scale(.12);opacity:0}}
 @keyframes fh-pic-out{0%{transform:scale(1)}30%{transform:scale(1.06)}100%{transform:scale(.2) rotate(-14deg);opacity:0}}
@@ -1080,6 +1082,81 @@ function frontBokeh(E, rgb) {
   const spots = [[4, 18, 15], [88, 12, 11], [92, 72, 17], [8, 80, 13], [22, 50, 8], [74, 40, 9]];
   const cols = Array.isArray(rgb) ? rgb : [rgb];
   return spots.map(([x, y, z], i) => E('div', { key: 'fb' + i, style: { position: 'absolute', left: x + '%', top: y + '%', width: z + 'vmin', height: z + 'vmin', marginLeft: -z / 2 + 'vmin', marginTop: -z / 2 + 'vmin', borderRadius: '50%', background: `radial-gradient(circle, rgba(${cols[i % cols.length]},.2) 0, rgba(${cols[i % cols.length]},.12) 45%, rgba(${cols[i % cols.length]},0) 70%)`, '--a': 1, '--dx': (i % 2 ? -40 : 40) + 'px', '--dy': (i % 3 ? 30 : -30) + 'px', animation: `fh-amb-w ${30 + i * 7}s ease-in-out ${-i * 5}s infinite alternate` } }));
+}
+// ---------- dessin de la pièce « pile ou face » : une vraie pièce de collection, aux couleurs du thème ----------
+// tout est en SVG (repère de -100 à 100) ; chaque motif est dessiné trois fois (ombre, lumière, relief) pour l'effet frappé
+function coinArt(E, o) {
+  const mix = (a, b, k) => '#' + hexRgb(a).split(',').map((v, i) => Math.round(+v + (+hexRgb(b).split(',')[i] - v) * k).toString(16).padStart(2, '0')).join('');
+  const acc = o.acc, hi2 = mix(acc, '#ffffff', 0.78), hi = mix(acc, '#ffffff', 0.5), lo = mix(acc, '#000000', 0.35), deep = mix(acc, '#000000', 0.6);
+  const P = (a, r) => [Math.cos(a * Math.PI / 180) * r, Math.sin(a * Math.PI / 180) * r];
+  const f2 = (n) => n.toFixed(2);
+  // relief : ombre portée en bas à droite, lumière en haut à gauche, puis le motif lui-même
+  const emb = (key, kids, k) => [
+    E('g', { key: key + 'd', transform: `translate(${f2(1.3 * (k || 1))} ${f2(1.6 * (k || 1))})`, fill: deep, stroke: deep, opacity: 0.7 }, ...kids()),
+    E('g', { key: key + 'l', transform: `translate(${f2(-0.9 * (k || 1))} ${f2(-1.1 * (k || 1))})`, fill: hi2, stroke: hi2, opacity: 0.75 }, ...kids()),
+    E('g', { key: key + 'm', fill: 'url(#fhc-relief)', stroke: 'url(#fhc-relief)' }, ...kids())];
+  const beads = () => Array.from({ length: 64 }, (_, i) => { const [x, y] = P(i * 360 / 64, 85); return E('circle', { key: 'b' + i, cx: f2(x), cy: f2(y), r: 1.75, stroke: 'none' }); });
+  const starD = (cx, cy, r) => { let d = ''; for (let i = 0; i < 10; i++) { const [x, y] = P(-90 + i * 36, i % 2 ? r * 0.42 : r); d += (i ? 'L' : 'M') + f2(cx + x) + ' ' + f2(cy + y); } return d + 'Z'; };
+  const defs = E('defs', { key: 'defs' },
+    E('linearGradient', { id: 'fhc-rim', gradientUnits: 'userSpaceOnUse', x1: -90, y1: -90, x2: 90, y2: 90 }, E('stop', { offset: 0, stopColor: hi2 }), E('stop', { offset: 0.45, stopColor: acc }), E('stop', { offset: 1, stopColor: deep })),
+    E('linearGradient', { id: 'fhc-wall', gradientUnits: 'userSpaceOnUse', x1: -90, y1: -90, x2: 90, y2: 90 }, E('stop', { offset: 0, stopColor: deep }), E('stop', { offset: 0.55, stopColor: lo }), E('stop', { offset: 1, stopColor: hi2 })),
+    E('radialGradient', { id: 'fhc-field', gradientUnits: 'userSpaceOnUse', cx: -32, cy: -38, r: 150 }, E('stop', { offset: 0, stopColor: hi }), E('stop', { offset: 0.45, stopColor: acc }), E('stop', { offset: 1, stopColor: lo })),
+    E('linearGradient', { id: 'fhc-relief', gradientUnits: 'userSpaceOnUse', x1: -60, y1: -70, x2: 60, y2: 70 }, E('stop', { offset: 0, stopColor: hi }), E('stop', { offset: 1, stopColor: mix(acc, '#000000', 0.08) })),
+    // stries circulaires du métal tourné
+    E('radialGradient', { id: 'fhc-lathe', gradientUnits: 'userSpaceOnUse', cx: 0, cy: 0, r: 2.6, spreadMethod: 'repeat' }, E('stop', { offset: 0, stopColor: '#ffffff', stopOpacity: 0.09 }), E('stop', { offset: 0.5, stopColor: '#000000', stopOpacity: 0.07 }), E('stop', { offset: 1, stopColor: '#ffffff', stopOpacity: 0.09 })),
+    E('path', { id: 'fhc-top', d: 'M -70 0 A 70 70 0 0 1 70 0' }),
+    E('path', { id: 'fhc-bot', d: 'M -77 0 A 77 77 0 0 0 77 0' }));
+  // le métal : bord bombé, paroi intérieure, champ, stries, perles
+  const base = (key) => [
+    E('circle', { key: key + 'rim', r: 100, fill: 'url(#fhc-rim)' }),
+    E('circle', { key: key + 'wall', r: 92, fill: 'url(#fhc-wall)' }),
+    E('circle', { key: key + 'field', r: 89.5, fill: 'url(#fhc-field)' }),
+    E('circle', { key: key + 'lathe', r: 89.5, fill: 'url(#fhc-lathe)' }),
+    ...emb(key + 'beads', beads, 0.6)];
+  const txt = (key, label, path, size, sp) => () => [E('text', { key, fontFamily: o.font, fontWeight: o.wt, fontSize: size, letterSpacing: sp, textAnchor: 'middle', stroke: 'none' }, E('textPath', { href: '#' + path, startOffset: '50%' }, label))];
+  // FACE : un soleil qui sourit, le mot en arc, l'année en bas
+  const sun = () => {
+    const out = [];
+    for (let i = 0; i < 16; i++) {
+      const a = i * 22.5 - 90, long = i % 2 === 0, d = long ? 6 : 4.6, r1 = 34, r2 = long ? 52 : 44;
+      const [x1, y1] = P(a - d, r1), [x2, y2] = P(a, r2), [x3, y3] = P(a + d, r1);
+      out.push(E('path', { key: 'ray' + i, d: `M${f2(x1)} ${f2(y1)}L${f2(x2)} ${f2(y2)}L${f2(x3)} ${f2(y3)}Z`, stroke: 'none' }));
+    }
+    out.push(E('circle', { key: 'ring', r: 29, fill: 'none', strokeWidth: 3.4 }));
+    out.push(E('ellipse', { key: 'el', cx: -10, cy: -7, rx: 3.3, ry: 4.6, stroke: 'none' }), E('ellipse', { key: 'er', cx: 10, cy: -7, rx: 3.3, ry: 4.6, stroke: 'none' }));
+    out.push(E('path', { key: 'sm', d: 'M -13 7 Q 0 20 13 7', fill: 'none', strokeWidth: 3.4, strokeLinecap: 'round' }));
+    out.push(E('circle', { key: 'cl', cx: -18, cy: 6, r: 2.6, stroke: 'none', opacity: 0.6 }), E('circle', { key: 'cr', cx: 18, cy: 6, r: 2.6, stroke: 'none', opacity: 0.6 }));
+    return out;
+  };
+  // PILE : grand 1, le mot dessous, deux branches de laurier, douze étoiles
+  const laurel = () => {
+    const out = [];
+    [-1, 1].forEach(sd => {
+      let stem = '';
+      for (let k = 0; k <= 10; k++) {
+        // chaque branche part du bas et remonte le long d'un côté ; les feuilles pointent vers le haut de la branche
+        const th = 106 + k * 10.5, [x, y] = P(th, 57), X = sd < 0 ? x : -x, Y = y + 2, dir = sd < 0 ? th + 90 : 90 - th;
+        stem += (k ? 'L' : 'M') + f2(X) + ' ' + f2(Y);
+        if (k > 0) [-1, 1].forEach(side => out.push(E('ellipse', { key: `lf${sd}${k}${side}`, cx: f2(X), cy: f2(Y), rx: f2(6.6 - k * 0.25), ry: f2(2.6 - k * 0.05), transform: `rotate(${f2(dir + side * 36)} ${f2(X)} ${f2(Y)}) translate(${f2(4.8 - k * 0.12)} 0)`, stroke: 'none' })));
+      }
+      out.push(E('path', { key: 'stem' + sd, d: stem, fill: 'none', strokeWidth: 1.7, strokeLinecap: 'round' }));
+    });
+    return out;
+  };
+  const stars = () => Array.from({ length: 12 }, (_, i) => { const [x, y] = P(-90 + i * 30, 74); return E('path', { key: 's' + i, d: starD(x, y, 4.4), stroke: 'none' }); });
+  const svg = (key, kids) => E('svg', { key, viewBox: '-100 -100 200 200', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible' } }, ...kids);
+  const front = svg('f', [defs, ...base('f'), ...emb('sun', sun),
+    ...emb('tf', txt('tf', o.faceLbl.toUpperCase(), 'fhc-top', 15, 4), 0.7), ...emb('ty', txt('ty', `★ ${o.year} ★`, 'fhc-bot', 10.5, 2.5), 0.6)]);
+  const back = svg('b', [...base('b'), ...emb('st', stars, 0.7), ...emb('lr', laurel, 0.8),
+    ...emb('one', () => [E('text', { key: 'one', y: 20, fontFamily: o.font, fontWeight: o.wt, fontSize: 70, textAnchor: 'middle', stroke: 'none' }, '1')]),
+    ...emb('pl', () => [E('text', { key: 'pl', y: 46, fontFamily: o.font, fontWeight: o.wt, fontSize: 14, letterSpacing: 4, textAnchor: 'middle', stroke: 'none' }, o.pileLbl.toUpperCase())], 0.7)]);
+  // la tranche : striée et éclairée du côté de la lumière (en haut à gauche)
+  const N = 48, segW = Math.ceil(Math.PI * o.D / N) + 1, R = o.D / 2, edges = [];
+  for (let i = 0; i < N; i++) {
+    const a = i * 360 / N, light = Math.max(0, Math.cos((a - 315) * Math.PI / 180)), c = mix(i % 2 ? deep : lo, hi2, light * (i % 2 ? 0.35 : 0.55));
+    edges.push(E('div', { key: 'e' + i, className: 'fh-edge', style: { position: 'absolute', left: R - segW / 2, top: R - o.T / 2, width: segW, height: o.T, background: `linear-gradient(90deg, ${c}, ${mix(c, '#000000', 0.18)})`, transform: `rotateZ(${a.toFixed(2)}deg) translateY(${(-R + 0.5).toFixed(1)}px) rotateX(90deg)` } }));
+  }
+  return { front, back, edges };
 }
 const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
@@ -2145,6 +2222,21 @@ class Component extends DCLogic {
   coinSpinRef = (el) => { this.coinSpin = el; };
   coinTossRef = (el) => { this.coinToss = el; };
   coinShRef = (el) => { this.coinSh = el; };
+  coinTiltRef = (el) => { this.coinTiltEl = el; };
+  // un éclat de lumière qui traverse les deux faces, une seule fois
+  coinShine = () => {
+    const box = this.coinToss && this.coinToss.closest('.fh-coin'); if (!box) return;
+    box.querySelectorAll('.fh-shine').forEach(el => { if (el.animate) el.animate([{ transform: 'translateX(-140%) skewX(-18deg)' }, { transform: 'translateX(330%) skewX(-18deg)' }], { duration: 950, easing: 'cubic-bezier(.4,0,.2,1)' }); });
+  };
+  // au survol, la pièce se penche un peu vers la souris
+  coinTilt = (e) => {
+    const el = this.coinTiltEl; if (!el || (e.pointerType && e.pointerType !== 'mouse')) return;
+    const box = e.currentTarget;
+    if (e.type === 'pointerleave' || this.state.coinBusy) { el.style.transform = ''; if (!this.state.coinBusy) { clearTimeout(this.liveT); this.liveT = setTimeout(() => { if (!this.state.coinBusy) box.classList.remove('fh-live'); }, 400); } return; }
+    if (!box.classList.contains('fh-live')) { clearTimeout(this.liveT); box.classList.add('fh-live'); this.coinShine(); }
+    const r = e.currentTarget.getBoundingClientRect(), dx = (e.clientX - r.left) / r.width - 0.5, dy = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `rotateY(${(dx * 22).toFixed(1)}deg) rotateX(${(-dy * 22).toFixed(1)}deg)`;
+  };
   flipCoin = () => {
     const spin = this.coinSpin, toss = this.coinToss, sh = this.coinSh; if (this.state.coinBusy || !spin || !toss) return;
     const rnd = (n) => { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } };
@@ -2153,7 +2245,8 @@ class Component extends DCLogic {
     // hauteur du lancer selon la place au-dessus de la pièce (elle ne sort jamais de l'écran) ; peu de place : elle vient plutôt vers nous
     const D = toss.offsetHeight || 200, room = toss.getBoundingClientRect().top - 76, H = Math.max(D * 0.25, Math.min(D * 1.1, room)), zoom = 1.1 + Math.max(0, Math.min(0.28, (D * 1.1 - H) / D * 0.35));
     const F = reduce ? 420 : 1250, L2 = reduce ? F : F / 0.8;
-    this.setState({ coinBusy: true });
+    this.setState({ coinBusy: true }); if (this.coinTiltEl) this.coinTiltEl.style.transform = '';
+    const box = toss.closest('.fh-coin'); clearTimeout(this.liveT); if (box) box.classList.add('fh-live');
     const anims = [], go = (el, kf, o) => { if (el && el.animate) anims.push(el.animate(kf, { fill: 'forwards', ...o })); };
     // rotation : vite au départ, puis ralentit jusqu'à se poser à plat
     go(spin, [{ transform: `rotateX(${from}deg)` }, { transform: `rotateX(${to}deg)` }], { duration: F, easing: 'cubic-bezier(.32,.56,.42,1)' });
@@ -2169,11 +2262,15 @@ class Component extends DCLogic {
       // en touchant la table, elle oscille un peu avant de s'immobiliser
       setTimeout(() => go(spin, [{ transform: `rotateX(${to}deg)` }, { transform: `rotateX(${to + 9}deg)` }, { transform: `rotateX(${to - 4}deg)` }, { transform: `rotateX(${to + 1.5}deg)` }, { transform: `rotateX(${to}deg)` }], { duration: 480, easing: 'ease-out' }), F);
       setTimeout(() => this.coinTing(1), F);
+      // des étincelles autour de la pièce quand elle touche la table
+      setTimeout(() => { const r = toss.getBoundingClientRect(); if (r.width) this.decoTap({ x: r.left + r.width / 2, y: r.top + r.height / 2, r: r.width / 2, fx: 'planet', c: this.state.s.accent }); }, F);
       setTimeout(() => this.coinTing(0.4), L2);
     } else setTimeout(() => this.coinTing(0.8), F);
     setTimeout(() => {
       anims.forEach(a => { try { a.cancel(); } catch (e) {} });
       this.coinAng = to; spin.style.transform = `rotateX(${to}deg)`;
+      if (box && !box.matches(':hover')) box.classList.remove('fh-live');
+      this.coinShine();
       this.setState(s0 => ({ coinBusy: false, coinRes: res, coinN: s0.coinN + 1 }));
     }, reduce ? F + 40 : F + 500);
   };
@@ -2658,19 +2755,24 @@ class Component extends DCLogic {
       const mixHex = (a, b, k) => '#' + hexRgb(a).split(',').map((v, i) => Math.round(+v + (+hexRgb(b).split(',')[i] - v) * k).toString(16).padStart(2, '0')).join('');
       const acc = s.accent, hi = mixHex(acc, '#ffffff', 0.55), lo = mixHex(acc, '#000000', 0.38), engr = lum(acc) > 0.42 ? mixHex(acc, '#000000', 0.74) : mixHex(acc, '#ffffff', 0.88);
       const dfC = s.dateFont === 'same' ? f : (FONT_BY[s.dateFont] || f), fs = Math.round(Math.max(14, Math.min(dPx * 0.8, 18)));
-      // une face : disque bombé, liseré, petite étoile et le mot gravé
-      const side = (txt, back) => E('div', { key: back ? 'back' : 'front', style: { position: 'absolute', inset: 0, borderRadius: '50%', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: `${back ? 'rotateX(180deg) ' : ''}translateZ(${(T / 2).toFixed(1)}px)`, background: `radial-gradient(circle at 34% 28%, ${hi} 0, ${acc} 50%, ${lo} 100%)`, boxShadow: `inset 0 0 0 ${Math.round(D * 0.03)}px ${hexA(lo, 0.55)}, inset 0 ${Math.round(D * 0.02)}px ${Math.round(D * 0.05)}px ${hexA(hi, 0.5)}`, display: 'flex', alignItems: 'center', justifyContent: 'center' } },
-        E('div', { style: { position: 'absolute', inset: '10%', borderRadius: '50%', border: `${Math.max(2, Math.round(D * 0.012))}px dashed ${hexA(engr, 0.4)}` } }),
-        E('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: Math.round(D * 0.02) } },
-          E('span', { style: { fontSize: Math.round(D * 0.1), lineHeight: 1, color: hexA(engr, 0.7) } }, '★'),
-          E('span', { style: { font: `${clampW(f, 800)} ${Math.round(D * 0.19)}px/1 ${stack(f)}`, letterSpacing: '.04em', color: engr, textShadow: `0 1px 0 ${hexA(hi, 0.6)}, 0 -1px 0 ${hexA(lo, 0.6)}` } }, txt.toUpperCase())));
-      // la tranche : une couronne de petites bandes, striée comme une vraie pièce
-      const N = 40, segW = Math.ceil(Math.PI * D / N) + 1, edges = [];
-      for (let i = 0; i < N; i++) edges.push(E('div', { key: 'e' + i, style: { position: 'absolute', left: R - segW / 2, top: R - T / 2, width: segW, height: T, background: i % 2 ? mixHex(acc, '#000000', 0.5) : mixHex(acc, '#000000', 0.32), transform: `rotateZ(${(i * 360 / N).toFixed(2)}deg) translateY(${(-R + 0.5).toFixed(1)}px) rotateX(90deg)` } }));
-      const coinBox = E('div', { key: 'cbox', 'data-tools': '', 'data-menu': 'none', 'data-tour': 'coin', role: 'button', 'aria-label': L.coinFlip, title: L.coinFlip, onClick: this.flipCoin, style: { position: 'relative', width: D, height: D, cursor: st.coinBusy ? 'default' : 'pointer', perspective: D * 5 + 'px' } },
-        E('div', { key: 'sh', ref: this.coinShRef, style: { position: 'absolute', left: '10%', right: '10%', bottom: -Math.round(D * 0.1), height: Math.round(D * 0.16), borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(0,0,0,.4), rgba(0,0,0,0))' } }),
-        E('div', { key: 'toss', ref: this.coinTossRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d' } },
-          E('div', { key: 'spin', ref: this.coinSpinRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d', transform: `rotateX(${this.coinAng}deg)` } }, ...edges, side(L.coinFace, false), side(L.coinPile, true))));
+      // la pièce (dessin mis en cache : il ne change qu'avec le thème, la taille ou la langue)
+      const lowQ = s.quality === 'low', artKey = [acc, D, T, s.font, clampW(f, 800), L.coinFace, L.coinPile, p.y, lowQ].join('|');
+      if (this.coinArtKey !== artKey) {
+        this.coinArtKey = artKey;
+        const art = coinArt(E, { acc, D, T, font: stack(f), wt: clampW(f, 800), faceLbl: L.coinFace, pileLbl: L.coinPile, year: p.y });
+        const faceDiv = (k, svgEl, back) => E('div', { key: k, style: { position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: `${back ? 'rotateX(180deg) ' : ''}translateZ(${(T / 2).toFixed(1)}px)` } }, svgEl,
+          // reflets du métal, et un éclat qui passe de temps en temps
+          E('div', { key: 'sheen', style: { position: 'absolute', inset: 0, borderRadius: '50%', pointerEvents: 'none', background: 'conic-gradient(from 200deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,.22) 28deg, rgba(255,255,255,0) 70deg, rgba(0,0,0,.13) 120deg, rgba(0,0,0,0) 165deg, rgba(255,255,255,.17) 210deg, rgba(255,255,255,0) 250deg, rgba(0,0,0,.11) 300deg, rgba(0,0,0,0) 345deg)' } }),
+          lowQ ? null : E('div', { key: 'shine', className: 'fh-shine', style: { position: 'absolute', top: '-15%', bottom: '-15%', left: 0, width: '42%', pointerEvents: 'none', background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0))', transform: 'translateX(-140%) skewX(-18deg)' } }));
+        this.coinArtKids = [...art.edges, faceDiv('front', art.front, false), faceDiv('back', art.back, true)];
+      }
+      const coinBox = E('div', { key: 'cbox', className: 'fh-coin', 'data-tools': '', 'data-menu': 'none', 'data-tour': 'coin', role: 'button', 'aria-label': L.coinFlip, title: L.coinFlip, onClick: this.flipCoin, onPointerMove: this.coinTilt, onPointerLeave: this.coinTilt, style: { position: 'relative', width: D, height: D, cursor: st.coinBusy ? 'default' : 'pointer', perspective: D * 5 + 'px' } },
+        // ombre sur la table : large et douce, plus un contact plus sombre
+        E('div', { key: 'sh', ref: this.coinShRef, style: { position: 'absolute', left: '6%', right: '6%', bottom: -Math.round(D * 0.12), height: Math.round(D * 0.2), borderRadius: '50%', background: `radial-gradient(closest-side, rgba(0,0,0,.42), rgba(0,0,0,.18) 55%, rgba(0,0,0,0)), radial-gradient(closest-side, ${hexA(acc, 0.35)}, ${hexA(acc, 0)})` } }),
+        E('div', { key: 'float', style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d', animation: s.quality === 'high' || s.quality === 'ultra' ? 'fh-coin-float 4.6s ease-in-out infinite' : undefined } },
+          E('div', { key: 'tilt', ref: this.coinTiltRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d', transition: 'transform .35s cubic-bezier(.2,.8,.2,1)' } },
+            E('div', { key: 'toss', ref: this.coinTossRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d' } },
+              E('div', { key: 'spin', ref: this.coinSpinRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d', transform: `rotateX(${this.coinAng}deg)` } }, this.coinArtKids)))));
       // résultat : le côté tombé, et ce qu'il veut dire si le prof l'a écrit
       const res = st.coinRes, said = res ? (res === 'face' ? s.coinFace : s.coinPile).trim() : '', ink = s.gradText ? s.grad2 : s.color;
       const resultEl = E('div', { key: 'res', 'aria-live': 'polite', style: { minHeight: Math.round(D * 0.42), marginTop: Math.round(D * 0.16), display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: Math.max(D * 1.6, 320) } },
