@@ -83,6 +83,8 @@ a{color:inherit}a:hover{opacity:.8}
 ::view-transition-group(fh-menu0),::view-transition-group(fh-menu1),::view-transition-group(fh-menu2),::view-transition-group(fh-menu3),::view-transition-new(fh-menu0),::view-transition-new(fh-menu1),::view-transition-new(fh-menu2),::view-transition-new(fh-menu3){animation:none}
 @media (prefers-reduced-motion:reduce){.fh-row{animation:none!important}}
 .fh-mi:hover{background:var(--mh)!important}
+/* chaque menu sur son propre calque : le décor animé dessous ne le force pas à se redessiner */
+.fh-menu{will-change:transform;contain:layout paint}
 .fh-menu::-webkit-scrollbar{width:8px}.fh-menu::-webkit-scrollbar-thumb{background:var(--mh);border-radius:8px}
 @keyframes fh-tabpop{0%{transform:scale(1)}35%{transform:scale(1.14) translateY(-1px)}65%{transform:scale(.96)}100%{transform:scale(1)}}
 @keyframes fh-panel-open{from{opacity:0;transform:translateY(-12px) scale(.985)}to{opacity:1;transform:none}}
@@ -212,9 +214,10 @@ a{color:inherit}a:hover{opacity:.8}
 
   <div data-menu="none" style="position: absolute; top: 12px; left: 50%; transform: translateX(-50%); width: min(1180px, calc(100% - 24px)); display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 10; color: {{ ui.fg }}; pointer-events: none;">
     <div onPointerEnter="{{ barEnter }}" onPointerLeave="{{ barLeave }}" style="display: flex; align-items: center; gap: 4px; padding: 6px; max-width: 100%; box-sizing: border-box; overflow-x: auto; scrollbar-width: none; border-radius: 16px; background: {{ ui.bar }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(22px) saturate(1.5); box-shadow: {{ ui.shadow }}; pointer-events: {{ chrome.pe }}; transform-origin: 50% 0; animation: {{ chrome.barAnim }};">
-      <div data-tour="modes" style="display: flex; gap: 2px; flex-shrink: 0;">
+      <div data-tour="modes" style="position: relative; display: flex; gap: 2px; flex-shrink: 0;">
+        <div ref="{{ modePillRef }}" style="position: absolute; left: 0; top: 0; width: 0; height: 38px; border-radius: 11px; pointer-events: none; opacity: 0; background: {{ pill.bg }}; box-shadow: {{ pill.ring }};"></div>
         <sc-for list="{{ modes }}" as="m" hint-placeholder-count="5">
-          <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 11px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; transition: background .15s, color .15s;" style-hover="background: {{ m.hover }};">
+          <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="position: relative; height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 11px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; transition: background .15s, color .15s;" style-hover="background: {{ m.hover }};">
             <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px; animation: {{ m.anim }};">{{ m.icon }}</span>
             <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span>{{ m.label }}</span></sc-if>
           </button>
@@ -1433,7 +1436,7 @@ class Component extends DCLogic {
   componentDidMount() {
     const s = this.state.s;
     this.ensureFonts([s.font, s.dateFont]);
-    this.warmT = setTimeout(() => (window.requestIdleCallback || setTimeout)(this.warmThemes), 3000);
+    this.warmT = setTimeout(() => (window.requestIdleCallback || setTimeout)(this.warmThemes), 1000);
     const loop = () => { this.tick(); this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10); };
     this.tmr = setTimeout(loop, 1000 - (Date.now() % 1000) + 10);
     const on = (t, ev, fn, o) => { t.addEventListener(ev, fn, o); this.offs.push(() => t.removeEventListener(ev, fn, o)); };
@@ -1476,6 +1479,19 @@ class Component extends DCLogic {
     this.measure();
   }
   componentWillUnmount() { this.closePip(); cancelAnimationFrame(this.depthRaf); [this.tmr, this.idleT, this.toastT, this.prevT, this.noteT, this.tourT, this.ringT, this.testT, this.fontT, this.warmT].forEach(clearTimeout); clearInterval(this.fastT); this.cancelPlan(); this.gridStop(); this.sndStop(true); this.offs.forEach(f => f()); this.state.media.forEach(m => URL.revokeObjectURL(m.url)); }
+  // pastille de l'onglet actif de la barre du haut : elle glisse d'un mode à l'autre (et s'étire à la bonne largeur)
+  modePillRef = (el) => { this.pillEl = el; if (el) requestAnimationFrame(() => this.placeModePill()); };
+  placeModePill = () => {
+    const el = this.pillEl; if (!el || !el.isConnected) return;
+    const b = el.parentElement.querySelector(`[data-tour="mode-${this.state.s.mode}"]`);
+    if (!b || !b.offsetWidth) { el.style.opacity = '0'; this.pillAt = null; return; }
+    const x = b.offsetLeft, w = b.offsetWidth, k = x + '|' + w;
+    if (k === this.pillAt) return;
+    const first = !this.pillAt; this.pillAt = k;
+    const ease = 'cubic-bezier(.3,1.25,.45,1)';
+    el.style.transition = first ? 'none' : `transform .45s ${ease}, width .45s ${ease}`;
+    el.style.transform = `translateX(${x}px)`; el.style.width = w + 'px'; el.style.opacity = '1';
+  };
   componentDidUpdate() {
     const s = this.state.s, st = this.state;
     const key = [s.mode, s.font, s.weight, s.italic, s.letterSpacing, s.fixedDigits, s.seconds, s.hour12, s.ampm, s.sep, s.digits, s.leadingZero, s.outline, s.locale, s.uiLang, s.tz, this.timeLen, st.vw, st.vh, st.fontsTick].join('|');
@@ -1485,6 +1501,7 @@ class Component extends DCLogic {
     this.placeMenu();
     this.depthSync(); this.placeReflect();
     this.runFlip();
+    this.placeModePill();
     this.tourMeasure();
     this.tourCheck();
     if (this.snd && s.mode !== 'sound' && !s.pinSnd) this.sndStop();
@@ -1816,17 +1833,36 @@ class Component extends DCLogic {
   menuRef = (i) => this.menuRefs[i] || (this.menuRefs[i] = (el) => { this.menuEls[i] = el; });
   openMenu = (kind, x, y, id) => {
     clearTimeout(this.menuT);
-    this.setState({ menu: { kind, x, y, id: id || '', open: [], seq: (this.menuSeq = (this.menuSeq || 0) + 1) }, tab: null, idle: false });
+    this.setState({ menu: { kind, x, y, id: id || '', open: [], seq: (this.menuSeq = (this.menuSeq || 0) + 1), overTour: !!this.ctxTour }, tab: null, idle: false });
   };
   closeMenu = () => { clearTimeout(this.menuT); if (this.state.menu) this.setState({ menu: null }); this.activity(); };
   // quel menu ouvrir pour l'élément cliqué (attribut data-menu, sinon celui du fond)
   menuAt = (x, y, target) => {
-    const el = target && target.closest ? target.closest('[data-menu]') : null, k = el ? el.getAttribute('data-menu') : 'bg';
+    const el = target && target.closest ? target.closest('[data-menu]') : null;
+    let k = el ? el.getAttribute('data-menu') : 'bg';
+    // tout le cadre de l'heure (le même que celui du tuto) ouvre son menu, même entre les chiffres ou sur les bords
+    if (k === 'bg') k = this.clockHit(x, y) || k;
     if (k === 'none') return false;
     const [kind, id] = k.split(':'); this.openMenu(kind, x, y, id); return true;
   };
+  // le cadre de l'heure, marge du tuto comprise : renvoie son menu ('time'), sinon null
+  clockHit = (x, y) => {
+    if (this.state.moveMode) return null;
+    const blk = this.blockRef.current, el = blk && blk.querySelector('[data-tour="clock"]'); if (!el) return null;
+    const r = el.getBoundingClientRect(), pad = 8;
+    if (!r.width || x < r.left - pad || x > r.right + pad || y < r.top - pad || y > r.bottom + pad) return null;
+    const m = el.closest('[data-menu]'); return m ? m.getAttribute('data-menu') : null;
+  };
   onCtx = (e) => {
-    const tg = e.target;
+    let tg = e.target;
+    // pendant le tuto, le voile couvre l'écran : le clic droit vise ce qu'il y a dessous (l'heure, la date, le fond…)
+    if (tg && tg.closest && tg.closest('[data-tour-layer]')) {
+      e.preventDefault();
+      if (tg.closest('[data-tour-box]')) return;
+      tg = document.elementsFromPoint(e.clientX, e.clientY).find(n => !n.closest('[data-tour-layer]')) || null;
+      this.ctxTour = true; if (tg) this.menuAt(e.clientX, e.clientY, tg); this.ctxTour = false;
+      return;
+    }
     if (tg && tg.closest && tg.closest('input, textarea, select, [contenteditable="true"]')) return; // menu habituel pour copier-coller
     if (this.state.ringing) { e.preventDefault(); this.stopAlarm(); return; }
     if (this.menuAt(e.clientX, e.clientY, tg)) e.preventDefault();
@@ -2169,11 +2205,37 @@ class Component extends DCLogic {
     this.ensureFonts(PRESETS.map(p => p.s.font));
     if (!document.fonts) return;
     this.warmT = setTimeout(() => PRESETS.forEach(p => { const f = FONT_BY[p.s.font]; if (f) document.fonts.load(`${p.s.italic ? 'italic ' : ''}${clampW(f, p.s.weight || f.dw)} 40px '${f.name}'`, '0123456789:').catch(() => {}); }), 800);
-    // aperçus des décors : dessinés et décodés à l'avance, quelques-uns à la fois pour ne rien ralentir
-    const FHS = window.FHScenes, idle = window.requestIdleCallback || ((f) => setTimeout(f, 50));
-    const todo = PRESETS.map(p => ({ ...VDEF, ...p.s })).filter(ps => ps.bgType === 'scene' && FHS && FHS.has(ps.scene));
-    const step = () => { todo.splice(0, 3).forEach(ps => { const m = /url\("(.+)"\)/.exec(FHS.preview(ps.scene, ps)); if (m) { const im = new Image(); im.src = m[1]; if (im.decode) im.decode().catch(() => {}); } }); if (todo.length) idle(step); };
-    idle(step);
+    this.warmThumbs(PRESETS.map(p => ({ ...VDEF, ...p.s })));
+  };
+  // vignettes des décors : le grand dessin (1600 × 900, des milliers de formes) est réduit une fois pour toutes en petite image.
+  // Les menus n'affichent que ces petites images : plus rien à dessiner quand on les ouvre.
+  thumbs = new Map();
+  thumbKey = (ps) => [ps.scene, ps.bg1, ps.bg2, ps.bg3].join('|');
+  warmThumbs = (list, fast) => {
+    const FHS = window.FHScenes; if (!FHS) return;
+    (list || []).forEach(ps => { if (ps.bgType === 'scene' && FHS.has(ps.scene)) { const k = this.thumbKey(ps); if (!this.thumbs.has(k) && !(this.thumbQ || []).some(q => this.thumbKey(q) === k)) (this.thumbQ = this.thumbQ || []).push(ps); } });
+    if (fast) this.thumbFast = true;
+    if (this.thumbBusy || !(this.thumbQ || []).length) return;
+    this.thumbBusy = true;
+    const idle = window.requestIdleCallback || ((f) => setTimeout(f, 30));
+    const next = () => (this.thumbFast ? setTimeout(one, 0) : idle(one, { timeout: 400 }));
+    const done = () => { this.thumbBusy = false; this.thumbFast = false; this.setState(st => ({ thumbsV: (st.thumbsV || 0) + 1 })); };
+    const one = () => {
+      const ps = this.thumbQ.shift(); if (!ps) { done(); return; }
+      const k = this.thumbKey(ps), m = /url\("(.+)"\)/.exec(FHS.preview(ps.scene, ps));
+      if (!m) { next(); return; }
+      const im = new Image();
+      im.onload = () => {
+        try {
+          const c = document.createElement('canvas'); c.width = 256; c.height = 144;
+          const g = c.getContext('2d'); g.fillStyle = ps.bg2 || '#000'; g.fillRect(0, 0, 256, 144); g.drawImage(im, 0, 0, 256, 144);
+          c.toBlob((b) => { if (b) this.thumbs.set(k, `url("${URL.createObjectURL(b)}")`); next(); }, 'image/webp', 0.86);
+        } catch (er) { this.thumbs.set(k, FHS.preview(ps.scene, ps)); next(); }
+      };
+      im.onerror = () => next();
+      im.src = m[1];
+    };
+    next();
   };
   activity = () => {
     if (this.state.idle) this.setState({ idle: false });
@@ -2487,7 +2549,7 @@ class Component extends DCLogic {
     if (this.state.tab) { this.closePanel(); return; }
     if (this.noClick) return;
     // un objet du décor (lune, citrouille, arbre…) réagit au lieu d'ouvrir le menu du fond
-    const h = this.onBg(e) && this.decoHit(e.clientX, e.clientY);
+    const h = this.onBg(e) && !this.clockHit(e.clientX, e.clientY) && this.decoHit(e.clientX, e.clientY);
     if (h) { this.decoTap(h); return; }
     this.menuAt(e.clientX, e.clientY, e.target);
   };
@@ -2556,7 +2618,7 @@ class Component extends DCLogic {
   // petite main au survol d'un objet qui réagit
   onStageMove = (e) => {
     if (e.pointerType && e.pointerType !== 'mouse') return;
-    const on = this.onBg(e) && !!this.decoHit(e.clientX, e.clientY);
+    const on = this.onBg(e) && !this.clockHit(e.clientX, e.clientY) && !!this.decoHit(e.clientX, e.clientY);
     if (on !== !!this.hotOn) { this.hotOn = on; e.currentTarget.style.cursor = on ? 'pointer' : ''; }
   };
   L() { const li = Math.max(0, LANGS.indexOf(this.state.s.uiLang)); if (this._li !== li) { this._li = li; const o = {}; for (const k in T) o[k] = T[k][li]; this._L = o; } return this._L; }
@@ -2951,7 +3013,7 @@ class Component extends DCLogic {
     const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: mode === id ? hexA(s.accent, dark ? 0.26 : 0.18) : 'transparent', ring: mode === id ? `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` : 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: 'transparent', ring: 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -2960,7 +3022,8 @@ class Component extends DCLogic {
       else if (ps.bgType === 'aurora') b = `radial-gradient(60% 80% at 25% 30%, ${ps.bg1}, transparent), radial-gradient(60% 80% at 80% 70%, ${ps.bg3}, transparent), ${ps.bg2}`;
       else if (ps.bgType === 'grid') b = `radial-gradient(38% 46% at 30% 64%, ${hexA(ps.gridLit, 0.38)}, transparent 70%), repeating-linear-gradient(0deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), ${ps.bgColor}`;
       else if (ps.bgType === 'spooky') b = `radial-gradient(circle at 80% 24%, #fff6d5 0 8%, rgba(255,214,140,.35) 9%, transparent 19%), ${spookyBase(ps)}`;
-      else if (ps.bgType === 'scene') b = newScene(ps.scene) ? `${FHS.preview(ps.scene, ps)} center bottom / cover no-repeat, ${sceneBase(ps)}` : sceneBase(ps);
+      // vignette déjà prête (petite image) ; sinon la couleur du décor en attendant qu'elle soit faite en tâche de fond
+      else if (ps.bgType === 'scene') { const th = newScene(ps.scene) && this.thumbs.get(this.thumbKey(ps)); if (newScene(ps.scene) && !th) this.warmThumbs([ps], true); b = th ? `${th} center bottom / cover no-repeat, ${sceneBase(ps)}` : sceneBase(ps); }
       else { const m = st.media.find(x => x.id === ps.bgImage) || st.media[0]; b = m && m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #111` : '#111'; }
       return ps.vignette ? `radial-gradient(ellipse at center, rgba(0,0,0,0) 40%, rgba(0,0,0,${(ps.vignette * 0.006).toFixed(2)}) 100%), ${b}` : b;
     };
@@ -3353,9 +3416,11 @@ class Component extends DCLogic {
           (it.icon || it.thumb) && it.check != null ? ico(it.check ? 'check' : '', 17, ink) : null,
           it.sub ? ico('chevron_right', 18, ui.fg3) : null);
       };
-      if (items0.length) menuUi = { on: true, el: E('div', { key: 'menus', 'data-menu-layer': '', onClick: (e) => { if (e.target === e.currentTarget) this.closeMenu(); }, onContextMenu: this.menuReopen, style: { position: 'fixed', inset: 0, zIndex: 70 } },
+      // menu ouvert au clic droit pendant le tuto : au-dessus du voile (sinon assombri et inaccessible)
+      const overTour = st.tour != null && !!M.overTour;
+      if (items0.length) menuUi = { on: true, el: E('div', { key: 'menus', 'data-menu-layer': '', onClick: (e) => { if (e.target === e.currentTarget) this.closeMenu(); }, onContextMenu: this.menuReopen, style: { position: 'fixed', inset: 0, zIndex: overTour ? 80 : 70 } },
         levels.map((items, level) => E('div', { key: 'm' + level + '-' + M.seq, ref: this.menuRef(level), role: 'menu', className: 'fh-menu', 'data-tour': 'menu' + level,
-          style: { position: 'fixed', left: -9999, top: 0, minWidth: 236, maxWidth: 340, maxHeight: 'calc(100vh - 16px)', overflowY: 'auto', overscrollBehavior: 'contain', boxSizing: 'border-box', padding: 5, borderRadius: 12, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: '0 18px 50px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18)', color: ink, backdropFilter: 'blur(18px)', scrollbarWidth: 'thin', colorScheme: ui.scheme, '--mh': ui.hover, animation: 'fh-menu-in .14s ease-out both', transformOrigin: '0 0', viewTransitionName: 'fh-menu' + level } },
+          style: { position: 'fixed', left: -9999, top: 0, minWidth: 236, maxWidth: 340, maxHeight: 'calc(100vh - 16px)', overflowY: 'auto', overscrollBehavior: 'contain', boxSizing: 'border-box', padding: 5, borderRadius: 12, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: '0 18px 50px rgba(0,0,0,.32), 0 3px 10px rgba(0,0,0,.18)', color: ink, scrollbarWidth: 'thin', colorScheme: ui.scheme, '--mh': ui.hover, animation: 'fh-menu-in .14s ease-out both', transformOrigin: '0 0', viewTransitionName: 'fh-menu' + level } },
           // les lignes arrivent l'une après l'autre : 17 ms d'écart, plus 0,2 s réparties sur toute la liste
           items.map((it, i) => { const el = rowEl(it, i, level), gap = 17 + 200 / Math.max(1, Math.min(items.length, 41) - 1); return React.cloneElement(el, { className: (el.props.className ? el.props.className + ' ' : '') + 'fh-row', style: { ...el.props.style, animation: `fh-mi-in .32s cubic-bezier(.2,.8,.2,1) ${Math.round(Math.min(i, 40) * gap)}ms both` } }); })))) };
     }
@@ -3386,7 +3451,7 @@ class Component extends DCLogic {
       const curve = step % 2 ? 'M22 74 C 50 56, 10 32, 30 8' : 'M38 74 C 10 56, 50 32, 30 8';
       const sp = (e) => e.stopPropagation();
       const tbtn = (key, label, onClick, primary) => E('button', { key, type: 'button', className: 'fh-btn', onClick: (e) => { sp(e); onClick(); }, style: { height: 38, padding: '0 16px', borderRadius: 999, border: primary ? 0 : '1px solid rgba(255,255,255,.35)', background: primary ? '#ffffff' : 'transparent', color: primary ? '#141210' : '#ffffff', font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, label);
-      const text = E('div', { key: 'txt' + step, ref: this.tourBoxRef, onClick: sp, style: { position: 'absolute', pointerEvents: 'auto', boxSizing: 'border-box', padding: '16px 20px 14px', borderRadius: 20, background: 'rgba(14,10,22,.8)', boxShadow: '0 12px 40px rgba(0,0,0,.4)', left: tx, width: textW, top: Math.max(12, Math.min(st.vh - boxH - 12, side ? r.y + r.h / 2 - boxH / 2 : below ? tipY + arrowH + 4 : tipY - arrowH - 4 - boxH)), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
+      const text = E('div', { key: 'txt' + step, 'data-tour-box': '', ref: this.tourBoxRef, onClick: sp, style: { position: 'absolute', pointerEvents: 'auto', boxSizing: 'border-box', padding: '16px 20px 14px', borderRadius: 20, background: 'rgba(14,10,22,.8)', boxShadow: '0 12px 40px rgba(0,0,0,.4)', left: tx, width: textW, top: Math.max(12, Math.min(st.vh - boxH - 12, side ? r.y + r.h / 2 - boxH / 2 : below ? tipY + arrowH + 4 : tipY - arrowH - 4 - boxH)), textAlign: 'center', color: '#ffffff', animation: 'fh-tour-in .45s cubic-bezier(.2,.8,.2,1) both' } },
         E('div', { style: { font: "700 34px/1.05 'Caveat', cursive", color: gold, marginBottom: 6 } }, cur.h),
         E('div', { style: { font: '400 15.5px/1.5 Geist, system-ui, sans-serif', textWrap: 'pretty', textShadow: '0 1px 8px rgba(0,0,0,.5)' } }, cur.x),
         // étape où l'utilisateur fait lui-même : consigne bien visible, puis « Bravo » quand c'est fait
@@ -3398,7 +3463,7 @@ class Component extends DCLogic {
         E('div', { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14, marginTop: 12, font: '500 12.5px/1 Geist, system-ui, sans-serif', color: 'rgba(255,255,255,.6)' } },
           E('span', null, `${step + 1} / ${n}`),
           last ? null : E('button', { type: 'button', onClick: (e) => { sp(e); this.endTour(); }, style: { border: 0, padding: 4, background: 'transparent', color: 'rgba(255,255,255,.75)', font: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3, cursor: 'pointer' } }, L.tourSkip)));
-      tourEl = E('div', { onClick: act ? undefined : () => this.tourGo(1), style: { position: 'absolute', inset: 0, zIndex: 75, cursor: act ? 'default' : 'pointer', pointerEvents: act ? 'none' : 'auto' } },
+      tourEl = E('div', { 'data-tour-layer': '', onClick: act ? undefined : () => this.tourGo(1), style: { position: 'absolute', inset: 0, zIndex: 75, cursor: act ? 'default' : 'pointer', pointerEvents: act ? 'none' : 'auto' } },
         E('div', { style: { position: 'absolute', left: r.x - pad, top: r.y - pad, width: r.w + pad * 2, height: r.h + pad * 2, borderRadius: 16, pointerEvents: 'none', boxShadow: `0 0 0 3000px rgba(6,3,12,.68), 0 0 0 2px ${gold}, 0 0 26px 6px ${hexA(gold, 0.45)}`, transition: 'left .5s cubic-bezier(.3,1.2,.4,1), top .5s cubic-bezier(.3,1.2,.4,1), width .5s cubic-bezier(.3,1.2,.4,1), height .5s cubic-bezier(.3,1.2,.4,1)' } }),
         side ? null : E('div', { key: 'arrow' + step, style: { position: 'absolute', left: cx - 30, top: below ? tipY : tipY - arrowH, width: 60, height: arrowH, pointerEvents: 'none', animation: 'fh-tour-in .4s ease both' } },
           E('svg', { viewBox: '0 0 60 78', width: 60, height: arrowH, style: { display: 'block', overflow: 'visible', animation: below ? 'fh-nudge 1.3s ease-in-out infinite' : 'fh-nudge-up 1.3s ease-in-out infinite' } },
@@ -3514,7 +3579,7 @@ class Component extends DCLogic {
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
       chrome: { barAnim: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? (hidden ? 'fh-bar-fadeout .4s ease forwards' : 'fh-bar-fadein .3s ease both') : hidden ? 'fh-bar-out .5s cubic-bezier(.5,0,.75,.3) forwards' : 'fh-bar-in .72s cubic-bezier(.22,.8,.3,1) both', labels: st.vw > 820, btnPad: st.vw > 820 ? '0 13px 0 10px' : '0', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       menuUi, zones, blockRef: this.blockRef, clockDown: this.clockDown, onCtx: this.onCtx, openSettings: this.openSettings,
-      modes, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      modes, modePillRef: this.modePillRef, pill: { bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` }, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);
