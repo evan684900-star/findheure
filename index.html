@@ -91,6 +91,7 @@ animation:fh-mm-blob var(--bd,9s) ease-in-out infinite;transition:transform .55s
 .fh-mm-b::before{content:'';position:absolute;left:15%;top:7%;width:46%;height:25%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,0));transform:rotate(-16deg);pointer-events:none}
 .fh-mm-b::after{content:'';position:absolute;left:24%;right:24%;bottom:6%;height:15%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
 .fh-mm-b:hover{transform:scale(1.05)}
+.fh-mm-b.drag{transform:scale(1.12);box-shadow:inset 0 0 0 1.5px rgba(var(--c),.5),inset 0 -16px 30px rgba(var(--c),.34),inset 0 12px 24px rgba(255,255,255,.8),0 44px 70px -22px rgba(var(--c),.85)}
 .fh-mm-b.on{transform:scale(1.09);box-shadow:inset 0 0 0 2px rgba(var(--c),.55),inset 0 -16px 30px rgba(var(--c),.38),inset 0 12px 24px rgba(255,255,255,.8),inset 12px 0 26px rgba(var(--c),.14),0 30px 56px -18px rgba(var(--c),.8),0 0 0 7px rgba(var(--c),.12)}
 .fh-mm-t{position:relative;z-index:1;display:block;box-sizing:border-box;margin:0;padding:0;border:0;outline:0;resize:none;overflow:hidden;background:transparent;text-align:center;color:#1f1d2b;caret-color:rgb(var(--c));scrollbar-width:none}
 .fh-mm-t::placeholder{color:rgba(31,29,43,.34)}
@@ -465,6 +466,10 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.10.0', d: '2026-11-03', items: [
+    'Carte mentale : bulles déplaçables.|Mind map: movable bubbles.',
+    'Carte mentale : couleur au choix par bulle (clic droit).|Mind map: per-bubble colour (right-click).',
+    'Clic droit avec un menu déjà ouvert : ouvre le bon menu.|Right-click with a menu open: opens the right menu.'] },
   { v: '2.9.3', d: '2026-11-03', items: ['Notes de mise à jour : numéro de version en titre.|Release notes: version number as title.'] },
   { v: '2.9.2', d: '2026-11-03', items: ['Notes de mise à jour plus courtes.|Shorter release notes.'] },
   { v: '2.9.1', d: '2026-11-03', items: ['Carte mentale : bulle du sujet plus large.|Mind map: wider topic bubble.'] },
@@ -519,6 +524,7 @@ const NEWS = [
 const MKEY = 'findheure:mind:v1';
 // teintes des bulles de la carte mentale (en r,g,b pour les transparences)
 const MIND_C = ['91,140,255', '255,107,154', '46,196,182', '255,170,40', '155,107,255', '255,122,69', '58,176,255', '76,199,100'];
+const MIND_HEX = MIND_C.map(c => '#' + c.split(',').map(v => (+v).toString(16).padStart(2, '0')).join(''));
 const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1', TOURKEY = 'findheure:tour:v1', PKEY = 'findheure:pics:v1';
 const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
 
@@ -631,7 +637,7 @@ const T_RAW = {
   md_mind: "Carte mentale|Mind map|Mapa mental|Mindmap", beta: "Bêta|Beta|Beta|Beta", mindBeta: "Carte mentale · version bêta|Mind map · beta version|Mapa mental · versión beta|Mindmap · Beta-Version", newsT: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?", newsVer: "Version|Version|Versión|Version", newsOk: "C’est noté !|Got it!|¡Entendido!|Verstanden!", newsMenu: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?",
   newsSub: "Depuis ta dernière visite|Since your last visit|Desde tu última visita|Seit deinem letzten Besuch", newsAll: "Toutes les nouveautés|All updates|Todas las novedades|Alle Neuerungen", mindTitlePh: "Le sujet…|The topic…|El tema…|Das Thema…", mindIdeaPh: "Une idée…|An idea…|Una idea…|Eine Idee…",
   mindHint: "Écris le sujet, puis Entrée|Write the topic, then Enter|Escribe el tema y pulsa Intro|Thema eingeben, dann Enter", mindNew: "Nouvelle carte mentale|New mind map|Nuevo mapa mental|Neue Mindmap",
-  mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen",
+  mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
   showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
   showUrlPh: "Adresse du site (lien YouTube, Google Slides, Canva…)|Website address (YouTube, Google Slides, Canva link…)|Dirección del sitio (enlace de YouTube, Google Slides, Canva…)|Adresse der Website (YouTube-, Google-Slides-, Canva-Link …)",
@@ -1510,7 +1516,8 @@ class Component extends DCLogic {
     if (!['digital', 'analog', 'both'].includes(s.clockType)) s.clockType = 'digital';
     if (!['hide', 'icons'].includes(s.barHide)) s.barHide = 'hide';
     if (s.msg === 'spooky') s.msg = 'theme';
-    const mind0 = loadJSON(MKEY, null) || {}, mind = { title: typeof mind0.title === 'string' ? mind0.title.slice(0, 60) : '', items: Array.isArray(mind0.items) ? mind0.items.filter(x => x && typeof x.id === 'string').map(x => ({ id: x.id, t: String(x.t || '').slice(0, 120) })).slice(0, 24) : [] };
+    const mind0 = loadJSON(MKEY, null) || {}, mind = { title: typeof mind0.title === 'string' ? mind0.title.slice(0, 60) : '', items: Array.isArray(mind0.items) ? mind0.items.filter(x => x && typeof x.id === 'string').map(x => { const o = { id: x.id, t: String(x.t || '').slice(0, 120) }; if (/^#[0-9a-f]{6}$/i.test(x.c || '')) o.c = x.c.toLowerCase(); if (x.p && [x.p.x, x.p.y].every(v => Number.isFinite(v) && v >= 0 && v <= 1)) o.p = { x: x.p.x, y: x.p.y }; return o; }).slice(0, 24) : [] };
+    if (/^#[0-9a-f]{6}$/i.test(mind0.cc || '')) mind.cc = mind0.cc.toLowerCase();
     // carte abîmée ou ancienne : au moins 6 bulles, et une vide de plus si toutes sont écrites
     if (mind.items.length) { const nid = (i) => 'b' + Date.now().toString(36) + i; while (mind.items.length < 6) mind.items.push({ id: nid(mind.items.length), t: '' }); if (mind.items.length < 24 && mind.items.every(x => x.t.trim())) mind.items.push({ id: nid(99), t: '' }); }
     const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {}, pics = loadJSON(PKEY, []);
@@ -1522,7 +1529,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { news: null, mind, mindGone: [], mindOn: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { news: null, mind, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -1977,13 +1984,13 @@ class Component extends DCLogic {
       this.ctxTour = true; if (tg) this.menuAt(e.clientX, e.clientY, tg); this.ctxTour = false;
       return;
     }
-    if (tg && tg.closest && tg.closest('input, textarea, select, [contenteditable="true"]')) return; // menu habituel pour copier-coller
+    if (tg && tg.closest && tg.closest('input, textarea, select, [contenteditable="true"]') && !(tg.classList.contains('fh-mm-t') && tg !== document.activeElement)) return; // menu habituel pour copier-coller
     if (this.state.ringing) { e.preventDefault(); this.stopAlarm(); return; }
     if (this.menuAt(e.clientX, e.clientY, tg)) e.preventDefault();
   };
   // clic droit pendant qu'un menu est ouvert : on le rouvre là où on a cliqué (comme Windows)
   menuReopen = (e) => {
-    e.preventDefault();
+    e.preventDefault(); e.stopPropagation(); // sinon le clic droit remonte jusqu'au fond et rouvre son menu à la place
     const all = document.elementsFromPoint(e.clientX, e.clientY);
     if (all[0] && all[0].closest('.fh-menu')) return;
     const el = all.find(n => !n.closest('[data-menu-layer]'));
@@ -2147,6 +2154,62 @@ class Component extends DCLogic {
   // clic sur le fond blanc : ouvre son menu, sauf si on était en train d'écrire (le clic sert alors juste à sortir de la bulle)
   mindBgDown = (e) => { const a = document.activeElement; this.mindWasTyping = !!(a && a.classList && a.classList.contains('fh-mm-t')); };
   mindBgClick = (e) => { if (e.target !== e.currentTarget || this.mindWasTyping) return; this.menuAt(e.clientX, e.clientY, e.currentTarget); };
+  // ---------- déplacer une bulle : on l'attrape (souris ou doigt), elle suit, puis rebondit en gélatine là où on la lâche ----------
+  mindJ = {};
+  mindClamp = (x, y, out) => {
+    const g = this.mindGeo; if (!g) return { x, y };
+    if (out) {
+      // lâchée sur la bulle du sujet : elle glisse juste à côté
+      const A = g.ca + g.d / 2 + 12, B = g.cb + g.d / 2 + 12, dx = x - g.cx, dy = y - g.cy, q = (dx / A) ** 2 + (dy / B) ** 2;
+      if (q < 1) { if (q < 1e-4) { y = g.cy - B; } else { const k = 1 / Math.sqrt(q); x = g.cx + dx * k; y = g.cy + dy * k; } }
+    }
+    const r = g.d / 2;
+    return { x: Math.max(r + 8, Math.min(g.vw - r - 8, x)), y: Math.max(g.top - 14 + r, Math.min(g.bot - r + 8, y)) };
+  };
+  mindDown = (e, id) => {
+    if (e.button !== 0 || this.mmD) return;
+    const t = e.target;
+    if (t.closest && t.closest('.fh-mm-x')) return;
+    if (t === document.activeElement && t.classList.contains('fh-mm-t')) return; // en train d'écrire : on sélectionne le texte
+    const el = e.currentTarget, cx = +el.dataset.cx, cy = +el.dataset.cy;
+    this.mmD = { id, el, pid: e.pointerId, sx: e.clientX, sy: e.clientY, ox: cx - e.clientX, oy: cy - e.clientY, moved: false };
+  };
+  mindMove = (e) => {
+    const d = this.mmD; if (!d || e.pointerId !== d.pid) return;
+    if (!d.moved) {
+      if (Math.hypot(e.clientX - d.sx, e.clientY - d.sy) < 6) return;
+      d.moved = true; try { d.el.setPointerCapture(d.pid); } catch (er) {}
+      try { window.getSelection().removeAllRanges(); } catch (er) {}
+      const a = document.activeElement; if (a && a.classList && a.classList.contains('fh-mm-t')) a.blur();
+    }
+    this.setState({ mindDrag: { id: d.id, ...this.mindClamp(e.clientX + d.ox, e.clientY + d.oy) } });
+  };
+  mindUp = (e) => {
+    const d = this.mmD; if (!d || (e && e.pointerId !== d.pid)) return;
+    this.mmD = null;
+    if (!d.moved) return;
+    this.mindNoClick = Date.now();
+    const g = this.mindGeo, p = this.state.mindDrag; if (!p || !g) { this.setState({ mindDrag: null }); return; }
+    // lâchée sur une autre bulle : elle se pousse juste à côté (sans la recouvrir)
+    let q = this.mindClamp(p.x, p.y, true);
+    const others = Object.entries(this.mindPos || {}).filter(([id]) => id !== d.id).map(([, v]) => v), gap = g.d + 10;
+    for (let k = 0; k < 24; k++) {
+      let hit = false;
+      others.forEach(o => { const dx = q.x - o.x, dy = q.y - o.y, dd = Math.hypot(dx, dy); if (dd < gap) { hit = true; const a = dd < 1 ? -Math.PI / 2 + k : Math.atan2(dy, dx); q = { x: o.x + Math.cos(a) * gap, y: o.y + Math.sin(a) * gap }; } });
+      q = this.mindClamp(q.x, q.y, true);
+      if (!hit) break;
+    }
+    this.mindJ[d.id] = (this.mindJ[d.id] || 0) + 1;
+    this.setState({ mindDrag: null });
+    this.setMind(m => ({ ...m, items: m.items.map(x => (x.id === d.id ? { ...x, p: { x: +(q.x / g.vw).toFixed(4), y: +(q.y / g.vh).toFixed(4) } } : x)) }));
+  };
+  mindTap = (it) => { if (Date.now() - (this.mindNoClick || 0) < 350) return; this.mindFocus(it); };
+  mindPatch = (id, patch) => {
+    if (id === 'title') { this.setMind(m => ({ ...m, cc: patch.c })); return; }
+    if (patch.p === null) this.mindJ[id] = (this.mindJ[id] || 0) + 1;
+    this.setMind(m => ({ ...m, items: m.items.map(x => { if (x.id !== id) return x; const o = { ...x, ...patch }; if (patch.p === null) delete o.p; return o; }) }));
+  };
+  mindTidy = () => { this.setMind(m => ({ ...m, items: m.items.map(x => { if (!x.p) return x; this.mindJ[x.id] = (this.mindJ[x.id] || 0) + 1; const o = { ...x }; delete o.p; return o; }) })); };
   mindView = (E, st, L, font) => {
     const m = st.mind, vw = st.vw, vh = st.vh, top = 84, bot = vh - 24, cx = vw / 2, cy = (top + bot) / 2, accRgb = hexRgb(st.s.accent);
     const D = Math.round(Math.max(150, Math.min(Math.min(vw, vh - 90) * 0.32, 340)));
@@ -2160,6 +2223,7 @@ class Component extends DCLogic {
     const d = Math.round(Math.max(76, Math.min(base, n ? per / n * 0.84 : base)));
     const rx = Math.max(Math.min(vw * 0.36, vw / 2 - d / 2 - 16), Math.min(ca + d / 2 + 26, vw / 2 - d / 2 - 16)), ry = Math.min((bot - top) * 0.38, (bot - top) / 2 - d / 2 - 4);
     const ease = 'cubic-bezier(.3,1.32,.45,1)', fresh = Date.now() - (this.mindPop || 0) < 1500;
+    this.mindGeo = { cx, cy, ca, cb, d, top, bot, vw, vh }; this.mindPos = {};
     // taille du texte selon la place et la longueur ; nombre de lignes estimé pour centrer la zone de saisie
     const fit = (txt, w, k0, hb) => {
       // jamais de mot coupé en deux : le mot le plus long doit tenir sur une ligne
@@ -2176,33 +2240,44 @@ class Component extends DCLogic {
     for (let k = 1; k <= S; k++) { const a0 = -Math.PI / 2 + (k - 1) / S * Math.PI * 2, a1 = -Math.PI / 2 + k / S * Math.PI * 2; cum.push(cum[k - 1] + Math.hypot(Math.cos(a1) * rx - Math.cos(a0) * rx, Math.sin(a1) * ry - Math.sin(a0) * ry)); }
     const angAt = (frac) => { const target = frac * cum[S]; let k = 1; while (k < S && cum[k] < target) k++; const f0 = (target - cum[k - 1]) / Math.max(1e-6, cum[k] - cum[k - 1]); return -Math.PI / 2 + (k - 1 + f0) / S * Math.PI * 2; };
     items.forEach((it, i) => {
-      const a = angAt(i / n), x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry;
-      const c = MIND_C[i % MIND_C.length], gone = st.mindGone.includes(it.id), on = st.mindOn === it.id;
+      const drag = st.mindDrag && st.mindDrag.id === it.id ? st.mindDrag : null;
+      let x, y;
+      if (drag) { x = drag.x; y = drag.y; }
+      else if (it.p) { const q = this.mindClamp(it.p.x * vw, it.p.y * vh); x = q.x; y = q.y; }
+      else { const a = angAt(i / n); x = cx + Math.cos(a) * rx; y = cy + Math.sin(a) * ry; }
+      this.mindPos[it.id] = { x, y };
+      const c = it.c ? hexRgb(it.c) : MIND_C[i % MIND_C.length], gone = st.mindGone.includes(it.id), on = st.mindOn === it.id;
+      const tr = drag ? 'none' : null;
       // trait du centre à la bulle (part du bord de la bulle centrale, s'arrête au bord de la petite)
       const ang = Math.atan2(y - cy, x - cx), rc = edgeC(ang), dist = Math.hypot(x - cx, y - cy), len = Math.max(0, dist - rc - d / 2 + 6);
-      kids.push(E('div', { key: 'l' + it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`, transition: `width .9s ${ease}, transform .9s ${ease}, opacity .3s`, opacity: gone ? 0 : 1, pointerEvents: 'none' } },
-        E('div', { style: { width: '100%', height: '100%', borderRadius: 3, background: `linear-gradient(90deg, rgba(${accRgb},.35), rgba(${c},.55))`, transformOrigin: '0 50%', animation: fresh ? `fh-mm-line .7s ${ease} ${180 + i * 70}ms backwards` : 'fh-mm-line .6s ease backwards' } })));
-      const tf = fit(it.t || L.mindIdeaPh, d, 0.13), to = `translate(${Math.round(x - d / 2)}px, ${Math.round(y - d / 2)}px)`;
-      kids.push(E('div', { key: 'b' + it.id, className: 'fh-mm-p', style: { position: 'absolute', left: 0, top: 0, width: d, height: d, zIndex: on ? 3 : 2, transform: to, '--fx': `${Math.round(cx - d / 2)}px`, '--fy': `${Math.round(cy - d / 2)}px`, '--to': to, transition: `transform .9s ${ease}, width .9s ${ease}, height .9s ${ease}`, animation: gone ? 'fh-mm-out .36s cubic-bezier(.5,0,.8,.4) forwards' : `fh-mm-in .95s ${ease} ${fresh ? i * 70 : 0}ms backwards` } },
-        E('div', { style: { position: 'absolute', inset: 0, '--fl': `${-5 - (i % 3) * 2}px`, animation: `fh-mm-jelly .9s ease ${fresh ? 300 + i * 70 : 120}ms backwards, fh-mm-float ${(5.5 + (i % 4) * 0.8).toFixed(1)}s ease-in-out ${(1.4 + i * 0.37).toFixed(2)}s infinite` } },
-          E('div', { className: 'fh-mm-b' + (on ? ' on' : ''), onClick: () => this.mindFocus(it), style: { '--c': c, '--bd': `${8 + (i % 5) * 1.3}s`, cursor: 'text' } },
+      kids.push(E('div', { key: 'l' + it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`, transition: tr || `width .9s ${ease}, transform .9s ${ease}, opacity .3s`, opacity: gone ? 0 : 1, pointerEvents: 'none' } },
+        E('div', { style: { width: '100%', height: '100%', borderRadius: 3, background: `linear-gradient(90deg, rgba(${accRgb},.35), rgba(${c},.55))`, transition: 'background .4s', transformOrigin: '0 50%', animation: fresh ? `fh-mm-line .7s ${ease} ${180 + i * 70}ms backwards` : 'fh-mm-line .6s ease backwards' } })));
+      const tf = fit(it.t || L.mindIdeaPh, d, 0.13), to = `translate(${Math.round(x - d / 2)}px, ${Math.round(y - d / 2)}px)`, jn = this.mindJ[it.id] || 0;
+      kids.push(E('div', { key: 'b' + it.id, className: 'fh-mm-p', 'data-menu': 'mmb:' + it.id, 'data-cx': Math.round(x), 'data-cy': Math.round(y),
+        onPointerDown: (e) => this.mindDown(e, it.id), onMouseDown: (e) => { const t = e.target; if (!(t.closest && t.closest('.fh-mm-x')) && !(t === document.activeElement && t.classList.contains('fh-mm-t'))) e.preventDefault(); }, onPointerMove: this.mindMove, onPointerUp: this.mindUp, onPointerCancel: this.mindUp,
+        style: { position: 'absolute', left: 0, top: 0, width: d, height: d, zIndex: drag ? 6 : on ? 3 : 2, transform: to, touchAction: 'none', cursor: drag ? 'grabbing' : undefined, '--fx': `${Math.round(cx - d / 2)}px`, '--fy': `${Math.round(cy - d / 2)}px`, '--to': to, transition: tr || `transform .9s ${ease}, width .9s ${ease}, height .9s ${ease}`, animation: gone ? 'fh-mm-out .36s cubic-bezier(.5,0,.8,.4) forwards' : `fh-mm-in .95s ${ease} ${fresh ? i * 70 : 0}ms backwards` } },
+        E('div', { key: 'j' + jn, style: { position: 'absolute', inset: 0, '--fl': `${-5 - (i % 3) * 2}px`, animation: `fh-mm-jelly .9s ease ${jn ? 0 : fresh ? 300 + i * 70 : 120}ms backwards, fh-mm-float ${(5.5 + (i % 4) * 0.8).toFixed(1)}s ease-in-out ${(1.4 + i * 0.37).toFixed(2)}s infinite` } },
+          E('div', { className: 'fh-mm-b' + (on ? ' on' : '') + (drag ? ' drag' : ''), onClick: () => this.mindTap(it), style: { '--c': c, '--bd': `${8 + (i % 5) * 1.3}s`, cursor: drag ? 'grabbing' : on ? 'text' : 'grab' } },
             E('textarea', { ref: this.mindRef(it.id), className: 'fh-mm-t', rows: 1, value: it.t, placeholder: L.mindIdeaPh, maxLength: 120, spellCheck: true, 'aria-label': `${L.mindIdeaPh} ${i + 1}`,
+              onMouseDown: (e) => { if (e.currentTarget !== document.activeElement) e.preventDefault(); },
               onChange: (e) => this.mindText(it.id, e), onFocus: () => this.setState({ mindOn: it.id }), onBlur: () => this.mindDone(it.id), onKeyDown: (e) => this.mindKey(it.id, e),
-              style: { width: Math.round(d * 0.74), height: tf.h, font: `600 ${tf.fs}px/1.18 Geist, system-ui, sans-serif`, transition: 'font-size .3s, height .3s' } }),
+              style: { width: Math.round(d * 0.74), height: tf.h, font: `600 ${tf.fs}px/1.18 Geist, system-ui, sans-serif`, cursor: 'inherit', transition: 'font-size .3s, height .3s' } }),
             it.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindDel(it.id); } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null))));
     });
     // la bulle du sujet, au centre
     const tt = fit(m.title || L.mindTitlePh, Wc * 0.92, 0.17, D), onT = st.mindOn === 'title';
-    kids.push(E('div', { key: 'center', style: { position: 'absolute', left: Math.round(cx - Wc / 2), top: Math.round(cy - D / 2), width: Wc, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
+    const ccRgb = m.cc ? hexRgb(m.cc) : accRgb;
+    kids.push(E('div', { key: 'center', 'data-menu': 'mmb:title', style: { position: 'absolute', left: Math.round(cx - Wc / 2), top: Math.round(cy - D / 2), width: Wc, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
       E('div', { key: 'cj' + (n ? 1 : 0), style: { position: 'absolute', inset: 0, animation: n ? `fh-mm-jelly .9s ease both` : 'fh-pop .7s cubic-bezier(.2,.9,.3,1.3) both' } },
-        E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': accRgb, '--bd': '11s', cursor: 'text' } },
+        E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': ccRgb, '--bd': '11s', cursor: 'text' } },
           E('textarea', { ref: this.mindRef('title'), className: 'fh-mm-t', rows: 1, value: m.title, placeholder: L.mindTitlePh, maxLength: 60, spellCheck: true, 'aria-label': L.mindTitlePh, autoFocus: !m.title && !n,
+            onMouseDown: (e) => { if (e.button === 2 && e.currentTarget !== document.activeElement) e.preventDefault(); },
             onChange: this.mindTitle, onFocus: () => this.setState({ mindOn: 'title' }), onBlur: () => { this.setState({ mindOn: null }); this.mindTitleDone(false); }, onKeyDown: (e) => this.mindKey('title', e),
             style: { width: Math.round(Wc * 0.76), height: tt.h, font: `${clampW(font, 700)} ${tt.fs}px/1.18 ${stack(font)}`, transition: 'font-size .3s, height .3s' } })))));
     kids.push(E('div', { key: 'beta', style: { position: 'absolute', left: 18, bottom: 16, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 8px', borderRadius: 999, font: '600 12.5px/1 Geist, system-ui, sans-serif', color: 'rgba(31,29,43,.62)', background: `rgba(${accRgb},.08)`, boxShadow: `inset 0 0 0 1px rgba(${accRgb},.18)`, pointerEvents: 'none' } },
       E('span', { style: { padding: '3px 6px', borderRadius: 6, font: '700 10px/1 Geist, system-ui, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', color: '#ffffff', background: `rgb(${accRgb})` } }, L.beta), L.mindBeta));
     if (!n) kids.push(E('div', { key: 'hint', style: { position: 'absolute', left: 0, right: 0, top: Math.round(cy + D / 2 + 26), textAlign: 'center', font: '500 15px/1.3 Geist, system-ui, sans-serif', color: 'rgba(31,29,43,.55)', pointerEvents: 'none', animation: 'fh-mm-hint 2.4s ease-in-out infinite' } }, L.mindHint));
-    return E('div', { 'data-menu': 'mind', 'data-tour': 'mind', onPointerDown: this.mindBgDown, onClick: this.mindBgClick, style: { position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', background: '#ffffff', color: '#1f1d2b', userSelect: 'text' } }, kids);
+    return E('div', { 'data-menu': 'mind', 'data-tour': 'mind', onPointerDown: this.mindBgDown, onClick: this.mindBgClick, style: { position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', background: '#ffffff', color: '#1f1d2b', userSelect: st.mindDrag ? 'none' : 'text' } }, kids);
   };
   // ---------- élan : la note ou l'image penche quand on la tire, puis glisse un peu quand on la lâche ----------
   track = (d, e) => {
@@ -3610,14 +3685,20 @@ class Component extends DCLogic {
           { key: 'ko', icon: 'open_in_full', label: L.mOpen, act: () => this.setMode(full) },
           sep, { key: 'ku', icon: 'close', label: L.unpin, act: () => this.pinTool(which) }];
       };
+      const mmb = M.kind === 'mmb' ? (M.id === 'title' ? { id: 'title', c: st.mind.cc || '' } : st.mind.items.find(x => x.id === M.id)) : null;
+      const mmbItems = () => { if (!mmb) return []; const i = st.mind.items.indexOf(mmb), cur = mmb.id === 'title' ? (mmb.c || s.accent || '').toLowerCase() : (mmb.c || MIND_HEX[i % MIND_HEX.length]);
+        return [{ key: 'mc', icon: 'palette', label: L.color, sub: () => [{ key: 'sw-mm', swatches: MIND_HEX, cur, pick: (c) => this.mindPatch(mmb.id, { c }) }] },
+          mmb.p ? { key: 'mp', icon: 'undo', label: L.mindPlace, act: () => this.mindPatch(mmb.id, { p: null }) } : null,
+          mmb.id !== 'title' ? sep : null, mmb.id !== 'title' ? { key: 'md', icon: 'delete', label: L.mindDel, danger: true, act: () => this.mindDel(mmb.id) } : null].filter(Boolean); };
       const mindItems = () => [
         { key: 'mnew', icon: 'restart_alt', label: L.mindNew, act: this.mindNew },
+        st.mind.items.some(x => x.p) ? { key: 'mtidy', icon: 'hub', label: L.mindTidy, act: this.mindTidy } : null,
         sep,
         { key: 'note', icon: 'sticky_note_2', label: kh(L.noteNew), act: () => this.addNote(M.x, M.y) },
         { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: kh(L.fullscreen), act: this.toggleFs },
         settings,
-        { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) }];
-      const items0 = M.kind === 'mind' ? mindItems() : M.kind === 'time' ? timeItems() : M.kind === 'date' ? dateItems() : M.kind === 'note' ? noteItems() : M.kind === 'pic' ? picItems() : M.kind === 'pin' ? pinItems() : bgItems();
+        { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) }].filter(Boolean);
+      const items0 = M.kind === 'mmb' ? mmbItems() : M.kind === 'mind' ? mindItems() : M.kind === 'time' ? timeItems() : M.kind === 'date' ? dateItems() : M.kind === 'note' ? noteItems() : M.kind === 'pic' ? picItems() : M.kind === 'pin' ? pinItems() : bgItems();
       const levels = [items0];
       M.open.forEach((o, i) => { const it = (levels[i] || []).find(x => x.key === o.key); if (it && it.sub) levels.push(it.sub()); });
       const panelBg = dark ? 'rgba(31,30,29,.97)' : 'rgba(251,250,248,.98)';
