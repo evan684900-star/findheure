@@ -25,7 +25,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,image,landscape,link,mic,mic_off,more_vert,music_note,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,upload_file,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,help,hourglass_top,hub,image,landscape,link,mic,mic_off,more_vert,music_note,new_releases,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,upload_file,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -83,6 +83,28 @@ a{color:inherit}a:hover{opacity:.8}
 ::view-transition-group(fh-menu0),::view-transition-group(fh-menu1),::view-transition-group(fh-menu2),::view-transition-group(fh-menu3),::view-transition-new(fh-menu0),::view-transition-new(fh-menu1),::view-transition-new(fh-menu2),::view-transition-new(fh-menu3){animation:none}
 @media (prefers-reduced-motion:reduce){.fh-row{animation:none!important}}
 .fh-mi:hover{background:var(--mh)!important}
+/* carte mentale : bulles en verre liquide (reflet en haut, lumière qui se concentre en bas, contour qui ondule) */
+.fh-mm-b{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
+background:radial-gradient(120% 120% at 30% 16%,rgba(255,255,255,.96) 0%,rgba(255,255,255,.6) 24%,rgba(var(--c),.12) 50%,rgba(var(--c),.32) 100%);
+box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.9),inset 0 -16px 30px rgba(var(--c),.32),inset 0 12px 24px rgba(255,255,255,.8),inset 12px 0 26px rgba(var(--c),.12),inset -8px -4px 18px rgba(var(--c),.16),0 24px 46px -18px rgba(var(--c),.7),0 4px 14px rgba(20,20,40,.08);
+animation:fh-mm-blob var(--bd,9s) ease-in-out infinite;transition:transform .55s cubic-bezier(.3,1.6,.5,1),box-shadow .4s ease}
+.fh-mm-b::before{content:'';position:absolute;left:15%;top:7%;width:46%;height:25%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,0));transform:rotate(-16deg);pointer-events:none}
+.fh-mm-b::after{content:'';position:absolute;left:24%;right:24%;bottom:6%;height:15%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
+.fh-mm-b:hover{transform:scale(1.05)}
+.fh-mm-b.on{transform:scale(1.09);box-shadow:inset 0 0 0 2px rgba(var(--c),.55),inset 0 -16px 30px rgba(var(--c),.38),inset 0 12px 24px rgba(255,255,255,.8),inset 12px 0 26px rgba(var(--c),.14),0 30px 56px -18px rgba(var(--c),.8),0 0 0 7px rgba(var(--c),.12)}
+.fh-mm-t{position:relative;z-index:1;display:block;box-sizing:border-box;margin:0;padding:0;border:0;outline:0;resize:none;overflow:hidden;background:transparent;text-align:center;color:#1f1d2b;caret-color:rgb(var(--c));scrollbar-width:none}
+.fh-mm-t::placeholder{color:rgba(31,29,43,.34)}
+.fh-mm-x{position:absolute;right:6%;top:6%;z-index:2;width:28px;height:28px;border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1f1d2b;
+background:radial-gradient(circle at 35% 25%,#fff,rgba(255,255,255,.75));box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 4px 12px rgba(var(--c),.45);opacity:0;transform:scale(.6);transition:opacity .2s,transform .35s cubic-bezier(.3,1.6,.5,1)}
+.fh-mm-p:hover .fh-mm-x,.fh-mm-x:focus-visible{opacity:1;transform:scale(1)}
+@keyframes fh-mm-blob{0%,100%{border-radius:50% 50% 50% 50%/50% 50% 50% 50%}25%{border-radius:53% 47% 51% 49%/48% 53% 47% 52%}50%{border-radius:48% 52% 46% 54%/53% 47% 54% 46%}75%{border-radius:51% 49% 54% 46%/46% 52% 48% 54%}}
+@keyframes fh-mm-in{from{transform:translate(var(--fx),var(--fy)) scale(.2);opacity:0}}
+@keyframes fh-mm-out{to{transform:var(--to) scale(.15);opacity:0}}
+@keyframes fh-mm-jelly{0%{transform:scale(1,1)}22%{transform:scale(1.14,.86)}42%{transform:scale(.92,1.08)}62%{transform:scale(1.05,.96)}80%{transform:scale(.98,1.02)}100%{transform:scale(1,1)}}
+@keyframes fh-mm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(var(--fl,-7px))}}
+@keyframes fh-mm-line{from{transform:scaleX(0);opacity:0}}
+@keyframes fh-mm-hint{0%,100%{opacity:.55}50%{opacity:1}}
+[data-q="low"] .fh-mm-b{animation:none}
 /* chaque menu sur son propre calque : le décor animé dessous ne le force pas à se redessiner */
 .fh-menu{will-change:transform;contain:layout paint}
 .fh-menu::-webkit-scrollbar{width:8px}.fh-menu::-webkit-scrollbar-thumb{background:var(--mh);border-radius:8px}
@@ -217,16 +239,16 @@ a{color:inherit}a:hover{opacity:.8}
       <div data-tour="modes" style="position: relative; display: flex; gap: 2px; flex-shrink: 0;">
         <div ref="{{ modePillRef }}" style="position: absolute; left: 0; top: 0; width: 0; height: 38px; border-radius: 11px; pointer-events: none; opacity: 0; background: {{ pill.bg }}; box-shadow: {{ pill.ring }};"></div>
         <sc-for list="{{ modes }}" as="m" hint-placeholder-count="5">
-          <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="position: relative; height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; border: 0; border-radius: 11px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; transition: background .15s, color .15s;" style-hover="background: {{ m.hover }};">
+          <button data-tour="{{ m.tour }}" title="{{ m.title }}" onClick="{{ m.pick }}" style="position: relative; height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; transition: padding .55s cubic-bezier(.3,1,.4,1), gap .55s cubic-bezier(.3,1,.4,1), background .2s; display: flex; align-items: center; justify-content: center; gap: {{ chrome.btnGap }}; border: 0; border-radius: 11px; background: {{ m.bg }}; box-shadow: {{ m.ring }}; color: {{ m.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; transition: background .15s, color .15s;" style-hover="background: {{ m.hover }};">
             <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px; animation: {{ m.anim }};">{{ m.icon }}</span>
-            <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span>{{ m.label }}</span></sc-if>
+            <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; overflow: hidden; white-space: nowrap; max-width: {{ chrome.lblW }}; opacity: {{ chrome.lblOp }}; transition: max-width .55s cubic-bezier(.3,1,.4,1), opacity .3s ease;">{{ m.label }}<sc-if value="{{ m.beta }}" hint-placeholder-val="{{ false }}"><span style="display: inline-block; margin-left: 6px; padding: 2px 5px 2px; border-radius: 6px; vertical-align: 1px; font: 700 9.5px/1 Geist, system-ui, sans-serif; letter-spacing: .06em; text-transform: uppercase; color: {{ m.betaFg }}; background: {{ m.betaBg }};">{{ L.beta }}</span></sc-if></span></sc-if>
           </button>
         </sc-for>
       </div>
       <div style="width: 1px; height: 22px; background: {{ ui.border }}; margin: 0 4px; flex-shrink: 0;"></div>
-      <button data-tour="settings" title="{{ L.settings }}" onClick="{{ openSettings }}" style="height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; display: flex; align-items: center; justify-content: center; gap: 7px; flex-shrink: 0; border: 0; border-radius: 11px; background: {{ chrome.setBg }}; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap;" style-hover="background: {{ ui.hover }};">
+      <button data-tour="settings" title="{{ L.settings }}" onClick="{{ openSettings }}" style="height: 38px; min-width: 38px; padding: {{ chrome.btnPad }}; transition: padding .55s cubic-bezier(.3,1,.4,1), gap .55s cubic-bezier(.3,1,.4,1), background .2s; display: flex; align-items: center; justify-content: center; gap: {{ chrome.btnGap }}; flex-shrink: 0; border: 0; border-radius: 11px; background: {{ chrome.setBg }}; color: {{ ui.fg }}; cursor: pointer; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap;" style-hover="background: {{ ui.hover }};">
         <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 20px;">settings</span>
-        <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span>{{ L.settings }}</span></sc-if>
+        <sc-if value="{{ chrome.labels }}" hint-placeholder-val="{{ true }}"><span style="display: inline-block; overflow: hidden; white-space: nowrap; max-width: {{ chrome.lblW }}; opacity: {{ chrome.lblOp }}; transition: max-width .55s cubic-bezier(.3,1,.4,1), opacity .3s ease;">{{ L.settings }}</span></sc-if>
       </button>
       <button data-tour="fs" title="{{ L.fullscreen }}" onClick="{{ toggleFs }}" style="width: 38px; height: 38px; padding: 0; display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 0; border-radius: 11px; background: transparent; color: {{ ui.fg }}; cursor: pointer;" style-hover="background: {{ ui.hover }};">
         <span style="font-family: 'Material Symbols Rounded'; line-height: 1; display: inline-block; white-space: nowrap; letter-spacing: normal; text-transform: none; direction: ltr; font-feature-settings: 'liga'; font-size: 21px;">{{ chrome.fsIcon }}</span>
@@ -417,6 +439,8 @@ a{color:inherit}a:hover{opacity:.8}
   <sc-if value="{{ menuUi.on }}" hint-placeholder-val="{{ false }}">{{ menuUi.el }}</sc-if>
   <sc-if value="{{ tour.show }}" hint-placeholder-val="{{ false }}">{{ tour.el }}</sc-if>
 
+  <sc-if value="{{ news.show }}" hint-placeholder-val="{{ false }}">{{ news.el }}</sc-if>
+
   <sc-if value="{{ toast.show }}" hint-placeholder-val="{{ false }}">
     <div style="position: absolute; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 72; display: flex; align-items: center; gap: 14px; padding: 10px 12px 10px 16px; border-radius: 12px; background: {{ ui.invBg }}; color: {{ ui.invFg }}; font: 500 13.5px/1 Geist, system-ui, sans-serif; white-space: nowrap; box-shadow: 0 10px 30px rgba(0,0,0,.25);">
       <span>{{ toast.msg }}</span>
@@ -430,6 +454,40 @@ a{color:inherit}a:hover{opacity:.8}
 <script type="text/x-dc" data-dc-script>
 const LANGS = ['fr', 'en', 'es', 'de'];
 const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
+// ---------- nouveautés : affichées au démarrage suivant, toutes celles pas encore vues (les plus récentes en haut) ----------
+// chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
+const NEWSKEY = 'findheure:news:v1';
+const NEWS = [
+  { id: '2026-11-03', items: [
+    'Nouveau mode « Carte mentale », en version bêta (barre du haut) : écris le sujet dans la bulle du centre, puis tes idées dans les bulles qui apparaissent autour. Une bulle de plus arrive dès qu’elles sont toutes remplies.|New “Mind map” mode, in beta (top bar): write the topic in the centre bubble, then your ideas in the bubbles around it. One more bubble appears as soon as they are all filled.',
+    'Nouveau réglage : au repos, la barre du haut peut se replier sur ses icônes au lieu de disparaître (Paramètres → Interface → La barre au repos).|New setting: when idle, the top bar can shrink to its icons instead of disappearing (Settings → Interface → Bar when idle).',
+    'Ce message de nouveautés : au démarrage, il regroupe tout ce qui a changé depuis ta dernière visite. On le retrouve aussi dans le menu du fond.|This “What’s new” message: at start-up it lists everything that changed since your last visit. It is also in the background menu.'] },
+  { id: '2026-11-02', items: [
+    'Le menu Thèmes s’ouvre sans à-coup.|The Themes menu opens smoothly.',
+    'Tout le cadre de l’heure ouvre son menu (clic gauche ou droit), même entre les chiffres, et aussi pendant le tuto.|The whole clock frame opens its menu (left or right click), even between digits, and during the tour too.',
+    'Barre du haut : la pastille du mode actif glisse d’un bouton à l’autre.|Top bar: the active-mode pill slides from one button to the next.'] },
+  { id: '2026-10-31', items: [
+    'Nouveau thème Gotham City, avec le Bat-Signal dans le ciel.|New Gotham City theme, with the Bat-Signal in the sky.',
+    'Nouveau mode Pile ou face : une vraie pièce qui tourne en l’air, aux couleurs du thème ; on peut écrire ce que veut dire chaque côté.|New Heads or tails mode: a real coin spinning in the air, in the theme’s colours; you can write what each side means.'] },
+  { id: '2026-10-10', items: [
+    'Réglage Qualité de l’image : Ultra, Haute, Moyenne ou Faible (pour les vieux ordinateurs).|Image quality setting: Ultra, High, Medium or Low (for old computers).',
+    'L’heure en fenêtre flottante, par-dessus PowerPoint ou un PDF (touche P).|The clock in a floating window, above PowerPoint or a PDF (P key).',
+    'Les thèmes s’ouvrent en cercle depuis le clic, les notes et images glissent avec élan, les menus s’affichent ligne par ligne.|Themes open in a circle from your click, notes and images glide, menus appear line by line.'] },
+  { id: '2026-10-09', items: [
+    '« Annuler » après un changement de thème (ou Ctrl+Z), et raccourcis clavier désactivables.|“Undo” after a theme change (or Ctrl+Z), and keyboard shortcuts can be turned off.'] },
+  { id: '2026-10-08', items: [
+    'Les décors réagissent quand on les touche.|Backgrounds react when you touch them.',
+    'Horloge à aiguilles, et ciel qui suit l’heure réelle.|Analog clock, and a sky that follows the real time of day.',
+    'Interface simplifiée : on clique sur ce qu’on veut changer. Nouveau thème Londres, beaucoup plus de salutations.|Simpler interface: click what you want to change. New London theme, many more greetings.'] },
+  { id: '2026-10-07', items: [
+    'Durée de minuteur personnalisée et guide complet interactif.|Custom timer length and a full interactive guide.',
+    'Images à poser à côté de l’heure, et un décor animé pour chaque thème.|Images next to the clock, and an animated background for every theme.'] },
+  { id: '2026-10-06', items: [
+    'Sonomètre, mode « Site ou image », minuteur et chrono à épingler sur l’horloge.|Sound meter, “Website or image” mode, timer and stopwatch pinned on the clock.'] },
+];
+const MKEY = 'findheure:mind:v1';
+// teintes des bulles de la carte mentale (en r,g,b pour les transparences)
+const MIND_C = ['91,140,255', '255,107,154', '46,196,182', '255,170,40', '155,107,255', '255,122,69', '58,176,255', '76,199,100'];
 const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1', TOURKEY = 'findheure:tour:v1', PKEY = 'findheure:pics:v1';
 const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
 
@@ -515,6 +573,7 @@ const T_RAW = {
   ofDay: "de la journée|of the day|del día|des Tages", uiTheme: "Thème de l’interface|Interface theme|Tema de la interfaz|Oberflächen-Thema",
   th_auto: "Auto|Auto|Auto|Auto", th_dark: "Sombre|Dark|Oscuro|Dunkel", th_light: "Clair|Light|Claro|Hell",
   autoHide: "Masquer la barre au repos|Hide the bar when idle|Ocultar la barra en reposo|Leiste bei Inaktivität ausblenden",
+  barHide: "La barre au repos|Bar when idle|Barra en reposo|Leiste bei Inaktivität", bh_hide: "Disparaît|Disappears|Desaparece|Verschwindet", bh_icons: "Se replie (icônes)|Shrinks to icons|Solo iconos|Nur Symbole",
   hideDelay: "Délai avant masquage|Hide after|Ocultar tras|Ausblenden nach", hideCursor: "Masquer le curseur au repos|Hide cursor when idle|Ocultar el cursor en reposo|Mauszeiger bei Inaktivität ausblenden",
   cat_spooky: "Halloween|Halloween|Halloween|Halloween", spooky: "Halloween|Halloween|Halloween|Halloween", grid: "Grille|Grid|Cuadrícula|Raster",
   m_spooky: "Halloween|Halloween|Halloween|Halloween", happyHalloween: "Joyeux Halloween 🎃|Happy Halloween 🎃|¡Feliz Halloween! 🎃|Fröhliches Halloween 🎃",
@@ -538,6 +597,10 @@ const T_RAW = {
   md_coin: "Pile ou face|Heads or tails|Cara o cruz|Kopf oder Zahl", coinFace: "Face|Heads|Cara|Kopf", coinPile: "Pile|Tails|Cruz|Zahl", coinFlip: "Lancer la pièce|Flip the coin|Lanzar la moneda|Münze werfen",
   coinMenu: "Ce que veut dire chaque côté|What each side means|Qué significa cada lado|Was jede Seite bedeutet", coinPh: "à écrire (facultatif)|type here (optional)|escribe aquí (opcional)|hier eintippen (optional)", coinAir: "La pièce est en l’air…|The coin is in the air…|La moneda está en el aire…|Die Münze fliegt…", coinSound: "Son de la pièce|Coin sound|Sonido de la moneda|Münzgeräusch",
   md_show: "Site ou image|Website or image|Sitio o imagen|Website oder Bild",
+  md_mind: "Carte mentale|Mind map|Mapa mental|Mindmap", beta: "Bêta|Beta|Beta|Beta", mindBeta: "Carte mentale · version bêta|Mind map · beta version|Mapa mental · versión beta|Mindmap · Beta-Version", newsT: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?", newsOk: "C’est noté !|Got it!|¡Entendido!|Verstanden!", newsMenu: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?",
+  newsSub: "Depuis ta dernière visite|Since your last visit|Desde tu última visita|Seit deinem letzten Besuch", newsAll: "Toutes les nouveautés|All updates|Todas las novedades|Alle Neuerungen", mindTitlePh: "Le sujet…|The topic…|El tema…|Das Thema…", mindIdeaPh: "Une idée…|An idea…|Una idea…|Eine Idee…",
+  mindHint: "Écris le sujet, puis Entrée|Write the topic, then Enter|Escribe el tema y pulsa Intro|Thema eingeben, dann Enter", mindNew: "Nouvelle carte mentale|New mind map|Nuevo mapa mental|Neue Mindmap",
+  mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
   showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
   showUrlPh: "Adresse du site (lien YouTube, Google Slides, Canva…)|Website address (YouTube, Google Slides, Canva link…)|Dirección del sitio (enlace de YouTube, Google Slides, Canva…)|Adresse der Website (YouTube-, Google-Slides-, Canva-Link …)",
@@ -598,7 +661,7 @@ const T_RAW = {
   tour2t: "Clique sur le fond|Click the background|Haz clic en el fondo|Klicke auf den Hintergrund",
   tour2: "Thèmes, décor, couleurs, ta photo, notes, images, plein écran : tout est dans le menu du fond. Le clic droit marche aussi partout.|Themes, scenery, colors, your photo, notes, images, fullscreen: it’s all in the background menu. Right-click works everywhere too.|Temas, decorado, colores, tu foto, notas, imágenes, pantalla completa: todo está en el menú del fondo. El clic derecho también funciona.|Themen, Kulisse, Farben, dein Foto, Notizen, Bilder, Vollbild: alles im Menü des Hintergrunds. Rechtsklick geht überall.",
   tour3t: "Minuteur, chrono…|Timer, stopwatch…|Temporizador, cronómetro…|Timer, Stoppuhr …",
-  tour3: "En haut : l’horloge, le minuteur, le chrono, le sonomètre et l’affichage d’un site ou d’une image.|At the top: clock, timer, stopwatch, sound meter and showing a website or an image.|Arriba: reloj, temporizador, cronómetro, sonómetro y mostrar un sitio o una imagen.|Oben: Uhr, Timer, Stoppuhr, Lärmampel und Anzeige einer Website oder eines Bildes.",
+  tour3: "En haut : l’horloge, le minuteur, le chrono, pile ou face, la carte mentale, le sonomètre et l’affichage d’un site ou d’une image.|At the top: clock, timer, stopwatch, heads or tails, mind map, sound meter and showing a website or an image.|Arriba: reloj, temporizador, cronómetro, cara o cruz, mapa mental, sonómetro y mostrar un sitio o una imagen.|Oben: Uhr, Timer, Stoppuhr, Kopf oder Zahl, Mindmap, Lärmampel und Anzeige einer Website oder eines Bildes.",
   tour4t: "Paramètres|Settings|Ajustes|Einstellungen",
   tour4: "Format de l’heure, date, langue, position… et, tout en bas, les réglages avancés.|Time format, date, language, position… and advanced settings at the bottom.|Formato de la hora, fecha, idioma, posición… y abajo, los ajustes avanzados.|Zeitformat, Datum, Sprache, Position … und ganz unten die erweiterten Einstellungen.",
   tour5t: "Besoin d’aide ?|Need help?|¿Necesitas ayuda?|Hilfe gebraucht?",
@@ -681,7 +744,7 @@ const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
 const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop', 'zoom', 'spin', 'swirl', 'melt', 'bounce', 'jelly', 'glitch', 'slot'];
 const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .85, glitch: .55, slot: .7 };
 const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
-const MODES = ['clock', 'timer', 'stopwatch', 'coin', 'sound', 'show'];
+const MODES = ['clock', 'timer', 'stopwatch', 'coin', 'mind', 'sound', 'show'];
 const pinView = (m) => m === 'clock' || m === 'show';
 // adresse tapée → adresse affichable (YouTube et Google Docs/Slides convertis en liens « intégrables »)
 function showUrl(u, forTab) {
@@ -1226,7 +1289,7 @@ const BASE = {
   vignette: 35, grain: 0, scanlines: false, tick: false,
   hour12: false, ampm: true, seconds: 'small', leadingZero: true, sep: ':', blink: false, digits: 'auto', tz: 'local', showZone: false,
   showDate: true, dateFmt: 'full', locale: 'auto', calendar: 'gregory', weekNum: false, uiLang: 'fr',
-  pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, hideDelay: 4, hideCursor: true,
+  pos: 'c', datePos: 'below', gap: 100, msg: 'none', msgText: '', cities: [], progress: false, uiTheme: 'auto', autoHide: true, barHide: 'hide', hideDelay: 4, hideCursor: true,
   weird: 'none', weirdSpeed: 50, gridLit: '#4ade80', gridLine: '#ffffff', gridSize: 56, gridTilt: 52, gridTurn: -16, gridTrail: 50, gridIdle: true, mode: 'clock',
   coinFace: '', coinPile: '', coinSound: true, quality: 'medium', keys: true, decoTap: true, sky: 'auto', clockType: 'digital', anaNums: true, anaMins: false, anaColor: false, anaSec: true,
   scene: 'winter', autoTheme: false, autoId: '', tmVisual: true, pinTimer: false, pinSw: false, pinSnd: false, pinPos: {}, pinScale: {}, showType: '', showUrl: '', showMedia: '', showPos: null, showSize: 64, sndThr: 65, sndSens: 50, sndBeep: false, alarmSnd: 'chime', alarmVol: 90,
@@ -1414,7 +1477,11 @@ class Component extends DCLogic {
     if (!QUALITIES.includes(s.quality)) s.quality = 'medium';
     ['coinFace', 'coinPile'].forEach(k => { if (typeof s[k] !== 'string') s[k] = ''; });
     if (!['digital', 'analog', 'both'].includes(s.clockType)) s.clockType = 'digital';
+    if (!['hide', 'icons'].includes(s.barHide)) s.barHide = 'hide';
     if (s.msg === 'spooky') s.msg = 'theme';
+    const mind0 = loadJSON(MKEY, null) || {}, mind = { title: typeof mind0.title === 'string' ? mind0.title.slice(0, 60) : '', items: Array.isArray(mind0.items) ? mind0.items.filter(x => x && typeof x.id === 'string').map(x => ({ id: x.id, t: String(x.t || '').slice(0, 120) })).slice(0, 24) : [] };
+    // carte abîmée ou ancienne : au moins 6 bulles, et une vide de plus si toutes sont écrites
+    if (mind.items.length) { const nid = (i) => 'b' + Date.now().toString(36) + i; while (mind.items.length < 6) mind.items.push({ id: nid(mind.items.length), t: '' }); if (mind.items.length < 24 && mind.items.every(x => x.t.trim())) mind.items.push({ id: nid(99), t: '' }); }
     const styles = loadJSON(STKEY, []), notes = loadJSON(NKEY, []), tools = loadJSON(TKEY, {}) || {}, pics = loadJSON(PKEY, []);
     const tm = { dur: 300000, left: 300000, endAt: null, done: false, ...(tools.tm || {}) };
     const sw = { start: null, acc: 0, laps: [], ...(tools.sw || {}) };
@@ -1424,7 +1491,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { news: null, mind, mindGone: [], mindOn: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -1433,6 +1500,17 @@ class Component extends DCLogic {
   cells = new Map();
   zTop = 10;
 
+  newsInit = (known) => {
+    let seen = null; try { seen = localStorage.getItem(NEWSKEY); } catch (e) {}
+    const latest = NEWS[0].id;
+    if (seen === latest) return;
+    if (!known) { this.newsSeen(); return; }
+    const list = NEWS.filter(n => !seen || n.id > seen);
+    if (list.length) this.newsT = setTimeout(() => { if (this.state.tour == null) this.setState({ news: list }); }, 900);
+  };
+  newsSeen = () => { try { localStorage.setItem(NEWSKEY, NEWS[0].id); } catch (e) {} };
+  newsClose = () => { this.newsSeen(); this.setState({ news: null }); this.activity(); };
+  newsOpen = () => { this.closeMenu(); this.setState({ news: NEWS }); };
   componentDidMount() {
     const s = this.state.s;
     this.ensureFonts([s.font, s.dateFont]);
@@ -1469,7 +1547,9 @@ class Component extends DCLogic {
     // (seulement s'il n'est pas déjà fini : sinon une vieille sonnerie partirait au premier clic, des heures plus tard)
     if (this.state.tm.endAt && this.state.tm.endAt > Date.now()) this.planAlarm(this.state.tm.endAt);
     this.applyAuto();
+    const known = !!loadJSON(TOURKEY, false) || localStorage.getItem(SKEY) != null;
     if (!loadJSON(TOURKEY, false)) this.tourT = setTimeout(this.startTour, 1200);
+    this.newsInit(known);
     if (this.state.notes.length) this.ensureFont('Caveat');
     this.zTop = [...this.state.notes, ...this.state.pics].reduce((m, n) => Math.max(m, n.z || 0), 10);
     DB.all().then(list => {
@@ -1483,13 +1563,15 @@ class Component extends DCLogic {
   modePillRef = (el) => { this.pillEl = el; if (el) requestAnimationFrame(() => this.placeModePill()); };
   placeModePill = () => {
     const el = this.pillEl; if (!el || !el.isConnected) return;
+    const cp = !!(this.state.idle && this.state.s.autoHide && this.state.s.barHide === 'icons');
+    if (cp !== this.pillCp) { const was = this.pillCp; this.pillCp = cp; if (was != null) { this.pillFollow = performance.now() + 700; cancelAnimationFrame(this.pillRaf); const loop = () => { this.placeModePill(); if (performance.now() < this.pillFollow) this.pillRaf = requestAnimationFrame(loop); else this.pillFollow = 0; }; this.pillRaf = requestAnimationFrame(loop); } }
     const b = el.parentElement.querySelector(`[data-tour="mode-${this.state.s.mode}"]`);
     if (!b || !b.offsetWidth) { el.style.opacity = '0'; this.pillAt = null; return; }
     const x = b.offsetLeft, w = b.offsetWidth, k = x + '|' + w;
     if (k === this.pillAt) return;
     const first = !this.pillAt; this.pillAt = k;
     const ease = 'cubic-bezier(.3,1.25,.45,1)';
-    el.style.transition = first ? 'none' : `transform .45s ${ease}, width .45s ${ease}`;
+    el.style.transition = first || this.pillFollow ? 'none' : `transform .45s ${ease}, width .45s ${ease}`;
     el.style.transform = `translateX(${x}px)`; el.style.width = w + 'px'; el.style.opacity = '1';
   };
   componentDidUpdate() {
@@ -1983,6 +2065,110 @@ class Component extends DCLogic {
     this.setState(st => ({ gone: [...st.gone, id] }));
     setTimeout(() => this.setState(st => ({ gone: st.gone.filter(x => x !== id), notes: st.notes.filter(n => n.id !== id) }), this.saveNotes), 420);
   };
+
+  // ---------- carte mentale : une bulle au centre pour le sujet, puis 6 bulles autour (une de plus dès qu'elles sont toutes remplies) ----------
+  mindRefs = {};
+  mindRef = (id) => this.mindRefs['r' + id] || (this.mindRefs['r' + id] = (el) => { this.mindRefs[id] = el; });
+  mindSave = () => { clearTimeout(this.mindT); this.mindT = setTimeout(() => { try { localStorage.setItem(MKEY, JSON.stringify(this.state.mind)); } catch (e) {} }, 250); };
+  mindId = () => 'b' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  // au moins 6 bulles ; quand elles sont toutes écrites, une bulle vide de plus (24 au maximum)
+  mindFix = (items) => {
+    const out = items.slice();
+    while (out.length < 6) out.push({ id: this.mindId(), t: '' });
+    if (out.length < 24 && out.every(x => x.t.trim())) out.push({ id: this.mindId(), t: '' });
+    return out;
+  };
+  setMind = (fn, after) => this.setState(st => ({ mind: fn(st.mind) }), () => { this.mindSave(); if (after) after(); });
+  mindTitle = (e) => { const v = e.target.value.replace(/\n/g, ' ').slice(0, 60); this.setMind(m => ({ ...m, title: v })); };
+  // le sujet est écrit : les bulles jaillissent du centre, et on peut écrire tout de suite dans la première
+  mindTitleDone = (focus) => {
+    const m = this.state.mind;
+    if (!m.title.trim() || m.items.length) { if (focus && m.items.length) this.mindFocus(m.items.find(x => !x.t.trim()) || m.items[0]); return; }
+    this.mindPop = Date.now();
+    this.setMind(mm => ({ ...mm, items: this.mindFix([]) }), () => { if (focus) setTimeout(() => this.mindFocus(this.state.mind.items[0]), 520); });
+  };
+  mindText = (id, e) => { const v = e.target.value.replace(/\n/g, ' ').slice(0, 120); this.setMind(m => ({ ...m, items: m.items.map(x => (x.id === id ? { ...x, t: v } : x)) })); };
+  mindDone = (id, after) => { this.setState({ mindOn: null }); this.setMind(m => ({ ...m, items: this.mindFix(m.items) }), after); };
+  mindFocus = (it) => { const el = it && this.mindRefs[it.id]; if (el) { el.focus(); const n = el.value.length; try { el.setSelectionRange(n, n); } catch (e) {} } };
+  mindKey = (id, e) => {
+    if (e.key === 'Escape') { e.preventDefault(); e.target.blur(); return; }
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    e.preventDefault();
+    if (id === 'title') { this.mindTitleDone(true); return; }
+    // Entrée : bulle suivante encore vide (la nouvelle si toutes sont remplies)
+    this.mindDone(id, () => {
+      const its = this.state.mind.items, i = its.findIndex(x => x.id === id);
+      const next = its.slice(i + 1).find(x => !x.t.trim()) || its.find(x => !x.t.trim());
+      if (next) setTimeout(() => this.mindFocus(next), 60);
+    });
+  };
+  mindDel = (id) => {
+    if (this.state.mindGone.includes(id)) return;
+    this.setState(st => ({ mindGone: [...st.mindGone, id] }));
+    setTimeout(() => { this.setState(st => ({ mindGone: st.mindGone.filter(x => x !== id) })); this.setMind(m => ({ ...m, items: this.mindFix(m.items.filter(x => x.id !== id)) })); }, 360);
+  };
+  mindNew = () => {
+    const prev = this.state.mind;
+    this.setMind(() => ({ title: '', items: [] }), () => setTimeout(() => { const el = this.mindRefs.title; if (el) el.focus(); }, 80));
+    this.toast(this.L().mindCleared, () => { this.setMind(() => prev); this.setState({ toast: null }); });
+  };
+  // clic sur le fond blanc : ouvre son menu, sauf si on était en train d'écrire (le clic sert alors juste à sortir de la bulle)
+  mindBgDown = (e) => { const a = document.activeElement; this.mindWasTyping = !!(a && a.classList && a.classList.contains('fh-mm-t')); };
+  mindBgClick = (e) => { if (e.target !== e.currentTarget || this.mindWasTyping) return; this.menuAt(e.clientX, e.clientY, e.currentTarget); };
+  mindView = (E, st, L, font) => {
+    const m = st.mind, vw = st.vw, vh = st.vh, top = 84, bot = vh - 24, cx = vw / 2, cy = (top + bot) / 2, accRgb = hexRgb(st.s.accent);
+    const D = Math.round(Math.max(150, Math.min(Math.min(vw, vh - 90) * 0.32, 340)));
+    const items = m.items, n = items.length;
+    const base = Math.max(96, Math.min(Math.min(vw, vh) * 0.21, 240));
+    const rx0 = Math.min(vw * 0.35, vw / 2 - base / 2 - 18), ry0 = Math.min((bot - top) * 0.37, (bot - top) / 2 - base / 2 - 6);
+    const per = Math.PI * (3 * (rx0 + ry0) - Math.sqrt((3 * rx0 + ry0) * (rx0 + 3 * ry0)));
+    const d = Math.round(Math.max(76, Math.min(base, n ? per / n * 0.84 : base)));
+    const rx = Math.min(vw * 0.36, vw / 2 - d / 2 - 16), ry = Math.min((bot - top) * 0.38, (bot - top) / 2 - d / 2 - 4);
+    const ease = 'cubic-bezier(.3,1.32,.45,1)', fresh = Date.now() - (this.mindPop || 0) < 1500;
+    // taille du texte selon la place et la longueur ; nombre de lignes estimé pour centrer la zone de saisie
+    const fit = (txt, w, k0) => {
+      // jamais de mot coupé en deux : le mot le plus long doit tenir sur une ligne
+      const len = txt.length, longest = Math.max(1, ...txt.split(/\s+/).map(x => x.length));
+      const fs = Math.round(Math.max(11, Math.min(w * (len <= 12 ? k0 : len <= 30 ? k0 * 0.84 : len <= 60 ? k0 * 0.7 : k0 * 0.58), w * 0.72 / (longest * 0.56))));
+      let lines = 1, cur = 0; const cpl = Math.max(4, Math.floor(w * 0.72 / (fs * 0.56)));
+      txt.split(/\s+/).forEach(wd => { if (cur && cur + 1 + wd.length > cpl) { lines++; cur = wd.length; } else cur += (cur ? 1 : 0) + wd.length; });
+      lines = Math.min(6, lines);
+      return { fs, h: Math.round(lines * fs * 1.18) };
+    };
+    const kids = [];
+    // bulles réparties à distance égale le long de l'ellipse (à angles égaux, elles se serreraient sur les côtés)
+    const S = 360, cum = [0];
+    for (let k = 1; k <= S; k++) { const a0 = -Math.PI / 2 + (k - 1) / S * Math.PI * 2, a1 = -Math.PI / 2 + k / S * Math.PI * 2; cum.push(cum[k - 1] + Math.hypot(Math.cos(a1) * rx - Math.cos(a0) * rx, Math.sin(a1) * ry - Math.sin(a0) * ry)); }
+    const angAt = (frac) => { const target = frac * cum[S]; let k = 1; while (k < S && cum[k] < target) k++; const f0 = (target - cum[k - 1]) / Math.max(1e-6, cum[k] - cum[k - 1]); return -Math.PI / 2 + (k - 1 + f0) / S * Math.PI * 2; };
+    items.forEach((it, i) => {
+      const a = angAt(i / n), x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry;
+      const c = MIND_C[i % MIND_C.length], gone = st.mindGone.includes(it.id), on = st.mindOn === it.id;
+      // trait du centre à la bulle (part du bord de la bulle centrale, s'arrête au bord de la petite)
+      const dist = Math.hypot(x - cx, y - cy), len = Math.max(0, dist - D / 2 - d / 2 + 6);
+      kids.push(E('div', { key: 'l' + it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(Math.atan2(y - cy, x - cx) * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(D / 2 - 3)}px)`, transition: `width .9s ${ease}, transform .9s ${ease}, opacity .3s`, opacity: gone ? 0 : 1, pointerEvents: 'none' } },
+        E('div', { style: { width: '100%', height: '100%', borderRadius: 3, background: `linear-gradient(90deg, rgba(${accRgb},.35), rgba(${c},.55))`, transformOrigin: '0 50%', animation: fresh ? `fh-mm-line .7s ${ease} ${180 + i * 70}ms backwards` : 'fh-mm-line .6s ease backwards' } })));
+      const tf = fit(it.t || L.mindIdeaPh, d, 0.13), to = `translate(${Math.round(x - d / 2)}px, ${Math.round(y - d / 2)}px)`;
+      kids.push(E('div', { key: 'b' + it.id, className: 'fh-mm-p', style: { position: 'absolute', left: 0, top: 0, width: d, height: d, zIndex: on ? 3 : 2, transform: to, '--fx': `${Math.round(cx - d / 2)}px`, '--fy': `${Math.round(cy - d / 2)}px`, '--to': to, transition: `transform .9s ${ease}, width .9s ${ease}, height .9s ${ease}`, animation: gone ? 'fh-mm-out .36s cubic-bezier(.5,0,.8,.4) forwards' : `fh-mm-in .95s ${ease} ${fresh ? i * 70 : 0}ms backwards` } },
+        E('div', { style: { position: 'absolute', inset: 0, '--fl': `${-5 - (i % 3) * 2}px`, animation: `fh-mm-jelly .9s ease ${fresh ? 300 + i * 70 : 120}ms backwards, fh-mm-float ${(5.5 + (i % 4) * 0.8).toFixed(1)}s ease-in-out ${(1.4 + i * 0.37).toFixed(2)}s infinite` } },
+          E('div', { className: 'fh-mm-b' + (on ? ' on' : ''), onClick: () => this.mindFocus(it), style: { '--c': c, '--bd': `${8 + (i % 5) * 1.3}s`, cursor: 'text' } },
+            E('textarea', { ref: this.mindRef(it.id), className: 'fh-mm-t', rows: 1, value: it.t, placeholder: L.mindIdeaPh, maxLength: 120, spellCheck: true, 'aria-label': `${L.mindIdeaPh} ${i + 1}`,
+              onChange: (e) => this.mindText(it.id, e), onFocus: () => this.setState({ mindOn: it.id }), onBlur: () => this.mindDone(it.id), onKeyDown: (e) => this.mindKey(it.id, e),
+              style: { width: Math.round(d * 0.74), height: tf.h, font: `600 ${tf.fs}px/1.18 Geist, system-ui, sans-serif`, transition: 'font-size .3s, height .3s' } }),
+            it.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindDel(it.id); } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null))));
+    });
+    // la bulle du sujet, au centre
+    const tt = fit(m.title || L.mindTitlePh, D, 0.15), onT = st.mindOn === 'title';
+    kids.push(E('div', { key: 'center', style: { position: 'absolute', left: Math.round(cx - D / 2), top: Math.round(cy - D / 2), width: D, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
+      E('div', { key: 'cj' + (n ? 1 : 0), style: { position: 'absolute', inset: 0, animation: n ? `fh-mm-jelly .9s ease both` : 'fh-pop .7s cubic-bezier(.2,.9,.3,1.3) both' } },
+        E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': accRgb, '--bd': '11s', cursor: 'text' } },
+          E('textarea', { ref: this.mindRef('title'), className: 'fh-mm-t', rows: 1, value: m.title, placeholder: L.mindTitlePh, maxLength: 60, spellCheck: true, 'aria-label': L.mindTitlePh, autoFocus: !m.title && !n,
+            onChange: this.mindTitle, onFocus: () => this.setState({ mindOn: 'title' }), onBlur: () => { this.setState({ mindOn: null }); this.mindTitleDone(false); }, onKeyDown: (e) => this.mindKey('title', e),
+            style: { width: Math.round(D * 0.76), height: tt.h, font: `${clampW(font, 700)} ${tt.fs}px/1.18 ${stack(font)}`, transition: 'font-size .3s, height .3s' } })))));
+    kids.push(E('div', { key: 'beta', style: { position: 'absolute', left: 18, bottom: 16, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 8px', borderRadius: 999, font: '600 12.5px/1 Geist, system-ui, sans-serif', color: 'rgba(31,29,43,.62)', background: `rgba(${accRgb},.08)`, boxShadow: `inset 0 0 0 1px rgba(${accRgb},.18)`, pointerEvents: 'none' } },
+      E('span', { style: { padding: '3px 6px', borderRadius: 6, font: '700 10px/1 Geist, system-ui, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', color: '#ffffff', background: `rgb(${accRgb})` } }, L.beta), L.mindBeta));
+    if (!n) kids.push(E('div', { key: 'hint', style: { position: 'absolute', left: 0, right: 0, top: Math.round(cy + D / 2 + 26), textAlign: 'center', font: '500 15px/1.3 Geist, system-ui, sans-serif', color: 'rgba(31,29,43,.55)', pointerEvents: 'none', animation: 'fh-mm-hint 2.4s ease-in-out infinite' } }, L.mindHint));
+    return E('div', { 'data-menu': 'mind', 'data-tour': 'mind', onPointerDown: this.mindBgDown, onClick: this.mindBgClick, style: { position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', background: '#ffffff', color: '#1f1d2b', userSelect: 'text' } }, kids);
+  };
   // ---------- élan : la note ou l'image penche quand on la tire, puis glisse un peu quand on la lâche ----------
   track = (d, e) => {
     const now = performance.now(), dt = now - d.lt;
@@ -2247,6 +2433,7 @@ class Component extends DCLogic {
   onKey = (e) => {
     const tg = e.target, tn = tg && tg.tagName;
     // Échap ferme toujours un menu ou annule le déplacement, même si le curseur est dans un champ
+    if (e.key === 'Escape' && this.state.news) { this.newsClose(); return; }
     if (e.key === 'Escape' && (this.state.menu || this.state.moveMode)) { this.closeMenu(); if (this.state.moveMode) this.placeClock(null); return; }
     if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable)) return;
     const k = e.key.toLowerCase(), mode = this.state.s.mode, keysOn = this.state.s.keys !== false;
@@ -2561,7 +2748,7 @@ class Component extends DCLogic {
   lightRef = (el) => { this.lightEl = el; };
   reflRef = (el) => { this.reflEl = el; };
   depthSync = () => {
-    const on = this.state.s.quality === 'ultra' && this.state.s.mode !== 'show';
+    const on = this.state.s.quality === 'ultra' && this.state.s.mode !== 'show' && this.state.s.mode !== 'mind';
     if (on && !this.depthRaf) {
       this.dp = this.dp || { x: 0, y: 0, lx: 0, ly: 0 };
       const frame = (t) => {
@@ -2951,7 +3138,7 @@ class Component extends DCLogic {
     if (s.quality === 'low') Object.assign(ui, { bar: dark ? 'rgba(22,21,20,.95)' : 'rgba(252,251,249,.96)', panel: dark ? 'rgba(22,21,20,.98)' : 'rgba(252,251,249,.99)' });
     // ---------- effets selon la qualité ----------
     let qEl = null;
-    if ((Q === 'high' || Q === 'ultra') && mode !== 'show') {
+    if ((Q === 'high' || Q === 'ultra') && mode !== 'show' && mode !== 'mind') {
       const ultra = Q === 'ultra', sceneId = s.bgType === 'scene' ? s.scene : s.bgType === 'spooky' ? 'spooky' : '', nightNow = skyL ? skyL.night : 0, darkBg = bgL < 0.4 || nightNow > 0.55;
       const sw0 = Math.max(st.vw, st.vh * 16 / 9), kk = sw0 / 1600, sy0 = st.vh - sw0 * 9 / 16, parts = [];
       // rayons de soleil qui scintillent doucement (pas la nuit)
@@ -3003,7 +3190,8 @@ class Component extends DCLogic {
       }
       qEl = parts;
     }
-    const hidden = st.idle && s.autoHide && !st.tab && st.tour == null;
+    // au repos : la barre disparaît (réglage « Disparaît ») ou se replie sur ses icônes et reste là (« Se replie »)
+    const barIdle = st.idle && s.autoHide && !st.tab && st.tour == null, compact = barIdle && s.barHide === 'icons', hidden = barIdle && !compact;
     // pastilles : anneau plus marqué quand la couleur se confond avec le panneau (blanc sur clair, noir sur sombre)
     const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`, ringSoft = `inset 0 0 0 1.5px ${hexA(ui.fg, 0.4)}`;
     const swRing = (c, on) => (on ? ringOn : contrast(c, ui.solid) < 1.6 ? ringSoft : ringOff);
@@ -3013,7 +3201,7 @@ class Component extends DCLogic {
     const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, pick: () => this.setMode(id), bg: 'transparent', ring: 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['mind', 'hub', L.md_mind, false], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, beta: id === 'mind', betaBg: hexA(s.accent, dark ? 0.3 : 0.2), betaFg: dark ? '#ffffff' : ui.fg, pick: () => this.setMode(id), bg: 'transparent', ring: 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -3141,7 +3329,7 @@ class Component extends DCLogic {
         H(L.hUi);
         seg('uiTheme', L.uiTheme, [['auto', L.th_auto], ['dark', L.th_dark], ['light', L.th_light]]);
         tog('autoHide', L.autoHide);
-        if (s.autoHide) rng('hideDelay', L.hideDelay, 2, 20, 1, v => v + ' s');
+        if (s.autoHide) { seg('barHide', L.barHide, [['hide', L.bh_hide], ['icons', L.bh_icons]]); rng('hideDelay', L.hideDelay, 2, 20, 1, v => v + ' s'); }
         tog('hideCursor', L.hideCursor);
         H(L.hQuality);
         seg('quality', L.quality, QUALITIES.map(k => [k, L['q_' + k]]), { span: '1 / -1' });
@@ -3363,6 +3551,7 @@ class Component extends DCLogic {
         { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: kh(L.fullscreen), act: this.toggleFs },
         pipItem,
         settings,
+        { key: 'news', icon: 'new_releases', label: L.newsMenu, act: this.newsOpen },
         { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) },
         { key: 'reset', icon: 'restart_alt', label: L.reset, act: this.reset }];
       const note = M.kind === 'note' && st.notes.find(x => x.id === M.id), pic = M.kind === 'pic' && st.pics.find(x => x.id === M.id);
@@ -3386,7 +3575,14 @@ class Component extends DCLogic {
           { key: 'ko', icon: 'open_in_full', label: L.mOpen, act: () => this.setMode(full) },
           sep, { key: 'ku', icon: 'close', label: L.unpin, act: () => this.pinTool(which) }];
       };
-      const items0 = M.kind === 'time' ? timeItems() : M.kind === 'date' ? dateItems() : M.kind === 'note' ? noteItems() : M.kind === 'pic' ? picItems() : M.kind === 'pin' ? pinItems() : bgItems();
+      const mindItems = () => [
+        { key: 'mnew', icon: 'restart_alt', label: L.mindNew, act: this.mindNew },
+        sep,
+        { key: 'note', icon: 'sticky_note_2', label: kh(L.noteNew), act: () => this.addNote(M.x, M.y) },
+        { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: kh(L.fullscreen), act: this.toggleFs },
+        settings,
+        { key: 'help', icon: 'help', label: L.help, act: () => this.startTour(true) }];
+      const items0 = M.kind === 'mind' ? mindItems() : M.kind === 'time' ? timeItems() : M.kind === 'date' ? dateItems() : M.kind === 'note' ? noteItems() : M.kind === 'pic' ? picItems() : M.kind === 'pin' ? pinItems() : bgItems();
       const levels = [items0];
       M.open.forEach((o, i) => { const it = (levels[i] || []).find(x => x.key === o.key); if (it && it.sub) levels.push(it.sub()); });
       const panelBg = dark ? 'rgba(31,30,29,.97)' : 'rgba(251,250,248,.98)';
@@ -3473,7 +3669,7 @@ class Component extends DCLogic {
     }
 
     // images posées à côté de l'heure (cachées en mode « site ou image » pour ne pas couvrir le contenu)
-    const picsEl = mode === 'show' ? null : st.pics.map(q => {
+    const picsEl = mode === 'show' || mode === 'mind' ? null : st.pics.map(q => {
       const m = st.media.find(x => x.id === q.m); if (!m) return null;
       const w = Math.max(40, q.w * st.vw), x = Math.max(60 - w, Math.min(st.vw - 60, q.x * st.vw)), y = Math.max(0, Math.min(st.vh - 50, q.y * st.vh)), drag = st.picDrag === q.id;
       const lift = st.lift && st.lift.id === q.id ? st.lift : null, gone = st.gone.includes(q.id);
@@ -3503,9 +3699,30 @@ class Component extends DCLogic {
           E('svg', { width: 17, height: 17, viewBox: '0 0 17 17', style: { display: 'block' } }, E('path', { d: 'M15.5 2L2 15.5M15.5 7.5L7.5 15.5M15.5 13L13 15.5', stroke: 'rgba(42,33,19,.78)', strokeWidth: 2.2, strokeLinecap: 'round', fill: 'none' }))));
     });
 
+
+    // ---------- fenêtre « Quoi de neuf ? » ----------
+    let newsEl = null;
+    if (st.news && st.news.length) {
+      const pickL = (x) => { const v = x.split('|'); return li === 0 ? v[0] : v[1] || v[0]; };
+      const dfmt = (id) => { try { return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(id + 'T12:00:00')); } catch (e) { return id; } };
+      const all = st.news.length === NEWS.length;
+      newsEl = E('div', { key: 'news', 'data-menu': 'none', onClick: (e) => { if (e.target === e.currentTarget) this.newsClose(); }, style: { position: 'absolute', inset: 0, zIndex: 74, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, boxSizing: 'border-box', background: 'rgba(8,6,14,.55)', animation: 'fh-bar-fadein .3s ease both' } },
+        E('div', { role: 'dialog', 'aria-modal': true, 'aria-label': L.newsT, style: { width: 'min(560px, 100%)', maxHeight: 'min(640px, calc(100vh - 32px))', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', borderRadius: 24, background: dark ? 'rgba(28,26,31,.97)' : 'rgba(251,250,248,.98)', border: `1px solid ${ui.border}`, boxShadow: ui.shadow, color: ui.fg, overflow: 'hidden', animation: 'fh-pop .5s cubic-bezier(.2,.9,.3,1.25) both' } },
+          E('div', { style: { padding: '24px 26px 12px', display: 'flex', alignItems: 'center', gap: 14 } },
+            E('span', { style: { ...ICON, fontSize: 30, color: accUi, animation: 'fh-tabpop .8s .3s cubic-bezier(.3,1.5,.5,1) both' } }, 'new_releases'),
+            E('div', null, E('div', { style: { font: '650 22px/1.15 Geist, system-ui, sans-serif' } }, L.newsT), E('div', { style: { marginTop: 4, font: '400 13.5px/1.3 Geist, system-ui, sans-serif', color: ui.fg2 } }, all ? L.newsAll : L.newsSub))),
+          E('div', { style: { padding: '4px 26px 8px', overflowY: 'auto', overscrollBehavior: 'contain' } },
+            st.news.map((n, gi) => E('div', { key: n.id, style: { padding: '12px 0 6px', borderTop: gi ? `1px solid ${ui.border}` : 'none', animation: `fh-mi-in .45s cubic-bezier(.2,.8,.2,1) ${Math.min(gi, 8) * 70 + 120}ms both` } },
+              E('div', { style: { font: '600 12px/1 Geist, system-ui, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: ui.fg3, marginBottom: 8 } }, dfmt(n.id)),
+              n.items.map((x, i) => E('div', { key: i, style: { display: 'flex', gap: 10, alignItems: 'flex-start', padding: '5px 0', font: '400 15px/1.45 Geist, system-ui, sans-serif' } },
+                E('span', { style: { flexShrink: 0, width: 7, height: 7, marginTop: '.55em', borderRadius: 99, background: accUi } }), E('span', null, pickL(x))))))),
+          E('div', { style: { padding: '12px 26px 22px', display: 'flex', justifyContent: 'flex-end' } },
+            E('button', { type: 'button', className: 'fh-btn', autoFocus: true, onClick: this.newsClose, style: { height: 42, padding: '0 22px', borderRadius: 999, border: 0, background: ui.invBg, color: ui.invFg, font: '600 15px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, L.newsOk))));
+    }
     // mode « site ou image »
     let showEl = null, showing = false;
-    if (mode === 'show') {
+    if (mode === 'mind') { showing = true; showEl = this.mindView(E, st, L, f); }
+    else if (mode === 'show') {
       const sm = s.showType === 'media' ? st.media.find(m => m.id === s.showMedia) : null;
       const src = s.showType === 'url' && showUrl(s.showUrl) ? { kind: 'url', url: showUrl(s.showUrl), tab: showUrl(s.showUrl, true) } : sm ? { kind: sm.type, url: sm.url, name: sm.name } : null;
       const waiting = s.showType === 'media' && !sm && !st.mediaReady;
@@ -3571,16 +3788,16 @@ class Component extends DCLogic {
       sky: { on: !!skyL, el: skyEl },
       q: { level: s.quality || 'medium', on: !!qEl, el: qEl, farRef: this.farRef, skyRef: this.skyRef },
       taps: { on: st.taps.length > 0, el: st.taps.map(tp => E('div', { key: tp.id, style: { position: 'absolute', left: tp.x, top: tp.y, width: 0, height: 0 } }, tapParts(E, tp, L.boo))) }, onStageMove: this.onStageMove,
-      halo: { on: s.bgType === 'scene' && mode !== 'show', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
+      halo: { on: s.bgType === 'scene' && mode !== 'show' && mode !== 'mind', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : st.moveMode === 'drag' ? 'grabbing' : 'pointer', gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: s.dateColor, opacity: Math.min(1, dateOp + 0.15), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
       cities: { show: mode === 'clock' && citiesList.length > 0, list: citiesList, style: { order: 3, display: 'flex', flexWrap: 'wrap', justifyContent: P[1], gap: '1em 2.4em', marginTop: Math.round(dPx * 0.9) + 'px', fontFamily: stack(df), fontWeight: clampW(df, 400), fontSize: Math.round(dPx * 0.8) + 'px', lineHeight: 1.1, color: dateColor, opacity: dateOp, textShadow: legib } },
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
-      chrome: { barAnim: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? (hidden ? 'fh-bar-fadeout .4s ease forwards' : 'fh-bar-fadein .3s ease both') : hidden ? 'fh-bar-out .5s cubic-bezier(.5,0,.75,.3) forwards' : 'fh-bar-in .72s cubic-bezier(.22,.8,.3,1) both', labels: st.vw > 820, btnPad: st.vw > 820 ? '0 13px 0 10px' : '0', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
+      chrome: { barAnim: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? (hidden ? 'fh-bar-fadeout .4s ease forwards' : 'fh-bar-fadein .3s ease both') : hidden ? 'fh-bar-out .5s cubic-bezier(.5,0,.75,.3) forwards' : 'fh-bar-in .72s cubic-bezier(.22,.8,.3,1) both', labels: st.vw > 820, btnPad: st.vw > 820 ? (compact ? '0 9px' : '0 13px 0 10px') : '0', btnGap: compact ? '0px' : '7px', lblW: compact ? '0px' : '150px', lblOp: compact ? 0 : 1, setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       menuUi, zones, blockRef: this.blockRef, clockDown: this.clockDown, onCtx: this.onCtx, openSettings: this.openSettings,
       modes, modePillRef: this.modePillRef, pill: { bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` }, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
-      tools: { show: mode !== 'clock' && mode !== 'show', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
+      tools: { show: mode !== 'clock' && mode !== 'show' && mode !== 'mind', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' || mode === 'mind' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);
         if (!m) return { show: false, el: null };
@@ -3589,6 +3806,7 @@ class Component extends DCLogic {
           E('button', { type: 'button', className: 'fh-btn', 'data-tour': 'bgpic-del', title: L.bgPicDel, onClick: this.dropBgPic, style: { display: 'inline-flex', alignItems: 'center', gap: 5, height: 28, padding: '0 12px 0 9px', borderRadius: 999, border: 0, background: '#e5484d', color: '#fff', font: '600 13px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } },
             E('span', { style: { ...ICON, fontSize: 17 } }, 'delete'), L.bgPicDel)) };
       })(),
+      news: { show: !!newsEl, el: newsEl },
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
