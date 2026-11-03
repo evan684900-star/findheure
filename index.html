@@ -2118,18 +2118,21 @@ class Component extends DCLogic {
   mindView = (E, st, L, font) => {
     const m = st.mind, vw = st.vw, vh = st.vh, top = 84, bot = vh - 24, cx = vw / 2, cy = (top + bot) / 2, accRgb = hexRgb(st.s.accent);
     const D = Math.round(Math.max(150, Math.min(Math.min(vw, vh - 90) * 0.32, 340)));
+    // la bulle du sujet est un ovale bien plus large que haut : la plus grande de l'écran
+    const Wc = Math.round(Math.max(D * 1.25, Math.min(D * 1.75, vw * 0.44))), ca = Wc / 2, cb = D / 2;
+    const edgeC = (ang) => (ca * cb) / Math.sqrt((cb * Math.cos(ang)) ** 2 + (ca * Math.sin(ang)) ** 2);
     const items = m.items, n = items.length;
     const base = Math.max(96, Math.min(Math.min(vw, vh) * 0.21, 240));
-    const rx0 = Math.min(vw * 0.35, vw / 2 - base / 2 - 18), ry0 = Math.min((bot - top) * 0.37, (bot - top) / 2 - base / 2 - 6);
+    const rx0 = Math.max(Math.min(vw * 0.35, vw / 2 - base / 2 - 18), Math.min(ca + base / 2 + 24, vw / 2 - base / 2 - 18)), ry0 = Math.min((bot - top) * 0.37, (bot - top) / 2 - base / 2 - 6);
     const per = Math.PI * (3 * (rx0 + ry0) - Math.sqrt((3 * rx0 + ry0) * (rx0 + 3 * ry0)));
     const d = Math.round(Math.max(76, Math.min(base, n ? per / n * 0.84 : base)));
-    const rx = Math.min(vw * 0.36, vw / 2 - d / 2 - 16), ry = Math.min((bot - top) * 0.38, (bot - top) / 2 - d / 2 - 4);
+    const rx = Math.max(Math.min(vw * 0.36, vw / 2 - d / 2 - 16), Math.min(ca + d / 2 + 26, vw / 2 - d / 2 - 16)), ry = Math.min((bot - top) * 0.38, (bot - top) / 2 - d / 2 - 4);
     const ease = 'cubic-bezier(.3,1.32,.45,1)', fresh = Date.now() - (this.mindPop || 0) < 1500;
     // taille du texte selon la place et la longueur ; nombre de lignes estimé pour centrer la zone de saisie
-    const fit = (txt, w, k0) => {
+    const fit = (txt, w, k0, hb) => {
       // jamais de mot coupé en deux : le mot le plus long doit tenir sur une ligne
       const len = txt.length, longest = Math.max(1, ...txt.split(/\s+/).map(x => x.length));
-      const fs = Math.round(Math.max(11, Math.min(w * (len <= 12 ? k0 : len <= 30 ? k0 * 0.84 : len <= 60 ? k0 * 0.7 : k0 * 0.58), w * 0.72 / (longest * 0.56))));
+      const B = hb || w, fs = Math.round(Math.max(11, Math.min(B * (len <= 12 ? k0 : len <= 30 ? k0 * 0.84 : len <= 60 ? k0 * 0.7 : k0 * 0.58), w * 0.72 / (longest * 0.56))));
       let lines = 1, cur = 0; const cpl = Math.max(4, Math.floor(w * 0.72 / (fs * 0.56)));
       txt.split(/\s+/).forEach(wd => { if (cur && cur + 1 + wd.length > cpl) { lines++; cur = wd.length; } else cur += (cur ? 1 : 0) + wd.length; });
       lines = Math.min(6, lines);
@@ -2144,8 +2147,8 @@ class Component extends DCLogic {
       const a = angAt(i / n), x = cx + Math.cos(a) * rx, y = cy + Math.sin(a) * ry;
       const c = MIND_C[i % MIND_C.length], gone = st.mindGone.includes(it.id), on = st.mindOn === it.id;
       // trait du centre à la bulle (part du bord de la bulle centrale, s'arrête au bord de la petite)
-      const dist = Math.hypot(x - cx, y - cy), len = Math.max(0, dist - D / 2 - d / 2 + 6);
-      kids.push(E('div', { key: 'l' + it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(Math.atan2(y - cy, x - cx) * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(D / 2 - 3)}px)`, transition: `width .9s ${ease}, transform .9s ${ease}, opacity .3s`, opacity: gone ? 0 : 1, pointerEvents: 'none' } },
+      const ang = Math.atan2(y - cy, x - cx), rc = edgeC(ang), dist = Math.hypot(x - cx, y - cy), len = Math.max(0, dist - rc - d / 2 + 6);
+      kids.push(E('div', { key: 'l' + it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`, transition: `width .9s ${ease}, transform .9s ${ease}, opacity .3s`, opacity: gone ? 0 : 1, pointerEvents: 'none' } },
         E('div', { style: { width: '100%', height: '100%', borderRadius: 3, background: `linear-gradient(90deg, rgba(${accRgb},.35), rgba(${c},.55))`, transformOrigin: '0 50%', animation: fresh ? `fh-mm-line .7s ${ease} ${180 + i * 70}ms backwards` : 'fh-mm-line .6s ease backwards' } })));
       const tf = fit(it.t || L.mindIdeaPh, d, 0.13), to = `translate(${Math.round(x - d / 2)}px, ${Math.round(y - d / 2)}px)`;
       kids.push(E('div', { key: 'b' + it.id, className: 'fh-mm-p', style: { position: 'absolute', left: 0, top: 0, width: d, height: d, zIndex: on ? 3 : 2, transform: to, '--fx': `${Math.round(cx - d / 2)}px`, '--fy': `${Math.round(cy - d / 2)}px`, '--to': to, transition: `transform .9s ${ease}, width .9s ${ease}, height .9s ${ease}`, animation: gone ? 'fh-mm-out .36s cubic-bezier(.5,0,.8,.4) forwards' : `fh-mm-in .95s ${ease} ${fresh ? i * 70 : 0}ms backwards` } },
@@ -2157,13 +2160,13 @@ class Component extends DCLogic {
             it.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindDel(it.id); } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null))));
     });
     // la bulle du sujet, au centre
-    const tt = fit(m.title || L.mindTitlePh, D, 0.15), onT = st.mindOn === 'title';
-    kids.push(E('div', { key: 'center', style: { position: 'absolute', left: Math.round(cx - D / 2), top: Math.round(cy - D / 2), width: D, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
+    const tt = fit(m.title || L.mindTitlePh, Wc * 0.92, 0.17, D), onT = st.mindOn === 'title';
+    kids.push(E('div', { key: 'center', style: { position: 'absolute', left: Math.round(cx - Wc / 2), top: Math.round(cy - D / 2), width: Wc, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
       E('div', { key: 'cj' + (n ? 1 : 0), style: { position: 'absolute', inset: 0, animation: n ? `fh-mm-jelly .9s ease both` : 'fh-pop .7s cubic-bezier(.2,.9,.3,1.3) both' } },
         E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': accRgb, '--bd': '11s', cursor: 'text' } },
           E('textarea', { ref: this.mindRef('title'), className: 'fh-mm-t', rows: 1, value: m.title, placeholder: L.mindTitlePh, maxLength: 60, spellCheck: true, 'aria-label': L.mindTitlePh, autoFocus: !m.title && !n,
             onChange: this.mindTitle, onFocus: () => this.setState({ mindOn: 'title' }), onBlur: () => { this.setState({ mindOn: null }); this.mindTitleDone(false); }, onKeyDown: (e) => this.mindKey('title', e),
-            style: { width: Math.round(D * 0.76), height: tt.h, font: `${clampW(font, 700)} ${tt.fs}px/1.18 ${stack(font)}`, transition: 'font-size .3s, height .3s' } })))));
+            style: { width: Math.round(Wc * 0.76), height: tt.h, font: `${clampW(font, 700)} ${tt.fs}px/1.18 ${stack(font)}`, transition: 'font-size .3s, height .3s' } })))));
     kids.push(E('div', { key: 'beta', style: { position: 'absolute', left: 18, bottom: 16, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 8px', borderRadius: 999, font: '600 12.5px/1 Geist, system-ui, sans-serif', color: 'rgba(31,29,43,.62)', background: `rgba(${accRgb},.08)`, boxShadow: `inset 0 0 0 1px rgba(${accRgb},.18)`, pointerEvents: 'none' } },
       E('span', { style: { padding: '3px 6px', borderRadius: 6, font: '700 10px/1 Geist, system-ui, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', color: '#ffffff', background: `rgb(${accRgb})` } }, L.beta), L.mindBeta));
     if (!n) kids.push(E('div', { key: 'hint', style: { position: 'absolute', left: 0, right: 0, top: Math.round(cy + D / 2 + 26), textAlign: 'center', font: '500 15px/1.3 Geist, system-ui, sans-serif', color: 'rgba(31,29,43,.55)', pointerEvents: 'none', animation: 'fh-mm-hint 2.4s ease-in-out infinite' } }, L.mindHint));
