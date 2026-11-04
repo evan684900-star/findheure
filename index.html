@@ -466,6 +466,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.11.0', d: '2026-11-04', items: ['Pile ou face : un secret à découvrir.|Heads or tails: a secret to discover.'] },
   { v: '2.10.1', d: '2026-11-03', items: ['Barre du haut : repli sur les icônes plus fluide.|Top bar: smoother collapse to icons.'] },
   { v: '2.10.0', d: '2026-11-03', items: [
     'Carte mentale : bulles déplaçables.|Mind map: movable bubbles.',
@@ -633,7 +634,7 @@ const T_RAW = {
   noteNew: "Nouvelle note (N)|New note (N)|Nueva nota (N)|Neue Notiz (N)", notePh: "Écris quelque chose…|Write something…|Escribe algo…|Schreib etwas…",
   noteDel: "Supprimer la note|Delete note|Eliminar nota|Notiz löschen",
   md_coin: "Pile ou face|Heads or tails|Cara o cruz|Kopf oder Zahl", coinFace: "Face|Heads|Cara|Kopf", coinPile: "Pile|Tails|Cruz|Zahl", coinFlip: "Lancer la pièce|Flip the coin|Lanzar la moneda|Münze werfen",
-  coinMenu: "Ce que veut dire chaque côté|What each side means|Qué significa cada lado|Was jede Seite bedeutet", coinPh: "à écrire (facultatif)|type here (optional)|escribe aquí (opcional)|hier eintippen (optional)", coinAir: "La pièce est en l’air…|The coin is in the air…|La moneda está en el aire…|Die Münze fliegt…", coinSound: "Son de la pièce|Coin sound|Sonido de la moneda|Münzgeräusch",
+  coinBroke: "Pièce brisée !|Coin broken!|¡Moneda rota!|Münze zerbrochen!", coinBrokeSub: "Pas de surprise aujourd’hui 😉|No surprise today 😉|Hoy no hay sorpresa 😉|Heute keine Überraschung 😉", coinMenu: "Ce que veut dire chaque côté|What each side means|Qué significa cada lado|Was jede Seite bedeutet", coinPh: "à écrire (facultatif)|type here (optional)|escribe aquí (opcional)|hier eintippen (optional)", coinAir: "La pièce est en l’air…|The coin is in the air…|La moneda está en el aire…|Die Münze fliegt…", coinSound: "Son de la pièce|Coin sound|Sonido de la moneda|Münzgeräusch",
   md_show: "Site ou image|Website or image|Sitio o imagen|Website oder Bild",
   md_mind: "Carte mentale|Mind map|Mapa mental|Mindmap", beta: "Bêta|Beta|Beta|Beta", mindBeta: "Carte mentale · version bêta|Mind map · beta version|Mapa mental · versión beta|Mindmap · Beta-Version", newsT: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?", newsVer: "Version|Version|Versión|Version", newsOk: "C’est noté !|Got it!|¡Entendido!|Verstanden!", newsMenu: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?",
   newsSub: "Depuis ta dernière visite|Since your last visit|Desde tu última visita|Seit deinem letzten Besuch", newsAll: "Toutes les nouveautés|All updates|Todas las novedades|Alle Neuerungen", mindTitlePh: "Le sujet…|The topic…|El tema…|Das Thema…", mindIdeaPh: "Une idée…|An idea…|Una idea…|Eine Idee…",
@@ -1192,6 +1193,8 @@ function frontBokeh(E, rgb) {
 }
 // ---------- dessin de la pièce « pile ou face » : une vraie pièce de collection, aux couleurs du thème ----------
 // tout est en SVG (repère de -100 à 100) ; chaque motif est dessiné trois fois (ombre, lumière, relief) pour l'effet frappé
+// « devoir(s) surprise », « évaluation(s) surprise » (majuscules et accents sans importance)
+const coinEgg = (t) => /\b(devoirs?|evaluations?) surprises?\b/.test(String(t || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]+/g, ' '));
 function coinArt(E, o) {
   const mix = (a, b, k) => '#' + hexRgb(a).split(',').map((v, i) => Math.round(+v + (+hexRgb(b).split(',')[i] - v) * k).toString(16).padStart(2, '0')).join('');
   const acc = o.acc, hi2 = mix(acc, '#ffffff', 0.78), hi = mix(acc, '#ffffff', 0.5), lo = mix(acc, '#000000', 0.35), deep = mix(acc, '#000000', 0.6);
@@ -2605,6 +2608,8 @@ class Component extends DCLogic {
     const spin = this.coinSpin, toss = this.coinToss, sh = this.coinSh; if (this.state.coinBusy || !spin || !toss) return;
     const rnd = (n) => { try { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; } catch (e) { return Math.floor(Math.random() * n); } };
     const res = rnd(2) ? 'pile' : 'face', reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    // petit secret : « devoir surprise » ou « évaluation surprise » sur un des côtés → la pièce se brise en l'air
+    if (!reduce && [this.state.s.coinFace, this.state.s.coinPile].some(coinEgg)) { this.coinBreak(); return; }
     const from = this.coinAng, base = from - (((from % 360) + 360) % 360), to = base + (reduce ? 1 : 5 + rnd(3)) * 360 + (res === 'pile' ? 180 : 0);
     // hauteur du lancer selon la place au-dessus de la pièce (elle ne sort jamais de l'écran) ; peu de place : elle vient plutôt vers nous
     const D = toss.offsetHeight || 200, room = toss.getBoundingClientRect().top - 76, H = Math.max(D * 0.25, Math.min(D * 1.1, room)), zoom = 1.1 + Math.max(0, Math.min(0.28, (D * 1.1 - H) / D * 0.35));
@@ -2637,6 +2642,114 @@ class Component extends DCLogic {
       this.coinShine();
       this.setState(s0 => ({ coinBusy: false, coinRes: res, coinN: s0.coinN + 1 }));
     }, reduce ? F + 40 : F + 500);
+  };
+  // ---------- la pièce qui se brise : elle monte, se met à plat, tremble, se fissure, éclate, puis se reforme ----------
+  coinBreak = () => {
+    const spin = this.coinSpin, toss = this.coinToss, sh = this.coinSh, box = toss && toss.closest('.fh-coin'); if (!box) return;
+    const face = spin.querySelector('[data-face="front"]'); if (!face || !face.animate) return;
+    const D = toss.offsetHeight || 200, room = toss.getBoundingClientRect().top - 76, H = Math.max(D * 0.25, Math.min(D * 0.95, room)), zoom = 1.1 + Math.max(0, Math.min(0.28, (D * 1.1 - H) / D * 0.35));
+    const from = this.coinAng, flat = from - (((from % 360) + 360) % 360) + 3 * 360;
+    const T1 = 760, T2 = 520, T3 = 1400, R = (a, b) => a + Math.random() * (b - a), pt = (a, r, o) => [50 + Math.cos(a) * r + (o ? o[0] : 0), 50 + Math.sin(a) * r + (o ? o[1] : 0)];
+    this.setState({ coinBusy: true, coinRes: null }); if (this.coinTiltEl) this.coinTiltEl.style.transform = '';
+    clearTimeout(this.liveT); box.classList.add('fh-live');
+    const anims = [], go = (el, kf, o) => { if (el && el.animate) { const a = el.animate(kf, { fill: 'forwards', ...o }); anims.push(a); return a; } };
+    // 1) elle monte en ralentissant sa rotation et finit à plat, côté face vers nous
+    go(spin, [{ transform: `rotateX(${from}deg)` }, { transform: `rotateX(${flat}deg)` }], { duration: T1, easing: 'cubic-bezier(.25,.7,.3,1)' });
+    go(toss, [{ transform: 'translate3d(0,0,0) scale(1)' }, { transform: `translate3d(0,${-H}px,0) scale(${zoom.toFixed(3)})` }], { duration: T1, easing: 'cubic-bezier(.2,.65,.35,1)' });
+    go(sh, [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(.5)', opacity: 0.3 }], { duration: T1, easing: 'ease-out' });
+    // les fissures : des lignes brisées qui partent d'un point d'impact ; les morceaux suivront ces mêmes lignes
+    const c = [R(-9, 9), R(-9, 9)], K = 9, angs = [];
+    for (let i = 0; i < K; i++) angs.push((i / K) * Math.PI * 2 + R(-0.22, 0.22));
+    const lines = angs.map(a => [[50 + c[0], 50 + c[1]], pt(a + R(-0.16, 0.16), R(14, 21), c.map(v => v * 0.7)), pt(a + R(-0.12, 0.12), R(30, 38), c.map(v => v * 0.35)), pt(a, 56)]);
+    const NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', '0 0 100 100'); svg.setAttribute('class', 'fh-crack');
+    svg.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible';
+    const paths = [];
+    lines.forEach((ln, i) => {
+      const d = 'M' + ln.map(p => p.map(v => v.toFixed(2)).join(' ')).join(' L');
+      [['rgba(255,255,255,.75)', 1.6, 0.5], ['rgba(20,14,8,.78)', 0.9, 0]].forEach(([col, w, off]) => {
+        const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('fill', 'none'); p.setAttribute('stroke', col); p.setAttribute('stroke-width', w); p.setAttribute('stroke-linecap', 'round'); p.setAttribute('stroke-linejoin', 'round');
+        p.setAttribute('pathLength', '100'); p.style.strokeDasharray = '100'; p.style.strokeDashoffset = '100'; if (off) p.setAttribute('transform', `translate(${off} ${off})`);
+        svg.appendChild(p); paths.push([p, i]);
+      });
+    });
+    const timers = [], later = (fn, t) => timers.push(setTimeout(fn, t));
+    later(() => {
+      face.appendChild(svg);
+      // 2) elle tremble, la fissure court sur la face (en deux temps)
+      go(spin, [0, 1, 2, 3, 4, 5, 6, 7, 8].map(k => ({ transform: `rotateX(${flat}deg) translate3d(${k === 8 ? 0 : (k % 2 ? 1 : -1) * R(1.5, 3.5)}px, ${k === 8 ? 0 : R(-2, 2)}px, 0) rotateZ(${k === 8 ? 0 : R(-2.5, 2.5)}deg)` })), { duration: T2, easing: 'linear' });
+      paths.forEach(([p, i]) => p.animate([{ strokeDashoffset: 100 }, { strokeDashoffset: 0 }], { duration: 220, delay: (i % 2 ? 230 : 40) + i * 12, easing: 'cubic-bezier(.3,.7,.4,1)', fill: 'forwards' }));
+      this.coinCrack(0.6);
+    }, T1);
+    later(() => this.coinCrack(1), T1 + 250);
+    // 3) elle éclate : les morceaux (taillés le long des fissures) partent en tournoyant et retombent
+    let shards = null;
+    later(() => {
+      const r = toss.getBoundingClientRect();
+      shards = document.createElement('div');
+      shards.style.cssText = 'position:absolute;inset:0;pointer-events:none;transform-style:preserve-3d;z-index:3';
+      const g = D * 2.6;
+      lines.forEach((ln, i) => {
+        const nx = lines[(i + 1) % K], a0 = angs[i], a1 = angs[(i + 1) % K] + (i === K - 1 ? Math.PI * 2 : 0), arc = [];
+        for (let a = a0 + 0.17; a < a1 - 0.05; a += 0.17) arc.push(pt(a, 56));
+        const poly = [...ln, ...arc, ...nx.slice().reverse().slice(0, -1)];
+        const cx = poly.reduce((t, p) => t + p[0], 0) / poly.length, cy = poly.reduce((t, p) => t + p[1], 0) / poly.length;
+        const el = document.createElement('div');
+        el.style.cssText = `position:absolute;inset:0;clip-path:polygon(${poly.map(p => p[0].toFixed(2) + '% ' + p[1].toFixed(2) + '%').join(',')});transform-origin:${cx.toFixed(1)}% ${cy.toFixed(1)}%;will-change:transform,opacity`;
+        const cl = face.cloneNode(true); cl.style.transform = 'none'; el.appendChild(cl); shards.appendChild(el);
+        const ang = Math.atan2(cy - 50, cx - 50), v = D * R(0.75, 1.35), vx = Math.cos(ang) * v, vy = Math.sin(ang) * v * 0.8 - D * R(0.25, 0.5);
+        const rz = R(-260, 260), rx = R(-320, 320), ry = R(-200, 200), z = R(-0.4, 0.9) * D;
+        el.animate([0, 0.08, 0.2, 0.35, 0.5, 0.68, 0.84, 1].map(t => ({
+          transform: `translate3d(${(vx * (t - 0.32 * t * t)).toFixed(1)}px, ${(-H + vy * t + g * t * t).toFixed(1)}px, ${(z * t).toFixed(1)}px) scale(${zoom.toFixed(3)}) rotateZ(${(rz * t).toFixed(1)}deg) rotateX(${(rx * t).toFixed(1)}deg) rotateY(${(ry * t).toFixed(1)}deg)`,
+          opacity: t < 0.62 ? 1 : Math.max(0, 1 - (t - 0.62) / 0.38) })), { duration: T3 * R(0.85, 1), easing: 'linear', fill: 'forwards' });
+      });
+      box.appendChild(shards);
+      toss.style.opacity = '0';
+      go(sh, [{ transform: 'scale(.5)', opacity: 0.3 }, { transform: 'scale(.3)', opacity: 0 }], { duration: 300, easing: 'ease-out' });
+      if (r.width) this.decoTap({ x: r.left + r.width / 2, y: r.top + r.height / 2, r: r.width / 2, fx: 'planet', c: this.state.s.accent });
+      this.coinShatter();
+    }, T1 + T2);
+    // 4) la pièce se reforme à sa place
+    later(() => {
+      if (shards) shards.remove(); svg.remove();
+      anims.forEach(a => { try { a.cancel(); } catch (e) {} });
+      this.coinAng = flat; spin.style.transform = `rotateX(${flat}deg)`; toss.style.opacity = '';
+      if (toss.animate) toss.animate([{ transform: 'scale(.15)', opacity: 0 }, { transform: 'scale(1.08)', opacity: 1, offset: 0.6 }, { transform: 'scale(.97)', offset: 0.82 }, { transform: 'scale(1)' }], { duration: 620, easing: 'cubic-bezier(.3,.8,.4,1)' });
+      if (sh && sh.animate) sh.animate([{ transform: 'scale(.3)', opacity: 0 }, { transform: 'scale(1)', opacity: 1 }], { duration: 500, easing: 'ease-out' });
+      if (!box.matches(':hover')) box.classList.remove('fh-live');
+      this.coinShine(); this.coinTing(0.35);
+      this.setState(s0 => ({ coinBusy: false, coinRes: 'broken', coinN: s0.coinN + 1 }));
+    }, T1 + T2 + T3 + 150);
+    this.coinTimers = timers;
+  };
+  // craquement : un claquement très court, sec
+  coinNoise = (ac, dur) => { const n = Math.round(ac.sampleRate * dur), b = ac.createBuffer(1, n, ac.sampleRate), d = b.getChannelData(0); for (let i = 0; i < n; i++) d[i] = Math.random() * 2 - 1; const src = ac.createBufferSource(); src.buffer = b; return src; };
+  coinCrack = (k) => {
+    if (this.state.s.coinSound === false) return;
+    try {
+      const ac = this.audio(); if (!ac) return;
+      const t = ac.currentTime, src = this.coinNoise(ac, 0.08), f = ac.createBiquadFilter(), g = ac.createGain();
+      f.type = 'bandpass'; f.frequency.value = 3200; f.Q.value = 1.4;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5 * k, t + 0.002); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.07);
+      src.connect(f); f.connect(g); g.connect(ac.destination); src.start(t); src.stop(t + 0.08);
+    } catch (e) {}
+  };
+  // l'éclatement : un souffle de verre brisé et des petits tintements qui retombent
+  coinShatter = () => {
+    if (this.state.s.coinSound === false) return;
+    try {
+      const ac = this.audio(); if (!ac) return;
+      const t = ac.currentTime, src = this.coinNoise(ac, 0.6), f = ac.createBiquadFilter(), g = ac.createGain();
+      f.type = 'highpass'; f.frequency.value = 1700;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.42, t + 0.006); g.gain.exponentialRampToValueAtTime(0.06, t + 0.12); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.55);
+      src.connect(f); f.connect(g); g.connect(ac.destination); src.start(t); src.stop(t + 0.6);
+      for (let i = 0; i < 9; i++) {
+        const at = t + 0.02 + Math.random() * (i < 4 ? 0.12 : 0.75), o = ac.createOscillator(), og = ac.createGain();
+        o.type = 'sine'; o.frequency.value = 2600 + Math.random() * 4200;
+        og.gain.setValueAtTime(0.0001, at); og.gain.exponentialRampToValueAtTime(0.07 * (i < 4 ? 1 : 0.55), at + 0.003); og.gain.exponentialRampToValueAtTime(0.0001, at + 0.16 + Math.random() * 0.2);
+        o.connect(og); og.connect(ac.destination); o.start(at); o.stop(at + 0.4);
+      }
+    } catch (e) {}
   };
   // le « ting » de la pièce sur la table : quelques notes aiguës qui ne s'accordent pas, comme du métal
   coinTing = (k) => {
@@ -3124,7 +3237,7 @@ class Component extends DCLogic {
       if (this.coinArtKey !== artKey) {
         this.coinArtKey = artKey;
         const art = coinArt(E, { acc, D, T, font: stack(f), wt: clampW(f, 800), faceLbl: L.coinFace, pileLbl: L.coinPile, year: p.y });
-        const faceDiv = (k, svgEl, back) => E('div', { key: k, style: { position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: `${back ? 'rotateX(180deg) ' : ''}translateZ(${(T / 2).toFixed(1)}px)` } }, svgEl,
+        const faceDiv = (k, svgEl, back) => E('div', { key: k, 'data-face': k, style: { position: 'absolute', inset: 0, borderRadius: '50%', overflow: 'hidden', backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden', transform: `${back ? 'rotateX(180deg) ' : ''}translateZ(${(T / 2).toFixed(1)}px)` } }, svgEl,
           // reflets du métal, et un éclat qui passe de temps en temps
           E('div', { key: 'sheen', style: { position: 'absolute', inset: 0, borderRadius: '50%', pointerEvents: 'none', background: 'conic-gradient(from 200deg, rgba(255,255,255,0) 0deg, rgba(255,255,255,.22) 28deg, rgba(255,255,255,0) 70deg, rgba(0,0,0,.13) 120deg, rgba(0,0,0,0) 165deg, rgba(255,255,255,.17) 210deg, rgba(255,255,255,0) 250deg, rgba(0,0,0,.11) 300deg, rgba(0,0,0,0) 345deg)' } }),
           lowQ ? null : E('div', { key: 'shine', className: 'fh-shine', style: { position: 'absolute', top: '-15%', bottom: '-15%', left: 0, width: '42%', pointerEvents: 'none', background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0))', transform: 'translateX(-140%) skewX(-18deg)' } }));
@@ -3138,11 +3251,11 @@ class Component extends DCLogic {
             E('div', { key: 'toss', ref: this.coinTossRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d' } },
               E('div', { key: 'spin', ref: this.coinSpinRef, style: { position: 'absolute', inset: 0, transformStyle: 'preserve-3d', transform: `rotateX(${this.coinAng}deg)` } }, this.coinArtKids)))));
       // résultat : le côté tombé, et ce qu'il veut dire si le prof l'a écrit
-      const res = st.coinRes, said = res ? (res === 'face' ? s.coinFace : s.coinPile).trim() : '', ink = s.gradText ? s.grad2 : s.color;
+      const res = st.coinRes, said = res === 'broken' ? L.coinBrokeSub : res ? (res === 'face' ? s.coinFace : s.coinPile).trim() : '', ink = s.gradText ? s.grad2 : s.color;
       const resultEl = E('div', { key: 'res', 'aria-live': 'polite', style: { minHeight: Math.round(D * 0.42), marginTop: Math.round(D * 0.16), display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', maxWidth: Math.max(D * 1.6, 320) } },
         st.coinBusy ? E('div', { key: 'air', style: { font: `500 ${Math.round(dPx * 1.1)}px/1.2 ${stack(dfC)}`, color: s.dateColor, opacity: 0.8, textShadow: legib } }, L.coinAir)
           : res ? E('div', { key: 'r' + st.coinN, style: { animation: 'fh-pop .55s cubic-bezier(.2,.9,.3,1.3) both' } },
-            E('div', { style: { font: `${clampW(f, 800)} ${Math.round(D * 0.24)}px/1 ${stack(f)}`, color: ink, textShadow: legib } }, (res === 'face' ? L.coinFace : L.coinPile).toUpperCase()),
+            E('div', { style: { font: `${clampW(f, 800)} ${Math.round(D * 0.24)}px/1 ${stack(f)}`, color: ink, textShadow: legib } }, (res === 'broken' ? L.coinBroke : res === 'face' ? L.coinFace : L.coinPile).toUpperCase()),
             said ? E('div', { style: { marginTop: '.35em', font: `600 ${Math.round(dPx * 1.25)}px/1.25 ${stack(dfC)}`, color: s.dateColor, textShadow: legib } }, said) : null) : null);
       const accInk = bestInk(acc);
       const buttons = E('div', { key: 'btns', 'data-tools': '', 'data-menu': 'none', style: { display: 'flex', alignItems: 'center', gap: '.6em' } },
