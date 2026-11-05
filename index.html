@@ -530,6 +530,9 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.14.0', d: '2026-11-05', items: [
+    'Carte mentale : bouton Réinitialiser (touche R).|Mind map: Reset button (R key).',
+    'Menu de la carte mentale : ouverture au clic ou au survol, depuis n’importe quel mode.|Mind map menu: opens on click or hover, from any mode.'] },
   { v: '2.13.0', d: '2026-11-05', items: [
     'Carte mentale : bulles habillées selon le thème, dans sa police.|Mind map: bubbles styled after the theme, in its font.',
     'Carte mentale : les traits restent accrochés aux bulles.|Mind map: lines stay attached to their bubbles.',
@@ -749,7 +752,7 @@ const T_RAW = {
   md_mind: "Carte mentale|Mind map|Mapa mental|Mindmap", beta: "Bêta|Beta|Beta|Beta", mindBeta: "Carte mentale · version bêta|Mind map · beta version|Mapa mental · versión beta|Mindmap · Beta-Version", newsT: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?", newsVer: "Version|Version|Versión|Version", newsOk: "C’est noté !|Got it!|¡Entendido!|Verstanden!", newsMenu: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?",
   newsSub: "Depuis ta dernière visite|Since your last visit|Desde tu última visita|Seit deinem letzten Besuch", newsAll: "Toutes les nouveautés|All updates|Todas las novedades|Alle Neuerungen", mindTitlePh: "Le sujet…|The topic…|El tema…|Das Thema…", mindIdeaPh: "Une idée…|An idea…|Una idea…|Eine Idee…",
   mindHint: "Écris le sujet, puis Entrée|Write the topic, then Enter|Escribe el tema y pulsa Intro|Thema eingeben, dann Enter", mindNew: "Nouvelle carte mentale|New mind map|Nuevo mapa mental|Neue Mindmap",
-  mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindBlank: "Page blanche|Blank page|Página en blanco|Leere Seite", mindSets: "Mes cartes|My maps|Mis mapas|Meine Karten", mindNone: "Aucune carte sauvegardée pour l’instant.|No saved maps yet.|Aún no hay mapas guardados.|Noch keine gespeicherten Karten.", mindAll: "Tout voir|See all|Ver todo|Alle anzeigen", mindAllT: "Mes cartes mentales|My mind maps|Mis mapas mentales|Meine Mindmaps", mindSave: "Sauvegarder|Save|Guardar|Speichern", mindSavedB: "Sauvegardée|Saved|Guardado|Gespeichert", mindSaved: "Carte sauvegardée|Map saved|Mapa guardado|Karte gespeichert", mindOpened: "Carte ouverte|Map opened|Mapa abierto|Karte geöffnet", mindDeleted: "Carte supprimée|Map deleted|Mapa eliminado|Karte gelöscht", mindDelSet: "Supprimer la carte|Delete map|Eliminar mapa|Karte löschen", mindUntitled: "Sans titre|Untitled|Sin título|Ohne Titel", mindIdea: "idée|idea|idea|Idee", mindIdeas: "idées|ideas|ideas|Ideen", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
+  mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindReset: "Réinitialiser|Reset|Restablecer|Zurücksetzen", mindBlank: "Page blanche|Blank page|Página en blanco|Leere Seite", mindSets: "Mes cartes|My maps|Mis mapas|Meine Karten", mindNone: "Aucune carte sauvegardée pour l’instant.|No saved maps yet.|Aún no hay mapas guardados.|Noch keine gespeicherten Karten.", mindAll: "Tout voir|See all|Ver todo|Alle anzeigen", mindAllT: "Mes cartes mentales|My mind maps|Mis mapas mentales|Meine Mindmaps", mindSave: "Sauvegarder|Save|Guardar|Speichern", mindSavedB: "Sauvegardée|Saved|Guardado|Gespeichert", mindSaved: "Carte sauvegardée|Map saved|Mapa guardado|Karte gespeichert", mindOpened: "Carte ouverte|Map opened|Mapa abierto|Karte geöffnet", mindDeleted: "Carte supprimée|Map deleted|Mapa eliminado|Karte gelöscht", mindDelSet: "Supprimer la carte|Delete map|Eliminar mapa|Karte löschen", mindUntitled: "Sans titre|Untitled|Sin título|Ohne Titel", mindIdea: "idée|idea|idea|Idee", mindIdeas: "idées|ideas|ideas|Ideen", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
   showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
   showUrlPh: "Adresse du site (lien YouTube, Google Slides, Canva…)|Website address (YouTube, Google Slides, Canva link…)|Dirección del sitio (enlace de YouTube, Google Slides, Canva…)|Adresse der Website (YouTube-, Google-Slides-, Canva-Link …)",
@@ -2304,13 +2307,30 @@ class Component extends DCLogic {
     this.toast(L.mindDeleted, () => { this.setMindSets(l => (l.some(x => x.id === id) ? l : [...l.slice(0, i), gone, ...l.slice(i)])); this.setState({ toast: null }); });
   };
   // le petit menu sous l'onglet « Carte mentale » : au survol (souris), ou au clic (tactile)
-  mindDDAt = (el, click) => { const r = el.getBoundingClientRect(); clearTimeout(this.ddT); this.setState({ mindDD: { x: Math.round(r.left), y: Math.round(r.bottom + 10), w: Math.round(r.width), click: !!click } }); };
-  mindTabEnter = (e) => { if (e.pointerType && e.pointerType !== 'mouse') return; if (this.state.s.mode === 'mind' && !this.state.tab && this.state.tour == null) this.mindDDAt(e.currentTarget, false); };
-  mindTabLeave = () => { clearTimeout(this.ddT); this.ddT = setTimeout(() => { if (this.state.mindDD && !this.state.mindDD.click) this.setState({ mindDD: null }); }, 260); };
-  mindTabClick = (e) => { if (this.state.s.mode !== 'mind') { this.setMode('mind'); return; } if (this.state.mindDD && this.state.mindDD.click) this.mindDDClose(); else this.mindDDAt(e.currentTarget, true); };
+  mindDDAt = (el, click) => {
+    const r = el.getBoundingClientRect(); clearTimeout(this.ddT);
+    this.setState({ mindDD: { x: Math.round(r.left), y: Math.round(r.bottom + 10), w: Math.round(r.width), click: !!click } });
+    // ouvert au clic : un clic ailleurs le referme, sans bloquer ce clic (on peut cliquer directement sur un autre onglet)
+    if (click && !this.ddDoc) { this.ddDoc = (ev) => { const t = ev.target; if (!(t && t.closest && t.closest('[data-mind-dd], [data-tour="mode-mind"]'))) this.mindDDClose(); }; document.addEventListener('pointerdown', this.ddDoc, true); }
+  };
+  // survol (souris) : le menu s'ouvre presque tout de suite, quel que soit le mode affiché
+  mindTabEnter = (e) => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    if (this.state.tab || this.state.tour != null) return;
+    const el = e.currentTarget; clearTimeout(this.ddT); clearTimeout(this.ddOpenT);
+    if (this.state.mindDD) return;
+    this.ddOpenT = setTimeout(() => { if (el.isConnected && el.matches(':hover')) this.mindDDAt(el, false); }, 80);
+  };
+  mindTabLeave = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.ddT = setTimeout(() => { if (this.state.mindDD && !this.state.mindDD.click) this.mindDDClose(); }, 260); };
+  // clic : passe en Carte mentale si besoin et ouvre le menu (un 2e clic le referme)
+  mindTabClick = (e) => {
+    const el = e.currentTarget; clearTimeout(this.ddOpenT);
+    if (this.state.s.mode !== 'mind') { this.setMode('mind'); this.mindDDAt(el, true); return; }
+    if (this.state.mindDD && this.state.mindDD.click) this.mindDDClose(); else this.mindDDAt(el, true);
+  };
   mindDDEnter = () => { clearTimeout(this.ddT); this.overBar = true; };
   mindDDLeave = () => { this.overBar = false; this.activity(); this.mindTabLeave(); };
-  mindDDClose = () => { clearTimeout(this.ddT); this.overBar = false; if (this.state.mindDD) this.setState({ mindDD: null }); };
+  mindDDClose = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.overBar = false; if (this.ddDoc) { document.removeEventListener('pointerdown', this.ddDoc, true); this.ddDoc = null; } if (this.state.mindDD) this.setState({ mindDD: null }); };
   mindBlank = () => { this.mindDDClose(); this.setState({ mindAll: false }); if (this.state.s.mode !== 'mind') this.setMode('mind'); this.mindNew(); };
   mindShowAll = () => { this.mindDDClose(); this.closeMenu(); this.setState({ mindAll: true }); };
   // le menu sous l'onglet, et la fenêtre « Mes cartes mentales »
@@ -2331,7 +2351,6 @@ class Component extends DCLogic {
       if (!sets.length) kids.push(E('div', { key: 'none', style: { padding: '6px 10px 10px', font: '400 13px/1.35 Geist, system-ui, sans-serif', color: ui.fg3 } }, L.mindNone));
       sets.slice(0, 5).forEach(p => kids.push(row('p' + p.id, p.id === cur ? 'check' : 'hub', p.name, () => this.mindLoad(p.id), { on: p.id === cur, meta: nIdeas(p), i: i++ })));
       if (sets.length) kids.push(E('div', { key: 'sep', style: { height: 1, margin: '5px 8px', background: ui.border } }), row('all', 'grid_view', sets.length > 5 ? `${L.mindAll} (${sets.length})` : L.mindAll, this.mindShowAll, { i: i++ }));
-      if (D.click) out.push(E('div', { key: 'ddc', onPointerDown: this.mindDDClose, style: { position: 'fixed', inset: 0, zIndex: 71 } }));
       out.push(E('div', { key: 'dd', className: 'fh-menu', 'data-menu': 'none', 'data-mind-dd': '', role: 'menu', onPointerEnter: this.mindDDEnter, onPointerLeave: this.mindDDLeave, style: { position: 'fixed', left: x, top: D.y, zIndex: 72, width: w, maxHeight: `calc(100vh - ${D.y + 16}px)`, overflowY: 'auto', boxSizing: 'border-box', padding: 6, borderRadius: 14, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: ui.shadow, color: ui.fg, transformOrigin: `${Math.round(D.x + D.w / 2 - x)}px 0`, animation: 'fh-mmdd-in .32s cubic-bezier(.2,.9,.3,1.15) both' } }, kids));
     }
     if (st.mindAll) {
@@ -2504,9 +2523,13 @@ class Component extends DCLogic {
     // Sauvegarder : enregistre la carte dans « Mes cartes » (met à jour celle qu'on a ouverte) ; « Sauvegardée » tant que rien n'a changé
     const has = !!(m.title.trim() || m.items.some(x => x.t.trim())), sv = m.pid && st.mindSets.find(x => x.id === m.pid);
     const clean = !!(sv && JSON.stringify(sv.map) === JSON.stringify(mindSnap(m)));
-    if (has) kids.push(E('button', { key: 'save' + (clean ? 1 : 0), type: 'button', className: 'fh-btn', 'data-tour': 'mind-save', title: L.mindSave + ' (Ctrl+S)', onClick: this.mindStore, style: { position: 'absolute', right: 18, bottom: 16, zIndex: 7, display: 'flex', alignItems: 'center', gap: 8, height: 42, padding: '0 18px 0 14px', borderRadius: 999, border: 0, cursor: 'pointer', font: '600 14.5px/1 Geist, system-ui, sans-serif',
+    // Réinitialiser (R) à côté : vide la carte, avec « Annuler »
+    const glassBtn = { display: 'flex', alignItems: 'center', gap: 8, height: 42, padding: '0 16px 0 12px', borderRadius: 999, border: 0, cursor: 'pointer', font: '600 14.5px/1 Geist, system-ui, sans-serif', color: `rgba(${ink},.8)`, background: dk ? 'rgba(14,12,22,.6)' : 'rgba(255,255,255,.78)', boxShadow: `inset 0 0 0 1px rgba(${accRgb},.35)` };
+    if (has) kids.push(E('div', { key: 'acts', style: { position: 'absolute', right: 18, bottom: 16, zIndex: 7, display: 'flex', alignItems: 'center', gap: 8 } },
+      E('button', { key: 'reset', type: 'button', className: 'fh-btn', 'data-tour': 'mind-reset', title: L.mindReset + ' (R)', onClick: this.mindNew, style: { ...glassBtn, animation: 'fh-pop .45s cubic-bezier(.2,.9,.3,1.3) both' } }, E('span', { style: { ...ICON, fontSize: 20 } }, 'restart_alt'), L.mindReset),
+      E('button', { key: 'save' + (clean ? 1 : 0), type: 'button', className: 'fh-btn', 'data-tour': 'mind-save', title: L.mindSave + ' (Ctrl+S)', onClick: this.mindStore, style: { display: 'flex', alignItems: 'center', gap: 8, height: 42, padding: '0 18px 0 14px', borderRadius: 999, border: 0, cursor: 'pointer', font: '600 14.5px/1 Geist, system-ui, sans-serif',
       color: clean ? `rgba(${ink},.72)` : bestInk(st.s.accent), background: clean ? (dk ? 'rgba(14,12,22,.6)' : 'rgba(255,255,255,.78)') : `linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%), rgb(${accRgb})`, boxShadow: clean ? `inset 0 0 0 1px rgba(${accRgb},.35)` : `inset 0 1px 0 rgba(255,255,255,.45), 0 10px 26px -8px rgba(${accRgb},.8)`, animation: 'fh-pop .45s cubic-bezier(.2,.9,.3,1.3) both' } },
-      E('span', { style: { ...ICON, fontSize: 20 } }, clean ? 'check' : 'save'), clean ? L.mindSavedB : L.mindSave));
+      E('span', { style: { ...ICON, fontSize: 20 } }, clean ? 'check' : 'save'), clean ? L.mindSavedB : L.mindSave)));
     return E('div', { ref: this.mindRootRef, 'data-menu': 'mind', 'data-tour': 'mind', className: `fh-mm-root fh-sk-${sk}${dk ? ' fh-mm-dk' : ''}`, onPointerDown: this.mindBgDown, onClick: this.mindBgClick, style: { position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', background: 'transparent', color: `rgb(${ink})`, userSelect: st.mindDrag ? 'none' : 'text', '--a': accRgb, '--tc': tc, '--tsh': tsh, '--g1': th.grad1, '--g2': th.grad2 } }, kids);
   };
   // ---------- les traits suivent la vraie position de leur bulle pendant qu'elle glisse (sinon ils décrochent) ----------
@@ -2829,6 +2852,7 @@ class Component extends DCLogic {
     }
     else if (k === 'r' && mode === 'timer') this.tmReset();
     else if (k === 'r' && mode === 'stopwatch') this.swReset();
+    else if (k === 'r' && mode === 'mind') { e.preventDefault(); this.mindNew(); } // sans écrire « r » dans la bulle du sujet qui reprend le curseur
     else if (k === 'l' && mode === 'stopwatch') this.swLap();
   };
   toggleFs = () => { try { if (document.fullscreenElement) document.exitFullscreen(); else { const r = document.documentElement.requestFullscreen(); if (r && r.catch) r.catch(() => {}); } } catch (e) {} };
@@ -4055,7 +4079,7 @@ class Component extends DCLogic {
           mmb.p ? { key: 'mp', icon: 'undo', label: L.mindPlace, act: () => this.mindPatch(mmb.id, { p: null }) } : null,
           mmb.id !== 'title' ? sep : null, mmb.id !== 'title' ? { key: 'md', icon: 'delete', label: L.mindDel, danger: true, act: () => this.mindDel(mmb.id) } : null].filter(Boolean); };
       const mindItems = () => [
-        { key: 'mnew', icon: 'restart_alt', label: L.mindNew, act: this.mindNew },
+        { key: 'mnew', icon: 'restart_alt', label: kh(L.mindReset + ' (R)'), act: this.mindNew },
         st.mind.title.trim() || st.mind.items.some(x => x.t.trim()) ? { key: 'msave', icon: 'save', label: L.mindSave + ' (Ctrl+S)', act: this.mindStore } : null,
         { key: 'mall', icon: 'grid_view', label: L.mindAllT + '…', act: this.mindShowAll },
         st.mind.items.some(x => x.p) ? { key: 'mtidy', icon: 'hub', label: L.mindTidy, act: this.mindTidy } : null,
