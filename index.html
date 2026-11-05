@@ -541,6 +541,10 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.15.2', d: '2026-11-05', items: ['Guide complet : étapes Pile ou face et carte mentale ajoutées.|Full guide: heads or tails and mind map steps added.'] },
+  { v: '2.15.1', d: '2026-11-05', items: [
+    'Oiseaux, mouettes et chauves-souris : vrais battements d’ailes.|Birds, gulls and bats: real wing flaps.',
+    'Automne : chemin, arbres du fond et champignons corrigés.|Autumn: path, background trees and mushrooms fixed.'] },
   { v: '2.15.0', d: '2026-11-05', items: [
     'Carte mentale : suppression d’une carte sauvegardée, avec la poubelle.|Mind map: delete a saved map with the bin.',
     'Le soleil traverse le ciel selon l’heure (Printemps, Pâques, Été, Glacier, Automne).|The sun crosses the sky with the time of day (Spring, Easter, Summer, Glacier, Autumn).',
@@ -1426,7 +1430,7 @@ const prepSub = (kind, sel, key) => (a) => {
 };
 const LONG_TOUR = [
   { t: ['clock'], h: 'Bienvenue !', x: 'Le principe est simple : tu cliques sur ce que tu veux changer (l’heure, la date, le fond…) et un menu apparaît, comme le clic droit sur Windows. Je te montre, et parfois c’est toi qui fais : suis les consignes « À toi ». Échap pour quitter.', prep: prepMode('clock') },
-  { t: ['clock'], h: 'Clique sur l’heure', x: 'Un clic sur l’heure ouvre son menu : déplacer, taille, police, couleur, effets, format…', act: (st) => !!(st.menu && st.menu.kind === 'time'), d: 'Clique sur les chiffres de l’heure.', prep: prepMode('clock') },
+  { t: ['clock'], h: 'Clique sur l’heure', x: 'Un clic sur l’heure ouvre son menu : déplacer, taille, police, couleur, effets, format, horloge à aiguilles, et même l’heure en petite fenêtre par-dessus PowerPoint (touche P).', act: (st) => !!(st.menu && st.menu.kind === 'time'), d: 'Clique sur les chiffres de l’heure.', prep: prepMode('clock') },
   { t: ['mi-font'], h: 'Les sous-menus', x: 'Les lignes avec une flèche › ouvrent un sous-menu : passe la souris dessus, ou clique (pratique sur un tableau tactile).', act: subIs('font'), d: 'Clique sur « Police ».', prep: prepRoot('time', 'clock') },
   { t: ['menu1'], h: 'Choisis une police', x: 'Chaque nom est écrit dans sa police. Le menu reste ouvert : tu peux en essayer plusieurs.', act: (st, b) => st.s.font !== b.s.font, d: 'Clique sur une police qui te plaît.', prep: prepSub('time', 'clock', 'font') },
   { t: ['mi-color'], h: 'La couleur', x: 'Même principe pour la couleur des chiffres.', act: subIs('color'), d: 'Clique sur « Couleur ».', prep: prepRoot('time', 'clock') },
@@ -1435,11 +1439,11 @@ const LONG_TOUR = [
   { t: ['clock'], h: 'Déplace l’heure', x: 'Appuie sur l’heure et glisse-la : neuf emplacements apparaissent, lâche-la dans celui que tu veux. (« Déplacer » dans son menu fait pareil.)', act: (st, b) => st.s.pos !== b.s.pos, d: 'Glisse l’heure vers un coin de l’écran.', prep: prepMode('clock') },
   { t: ['bgspot'], h: 'Clique sur le fond', x: 'Le fond a son menu à lui : thèmes, décor, couleurs, ta photo, notes, images…', act: (st) => !!(st.menu && st.menu.kind === 'bg'), d: 'Clique sur le fond, là où il n’y a rien.', prep: prepMode('clock') },
   { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres.', act: subIs('theme'), d: 'Clique sur « Thèmes ».', prep: prepRoot('bg', 'bgspot') },
-  { t: ['menu1'], h: 'Choisis un thème', x: 'Chaque thème change d’un coup la police, les couleurs et le décor. Le menu reste ouvert : essaie-en plusieurs.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: prepSub('bg', 'bgspot', 'theme') },
-  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran et Paramètres. Astuce : dans les décors, touche la lune, le soleil, un arbre ou une citrouille : le décor réagit !', prep: prepRoot('bg', 'bgspot') },
+  { t: ['menu1'], h: 'Choisis un thème', x: 'Chaque thème change d’un coup la police, les couleurs et le décor. Le menu reste ouvert : essaie-en plusieurs. Regretté ? Ctrl+Z revient au thème d’avant. Sur les décors de jour, le ciel et le soleil suivent l’heure de la journée.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: prepSub('bg', 'bgspot', 'theme') },
+  { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran, Paramètres et « Quoi de neuf ? » (les dernières nouveautés). Astuce : dans les décors, touche la lune, le soleil, un arbre ou une citrouille : le décor réagit !', prep: prepRoot('bg', 'bgspot') },
   { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepRoot('bg', 'bgspot') },
   { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut. Pour changer sa taille, tire les petits traits dans son coin en bas à droite. Un clic sur la barre ouvre son menu : couleur, taille, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
-  { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, il ne reste que l’essentiel : horloge, minuteur, chrono, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, l’essentiel : horloge, minuteur, chrono, pile ou face, carte mentale, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['tm-10'], h: 'Une durée toute prête', x: 'Ces pastilles mettent le minuteur à une durée en un clic.', act: (st) => st.tm.dur === 600000, d: 'Clique sur « 10 min ».', prep: prepMode('timer') },
   { t: ['tm-custom', 'tm-ok'], h: 'Ta propre durée', x: 'Besoin de 7 min 30 ? « Personnaliser » te laisse taper les heures, minutes et secondes, puis OK (ou Entrée).', act: (st, b) => st.tm.dur !== b.tm.dur && !st.tmEdit, d: 'Clique sur « Personnaliser », tape par exemple 2 min, puis OK.', prep: prepMode('timer') },
   { t: ['tm-go'], h: 'Lance-le !', x: 'Le disque se vide et passe du vert à l’orange puis au rouge. La barre d’espace démarre et met en pause aussi.', act: (st) => !!st.tm.endAt, d: 'Clique sur « Démarrer ».', prep: prepMode('timer') },
@@ -1447,9 +1451,17 @@ const LONG_TOUR = [
   { t: ['tm-pin'], h: 'Épingle-le', x: 'Épingler garde le minuteur dans un coin de l’écran, même quand tu reviens à l’horloge.', act: (st) => !!st.s.pinTimer, d: 'Clique sur le bouton « épingler ».', prep: prepMode('timer') },
   { t: ['pin-pt'], h: 'Ton minuteur épinglé', x: 'Il continue de tourner ici. Glisse-le où tu veux ; un clic dessus ouvre son menu : taille, ranger dans le coin, ouvrir en grand, retirer.', prep: (a) => { a.closeMenu(); if (a.state.s.mode !== 'clock') a.setMode('clock'); } },
   { t: ['mode-stopwatch'], h: 'Le chronomètre', x: 'Le chrono compte vers le haut et garde les tours.', act: modeIs('stopwatch'), d: 'Ouvre le chronomètre.' },
+  { t: ['mode-coin'], h: 'Pile ou face', x: 'Une vraie pièce qui tourne en l’air, aux couleurs du thème, avec un tirage 50/50 garanti. Pratique pour savoir quel groupe commence.', act: modeIs('coin'), d: 'Clique sur « Pile ou face ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['coin-menu'], h: 'Ce que veut dire chaque côté', x: 'Écris ici ce que veut dire Face et Pile (par exemple « Le groupe A commence ») : le résultat l’affichera sous la pièce. Ce n’est pas obligatoire.', prep: prepMode('coin') },
+  { t: ['coin', 'coin-go'], h: 'Lance la pièce', x: 'Clique sur la pièce ou sur « Lancer la pièce » : elle monte, tourne, retombe avec un petit « ting », et le côté tombé s’affiche dessous.', act: (st, b) => st.coinN > b.coinN, d: 'Lance la pièce.', prep: prepMode('coin') },
+  { t: ['mode-mind'], h: 'La carte mentale', x: 'Pour un remue-méninges avec la classe : un sujet au centre, des idées tout autour. (Elle est encore en version bêta.)', act: modeIs('mind'), d: 'Clique sur « Carte mentale ».', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['mind-title'], h: 'Écris le sujet', x: 'Tape le sujet dans la grande bulle, puis Entrée : les bulles d’idées jaillissent autour. Entrée passe à la bulle suivante, et une bulle de plus arrive dès qu’elles sont toutes remplies.', act: (st, b) => st.mind.items.filter(x => x.t.trim()).length > b.mind.items.filter(x => x.t.trim()).length, d: 'Écris un sujet, Entrée, puis une idée.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); setTimeout(() => { const el = a.mindRefs && (a.state.mind.items.length ? a.mindRefs[(a.state.mind.items.find(x => !x.t.trim()) || {}).id] : a.mindRefs.title); if (el) el.focus(); }, 350); } },
+  { t: ['mind'], h: 'Bouge et colore les bulles', x: 'Attrape une bulle pour la déplacer : son trait la suit. Clic droit sur une bulle : changer sa couleur, la remettre à sa place ou la supprimer. Les bulles prennent la police, les couleurs et le décor du thème.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
+  { t: ['mind-reset', 'mind-save'], h: 'Sauvegarder ou repartir de zéro', x: '« Sauvegarder » (Ctrl+S) range la carte dans « Mes cartes ». « Réinitialiser » (touche R) vide la carte pour en faire une nouvelle, avec « Annuler » si tu t’es trompé.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
+  { t: ['mode-mind'], h: 'Mes cartes', x: 'Passe la souris sur l’onglet (ou clique dessus) : « Page blanche », tes dernières cartes, et « Tout voir ». La poubelle à droite d’une carte la supprime.', prep: (a) => { a.closeMenu(); a.mindDDClose(); } },
   { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. « Site ou image » affiche une page, une vidéo ou une image en grand, avec l’heure par-dessus.' },
   { t: ['mode-clock'], h: 'Retour à l’horloge', x: 'On revient à l’heure.', act: modeIs('clock'), d: 'Clique sur « Horloge ».' },
-  { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, boutons qui se cachent… Tout en bas : les réglages avancés.', act: (st) => st.tab === 'display', d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, qualité de l’image (Faible pour un vieil ordinateur), la barre du haut au repos (cachée ou juste ses icônes)… Tout en bas : les réglages avancés.', act: (st) => st.tab === 'display', d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['close'], h: 'Ferme les paramètres', x: 'Tout est enregistré automatiquement dans ce navigateur.', act: (st) => !st.tab, d: 'Clique sur la croix.', prep: (a) => { if (a.state.tab !== 'display') a.openTab('display'); } },
   { t: ['fs'], h: 'Plein écran', x: 'Pour projeter au tableau : ce bouton ou la touche F. Les boutons se cachent tout seuls quand la souris ne bouge plus.' },
   { t: ['help'], h: 'C’est toi qui joues !', x: 'Retiens juste ceci : clique sur ce que tu veux changer. Ce bouton relance ce guide quand tu veux. Bonne classe !' },
@@ -1793,7 +1805,7 @@ class Component extends DCLogic {
   endTour = () => { clearTimeout(this.tourAdvT); this.setState({ tour: null, tourOk: false }); try { localStorage.setItem(TOURKEY, 'true'); } catch (e) {} this.activity(); };
   tourSteps = () => { if (this.state.tourLong) return LONG_TOUR; const L = this.L(); return TOUR.map((t, i) => ({ t, h: L['tour' + (i + 1) + 't'], x: L['tour' + (i + 1)] })); };
   // état de départ de l'étape, pris avant le rendu (sinon l'action de l'étape précédente compterait)
-  tourSnap = () => { const st = this.state; this.tourBase = { s: st.s, tm: st.tm, notes: st.notes.length, tab: st.tab }; };
+  tourSnap = () => { const st = this.state; this.tourBase = { s: st.s, tm: st.tm, notes: st.notes.length, tab: st.tab, coinN: st.coinN, mind: st.mind }; };
   tourEnter = (n) => { const step = this.tourSteps()[n]; if (step && step.prep) step.prep(this); };
   tourGo = (d) => {
     clearTimeout(this.tourAdvT); const n = (this.state.tour || 0) + d, len = this.tourSteps().length; if (n < 0) return;
@@ -2363,7 +2375,8 @@ class Component extends DCLogic {
   // clic : passe en Carte mentale si besoin et ouvre le menu (un 2e clic le referme)
   mindTabClick = (e) => {
     const el = e.currentTarget; clearTimeout(this.ddOpenT);
-    if (this.state.s.mode !== 'mind') { this.setMode('mind'); this.mindDDAt(el, true); return; }
+    if (this.state.s.mode !== 'mind') { this.setMode('mind'); if (this.state.tour == null) this.mindDDAt(el, true); return; }
+    if (this.state.tour != null) return;
     if (this.state.mindDD && this.state.mindDD.click) this.mindDDClose(); else this.mindDDAt(el, true);
   };
   mindDDEnter = () => { clearTimeout(this.ddT); this.overBar = true; };
@@ -2669,7 +2682,7 @@ class Component extends DCLogic {
     // la bulle du sujet, au centre
     const tt = fit(m.title || L.mindTitlePh, Wc * 0.92, 0.17, D, wTitle), onT = st.mindOn === 'title';
     const ccRgb = m.cc ? hexRgb(m.cc) : accRgb;
-    kids.push(E('div', { key: 'center', 'data-menu': 'mmb:title', style: { position: 'absolute', left: Math.round(cx - Wc / 2), top: Math.round(cy - D / 2), width: Wc, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
+    kids.push(E('div', { key: 'center', 'data-menu': 'mmb:title', 'data-tour': 'mind-title', style: { position: 'absolute', left: Math.round(cx - Wc / 2), top: Math.round(cy - D / 2), width: Wc, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
       E('div', { key: 'cj' + (n ? 1 : 0), style: { position: 'absolute', inset: 0, animation: n ? `fh-mm-jelly .9s ease both` : 'fh-pop .7s cubic-bezier(.2,.9,.3,1.3) both' } },
         E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': ccRgb, '--ti': bestInk(m.cc || th.accent), '--tis': bestInk(m.cc || th.accent) === '#ffffff' ? '0 1px 2px rgba(0,0,0,.35)' : 'none', cursor: 'text' } },
           E('textarea', { ref: this.mindRef('title'), className: 'fh-mm-t' + (gradT ? ' grad' : ''), rows: 1, value: m.title, placeholder: L.mindTitlePh, maxLength: 60, spellCheck: true, 'aria-label': L.mindTitlePh, autoFocus: !m.title && !n,
