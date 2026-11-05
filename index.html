@@ -172,8 +172,9 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 .fh-bin{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin:-5px -6px -5px 0;border-radius:8px;cursor:pointer;flex-shrink:0;transition:color .2s ease,background .2s ease}
 .fh-bin:hover,.fh-bin:focus-visible,.fh-bin.open{color:#e5484d!important;background:rgba(229,72,77,.12);outline:none}
 .fh-bin svg{overflow:visible;display:block}
-.fh-bin-lid{transform-box:view-box;transform-origin:19.8px 7.2px;transition:transform .45s cubic-bezier(.3,1.75,.5,1)}
-.fh-bin:hover .fh-bin-lid,.fh-bin:focus-visible .fh-bin-lid,.fh-bin.open .fh-bin-lid{transform:translate(-.4px,-2.6px) rotate(-17deg)}
+/* charnière tout à droite du couvercle : il bascule vers la droite jusqu'à 110° */
+.fh-bin-lid{transform-box:view-box;transform-origin:20px 7.2px;transition:transform .5s cubic-bezier(.3,1.45,.5,1)}
+.fh-bin:hover .fh-bin-lid,.fh-bin:focus-visible .fh-bin-lid,.fh-bin.open .fh-bin-lid{transform:rotate(110deg)}
 .fh-bin-body{transform-box:view-box;transform-origin:12px 21px}
 @keyframes fh-mmdd-in{from{opacity:0;transform:translateY(-8px) scale(.94)}}
 /* chaque menu sur son propre calque : le décor animé dessous ne le force pas à se redessiner */
@@ -231,7 +232,7 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
     <canvas ref="{{ gridRef }}" style="position: absolute; inset: 0; width: 100%; height: 100%; display: block; pointer-events: none;"></canvas>
   </sc-if>
   <sc-if value="{{ bg.isScene }}" hint-placeholder-val="{{ false }}">
-    <div class="fh-still" ref="{{ q.farRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.scene }}</div>
+    <div class="fh-still" ref="{{ q.farRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none; --fhsx: {{ bg.sunX }}; --fhsy: {{ bg.sunY }}; --fhso: {{ bg.sunO }};">{{ bg.scene }}</div>
   </sc-if>
   <sc-if value="{{ sky.on }}" hint-placeholder-val="{{ false }}">
     <div class="fh-still" ref="{{ q.skyRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ sky.el }}</div>
@@ -537,7 +538,10 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
-  { v: '2.15.0', d: '2026-11-05', items: ['Carte mentale : suppression d’une carte sauvegardée, avec la poubelle.|Mind map: delete a saved map with the bin.'] },
+  { v: '2.15.0', d: '2026-11-05', items: [
+    'Carte mentale : suppression d’une carte sauvegardée, avec la poubelle.|Mind map: delete a saved map with the bin.',
+    'Le soleil traverse le ciel selon l’heure (Printemps, Pâques, Été, Glacier, Automne).|The sun crosses the sky with the time of day (Spring, Easter, Summer, Glacier, Autumn).',
+    'Automne : ciel selon l’heure (aube, coucher de soleil, nuit).|Autumn: sky follows the time of day (dawn, sunset, night).'] },
   { v: '2.14.1', d: '2026-11-05', items: ['Carte mentale : icône « Remettre à sa place » corrigée.|Mind map: “Put back in place” icon fixed.'] },
   { v: '2.14.0', d: '2026-11-05', items: [
     'Carte mentale : bouton Réinitialiser (touche R).|Mind map: Reset button (R key).',
@@ -1062,9 +1066,9 @@ function greeting(li, p) {
 }
 // ---------- ciel selon l'heure (décors de jour) ----------
 // lever et coucher du soleil calculés pour la France (latitude 46,5°, longitude 2,5°) à la date du jour
-const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy']);
+const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy', 'autumn']);
 // où se trouve le soleil de chaque décor (dessin de 1600 × 900) : la lune prend sa place la nuit
-const SKY_SUN = { spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
+const SKY_SUN = { autumn: [1180, 170, 46], spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
 const SKY_MODES = ['auto', 'day', 'dawn', 'gold', 'sunset', 'night'];
 const QUALITIES = ['ultra', 'high', 'medium', 'low'];
 const SKY_FIXED = { day: {}, dawn: { dawn: 1, night: 0.3 }, gold: { gold: 1 }, sunset: { sunset: 1, gold: 0.3, night: 0.1 }, night: { night: 1 } };
@@ -1277,6 +1281,18 @@ const AMB = {
   bokeh: { c: null, shape: 'soft', move: 'drift', size: [8, 20], a: [0.14, 0.32] },
 };
 // rayons de soleil : où est le soleil dans le dessin du décor (1600 × 900)
+// ---------- le soleil traverse le ciel au fil de la journée (thèmes de jour, ciel « selon l'heure ») ----------
+// lever à gauche (est), coucher à droite (ouest), au plus haut à midi solaire ; sous l'horizon (derrière le décor) la nuit
+// [x au plus haut, y au plus haut, y de l'horizon (caché derrière les collines / la mer)]
+const SUN_PATH = { autumn: [800, 190, 740], spring: [800, 120, 720], easter: [800, 110, 740], summer: [800, 130, 660], glacier: [800, 150, 720] };
+function sunAt(s, now, tz) {
+  if (s.bgType !== 'scene' || !SUN_PATH[s.scene] || !DAYLIT.has(s.scene) || (s.sky && s.sky !== 'auto')) return null;
+  const p = zp(now, tz), t = p.h + p.m / 60 + p.s / 3600, { sr, ss } = sunTimes(p, now), [xm, ytop, yh] = SUN_PATH[s.scene];
+  const f = (t - sr) / (ss - sr), up = f >= 0 && f <= 1;
+  const fc = Math.max(-0.08, Math.min(1.08, f));
+  const x = 130 + (1470 - 130) * fc, y = yh - (yh - ytop) * Math.sin(Math.PI * Math.max(0, Math.min(1, fc))) + (up ? 0 : 80);
+  return { x: Math.round(x), y: Math.round(y), on: up ? 1 : 0 };
+}
 const RAY_SUN = { spring: [1300, 140, '255,246,214'], easter: [260, 128, '255,246,214'], summer: [1288, 148, '255,248,220'], glacier: [1250, 170, '240,250,255'], autumn: [1004, 576, '255,200,130'], valentine: [800, 656, '255,190,200'], sunset: [800, 496, '255,150,190'] };
 // reflet de l'heure dans l'eau : hauteur de la ligne d'eau dans le dessin
 const REFLECT_Y = { summer: 586, glacier: 645, sunset: 598, london: 745 };
@@ -2444,7 +2460,7 @@ class Component extends DCLogic {
       lid.style.transition = 'none';
       // (courbes posées étape par étape : une courbe globale décalerait la fermeture avant l'arrivée de la boule)
       const LT = T4 + 430, at = (t) => t / LT;
-      lid.animate([{ transform: 'translate(-.4px,-2.6px) rotate(-17deg)', easing: 'cubic-bezier(.3,1.6,.5,1)' }, { transform: 'translate(-.8px,-5px) rotate(-28deg)', offset: at(220) }, { transform: 'translate(-.8px,-5px) rotate(-28deg)', offset: at(T4 - 10), easing: 'cubic-bezier(.55,0,.9,.45)' }, { transform: 'translate(0,.4px) rotate(5deg)', offset: at(T4 + 130), easing: 'ease-out' }, { transform: 'translate(0,-.8px) rotate(-4deg)', offset: at(T4 + 240), easing: 'ease-in-out' }, { transform: 'translate(0,0) rotate(1.5deg)', offset: at(T4 + 340), easing: 'ease-in-out' }, { transform: 'translate(0,0) rotate(0deg)' }], { duration: LT, easing: 'linear', fill: 'forwards' });
+      lid.animate([{ transform: 'rotate(110deg)' }, { transform: 'rotate(110deg)', offset: at(T4 - 10), easing: 'cubic-bezier(.55,0,.9,.45)' }, { transform: 'rotate(-3deg)', offset: at(T4 + 130), easing: 'ease-out' }, { transform: 'rotate(10deg)', offset: at(T4 + 230), easing: 'ease-in' }, { transform: 'rotate(-1.5deg)', offset: at(T4 + 320), easing: 'ease-out' }, { transform: 'rotate(2.5deg)', offset: at(T4 + 380), easing: 'ease-in-out' }, { transform: 'rotate(0deg)' }], { duration: LT, easing: 'linear', fill: 'forwards' });
     }
     // la boule touche le fond (petit sursaut), puis le couvercle claque (la poubelle s'écrase un peu)
     if (body) body.animate([{ transform: 'scale(1,1)' }, { transform: 'scale(1,1)', offset: (T4 - 30) / (T4 + 430) }, { transform: 'scale(1.03,.96)', offset: (T4 + 20) / (T4 + 430), easing: 'ease-out' }, { transform: 'scale(1,1)', offset: (T4 + 100) / (T4 + 430), easing: 'ease-in' }, { transform: 'scale(1.08,.88)', offset: (T4 + 150) / (T4 + 430), easing: 'ease-out' }, { transform: 'scale(.97,1.04)', offset: (T4 + 270) / (T4 + 430), easing: 'ease-in-out' }, { transform: 'scale(1,1)' }], { duration: T4 + 430, easing: 'linear', fill: 'forwards' });
@@ -3410,13 +3426,14 @@ class Component extends DCLogic {
     const st = this.state, s = st.s, vw = st.vw, vh = st.vh;
     const id = s.bgType === 'spooky' ? 'spooky' : s.bgType === 'scene' ? s.scene : '', list = DECO_TAP[id];
     if (!list || s.decoTap === false || st.tour != null || st.moveMode) return [];
-    const key = id + '|' + vw + '|' + vh;
+    // le soleil qui bouge : son point « toucher » le suit (la nuit, c'est la lune, à sa place habituelle)
+    const sp = sunAt(s, new Date(), s.tz === 'local' ? undefined : s.tz), key = id + '|' + vw + '|' + vh + '|' + (sp ? sp.x + ',' + sp.y + ',' + sp.on : '');
     if (this.spotKey !== key) {
       let map;
       if (id === 'spooky') { const k = Math.max(vw / 1600, vh * 0.34 / 320); map = ([x, y, r]) => [vw / 2 + (x - 800) * k, vh - (320 - y) * k, r * k]; }
       else { const sw = Math.round(Math.max(vw, vh * 16 / 9)), k = sw / 1600; map = ([x, y, r]) => [vw / 2 + (x - 800) * k, vh - Math.round(sw * 9 / 16) + y * k, r * k]; }
       const vm = Math.min(vw, vh) / 100;
-      this.spots = list.map(h => { const [x, y, r] = h[0] === 'moon' ? [vw * 0.89 - 7.5 * vm, vh * 0.09 + 7.5 * vm, 7.5 * vm] : map(h); return { x, y, r, fx: h[3], c: h[4] }; });
+      this.spots = list.map(h => { const hh = sp && h[3] === 'sun' ? (sp.on ? [sp.x, sp.y, h[2]] : SKY_SUN[id] ? [SKY_SUN[id][0], SKY_SUN[id][1], h[2]] : h) : h; const [x, y, r] = hh[0] === 'moon' ? [vw * 0.89 - 7.5 * vm, vh * 0.09 + 7.5 * vm, 7.5 * vm] : map(hh); return { x, y, r, fx: h[3], c: h[4] }; });
       this.spotKey = key;
     }
     return this.spots;
@@ -3452,7 +3469,7 @@ class Component extends DCLogic {
     const uiLoc = UI_LOC[sRaw.uiLang] || 'fr-FR', locale = sRaw.locale === 'auto' ? uiLoc : sRaw.locale;
     const tz = sRaw.tz === 'local' ? undefined : sRaw.tz, now = st.now, p = zp(now, tz);
     // ciel selon l'heure : la nuit, une heure écrite en foncé passe en clair pour rester lisible
-    const skyL = skyLight(sRaw, now, tz), skyNight = !!skyL && skyL.night > 0.55;
+    const skyL = skyLight(sRaw, now, tz), skyNight = !!skyL && skyL.night > 0.55, sunP = sunAt(sRaw, now, tz);
     const s = skyNight && lum(sRaw.gradText ? sRaw.grad2 : sRaw.color) < 0.35 ? { ...sRaw, color: '#fbf7ef', dateColor: '#efe9f8', gradText: false, shadow: Math.max(35, sRaw.shadow) } : sRaw;
     const nuEff = s.digits === 'auto' ? autoNu(locale) : s.digits;
     const isRoman = nuEff === 'roman', dm = dmap(nuEff), latin = !dm && !isRoman;
@@ -3772,7 +3789,7 @@ class Component extends DCLogic {
       // rayons de soleil qui scintillent doucement (pas la nuit)
       const rs = RAY_SUN[sceneId], dayK = 1 - nightNow;
       if (rs && dayK > 0.05) {
-        const [rx, ry, rc] = rs, X = st.vw / 2 + (rx - 800) * kk, Y = sy0 + ry * kk, warm = skyL ? Math.min(1, skyL.gold + skyL.sunset) : 0, col = warm > 0.4 ? '255,206,150' : rc;
+        const sp = sunP && SUN_PATH[sceneId] ? sunP : null, rx = sp ? sp.x : rs[0], ry = sp ? sp.y : rs[1], rc = rs[2], X = st.vw / 2 + (rx - 800) * kk, Y = sy0 + ry * kk, warm = skyL ? Math.min(1, skyL.gold + skyL.sunset) : 0, col = warm > 0.4 ? '255,206,150' : rc;
         const ray = (k, from, dl) => E('div', { key: 'ray' + k, style: { position: 'absolute', inset: 0, background: `repeating-conic-gradient(from ${from}deg at ${X.toFixed(0)}px ${Y.toFixed(0)}px, rgba(${col},0) 0deg 4deg, rgba(${col},.3) 6.5deg 9deg, rgba(${col},0) 11.5deg 16deg)`, WebkitMaskImage: `radial-gradient(circle at ${X.toFixed(0)}px ${Y.toFixed(0)}px, #000 0, rgba(0,0,0,.6) 25%, transparent 72%)`, maskImage: `radial-gradient(circle at ${X.toFixed(0)}px ${Y.toFixed(0)}px, #000 0, rgba(0,0,0,.6) 25%, transparent 72%)`, animation: `fh-rays ${k ? 11 : 8}s ease-in-out ${dl}s infinite` } });
         parts.push(E('div', { key: 'rays', style: { position: 'absolute', inset: 0, opacity: +(dayK * 0.9).toFixed(3), transition: 'opacity 2s ease' } },
           ray(0, 0, 0), ultra ? ray(1, 4, -5) : null,
@@ -4419,7 +4436,7 @@ class Component extends DCLogic {
     return {
       s, L: sRaw.keys === false ? { ...L, fullscreen: L.fullscreen.replace(/\s*\([A-Z]\)$/, '') } : L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
       // la carte mentale laisse voir le décor du thème ; « site ou image » le cache
-      bg: { base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !bgOff, isSpooky: spooky && !bgOff, spooky: spooky && !bgOff ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !bgOff, scene: s.bgType === 'scene' && !bgOff ? (newScene(s.scene) ? FHS.render(s.scene, E, s, { vw: st.vw, vh: st.vh }) : null) : null },
+      bg: { sunX: sunP ? sunP.x : 'initial', sunY: sunP ? sunP.y : 'initial', sunO: sunP ? sunP.on : 'initial', base, isAurora: s.bgType === 'aurora', aurora, isImage: s.bgType === 'image', layers, dim: `rgba(0,0,0,${(s.bgDim / 100).toFixed(2)})`, isGrid: s.bgType === 'grid' && !bgOff, isSpooky: spooky && !bgOff, spooky: spooky && !bgOff ? spookyScene(E) : null, isScene: s.bgType === 'scene' && !bgOff, scene: s.bgType === 'scene' && !bgOff ? (newScene(s.scene) ? FHS.render(s.scene, E, s, { vw: st.vw, vh: st.vh }) : null) : null },
       sndAlert: { on: !!st.snd.alert && (mode === 'sound' || (pinView(mode) && !!s.pinSnd)) },
       alarm: { on: !!st.ringing, bg: `radial-gradient(ellipse at center, ${hexA(s.accent, 0)} 30%, ${hexA(s.accent, 0.5)} 100%)` },
       fx: { hasVignette: s.vignette > 0, vignette: `radial-gradient(ellipse 120% 95% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,${(s.vignette * 0.0075).toFixed(3)}) 100%)`, hasGrain: s.grain > 0, grainImg: GRAIN, grainOp: (s.grain / 100 * 0.22).toFixed(3), scan: !!s.scanlines },

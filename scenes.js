@@ -400,9 +400,11 @@
       const leafC = ['#d9481c', '#f08a24', '#f6b73c', '#b8321c', '#e2672a', '#c9a227'];
       const kinds = ['maple', 'oak', 'leaf'];
       return [
-        t.art('sky', (p) => {
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.45, o.bg1], [0.72, o.bg3]])),
+        ...movingSun(t, 'sun', 1010, 600, 420, (x, y, p) => glow(p + 'g', x, y, 420, '#ffd27a', 0.55) + circ(x, y, 70, '#ffe7a8', ' opacity=".95"')),
+        t.art('streaks', (p) => {
           const r = t.r('sk');
-          let s = sky(p + 's', [[0, o.bg2], [0.45, o.bg1], [0.72, o.bg3]]) + glow(p + 'sun', 1010, 600, 420, '#ffd27a', 0.55) + circ(1010, 600, 70, '#ffe7a8', ' opacity=".95"');
+          let s = '';
           for (let i = 0; i < 6; i++) { const y = rr(r, 120, 360), x = rr(r, -100, 1500); s += ell(x, y, rr(r, 160, 300), rr(r, 10, 20), '#ffc7a0', ` opacity="${N(rr(r, 0.12, 0.3))}"`); }
           return s;
         }),
@@ -572,7 +574,8 @@
     layers: (t, o) => {
       const pinkC = ['#ffb7d5', '#ff9cc5', '#ffd1e3', '#ffc2dc'];
       return [
-        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.78, o.bg3]]) + glow(p + 'sun', 1300, 140, 300, '#fff4b8', 0.75) + circ(1300, 140, 54, '#fff8d6')),
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.78, o.bg3]])),
+        ...movingSun(t, 'sun', 1300, 140, 300, (x, y, p) => glow(p + 'g', x, y, 300, '#fff4b8', 0.75) + circ(x, y, 54, '#fff8d6')),
         ...clouds(t, 'cl', [{ x: -260, y: 90, k: 1.1, dx: 2000, dur: 120, dl: -20, c: '#ffffff', s: '#dcefff' }, { x: -260, y: 200, k: 0.75, dx: 2000, dur: 90, dl: -60, c: '#ffffff', s: '#dcefff' }, { x: -260, y: 40, k: 0.6, dx: 2000, dur: 140, dl: -100, c: '#ffffff', s: '#dcefff' }]),
         t.still(cloud(380, 120, 1.1, '#ffffff', '#dcefff') + cloud(980, 220, 0.75, '#ffffff', '#dcefff')),
         t.art('land', (p) => {
@@ -612,7 +615,8 @@
     layers: (t, o) => {
       const ec = ['#ff8fab', '#ffd166', '#8ecae6', '#b8f2a6', '#c9a7ff', '#ffb38a'];
       return [
-        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.8, o.bg3]]) + glow(p + 'sun', 260, 130, 280, '#fff4b8', 0.7) + circ(260, 130, 48, '#fff8d6')),
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.8, o.bg3]])),
+        ...movingSun(t, 'sun', 260, 130, 280, (x, y, p) => glow(p + 'g', x, y, 280, '#fff4b8', 0.7) + circ(x, y, 48, '#fff8d6')),
         ...clouds(t, 'cl', [{ x: -260, y: 70, k: 0.9, dx: 2000, dur: 110, dl: -30, c: '#ffffff', s: '#e2f1ff' }, { x: -260, y: 190, k: 0.65, dx: 2000, dur: 85, dl: -70, c: '#ffffff', s: '#e2f1ff' }]),
         t.still(cloud(700, 110, 0.9, '#ffffff', '#e2f1ff') + cloud(1150, 200, 0.65, '#ffffff', '#e2f1ff')),
         t.art('land', (p) => {
@@ -664,8 +668,9 @@
       const E = t.E;
       return [
         t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.5, o.bg1], [0.655, '#bfe9ff'], [0.66, '#1fb5c9'], [0.82, '#0b88b8']])),
-        t.el('rays', t.img(spr('rays', '#fff6c8', 22), { left: em(1290 - 360), top: em(150 - 360), width: em(720), height: em(720), animation: 'fhs-spin 90s linear infinite' })),
-        t.art('sun', (p) => glow(p + 'g', 1290, 150, 260, '#fff2a8', 0.85) + circ(1290, 150, 62, '#fffbe0') + circ(1290, 150, 62, 'none', ' stroke="#ffe27a" stroke-width="6" opacity=".6"') + cloud(300, 150, 0.8, '#ffffff', '#d7efff') + cloud(560, 250, 0.55, '#ffffff', '#d7efff') + cloud(1000, 110, 0.45, '#ffffff', '#d7efff')),
+        t.el('raysw', { position: 'absolute', inset: 0, clipPath: 'inset(0 0 34.4% 0)' }, E('div', { style: { position: 'absolute', inset: 0, transform: 'translate(calc((var(--fhsx, 1290) - 1290) * .1em), calc((var(--fhsy, 150) - 150) * .1em))', opacity: 'var(--fhso, 1)', transition: 'transform 60s linear, opacity 4s ease' } }, E('div', { style: t.img(spr('rays', '#fff6c8', 22), { left: em(1290 - 360), top: em(150 - 360), width: em(720), height: em(720), animation: 'fhs-spin 90s linear infinite' }) }))),
+        ...movingSun(t, 'sun', 1290, 150, 260, (x, y, p) => glow(p + 'g', x, y, 260, '#fff2a8', 0.85) + circ(x, y, 62, '#fffbe0') + circ(x, y, 62, 'none', ' stroke="#ffe27a" stroke-width="6" opacity=".6"'), 590),
+        t.art('sun', (p) => cloud(300, 150, 0.8, '#ffffff', '#d7efff') + cloud(560, 250, 0.55, '#ffffff', '#d7efff') + cloud(1000, 110, 0.45, '#ffffff', '#d7efff')),
         t.art('sea', (p) => {
           const r = t.r('se');
           let s = path('M-20 596Q80 540 180 560Q260 520 330 596Z', '#3f9a6a') + palm(r, 210, 590, 70, 14, { trunk: '#7a5533', trunk2: '#6b4a2a', leaf: '#2f8a4a', leaf2: '#3fa05a' }).replace(/stroke-width="4"/g, 'stroke-width="1.5"');
@@ -1252,9 +1257,11 @@
     layers: (t, o) => {
       const E = t.E;
       return [
-        t.art('sky', (p) => {
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.5, o.bg1], [0.7, '#ffffff']])),
+        ...movingSun(t, 'sun', 1250, 170, 260, (x, y, p) => glow(p + 'g', x, y, 260, '#ffffff', 0.9)),
+        t.art('mt', (p) => {
           const r = t.r('gl');
-          let s = sky(p + 's', [[0, o.bg2], [0.5, o.bg1], [0.7, '#ffffff']]) + glow(p + 'sun', 1250, 170, 260, '#ffffff', 0.9);
+          let s = '';
           s += mountains(r, p + 'm', { y: 650, amp: 220, n: 8, valley: 0.6, fill: '#d6ecf9', shade: 'rgba(90,150,200,.25)', snow: '#ffffff', snowLine: 0.5, haze: '#eef8ff', hazeA: 0.8 });
           // mer
           s += `<defs>${lg(p + 'w', [[0, '#3c86b5'], [0.4, '#1d5f8a'], [1, '#0b3352']])}</defs>` + rect(0, 650, W, 260, `url(#${p}w)`);
@@ -1715,6 +1722,14 @@
     },
   });
 
+  // soleil à part du décor : il glisse à la position donnée par la page (variables --fhsx / --fhsy, en unités du dessin)
+  // et s'efface sous l'horizon (--fhso) ; sans ces variables, il reste à sa place d'origine
+  function movingSun(t, k, X, Y, G, body, horizon) {
+    const url = cached('msun|' + t.id + '|' + k, () => svg(`${-G} ${-G} ${2 * G} ${2 * G}`, body(0, 0, 'ms' + k)));
+    const sun = t.el(k, t.img(url, { left: em(X - G), top: em(Y - G), width: em(2 * G), height: em(2 * G), transform: `translate(calc((var(--fhsx, ${X}) - ${X}) * .1em), calc((var(--fhsy, ${Y}) - ${Y}) * .1em))`, opacity: 'var(--fhso, 1)', transition: 'transform 60s linear, opacity 4s ease', willChange: 'transform' }));
+    // horizon (la mer peinte avec le ciel) : le soleil est coupé sous cette ligne, il s'enfonce dans l'eau
+    return [horizon ? t.el(k + 'h', { position: 'absolute', inset: 0, clipPath: `inset(0 0 ${N((1 - horizon / H) * 100)}% 0)` }, sun) : sun, t.still(body(X, Y, t.id + '-' + k))];
+  }
   function render(id, E, o, env) {
     injectCss();
     const sc = SC[id] || SC.winter;
