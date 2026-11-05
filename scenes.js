@@ -90,6 +90,24 @@
     if (o.dots) for (let i = 0; i < o.dots.n; i++) { const a = r() * Math.PI * 2, d = Math.sqrt(r()) * R * 1.1; s += circ(cx + Math.cos(a) * d * 1.2, cy + Math.sin(a) * d * 0.8, o.dots.r * (0.6 + r() * 0.8), pick(r, o.dots.c)); }
     return s;
   }
+  // arbre d'automne lointain, net : tronc effilé, couronne ronde bosselée (ou peuplier), ombre portée et reflet
+  function autumnTree(r, x, b, h, cols, kind, far) {
+    const c = pick(r, cols), trunk = far ? '#4b2a22' : '#3d1f15';
+    let s = ell(x + h * 0.06, b + 1, h * 0.2, h * 0.035, 'rgba(40,12,6,.32)');
+    const top = kind === 'poplar' ? b - h * 0.4 : b - h * 0.52;
+    s += path(`M${N(x - h * 0.04)} ${N(b)}Q${N(x - h * 0.018)} ${N((b + top) / 2)} ${N(x - h * 0.01)} ${N(top)}L${N(x + h * 0.01)} ${N(top)}Q${N(x + h * 0.018)} ${N((b + top) / 2)} ${N(x + h * 0.04)} ${N(b)}Z`, trunk);
+    if (kind === 'poplar') {
+      const cy = b - h * 0.62, rx = h * 0.13, ry = h * 0.38;
+      s += ell(x + h * 0.025, cy + h * 0.03, rx, ry, 'rgba(60,20,10,.35)') + ell(x, cy, rx, ry, c) + ell(x - rx * 0.35, cy - ry * 0.3, rx * 0.4, ry * 0.42, 'rgba(255,225,160,.22)');
+      return s;
+    }
+    const cy = b - h * 0.68, rx = h * 0.27, ry = h * 0.24, bumps = [];
+    for (let k = 0; k < 7; k++) { const a = -Math.PI / 2 + k / 7 * Math.PI * 2 + rr(r, -0.2, 0.2); bumps.push([x + Math.cos(a) * rx * 0.78, cy + Math.sin(a) * ry * 0.72, h * rr(r, 0.12, 0.15)]); }
+    const crown = (dx, dy, fill) => ell(x + dx, cy + dy, rx, ry, fill) + bumps.map(([bx, by, br]) => circ(bx + dx, by + dy, br, fill)).join('');
+    s += crown(h * 0.03, h * 0.04, 'rgba(60,20,10,.38)') + crown(0, 0, c);
+    s += circ(x - rx * 0.38, cy - ry * 0.42, h * 0.11, 'rgba(255,225,160,.22)') + circ(x + rx * 0.3, cy + ry * 0.35, h * 0.12, 'rgba(70,20,10,.16)');
+    return s;
+  }
   // nuage : boules + base arrondie (option : ombre dessous, reflet clair dessus)
   function cloud(x, y, k, fill, shade, hi) {
     const c = [[0, 0, 46], [-58, 14, 34], [60, 12, 38], [-24, -22, 36], [30, -26, 40], [-98, 24, 22], [100, 24, 24]];
@@ -143,6 +161,13 @@
     heart: (c, hl) => svg('0 0 20 20', path('M10 18C2 12 0.5 7 3 4C5.8 0.8 9 2 10 5C11 2 14.2 0.8 17 4C19.5 7 18 12 10 18Z', c) + (hl ? path('M5.2 5.2C6.2 4.2 7.6 4.3 8.2 5', 'none', ` stroke="${hl}" stroke-width="1.4" stroke-linecap="round"`) : '')),
     hballoon: (c, d) => svg('0 0 40 90', line('M20 34Q16 50 22 62Q27 74 19 89', 'rgba(255,255,255,.75)', 1) + path('M20 35C6 25 1 15 5 8C9 1 17 2 20 9C23 2 31 1 35 8C39 15 34 25 20 35Z', c) + path('M18 35L22 35L21 38L19 38Z', d) + path('M10 9C12 6.5 15 6.5 16.5 8.5', 'none', ' stroke="rgba(255,255,255,.7)" stroke-width="2.4" stroke-linecap="round"')),
     balloon: (c, d) => svg('0 0 40 90', line('M20 50Q16 62 22 72Q27 80 19 89', 'rgba(255,255,255,.7)', 1) + ell(20, 24, 17, 22, c) + path('M17 45L23 45L21.5 50L18.5 50Z', d) + ell(13, 15, 4, 7, 'rgba(255,255,255,.5)', ' transform="rotate(25 13 15)"')),
+    // ailes séparées (épaule à droite du dessin) et corps : l'aile pivote à l'épaule pour battre
+    wingBird: (c) => svg('0 0 24 20', path('M24 9Q15 1 1 5Q8 6.5 12 9Q17 11.6 24 14Z', c)),
+    bodyBird: (c) => svg('0 0 16 10', ell(8, 5.4, 6.6, 3.2, c)),
+    wingGull: () => svg('0 0 26 22', path('M26 10Q15 1 1 8Q9 8.6 14 11Q19 12.6 26 15Z', '#ffffff', ' stroke="#9aa9b4" stroke-width="1"') + path('M1 8Q4 5.6 8 5.2L6.4 8.6Z', '#3b4651')),
+    bodyGull: () => svg('0 0 16 12', ell(8, 6, 6.4, 3.2, '#ffffff', ' stroke="#9aa9b4" stroke-width=".8"') + path('M13.6 5.6L16 6.4L13.6 7.1Z', '#f4a62a')),
+    wingBat: (c) => svg('0 0 26 20', path('M26 8Q17 1 1 4Q3.5 8.5 2.5 13Q6.5 10.5 9.5 13.5Q12.5 10.5 16 14Q19 11.5 26 13Z', c)),
+    bodyBat: (c) => svg('0 0 12 14', ell(6, 8.2, 3.8, 5, c) + path('M3 4.6L3.8 0.6L5.6 3.8Z M9 4.6L8.2 0.6L6.4 3.8Z', c)),
     bird: (c) => svg('0 0 40 20', path('M1 9Q9 0.5 20 10Q31 0.5 39 9Q31 5 20 14Q9 5 1 9Z', c)),
     gull: () => svg('0 0 50 22', path('M1 11Q12 1 25 12Q38 1 49 11Q38 7 25 16Q12 7 1 11Z', '#ffffff', ' stroke="#9aa9b4" stroke-width="1"') + path('M1 11Q4 8 7 7L5 11Z', '#3b4651') + path('M49 11Q46 8 43 7L45 11Z', '#3b4651') + ell(25, 13.5, 3.2, 2.2, '#ffffff') + path('M27.5 13.5L31 14.2L27.5 15Z', '#f3a531')),
     butterfly: (a, b, k) => svg('0 0 40 32', path('M20 15C14 3 3 0 2 7C1 13 9 16 19 16Z', a) + path('M20 15C26 3 37 0 38 7C39 13 31 16 21 16Z', a) + path('M19 17C10 17 5 23 8 28C11 31 17 25 19.5 18Z', b) + path('M21 17C30 17 35 23 32 28C29 31 23 25 20.5 18Z', b) + circ(9, 8, 2.2, 'rgba(255,255,255,.55)') + circ(31, 8, 2.2, 'rgba(255,255,255,.55)') + ell(20, 17, 1.4, 8, k || '#2b2118') + line('M20 9Q17 4 15 3M20 9Q23 4 25 3', k || '#2b2118', 0.9)),
@@ -169,6 +194,8 @@
     '@keyframes fhs-tw{0%,100%{opacity:var(--o1,1)}50%{opacity:var(--o0,.15)}}',
     '@keyframes fhs-spin{to{transform:rotate(360deg)}}',
     '@keyframes fhs-spinr{to{transform:rotate(-360deg)}}',
+    '@keyframes fhs-wing{0%{transform:rotate(var(--wu,36deg)) scaleY(.8);animation-timing-function:cubic-bezier(.5,0,.35,1)}42%{transform:rotate(var(--wd,-26deg)) scaleY(1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:rotate(var(--wu,36deg)) scaleY(.8)}}',
+    '@keyframes fhs-wbob{0%,100%{transform:translateY(var(--wb,7%))}42%{transform:translateY(calc(var(--wb,7%) * -1))}}',
     '@keyframes fhs-flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(var(--f,.3))}}',
     '@keyframes fhs-flapx{0%,100%{transform:scaleX(1)}50%{transform:scaleX(var(--f,.25))}}',
     '@keyframes fhs-burst{0%{transform:scale(.04);opacity:0}4%{opacity:1}42%{opacity:1}66%{transform:scale(1) translate3d(0,.8em,0);opacity:0}100%{transform:scale(1) translate3d(0,.8em,0);opacity:0}}',
@@ -212,13 +239,25 @@
     };
     return t;
   }
+  // oiseau (ou mouette, chauve-souris) qui bat vraiment des ailes : deux ailes qui pivotent à l'épaule, un corps qui monte et descend
+  const WINGS = { bird: { wu: 38, wd: -28, body: [34, 46] }, gull: { wu: 28, wd: -20, body: [32, 48] }, bat: { wu: 46, wd: -36, body: [24, 64] } };
+  function flyer(E, kind, color, dur, delay, style) {
+    const k = WINGS[kind] || WINGS.bird, wing = kind === 'gull' ? spr('wingGull') : kind === 'bat' ? spr('wingBat', color) : spr('wingBird', color);
+    const body = kind === 'gull' ? spr('bodyGull') : kind === 'bat' ? spr('bodyBat', color) : spr('bodyBird', color);
+    const anim = `fhs-wing ${N(dur)}s ${N(delay)}s infinite`, half = (key, flip) => E('div', { key, style: { position: 'absolute', top: 0, left: flip ? '50%' : 0, width: '50%', height: '100%', transform: flip ? 'scaleX(-1)' : undefined } },
+      E('div', { style: { position: 'absolute', inset: 0, backgroundImage: wing, backgroundSize: '100% 100%', transformOrigin: '100% 58%', '--wu': k.wu + 'deg', '--wd': k.wd + 'deg', animation: anim } }));
+    return E('div', { style: { position: 'absolute', ...style } },
+      E('div', { style: { position: 'absolute', inset: 0, animation: `fhs-wbob ${N(dur)}s ease-in-out ${N(delay)}s infinite` } },
+        half('l', false), half('r', true),
+        E('div', { style: { position: 'absolute', left: (50 - k.body[0] / 2) + '%', top: (58 - k.body[1] / 2) + '%', width: k.body[0] + '%', height: k.body[1] + '%', backgroundImage: body, backgroundSize: '100% 100%' } })));
+  }
   // particules qui tombent / montent / traversent : un porteur qui se déplace, un enfant qui oscille et porte l'image
   function drift(t, key, list) {
     if (t.preview) return [];
     const E = t.E;
     return list.map((p, i) => E('div', { key: key + i, style: { position: 'absolute', left: em(p.x), top: em(p.y), width: em(p.w), height: em(p.h == null ? p.w : p.h), '--x0': em(p.x0 || 0), '--y0': em(p.y0 || 0), '--x1': em(p.x1 || 0), '--y1': em(p.y1 || 0), '--r0': (p.r0 || 0) + 'deg', '--r1': (p.r1 || 0) + 'deg', '--op': p.op == null ? 1 : p.op, opacity: p.fade ? 0 : p.op, animation: `${p.fade ? 'fhs-movef' : 'fhs-move'} ${N(p.dur)}s ${p.ease || 'linear'} ${N(p.dl || 0)}s infinite`, zIndex: p.z } },
       E('div', { style: { width: '100%', height: '100%', '--sw': em(p.sw || 0), '--sr': (p.sr || 0) + 'deg', animation: p.sw || p.sr ? `fhs-sway ${N(p.swd || 3)}s ease-in-out ${N(-(p.dl || 0) * 0.7)}s infinite` : undefined } },
-        E('div', { style: { width: '100%', height: '100%', ...(p.img ? { backgroundImage: p.img, backgroundSize: '100% 100%' } : { background: p.bg }), borderRadius: p.round, '--f': p.f, animation: p.flap ? `${p.flapx ? 'fhs-flapx' : 'fhs-flap'} ${N(p.flap)}s ease-in-out infinite` : undefined, transform: p.flip ? 'scaleX(-1)' : undefined } }))));
+        p.wing ? flyer(E, p.wing, p.wc, p.flap || 0.6, -(i * 0.37 % 1), { inset: 0, transform: p.flip ? 'scaleX(-1)' : undefined }) : E('div', { style: { width: '100%', height: '100%', ...(p.img ? { backgroundImage: p.img, backgroundSize: '100% 100%' } : { background: p.bg }), borderRadius: p.round, '--f': p.f, animation: p.flap ? `${p.flapx ? 'fhs-flapx' : 'fhs-flap'} ${N(p.flap)}s ease-in-out infinite` : undefined, transform: p.flip ? 'scaleX(-1)' : undefined } }))));
   }
 
   // ======================================================================
@@ -399,6 +438,20 @@
     layers: (t, o) => {
       const leafC = ['#d9481c', '#f08a24', '#f6b73c', '#b8321c', '#e2672a', '#c9a227'];
       const kinds = ['maple', 'oak', 'leaf'];
+      // chemin qui serpente du premier plan jusqu'au pied des arbres, de plus en plus étroit avec la distance
+      const Bz = (u, a, b2, c, d) => (1 - u) ** 3 * a + 3 * (1 - u) ** 2 * u * b2 + 3 * (1 - u) * u * u * c + u ** 3 * d;
+      const cx0 = [786, 800, 660, 802], cy0 = [985, 840, 770, 648], PL = [], PR = [], PM = [];
+      for (let k = 0; k <= 48; k++) {
+        const u = k / 48, x = Bz(u, ...cx0), y = Bz(u, ...cy0), dx = Bz(Math.min(1, u + 0.01), ...cx0) - Bz(Math.max(0, u - 0.01), ...cx0), dy = Bz(Math.min(1, u + 0.01), ...cy0) - Bz(Math.max(0, u - 0.01), ...cy0);
+        const l = Math.hypot(dx, dy) || 1, w = 230 * Math.pow(1 - u, 1.55) + 6;
+        PL.push([x - dy / l * w / 2, y + dx / l * w / 2]); PR.push([x + dy / l * w / 2, y - dx / l * w / 2]); if (k <= 42) PM.push([x - dy / l * w * 0.08, y + dx / l * w * 0.08]);
+      }
+      const pp = (pts) => pts.map(([x, y], i) => (i ? 'L' : 'M') + N(x) + ' ' + N(y)).join(''), shape = pp(PL) + pp(PR.slice().reverse()).replace('M', 'L') + 'Z';
+      // below : ne garder que ce qui est sous cette ligne (pour repasser par-dessus ce qui est devant)
+      const trail = (id, below) => {
+        const body = path(shape, '#cf9459') + path(shape, 'none', ' stroke="#a8693a" stroke-width="3" opacity=".55"') + path(pp(PM), 'none', ' stroke="#e2ae72" stroke-width="10" stroke-linecap="round" opacity=".5"');
+        return below == null ? body : `<defs><clipPath id="${id}">${rect(-20, below, 1640, 920 - below)}</clipPath></defs><g clip-path="url(#${id})">${body}</g>`;
+      };
       return [
         t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.45, o.bg1], [0.72, o.bg3]])),
         ...movingSun(t, 'sun', 1010, 600, 420, (x, y, p) => glow(p + 'g', x, y, 420, '#ffd27a', 0.55) + circ(x, y, 70, '#ffe7a8', ' opacity=".95"')),
@@ -413,11 +466,21 @@
           const r = t.r('fo');
           let s = hill(r, { y: 610, amp: 80, n: 16 }, '#9a5a62', ' opacity=".85"');
           for (let i = 0; i < 70; i++) { const x = rr(r, -20, 1620), y = rr(r, 600, 640); s += circ(x, y, rr(r, 14, 26), pick(r, ['#8a3f3a', '#a24c34', '#7d4a3d', '#b2603a'])); }
-          s += hill(r, { y: 650, amp: 50, n: 14 }, '#7c3b2a');
-          for (let i = 0; i < 40; i++) { const x = rr(r, -20, 1620); if (x > 520 && x < 1080 && r() < 0.6) continue; s += leafy(r, x, rr(r, 668, 700), rr(r, 70, 120), { trunk: '#4a2618', cols: ['#c8461d', '#e2752a', '#eab140', '#a8341c'], shadow: 'rgba(60,20,10,.35)', n: 9 }); }
-          // chemin qui serpente
-          s += path('M640 900C700 820 820 800 770 760C730 730 800 710 860 700L890 700C840 714 790 734 830 762C890 804 820 836 860 900Z', '#d9a066') + path('M700 900C730 850 790 830 780 800', 'none', ' stroke="#c48a52" stroke-width="5" opacity=".6"');
+          // la crête (forme connue, pour poser les arbres pile dessus)
+          const ridge = (x) => 654 + 15 * Math.sin(x / 190 + 0.6) + 7 * Math.sin(x / 77 + 2.1);
+          let rp = 'M-20 900'; for (let x = -20; x <= 1620; x += 20) rp += `L${x} ${N(ridge(x))}`;
+          s += path(rp + 'L1620 900Z', '#7c3b2a');
+          s += trail(p + 'c0');
+          // arbres du fond, en deux rangées : un tronc, une couronne ronde ou un peuplier, une ombre au pied
+          const trees = [];
+          for (let i = 0; i < 26; i++) trees.push({ x: rr(r, -20, 1620), h: rr(r, 58, 80), far: 1 });
+          for (let i = 0; i < 22; i++) { const x = rr(r, -20, 1620); if (x > 690 && x < 910) continue; trees.push({ x, h: rr(r, 82, 118), far: 0 }); }
+          trees.sort((a, b) => b.far - a.far || a.x - b.x).forEach(tr => {
+            const b = ridge(tr.x) + (tr.far ? -2 : 10) + rr(r, 0, 6);
+            s += autumnTree(r, tr.x, b, tr.h, tr.far ? ['#a8463a', '#b8603a', '#c9853e', '#9a3f36'] : ['#c8461d', '#e2752a', '#eab140', '#a8341c', '#d65a24'], r() < 0.22 ? 'poplar' : 'round', tr.far);
+          });
           s += hill(r, { y: 760, amp: 40, n: 12 }, '#5b2c17');
+          s += trail(p + 'c1', 700);
           return s;
         }),
         t.art('front', (p) => {
@@ -426,20 +489,24 @@
           // tapis de feuilles au sol
           s += path('M-20 900L-20 800C200 780 400 830 640 812L700 900Z', '#4a2412') + path('M870 900L900 812C1100 800 1300 780 1620 806L1620 900Z', '#4a2412');
           for (let i = 0; i < 260; i++) { const x = rr(r, -10, 1610); if (x > 660 && x < 880) continue; const y = rr(r, 812, 900); s += ell(x, y, rr(r, 4, 9), rr(r, 2, 4), pick(r, leafC), ` transform="rotate(${N(rr(r, -60, 60))} ${N(x)} ${N(y)})" opacity="${N(rr(r, 0.7, 1))}"`); }
+          s += trail(p + 'c2', 790);
           // champignons
-          [[520, 846, 1], [548, 852, 0.7], [1080, 842, 0.9]].forEach(([x, y, k]) => { s += rect(x - 5 * k, y - 22 * k, 10 * k, 22 * k, '#f1e3cc', ` rx="${N(4 * k)}"`) + path(`M${N(x - 20 * k)} ${N(y - 20 * k)}Q${x} ${N(y - 46 * k)} ${N(x + 20 * k)} ${N(y - 20 * k)}Z`, '#c8321f') + circ(x - 7 * k, y - 30 * k, 3 * k, '#fff3e6') + circ(x + 6 * k, y - 27 * k, 2.4 * k, '#fff3e6'); });
+          [[520, 846, 1], [548, 852, 0.7], [1080, 842, 0.9]].forEach(([x, y, k]) => { s += rect(x - 5 * k, y - 22 * k, 10 * k, 22 * k, '#f1e3cc', ` rx="${N(4 * k)}"`) + path(`M${N(x - 20 * k)} ${N(y - 20 * k)}Q${x} ${N(y - 46 * k)} ${N(x + 20 * k)} ${N(y - 20 * k)}Z`, '#c8321f') + circ(x - 7 * k, y - 25.5 * k, 2.5 * k, '#fff3e6') + circ(x + 6.5 * k, y - 25 * k, 2.1 * k, '#fff3e6') + circ(x - 0.5 * k, y - 29.5 * k, 1.6 * k, '#fff3e6'); });
           // clôture
           for (let x = 1120; x < 1420; x += 46) s += rect(x, 760 + (x - 1120) * 0.02, 10, 70, '#6b4128') + path(`M${x - 1} ${760 + (x - 1120) * 0.02}L${x + 5} ${750 + (x - 1120) * 0.02}L${x + 11} ${760 + (x - 1120) * 0.02}Z`, '#6b4128');
           s += line('M1110 782L1430 790M1110 808L1430 816', '#6b4128', 7);
           // grands arbres qui encadrent l'image
           s += leafy(r, 70, 905, 560, { trunk: '#3a1d12', cols: ['#c8461d', '#b8321c', '#d65a24', '#9e2d18'], shadow: 'rgba(50,15,5,.45)', light: 'rgba(255,200,110,.18)', n: 26 });
           s += leafy(r, 1545, 905, 540, { trunk: '#3a1d12', cols: ['#b8321c', '#d9481c', '#c8461d', '#a8341c'], shadow: 'rgba(50,15,5,.45)', light: 'rgba(255,200,110,.16)', n: 24 });
-          s += leafy(r, 300, 880, 260, { trunk: '#4a2618', cols: ['#f6b73c', '#eab140', '#f08a24'], shadow: 'rgba(50,15,5,.35)', light: 'rgba(255,240,170,.2)', n: 14 });
+          s += ell(312, 884, 96, 13, 'rgba(30,8,4,.45)');
+          s += leafy(r, 300, 884, 260, { trunk: '#7a4527', cols: ['#f6b73c', '#eab140', '#f08a24'], shadow: 'rgba(50,15,5,.35)', light: 'rgba(255,240,170,.2)', n: 14 });
+          s += path('M291 884Q296 822 298 760L304 760Q306 822 311 884Z', 'rgba(255,220,170,.18)');
+          for (let i = 0; i < 26; i++) { const x = rr(r, 210, 410), y = rr(r, 872, 898); s += ell(x, y, rr(r, 4, 8), rr(r, 2, 3.5), pick(r, ['#f6b73c', '#eab140', '#f08a24']), ` transform="rotate(${N(rr(r, -50, 50))} ${N(x)} ${N(y)})"`); }
           return s;
         }),
         // vol d'oiseaux en V
         t.el('birds', { position: 'absolute', left: em(-300), top: em(190), width: em(240), height: em(120), '--x1': em(2200), '--y1': em(-60), animation: 'fhs-move 46s linear -12s infinite' },
-          [[0, 50], [34, 38], [34, 62], [68, 26], [68, 74], [102, 14], [102, 86]].map(([x, y], i) => t.E('div', { key: i, style: t.img(spr('bird', '#3b1d1d'), { left: em(200 - x), top: em(y), width: em(30), height: em(15), '--f': 0.25, animation: `fhs-flap ${N(0.55 + (i % 3) * 0.08)}s ease-in-out ${N(-i * 0.13)}s infinite` }) }))),
+          [[0, 50], [34, 38], [34, 62], [68, 26], [68, 74], [102, 14], [102, 86]].map(([x, y], i) => t.E('div', { key: i, style: { position: 'absolute', left: em(200 - x), top: em(y), width: em(32), height: em(18) } }, flyer(t.E, 'bird', '#3b1d1d', 0.62 + (i % 3) * 0.07, -i * 0.17, { inset: 0 })))),
         ...drift(t, 'lv', t.n('lv', 22, (r) => ({ x: rr(r, -40, 1600), y: -60, w: rr(r, 22, 38), y1: 1000, x1: rr(r, -240, 160), r0: rr(r, -40, 40), r1: rr(r, -540, 540), dur: rr(r, 10, 17), dl: -r() * 17, sw: rr(r, 3, 6), sr: rr(r, 10, 30), swd: rr(r, 2.4, 4.2), img: spr(pick(r, kinds), pick(r, leafC)) }))),
       ];
     },
@@ -692,7 +759,7 @@
         twinkles(t, 'tw', 12, [380, 610, 1500, 740], '#ffffff'),
         t.el('boat', { position: 'absolute', left: em(560), top: em(500), width: em(72), height: em(78), '--x1': em(320), animation: 'fhs-move 60s ease-in-out infinite alternate' }, E('div', { style: t.img(spr('boat'), { inset: 0, transformOrigin: '50% 90%', '--a': '3deg', animation: 'fhs-rock 3.6s ease-in-out infinite' }) })),
         t.still(`<image href="${spr('boat').slice(5, -2)}" x="560" y="500" width="72" height="78"/>`),
-        ...drift(t, 'gl', t.n('gl', 3, (r, i) => ({ x: -100, y: rr(r, 240, 420), w: rr(r, 50, 70), h: rr(r, 22, 30), x1: 1900, y1: rr(r, -80, 80), dur: rr(r, 26, 38), dl: -i * 11, flap: rr(r, 0.7, 1), f: 0.3, img: spr('gull') }))),
+        ...drift(t, 'gl', t.n('gl', 3, (r, i) => ({ x: -100, y: rr(r, 240, 420), w: rr(r, 50, 70), h: rr(r, 22, 30), x1: 1900, y1: rr(r, -80, 80), dur: rr(r, 26, 38), dl: -i * 11, flap: rr(r, 0.8, 1.1), wing: 'gull' }))),
         ...[0, 1].map((i) => t.el('wv' + i, { position: 'absolute', left: 0, top: em(i ? 742 : 752), width: em(3200), height: em(i ? 40 : 34), backgroundImage: spr('foam', i ? 'rgba(255,255,255,.55)' : 'rgba(255,255,255,.85)'), backgroundSize: '50% 100%', backgroundRepeat: 'repeat-x', '--sx': em(-800), animation: `fhs-scroll ${i ? 14 : 9}s linear infinite` })),
         t.el('crab', { position: 'absolute', left: em(640), top: em(838), width: em(60), height: em(40), '--x1': em(220), animation: 'fhs-move 9s ease-in-out infinite alternate' }, E('div', { style: t.img(spr('crab'), { inset: 0, '--by': em(-3), animation: 'fhs-bob .35s ease-in-out infinite' }) })),
       ];
@@ -1567,7 +1634,7 @@
         t.el('flag', { position: 'absolute', left: em(57), top: em(262), width: em(64), height: em(34), transformOrigin: '0 50%', '--a': '5deg', animation: 'fhs-rock 3.2s ease-in-out infinite' },
           E('div', { style: t.img(spr('ukflag'), { position: 'static', width: '100%', height: '100%', borderRadius: '1px 6px 6px 1px', boxShadow: '0 .3em .8em rgba(0,0,0,.3)' }) })),
         t.still(`<image href="${spr('ukflag').slice(5, -2)}" x="57" y="262" width="64" height="34"/>`),
-        ...drift(t, 'gl', t.n('gl', 2, (r, i) => ({ x: -100, y: rr(r, 330, 430), w: rr(r, 44, 56), h: rr(r, 20, 25), x1: 1900, y1: rr(r, -60, 60), dur: rr(r, 30, 40), dl: -i * 17, flap: rr(r, 0.7, 1), f: 0.3, img: spr('gull') }))),
+        ...drift(t, 'gl', t.n('gl', 2, (r, i) => ({ x: -100, y: rr(r, 330, 430), w: rr(r, 44, 56), h: rr(r, 20, 25), x1: 1900, y1: rr(r, -60, 60), dur: rr(r, 30, 40), dl: -i * 17, flap: rr(r, 0.8, 1.1), wing: 'gull' }))),
         // bus rouge et taxi noir sur le pont (le parapet passe devant)
         t.el('bus', t.img(spr('bus'), { left: em(-160), top: em(658), width: em(110), height: em(58.7), '--x1': em(1920), animation: 'fhs-move 27s linear -9s infinite' })),
         t.el('cab', t.img(spr('cab'), { left: em(1640), top: em(680), width: em(70), height: em(36.75), '--x1': em(-1820), animation: 'fhs-move 19s linear -3s infinite' })),
@@ -1713,7 +1780,7 @@
           return s;
         }),
         // chauves-souris qui passent devant le signal
-        ...drift(t, 'bt', t.n('bt', 3, (r, i) => ({ x: 1700, y: rr(r, 120, 320), w: rr(r, 30, 46), h: rr(r, 13, 19), x1: -1900, y1: rr(r, -80, 80), dur: rr(r, 16, 24), dl: -i * 8, flap: rr(r, 0.22, 0.3), f: 0.25, img: spr('bat', '#07080d') }))),
+        ...drift(t, 'bt', t.n('bt', 3, (r, i) => ({ x: 1700, y: rr(r, 120, 320), w: rr(r, 30, 46), h: rr(r, 13, 19), x1: -1900, y1: rr(r, -80, 80), dur: rr(r, 16, 24), dl: -i * 8, flap: rr(r, 0.24, 0.32), wing: 'bat', wc: '#07080d' }))),
         // brume au ras des rues
         ...drift(t, 'mi', t.n('mi', 2, (r, i) => ({ x: -900, y: 690, w: 1100, h: 120, x1: 2700, dur: 90, dl: -i * 45, op: 0.12, fade: true, img: spr('dot', '#d6d9e6') }))),
         // pluie fine et oblique

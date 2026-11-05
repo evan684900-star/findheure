@@ -194,6 +194,9 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 @keyframes fh-twinkle{0%,100%{opacity:.2}50%{opacity:1}}
 @keyframes fh-batfly{0%{transform:translate3d(-14vw,0,0)}20%{transform:translate3d(14vw,-5vh,0)}40%{transform:translate3d(40vw,2vh,0)}60%{transform:translate3d(66vw,-4vh,0)}80%{transform:translate3d(92vw,3vh,0)}100%{transform:translate3d(118vw,-2vh,0)}}
 @keyframes fh-flap{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.2)}}
+/* chauve-souris : chaque aile pivote à l'épaule (descente rapide, remontée plus lente), le corps monte quand les ailes poussent */
+@keyframes fh-wing{0%{transform:rotate(46deg) scaleY(.78);animation-timing-function:cubic-bezier(.5,0,.35,1)}42%{transform:rotate(-36deg) scaleY(1);animation-timing-function:cubic-bezier(.4,0,.6,1)}100%{transform:rotate(46deg) scaleY(.78)}}
+@keyframes fh-wbob{0%,100%{transform:translateY(8%)}42%{transform:translateY(-8%)}}
 @keyframes fh-tp{0%{transform:translate(0,0) scale(.3) rotate(0deg);opacity:0;animation-timing-function:cubic-bezier(.2,.7,.3,1)}12%{opacity:1}40%{transform:translate(var(--mx),var(--my)) scale(1) rotate(calc(var(--r) * .4));animation-timing-function:cubic-bezier(.45,0,.75,.6)}78%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(var(--s)) rotate(var(--r));opacity:0}}
 @keyframes fh-tp-glow{0%{transform:scale(.4);opacity:0}18%{transform:scale(1.06);opacity:1}100%{transform:scale(1.3);opacity:0}}
 @keyframes fh-tp-flick{0%{opacity:0}8%{opacity:1}18%{opacity:.62}26%{opacity:1}44%{opacity:.8}52%{opacity:1}70%{opacity:.86}100%{opacity:0}}
@@ -1193,7 +1196,7 @@ function tapParts(E, tp, booText) {
   const bats = (k) => {
     for (let i = 0; i < k; i++) {
       const t = -1.571 + rr(-1.25, 1.25), d = rr(280, 460) * u, w = rr(34, 56) * u;
-      part(w, w * 0.42, E('svg', { viewBox: '0 0 120 50', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible', animation: `fh-flap ${rr(0.18, 0.28).toFixed(2)}s ease-in-out infinite` } }, E('path', { d: BAT_D, fill: '#0b0412' })),
+      part(w, w * 0.42, batFly(E, w, rr(0.2, 0.3), '#0b0412'),
         [Math.cos(t) * d * 0.4, Math.sin(t) * d * 0.4 - 20 * u, Math.cos(t) * d * 1.5, Math.sin(t) * d * 1.3 - 80 * u, rr(-20, 20), 1.7], rr(2, 2.6), rr(0, 0.25));
     }
   };
@@ -1210,7 +1213,7 @@ function tapParts(E, tp, booText) {
       const r0 = tp.r;
       for (let i = 0; i < 4; i++) {
         const w = rr(40, 60) * u, y0 = rr(-0.5, 0.5) * r0;
-        part(w, w * 0.42, E('svg', { viewBox: '0 0 120 50', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible', animation: `fh-flap ${rr(0.18, 0.26).toFixed(2)}s ease-in-out infinite` } }, E('path', { d: BAT_D, fill: '#0b0412' })),
+        part(w, w * 0.42, batFly(E, w, rr(0.2, 0.28), '#0b0412'),
           [1.7 * r0, rr(-0.3, 0.3) * r0, 3.6 * r0, rr(-1.2, 0.2) * r0, rr(-10, 10), 1.3], rr(2, 2.6), i * 0.22, -1.8 * r0, y0);
       }
       break;
@@ -1527,6 +1530,16 @@ const SPOOK = (() => {
     embers: Array.from({ length: 20 }, () => ({ x: r() * 100, z: 2 + r() * 4, dur: 9 + r() * 12, dl: -r() * 20, dx: Math.round((r() - 0.5) * 140), green: r() < 0.25 })),
   };
 })();
+// chauve-souris qui bat vraiment des ailes (deux ailes séparées + un corps), à la place d'un dessin qu'on écrase
+const BAT_WING = 'M60 18Q41 5 3 9Q9 19 5 31Q15 25 23 32Q31 25 40 33Q47 27 60 30Z';
+const batFly = (E, w, dur, color, key) => {
+  const anim = `fh-wing ${dur.toFixed(2)}s ${(-((w * 7.31) % dur)).toFixed(2)}s infinite`, c = color || '#0b0412';
+  const half = (k, flip) => E('div', { key: k, style: { position: 'absolute', top: 0, left: flip ? '50%' : 0, width: '50%', height: '100%', transform: flip ? 'scaleX(-1)' : undefined } },
+    E('svg', { viewBox: '0 0 60 50', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible', transformOrigin: '100% 46%', animation: anim } }, E('path', { d: BAT_WING, fill: c })));
+  return E('div', { key, style: { position: 'relative', width: w, height: w * 0.42 } },
+    E('div', { style: { position: 'absolute', inset: 0, animation: `fh-wbob ${dur.toFixed(2)}s ease-in-out infinite` } }, half('l', false), half('r', true),
+      E('svg', { viewBox: '0 0 20 26', style: { position: 'absolute', left: '43%', top: '18%', width: '14%', height: '70%', overflow: 'visible' } }, E('path', { d: 'M10 25C5 25 3.5 19 4 13L3 3.5L7 8.5Q10 7.4 13 8.5L17 3.5L16 13C16.5 19 15 25 10 25Z', fill: c }))));
+};
 const BAT_D = 'M54 20 L56 11 L59 17 L61 17 L64 11 L66 20 C74 14 90 8 116 16 C106 20 102 26 104 34 C96 28 88 30 84 38 C78 32 72 34 68 40 L60 47 L52 40 C48 34 42 32 36 38 C32 30 24 28 16 34 C18 26 14 20 4 16 C30 8 46 14 54 20 Z';
 function spookyScene(E) {
   const ink = '#040108', svg = (p, ...k) => E('svg', p, ...k);
@@ -1552,7 +1565,7 @@ function spookyScene(E) {
     E('div', { key: 'fog1', style: { position: 'absolute', left: '-20%', width: '140%', top: '22%', height: '30%', background: 'radial-gradient(45% 50% at 30% 50%, rgba(200,180,255,.08), transparent 70%), radial-gradient(40% 45% at 75% 55%, rgba(200,180,255,.06), transparent 70%)', animation: 'fh-fog 34s ease-in-out infinite alternate' } }),
     ...SPOOK.bats.map((b, i) => E('div', { key: 'bat' + i, style: { position: 'absolute', left: 0, right: 0, top: b.top + '%', transform: b.rev ? 'scaleX(-1)' : undefined } },
       E('div', { style: { width: b.size, animation: `fh-batfly ${b.dur.toFixed(1)}s linear ${b.dl.toFixed(1)}s infinite` } },
-        svg({ viewBox: '0 0 120 50', width: b.size, height: b.size * 0.42, style: { display: 'block', overflow: 'visible', animation: `fh-flap ${b.flap.toFixed(2)}s ease-in-out infinite` } }, E('path', { d: BAT_D, fill: '#0b0412' }))))),
+        batFly(E, b.size, b.flap + 0.06, '#0b0412')))),
     E('div', { key: 'ghost', style: { position: 'absolute', left: 0, top: '30%', opacity: 0.5, animation: 'fh-ghost 46s linear -14s infinite' } },
       E('div', { style: { animation: 'fh-bob 3.4s ease-in-out infinite' } },
         svg({ viewBox: '0 0 60 70', width: '7vmin', height: '8.2vmin', style: { display: 'block', filter: 'drop-shadow(0 0 10px rgba(230,220,255,.6))' } },
