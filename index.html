@@ -87,7 +87,7 @@ a{color:inherit}a:hover{opacity:.8}
 .fh-mm-b{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
 background:radial-gradient(120% 120% at 30% 16%,rgba(255,255,255,.96) 0%,rgba(255,255,255,.6) 24%,rgba(var(--c),.12) 50%,rgba(var(--c),.32) 100%);
 box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.9),inset 0 -16px 30px rgba(var(--c),.32),inset 0 12px 24px rgba(255,255,255,.8),inset 12px 0 26px rgba(var(--c),.12),inset -8px -4px 18px rgba(var(--c),.16),0 24px 46px -18px rgba(var(--c),.7),0 4px 14px rgba(20,20,40,.08);
-animation:fh-mm-blob var(--bd,9s) ease-in-out infinite;transition:transform .55s cubic-bezier(.3,1.6,.5,1),box-shadow .4s ease}
+transition:transform .55s cubic-bezier(.3,1.6,.5,1),box-shadow .4s ease}
 .fh-mm-b::before{content:'';position:absolute;left:15%;top:7%;width:46%;height:25%;border-radius:50%;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,0));transform:rotate(-16deg);pointer-events:none}
 .fh-mm-b::after{content:'';position:absolute;left:24%;right:24%;bottom:6%;height:15%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.75),rgba(255,255,255,0));pointer-events:none}
 .fh-mm-b:hover{transform:scale(1.05)}
@@ -102,10 +102,11 @@ background:radial-gradient(circle at 35% 25%,#fff,rgba(255,255,255,.75));box-sha
 @keyframes fh-mm-in{from{transform:translate(var(--fx),var(--fy)) scale(.2);opacity:0}}
 @keyframes fh-mm-out{to{transform:var(--to) scale(.15);opacity:0}}
 @keyframes fh-mm-jelly{0%{transform:scale(1,1)}22%{transform:scale(1.14,.86)}42%{transform:scale(.92,1.08)}62%{transform:scale(1.05,.96)}80%{transform:scale(.98,1.02)}100%{transform:scale(1,1)}}
-@keyframes fh-mm-float{0%,100%{transform:translateY(0)}50%{transform:translateY(var(--fl,-7px))}}
+@keyframes fh-mm-float{0%,100%{transform:translateY(0) scale(1,1)}25%{transform:translateY(calc(var(--fl,-7px)*.5)) scale(1.014,.986)}50%{transform:translateY(var(--fl,-7px)) scale(1,1)}75%{transform:translateY(calc(var(--fl,-7px)*.5)) scale(.986,1.014)}}
+.fh-mm-f{will-change:transform}.fh-mm-p{contain:layout style}
 @keyframes fh-mm-line{from{transform:scaleX(0);opacity:0}}
 @keyframes fh-mm-hint{0%,100%{opacity:.55}50%{opacity:1}}
-[data-q="low"] .fh-mm-b{animation:none}
+[data-q="low"] .fh-mm-f{animation:none!important}
 .fh-mm-b{background-color:rgba(255,255,255,.5)}
 .fh-mm-dk .fh-mm-b{background:radial-gradient(120% 120% at 30% 16%,rgba(255,255,255,.34) 0%,rgba(var(--c),.3) 26%,rgba(var(--c),.16) 52%,rgba(var(--c),.4) 100%),rgba(16,14,26,.62);
 box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(--c),.42),inset 0 12px 24px rgba(255,255,255,.14),inset 12px 0 26px rgba(var(--c),.16),0 24px 46px -18px rgba(var(--c),.75),0 4px 14px rgba(0,0,0,.3)}
@@ -116,6 +117,57 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 .fh-mm-dk .fh-mm-t{color:#f6f4f0;text-shadow:0 1px 3px rgba(0,0,0,.45)}
 .fh-mm-dk .fh-mm-t::placeholder{color:rgba(246,244,240,.5)}
 .fh-mm-dk .fh-mm-x{color:#f6f4f0;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.35),rgba(30,28,40,.9))}
+/* traits */
+.fh-mm-l{width:100%;height:100%;border-radius:3px;transform-origin:0 50%;background:linear-gradient(90deg,rgba(var(--a),.5),rgba(var(--c),.8));box-shadow:0 0 6px rgba(255,255,255,.6)}
+.fh-mm-dk .fh-mm-l{box-shadow:0 0 8px rgba(0,0,0,.35)}
+/* texte des bulles : couleur, lueur et dégradé du thème */
+.fh-mm-root .fh-mm-t{color:var(--tc);text-shadow:var(--tsh,none)}
+.fh-mm-root .fh-mm-t::placeholder{color:currentColor;opacity:.5}
+.fh-mm-root .fh-mm-t.grad{background:linear-gradient(180deg,var(--g1),var(--g2));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:none;caret-color:var(--g2)}
+.fh-mm-root .fh-mm-t.grad::placeholder{-webkit-text-fill-color:var(--g2);opacity:.45}
+.fh-sk-brutal .fh-mm-t,.fh-sk-candy .fh-mm-t,.fh-sk-cube .fh-mm-t{color:var(--ti);text-shadow:var(--tis,none)}
+/* habillages : un contour en relief pour garder la même idée sur tous les thèmes */
+.fh-mm-root:not(.fh-sk-glass) .fh-mm-b.on{outline:3px solid rgba(var(--c),.55);outline-offset:5px}
+/* néon : tube lumineux */
+.fh-sk-neon .fh-mm-b{background:radial-gradient(circle at 50% 60%,rgba(var(--c),.16),rgba(9,6,18,.84) 72%);box-shadow:inset 0 0 0 2px rgba(var(--c),.95),inset 0 0 22px rgba(var(--c),.45),0 0 16px rgba(var(--c),.7),0 0 40px rgba(var(--c),.3)}
+.fh-sk-neon .fh-mm-b::before,.fh-sk-neon .fh-mm-b::after{display:none}
+.fh-sk-neon .fh-mm-l{background:rgb(var(--c));box-shadow:0 0 6px rgba(var(--c),.9),0 0 14px rgba(var(--c),.5)}
+/* papier : rond découpé, contour à l'encre, bout de ruban adhésif */
+.fh-sk-paper .fh-mm-b{background:#fffdf6;box-shadow:inset 0 0 0 1.5px rgba(28,26,23,.8),4px 5px 0 rgba(var(--c),.5),0 12px 24px -10px rgba(0,0,0,.25)}
+.fh-sk-paper .fh-mm-b::before{left:36%;top:-6px;width:28%;height:16px;border-radius:2px;background:rgba(var(--c),.42);transform:rotate(-5deg)}
+.fh-sk-paper .fh-mm-b::after{display:none}
+.fh-sk-paper .fh-mm-l{background:repeating-linear-gradient(90deg,rgba(28,26,23,.75) 0 9px,transparent 9px 15px);box-shadow:none}
+/* craie : cercle tracé à la main sur le tableau */
+.fh-sk-chalk .fh-mm-b{background:rgba(var(--c),.14);box-shadow:none;border:2.5px dashed rgba(255,255,255,.82)}
+.fh-sk-chalk .fh-mm-b::before,.fh-sk-chalk .fh-mm-b::after{display:none}
+.fh-sk-chalk .fh-mm-l{background:repeating-linear-gradient(90deg,rgba(255,255,255,.85) 0 12px,rgba(255,255,255,.3) 12px 16px);box-shadow:none}
+/* brutal : aplat, gros contour noir, ombre dure */
+.fh-sk-brutal .fh-mm-b{background:rgb(var(--c));box-shadow:inset 0 0 0 3px #111,6px 6px 0 #111}
+.fh-sk-brutal .fh-mm-b::before,.fh-sk-brutal .fh-mm-b::after{display:none}
+.fh-sk-brutal .fh-mm-b:hover{transform:translate(-2px,-2px)}
+.fh-sk-brutal .fh-mm-b.on{transform:translate(-3px,-3px);box-shadow:inset 0 0 0 3px #111,9px 9px 0 #111;outline:none}
+.fh-sk-brutal .fh-mm-l{background:#111;box-shadow:none;height:5px;margin-top:-1px;border-radius:0}
+/* pixel : rond en escalier, bord épais */
+.fh-sk-pixel .fh-mm-b{border-radius:0;background:rgb(var(--c));box-shadow:none;clip-path:polygon(30% 0,70% 0,70% 6%,82% 6%,82% 12%,88% 12%,88% 18%,94% 18%,94% 30%,100% 30%,100% 70%,94% 70%,94% 82%,88% 82%,88% 88%,82% 88%,82% 94%,70% 94%,70% 100%,30% 100%,30% 94%,18% 94%,18% 88%,12% 88%,12% 82%,6% 82%,6% 70%,0 70%,0 30%,6% 30%,6% 18%,12% 18%,12% 12%,18% 12%,18% 6%,30% 6%)}
+.fh-sk-pixel .fh-mm-b::before{left:5px;top:5px;right:5px;bottom:5px;width:auto;height:auto;border-radius:0;transform:none;background:rgba(18,10,36,.94);clip-path:inherit}
+.fh-sk-pixel .fh-mm-b::after{left:22%;top:18%;right:auto;bottom:auto;width:8%;height:8%;border-radius:0;background:rgba(255,255,255,.75)}
+.fh-sk-pixel .fh-mm-b.on{outline:none;transform:scale(1.09)}
+.fh-sk-pixel .fh-mm-l{background:repeating-linear-gradient(90deg,rgb(var(--c)) 0 6px,transparent 6px 12px);box-shadow:none;height:6px;margin-top:-1.5px;border-radius:0}
+/* orné : médaillon sombre à double filet doré (ou de la couleur du thème) */
+.fh-sk-ornate .fh-mm-b{background:radial-gradient(circle at 50% 35%,rgba(var(--a),.16),rgba(12,9,6,.88) 70%);box-shadow:inset 0 0 0 1.5px rgba(var(--a),.95),inset 0 0 0 6px rgba(12,9,6,.88),inset 0 0 0 7px rgba(var(--a),.5),inset 0 -14px 26px rgba(var(--c),.28),0 18px 40px -12px rgba(0,0,0,.6),0 0 22px rgba(var(--a),.18)}
+.fh-sk-ornate .fh-mm-b::before{background:linear-gradient(180deg,rgba(255,255,255,.2),rgba(255,255,255,0))}
+.fh-sk-ornate .fh-mm-b::after{display:none}
+.fh-sk-ornate .fh-mm-l{background:linear-gradient(90deg,rgba(var(--a),.95),rgba(var(--a),.4));box-shadow:0 0 6px rgba(var(--a),.4);height:2px;margin-top:.5px}
+/* bonbon : gelée brillante bien colorée */
+.fh-sk-candy .fh-mm-b{background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.95) 0,rgba(255,255,255,.5) 9%,rgba(var(--c),.92) 32%,rgb(var(--c)) 74%);box-shadow:inset 0 -12px 20px rgba(0,0,0,.18),inset 0 8px 16px rgba(255,255,255,.5),0 16px 28px -10px rgba(var(--c),.9)}
+.fh-sk-candy .fh-mm-l{background:rgb(var(--c));height:5px;margin-top:-1px;border-radius:5px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+/* cube : pastille épaisse, comme un jouet en 3D */
+.fh-sk-cube .fh-mm-b{background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,0) 60%),rgb(var(--c));box-shadow:inset 0 0 0 2px rgba(255,255,255,.35),0 10px 0 rgba(0,0,0,.28),0 10px 0 rgb(var(--c)),0 22px 26px -6px rgba(0,0,0,.4)}
+.fh-sk-cube .fh-mm-b::after{display:none}
+.fh-sk-cube .fh-mm-l{background:rgb(var(--c));height:6px;margin-top:-1.5px;box-shadow:0 3px 0 rgba(0,0,0,.25)}
+/* glace : givre clair et bord blanc */
+.fh-sk-ice .fh-mm-b{background:linear-gradient(155deg,rgba(255,255,255,.95) 0%,rgba(236,246,255,.88) 45%,rgba(var(--c),.32) 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.95),inset 0 -14px 24px rgba(var(--c),.25),0 14px 30px -12px rgba(30,80,140,.45)}
+.fh-sk-ice .fh-mm-l{background:linear-gradient(90deg,rgba(255,255,255,.95),rgba(var(--c),.85));box-shadow:0 0 6px rgba(255,255,255,.8)}
 @keyframes fh-mmdd-in{from{opacity:0;transform:translateY(-8px) scale(.94)}}
 /* chaque menu sur son propre calque : le décor animé dessous ne le force pas à se redessiner */
 .fh-menu{will-change:transform;contain:layout paint}
@@ -478,6 +530,10 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.13.0', d: '2026-11-05', items: [
+    'Carte mentale : bulles habillées selon le thème, dans sa police.|Mind map: bubbles styled after the theme, in its font.',
+    'Carte mentale : les traits restent accrochés aux bulles.|Mind map: lines stay attached to their bubbles.',
+    'Carte mentale plus fluide.|Smoother mind map.'] },
   { v: '2.12.0', d: '2026-11-05', items: [
     'Carte mentale aux couleurs et au décor du thème.|Mind map follows the theme’s colours and background.',
     'Carte mentale : sauvegarde (Ctrl+S) et liste « Mes cartes » sous l’onglet.|Mind map: save (Ctrl+S) and a “My maps” list under the tab.',
@@ -564,6 +620,22 @@ function mindPal(s) {
   while (out.length < 8) out.push(MIND_HEX[out.length]);
   return out;
 }
+// l'habillage des bulles selon la famille du thème
+const MIND_SKIN = { neon: 'neon', holo: 'neon', cosmos: 'neon', terminal: 'neon', matrix: 'neon', grid: 'neon', paper: 'paper', rentree: 'chalk', brutal: 'brutal', arcade: 'pixel', luxe: 'ornate', newyear: 'ornate', gothic: 'ornate', candy: 'candy', easter: 'candy', spring: 'candy', valentine: 'candy', april: 'candy', trippy: 'candy', iso: 'cube', glacier: 'ice', winter: 'ice' };
+const mindSkin = (s) => MIND_SKIN[s.bgType === 'scene' ? s.scene : s.bgType] || 'glass';
+// couleur de fond approximative de chaque habillage (pour choisir une couleur de texte lisible)
+const MIND_FILL = { neon: '#0d0a16', pixel: '#140a28', chalk: '#2b3a33', ornate: '#0e0a06', paper: '#fffdf6', ice: '#eef6ff' };
+// largeur d'un mot dans une police donnée (mesurée une fois à 100 px, puis mise à l'échelle)
+const MW = new Map(); let MW_CTX = null;
+const measure100 = (txt, fam, wt, it) => {
+  const k = fam + '|' + wt + '|' + (it ? 1 : 0) + '|' + txt; let v = MW.get(k); if (v != null) return v;
+  const cf = `${it ? 'italic ' : ''}${wt} 100px ${fam}`;
+  try { if (!MW_CTX) MW_CTX = document.createElement('canvas').getContext('2d'); MW_CTX.font = cf; v = MW_CTX.measureText(txt).width; } catch (e) { v = txt.length * 56; }
+  // police pas encore chargée : mesure provisoire, on ne la garde pas (on remesurera une fois la police là)
+  let ready = true; try { ready = !document.fonts || document.fonts.check(cf); } catch (e) {}
+  if (ready) { if (MW.size > 4000) MW.clear(); MW.set(k, v); }
+  return v;
+};
 const MIND_HEX = MIND_C.map(c => '#' + c.split(',').map(v => (+v).toString(16).padStart(2, '0')).join(''));
 const SKEY = 'findheure:settings:v2', STKEY = 'findheure:styles:v1', NKEY = 'findheure:notes:v1', TKEY = 'findheure:tools:v1', TOURKEY = 'findheure:tour:v1', PKEY = 'findheure:pics:v1';
 const four = (v) => { const a = String(v).split('|'); return [0, 1, 2, 3].map(i => a[i] ?? a[0]); };
@@ -808,6 +880,7 @@ const FONTS = [
 ].map(([name, cat, spec, wmin, wmax, dw, w]) => ({ name, cat, spec, wmin, wmax, dw, w }));
 const FONT_BY = {}; FONTS.forEach(f => { FONT_BY[f.name] = f; });
 const NODATE = new Set(['Monoton', 'Bungee Shade', 'Rubik Glitch', 'Rubik Moonrocks', 'Nabla', 'Honk', 'Tilt Prism', 'Six Caps', 'UnifrakturMaguntia', 'Sixtyfour', 'Major Mono Display', 'Rampart One', 'Bungee Spice', 'Creepster', 'Nosifer', 'Eater', 'Butcherman', 'Metal Mania']);
+const COLORF = new Set(['Nabla', 'Honk', 'Bungee Spice']);
 const CATS = ['all', 'spooky', 'modern', 'elegant', 'poster', 'future', 'retro', 'pixel', 'fun', 'script'];
 const stack = (f) => `'${f.name}', ${FALLBACK[f.cat]}`;
 const clampW = (f, w) => Math.min(f.wmax, Math.max(f.wmin, w));
@@ -1665,6 +1738,11 @@ class Component extends DCLogic {
     this.runFlip();
     this.placeModePill();
     this.tourMeasure();
+    // carte mentale : dès que les bulles changent de place, les traits les suivent jusqu'à l'arrivée
+    if (s.mode === 'mind' && this.mindPos) {
+      const lk = Object.entries(this.mindPos).map(([k, v]) => k + ':' + Math.round(v.x) + ',' + Math.round(v.y)).join('|') + '|' + (this.mindGeo ? this.mindGeo.d : 0) + '|' + (this.mindPop || 0) + '|' + st.mindGone.join(',');
+      if (lk !== this.mlKey) { this.mlKey = lk; this.mindLinesRun(Date.now() - (this.mindPop || 0) < 1500 ? 1200 + 80 * st.mind.items.length : 1100); }
+    } else this.mlKey = null;
     this.tourCheck();
     if (this.snd && s.mode !== 'sound' && !s.pinSnd) this.sndStop();
   }
@@ -2339,7 +2417,18 @@ class Component extends DCLogic {
     // la carte suit le thème : ses couleurs pour les bulles, verre clair sur fond clair, verre sombre sur fond sombre
     const palKey = [st.s.accent, st.s.glowColor, st.s.grad1, st.s.grad2, st.s.bg3, st.s.color, st.s.dateColor, st.s.bg1].join('|');
     if (palKey !== this.mindPalKey) { this.mindPalKey = palKey; this.mindPal = mindPal(st.s); }
-    const pal = this.mindPal, ink = dk ? '246,244,240' : '31,29,43';
+    const pal = this.mindPal, ink = dk ? '246,244,240' : '31,29,43', th = st.s, sk = mindSkin(th);
+    // texte : la couleur du thème si elle se lit bien sur la bulle, sinon blanc cassé ou encre
+    const fill = MIND_FILL[sk] || (dk ? '#1a1626' : '#f4f2f6'), dkFill = lum(fill) < 0.3;
+    const tc = contrast(th.color, fill) >= 3.6 ? th.color : dkFill ? '#f6f4f0' : '#1f1d2b';
+    const glowC = sk === 'neon' && !(th.glow > 0) ? th.accent : th.glowColor;
+    const tsh = (th.glow > 0 || sk === 'neon') && dkFill ? `0 0 ${(0.06 + Math.max(th.glow || 0, 40) / 700).toFixed(3)}em ${hexA(glowC, 0.9)}, 0 0 ${(0.14 + Math.max(th.glow || 0, 40) / 300).toFixed(3)}em ${hexA(glowC, 0.45)}`
+      : sk === 'chalk' ? '0 0 2px rgba(255,255,255,.45)' : dkFill && th.shadow > 0 ? '0 2px 6px rgba(0,0,0,.55)' : 'none';
+    const gradT = th.gradText && !['brutal', 'candy', 'cube', 'paper', 'ice'].includes(sk) && contrast(th.grad2, fill) >= 3 && contrast(th.grad1, fill) >= 3;
+    // la police du thème partout (sujet et idées), avec son style ; une police « en couleurs » (Nabla…) impose ses propres teintes : on prend alors la 2e police du thème
+    if (COLORF.has(font.name)) font = (th.dateFont !== 'same' && FONT_BY[th.dateFont]) || FONT_BY.Fredoka || FONT_BY.Geist || font;
+    const fam = stack(font), lsEm = (th.letterSpacing || 0) / 100 * 0.6, ital = !!th.italic;
+    const wIdea = clampW(font, Math.max(th.weight || 400, 500)), wTitle = clampW(font, Math.max(th.weight || 400, 600));
     const D = Math.round(Math.max(150, Math.min(Math.min(vw, vh - 90) * 0.32, 340)));
     // la bulle du sujet est un ovale bien plus large que haut : la plus grande de l'écran
     const Wc = Math.round(Math.max(D * 1.25, Math.min(D * 1.75, vw * 0.44))), ca = Wc / 2, cb = D / 2;
@@ -2352,14 +2441,21 @@ class Component extends DCLogic {
     const rx = Math.max(Math.min(vw * 0.36, vw / 2 - d / 2 - 16), Math.min(ca + d / 2 + 26, vw / 2 - d / 2 - 16)), ry = Math.min((bot - top) * 0.38, (bot - top) / 2 - d / 2 - 4);
     const ease = 'cubic-bezier(.3,1.32,.45,1)', fresh = Date.now() - (this.mindPop || 0) < 1500;
     this.mindGeo = { cx, cy, ca, cb, d, top, bot, vw, vh }; this.mindPos = {};
-    // taille du texte selon la place et la longueur ; nombre de lignes estimé pour centrer la zone de saisie
-    const fit = (txt, w, k0, hb) => {
-      // jamais de mot coupé en deux : le mot le plus long doit tenir sur une ligne
-      const len = txt.length, longest = Math.max(1, ...txt.split(/\s+/).map(x => x.length));
-      const B = hb || w, fs = Math.round(Math.max(11, Math.min(B * (len <= 12 ? k0 : len <= 30 ? k0 * 0.84 : len <= 60 ? k0 * 0.7 : k0 * 0.58), w * 0.72 / (longest * 0.56))));
-      let lines = 1, cur = 0; const cpl = Math.max(4, Math.floor(w * 0.72 / (fs * 0.56)));
-      txt.split(/\s+/).forEach(wd => { if (cur && cur + 1 + wd.length > cpl) { lines++; cur = wd.length; } else cur += (cur ? 1 : 0) + wd.length; });
-      lines = Math.min(6, lines);
+    // taille du texte selon la place et la longueur, mesurée dans la vraie police : jamais de mot coupé, et ça tient dans la bulle
+    const fit = (txt, w, k0, hb, wt) => {
+      const words = txt.split(/\s+/).filter(Boolean), len = txt.length, W = w * 0.72, B = hb || w;
+      const ww = (words.length ? words : [txt]).map(x => measure100(x, fam, wt, ital) + lsEm * 100 * x.length), sp = measure100(' ', fam, wt, ital);
+      // 11 px au minimum, sauf si un mot très long ne tiendrait pas autrement (police très large, comme le pixel)
+      const fitW = W * 100 / Math.max(...ww), fmin = Math.min(11, Math.max(7, fitW));
+      let fs = Math.max(fmin, Math.min(B * (len <= 12 ? k0 : len <= 30 ? k0 * 0.84 : len <= 60 ? k0 * 0.7 : k0 * 0.58), fitW));
+      let lines = 1;
+      for (let k = 0; k < 12; k++) {
+        lines = 1; let cur = 0;
+        ww.forEach(x => { const px = x * fs / 100, add = cur ? sp * fs / 100 + px : px; if (cur && cur + add > W) { lines++; cur = px; } else cur += add; });
+        if (lines * fs * 1.18 <= B * 0.62 || fs <= fmin) break;
+        fs = Math.max(fmin, fs * 0.9);
+      }
+      fs = Math.round(fs); lines = Math.min(7, lines);
       return { fs, h: Math.round(lines * fs * 1.18) };
     };
     const kids = [];
@@ -2378,30 +2474,30 @@ class Component extends DCLogic {
       const tr = drag ? 'none' : null;
       // trait du centre à la bulle (part du bord de la bulle centrale, s'arrête au bord de la petite)
       const ang = Math.atan2(y - cy, x - cx), rc = edgeC(ang), dist = Math.hypot(x - cx, y - cy), len = Math.max(0, dist - rc - d / 2 + 6);
-      kids.push(E('div', { key: 'l' + it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`, transition: tr || `width .9s ${ease}, transform .9s ${ease}, opacity .3s`, opacity: gone ? 0 : 1, pointerEvents: 'none' } },
-        E('div', { style: { width: '100%', height: '100%', borderRadius: 3, background: `linear-gradient(90deg, rgba(${accRgb},.5), rgba(${c},.8))`, boxShadow: dk ? '0 0 8px rgba(0,0,0,.35)' : '0 0 6px rgba(255,255,255,.6)', transition: 'background .4s', transformOrigin: '0 50%', animation: fresh ? `fh-mm-line .7s ${ease} ${180 + i * 70}ms backwards` : 'fh-mm-line .6s ease backwards' } })));
-      const tf = fit(it.t || L.mindIdeaPh, d, 0.13), to = `translate(${Math.round(x - d / 2)}px, ${Math.round(y - d / 2)}px)`, jn = this.mindJ[it.id] || 0;
+      kids.push(E('div', { key: 'l' + it.id, 'data-l': it.id, style: { position: 'absolute', left: cx, top: cy - 1.5, width: len, height: 3, transformOrigin: '0 50%', transform: `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`, transition: 'opacity .3s', opacity: gone ? 0 : 1, pointerEvents: 'none' } },
+        E('div', { className: 'fh-mm-l', style: { '--c': c, animation: fresh ? `fh-mm-line .7s ${ease} ${180 + i * 70}ms backwards` : 'fh-mm-line .6s ease backwards' } })));
+      const tf = fit(it.t || L.mindIdeaPh, d, 0.13, 0, wIdea), to = `translate(${Math.round(x - d / 2)}px, ${Math.round(y - d / 2)}px)`, jn = this.mindJ[it.id] || 0;
       kids.push(E('div', { key: 'b' + it.id, className: 'fh-mm-p', 'data-menu': 'mmb:' + it.id, 'data-cx': Math.round(x), 'data-cy': Math.round(y),
         onPointerDown: (e) => this.mindDown(e, it.id), onMouseDown: (e) => { const t = e.target; if (!(t.closest && t.closest('.fh-mm-x')) && !(t === document.activeElement && t.classList.contains('fh-mm-t'))) e.preventDefault(); }, onPointerMove: this.mindMove, onPointerUp: this.mindUp, onPointerCancel: this.mindUp,
         style: { position: 'absolute', left: 0, top: 0, width: d, height: d, zIndex: drag ? 6 : on ? 3 : 2, transform: to, touchAction: 'none', cursor: drag ? 'grabbing' : undefined, '--fx': `${Math.round(cx - d / 2)}px`, '--fy': `${Math.round(cy - d / 2)}px`, '--to': to, transition: tr || `transform .9s ${ease}, width .9s ${ease}, height .9s ${ease}`, animation: gone ? 'fh-mm-out .36s cubic-bezier(.5,0,.8,.4) forwards' : `fh-mm-in .95s ${ease} ${fresh ? i * 70 : 0}ms backwards` } },
-        E('div', { key: 'j' + jn, style: { position: 'absolute', inset: 0, '--fl': `${-5 - (i % 3) * 2}px`, animation: `fh-mm-jelly .9s ease ${jn ? 0 : fresh ? 300 + i * 70 : 120}ms backwards, fh-mm-float ${(5.5 + (i % 4) * 0.8).toFixed(1)}s ease-in-out ${(1.4 + i * 0.37).toFixed(2)}s infinite` } },
-          E('div', { className: 'fh-mm-b' + (on ? ' on' : '') + (drag ? ' drag' : ''), onClick: () => this.mindTap(it), style: { '--c': c, '--bd': `${8 + (i % 5) * 1.3}s`, cursor: drag ? 'grabbing' : on ? 'text' : 'grab' } },
+        E('div', { key: 'j' + jn, className: 'fh-mm-f', style: { position: 'absolute', inset: 0, '--fl': `${-5 - (i % 3) * 2}px`, animation: `fh-mm-jelly .9s ease ${jn ? 0 : fresh ? 300 + i * 70 : 120}ms backwards, fh-mm-float ${(5.5 + (i % 4) * 0.8).toFixed(1)}s ease-in-out ${(1.4 + i * 0.37).toFixed(2)}s infinite` } },
+          E('div', { className: 'fh-mm-b' + (on ? ' on' : '') + (drag ? ' drag' : ''), onClick: () => this.mindTap(it), style: { '--c': c, '--ti': bestInk(it.c || pal[i % pal.length]), '--tis': bestInk(it.c || pal[i % pal.length]) === '#ffffff' ? '0 1px 2px rgba(0,0,0,.35)' : 'none', cursor: drag ? 'grabbing' : on ? 'text' : 'grab' } },
             E('textarea', { ref: this.mindRef(it.id), className: 'fh-mm-t', rows: 1, value: it.t, placeholder: L.mindIdeaPh, maxLength: 120, spellCheck: true, 'aria-label': `${L.mindIdeaPh} ${i + 1}`,
               onMouseDown: (e) => { if (e.currentTarget !== document.activeElement) e.preventDefault(); },
               onChange: (e) => this.mindText(it.id, e), onFocus: () => this.setState({ mindOn: it.id }), onBlur: () => this.mindDone(it.id), onKeyDown: (e) => this.mindKey(it.id, e),
-              style: { width: Math.round(d * 0.74), height: tf.h, font: `600 ${tf.fs}px/1.18 Geist, system-ui, sans-serif`, cursor: 'inherit', transition: 'font-size .3s, height .3s' } }),
+              style: { width: Math.round(d * 0.74), height: tf.h, font: `${ital ? 'italic ' : ''}${wIdea} ${tf.fs}px/1.18 ${fam}`, letterSpacing: lsEm + 'em', cursor: 'inherit', transition: 'font-size .3s, height .3s' } }),
             it.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindDel(it.id); } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null))));
     });
     // la bulle du sujet, au centre
-    const tt = fit(m.title || L.mindTitlePh, Wc * 0.92, 0.17, D), onT = st.mindOn === 'title';
+    const tt = fit(m.title || L.mindTitlePh, Wc * 0.92, 0.17, D, wTitle), onT = st.mindOn === 'title';
     const ccRgb = m.cc ? hexRgb(m.cc) : accRgb;
     kids.push(E('div', { key: 'center', 'data-menu': 'mmb:title', style: { position: 'absolute', left: Math.round(cx - Wc / 2), top: Math.round(cy - D / 2), width: Wc, height: D, zIndex: 4, transition: `left .6s ${ease}, top .6s ${ease}, width .6s ${ease}, height .6s ${ease}` } },
       E('div', { key: 'cj' + (n ? 1 : 0), style: { position: 'absolute', inset: 0, animation: n ? `fh-mm-jelly .9s ease both` : 'fh-pop .7s cubic-bezier(.2,.9,.3,1.3) both' } },
-        E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': ccRgb, '--bd': '11s', cursor: 'text' } },
-          E('textarea', { ref: this.mindRef('title'), className: 'fh-mm-t', rows: 1, value: m.title, placeholder: L.mindTitlePh, maxLength: 60, spellCheck: true, 'aria-label': L.mindTitlePh, autoFocus: !m.title && !n,
+        E('div', { className: 'fh-mm-b' + (onT ? ' on' : ''), onClick: () => { const el = this.mindRefs.title; if (el) el.focus(); }, style: { '--c': ccRgb, '--ti': bestInk(m.cc || th.accent), '--tis': bestInk(m.cc || th.accent) === '#ffffff' ? '0 1px 2px rgba(0,0,0,.35)' : 'none', cursor: 'text' } },
+          E('textarea', { ref: this.mindRef('title'), className: 'fh-mm-t' + (gradT ? ' grad' : ''), rows: 1, value: m.title, placeholder: L.mindTitlePh, maxLength: 60, spellCheck: true, 'aria-label': L.mindTitlePh, autoFocus: !m.title && !n,
             onMouseDown: (e) => { if (e.button === 2 && e.currentTarget !== document.activeElement) e.preventDefault(); },
             onChange: this.mindTitle, onFocus: () => this.setState({ mindOn: 'title' }), onBlur: () => { this.setState({ mindOn: null }); this.mindTitleDone(false); }, onKeyDown: (e) => this.mindKey('title', e),
-            style: { width: Math.round(Wc * 0.76), height: tt.h, font: `${clampW(font, 700)} ${tt.fs}px/1.18 ${stack(font)}`, transition: 'font-size .3s, height .3s' } })))));
+            style: { width: Math.round(Wc * 0.76), height: tt.h, font: `${ital ? 'italic ' : ''}${wTitle} ${tt.fs}px/1.18 ${fam}`, letterSpacing: lsEm + 'em', transition: 'font-size .3s, height .3s' } })))));
     kids.push(E('div', { key: 'beta', style: { position: 'absolute', left: 18, bottom: 16, display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px 6px 8px', borderRadius: 999, font: '600 12.5px/1 Geist, system-ui, sans-serif', color: `rgba(${ink},.75)`, background: dk ? 'rgba(14,12,22,.55)' : 'rgba(255,255,255,.7)', boxShadow: `inset 0 0 0 1px rgba(${accRgb},.3)`, pointerEvents: 'none' } },
       E('span', { style: { padding: '3px 6px', borderRadius: 6, font: '700 10px/1 Geist, system-ui, sans-serif', letterSpacing: '.06em', textTransform: 'uppercase', color: '#ffffff', background: `rgb(${accRgb})` } }, L.beta), L.mindBeta));
     if (!n) kids.push(E('div', { key: 'hint', style: { position: 'absolute', left: 0, right: 0, top: Math.round(cy + D / 2 + 26), textAlign: 'center', font: '500 15px/1.3 Geist, system-ui, sans-serif', color: `rgba(${ink},.8)`, textShadow: dk ? '0 1px 6px rgba(0,0,0,.6)' : '0 1px 6px rgba(255,255,255,.9)', pointerEvents: 'none', animation: 'fh-mm-hint 2.4s ease-in-out infinite' } }, L.mindHint));
@@ -2411,7 +2507,29 @@ class Component extends DCLogic {
     if (has) kids.push(E('button', { key: 'save' + (clean ? 1 : 0), type: 'button', className: 'fh-btn', 'data-tour': 'mind-save', title: L.mindSave + ' (Ctrl+S)', onClick: this.mindStore, style: { position: 'absolute', right: 18, bottom: 16, zIndex: 7, display: 'flex', alignItems: 'center', gap: 8, height: 42, padding: '0 18px 0 14px', borderRadius: 999, border: 0, cursor: 'pointer', font: '600 14.5px/1 Geist, system-ui, sans-serif',
       color: clean ? `rgba(${ink},.72)` : bestInk(st.s.accent), background: clean ? (dk ? 'rgba(14,12,22,.6)' : 'rgba(255,255,255,.78)') : `linear-gradient(180deg, rgba(255,255,255,.28), rgba(255,255,255,0) 55%), rgb(${accRgb})`, boxShadow: clean ? `inset 0 0 0 1px rgba(${accRgb},.35)` : `inset 0 1px 0 rgba(255,255,255,.45), 0 10px 26px -8px rgba(${accRgb},.8)`, animation: 'fh-pop .45s cubic-bezier(.2,.9,.3,1.3) both' } },
       E('span', { style: { ...ICON, fontSize: 20 } }, clean ? 'check' : 'save'), clean ? L.mindSavedB : L.mindSave));
-    return E('div', { 'data-menu': 'mind', 'data-tour': 'mind', className: dk ? 'fh-mm-dk' : '', onPointerDown: this.mindBgDown, onClick: this.mindBgClick, style: { position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', background: 'transparent', color: `rgb(${ink})`, userSelect: st.mindDrag ? 'none' : 'text' } }, kids);
+    return E('div', { ref: this.mindRootRef, 'data-menu': 'mind', 'data-tour': 'mind', className: `fh-mm-root fh-sk-${sk}${dk ? ' fh-mm-dk' : ''}`, onPointerDown: this.mindBgDown, onClick: this.mindBgClick, style: { position: 'absolute', inset: 0, zIndex: 3, overflow: 'hidden', background: 'transparent', color: `rgb(${ink})`, userSelect: st.mindDrag ? 'none' : 'text', '--a': accRgb, '--tc': tc, '--tsh': tsh, '--g1': th.grad1, '--g2': th.grad2 } }, kids);
+  };
+  // ---------- les traits suivent la vraie position de leur bulle pendant qu'elle glisse (sinon ils décrochent) ----------
+  mindRootRef = (el) => { this.mindRoot = el; };
+  mindLinesSync = () => {
+    const g = this.mindGeo, root = this.mindRoot; if (!g || !root || !root.isConnected) return;
+    const reads = [];
+    root.querySelectorAll('[data-l]').forEach(l => { const w = root.querySelector(`[data-menu="mmb:${l.dataset.l}"]`); if (w) reads.push([l, getComputedStyle(w).transform, w.offsetWidth]); });
+    reads.forEach(([l, t, dw]) => {
+      if (!t || t === 'none') return;
+      let mx; try { mx = new DOMMatrixReadOnly(t); } catch (e) { return; }
+      const x = mx.e + dw / 2, y = mx.f + dw / 2, r = (dw / 2) * Math.hypot(mx.a, mx.b);
+      const ang = Math.atan2(y - g.cy, x - g.cx), rc = (g.ca * g.cb) / Math.sqrt((g.cb * Math.cos(ang)) ** 2 + (g.ca * Math.sin(ang)) ** 2);
+      l.style.width = Math.max(0, Math.hypot(x - g.cx, y - g.cy) - rc - r + 6).toFixed(1) + 'px';
+      l.style.transform = `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`;
+    });
+  };
+  mindLinesRun = (ms) => {
+    this.mlUntil = Math.max(this.mlUntil || 0, performance.now() + ms);
+    this.mindLinesSync();
+    if (this.mlRaf) return;
+    const f = () => { this.mindLinesSync(); if (performance.now() < this.mlUntil) this.mlRaf = requestAnimationFrame(f); else this.mlRaf = 0; };
+    this.mlRaf = requestAnimationFrame(f);
   };
   // ---------- élan : la note ou l'image penche quand on la tire, puis glisse un peu quand on la lâche ----------
   track = (d, e) => {
