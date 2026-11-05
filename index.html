@@ -168,6 +168,13 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 /* glace : givre clair et bord blanc */
 .fh-sk-ice .fh-mm-b{background:linear-gradient(155deg,rgba(255,255,255,.95) 0%,rgba(236,246,255,.88) 45%,rgba(var(--c),.32) 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.95),inset 0 -14px 24px rgba(var(--c),.25),0 14px 30px -12px rgba(30,80,140,.45)}
 .fh-sk-ice .fh-mm-l{background:linear-gradient(90deg,rgba(255,255,255,.95),rgba(var(--c),.85));box-shadow:0 0 6px rgba(255,255,255,.8)}
+/* poubelle des cartes sauvegardées : le couvercle se soulève sur sa charnière au survol */
+.fh-bin{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin:-5px -6px -5px 0;border-radius:8px;cursor:pointer;flex-shrink:0;transition:color .2s ease,background .2s ease}
+.fh-bin:hover,.fh-bin:focus-visible,.fh-bin.open{color:#e5484d!important;background:rgba(229,72,77,.12);outline:none}
+.fh-bin svg{overflow:visible;display:block}
+.fh-bin-lid{transform-box:view-box;transform-origin:19.8px 7.2px;transition:transform .45s cubic-bezier(.3,1.75,.5,1)}
+.fh-bin:hover .fh-bin-lid,.fh-bin:focus-visible .fh-bin-lid,.fh-bin.open .fh-bin-lid{transform:translate(-.4px,-2.6px) rotate(-17deg)}
+.fh-bin-body{transform-box:view-box;transform-origin:12px 21px}
 @keyframes fh-mmdd-in{from{opacity:0;transform:translateY(-8px) scale(.94)}}
 /* chaque menu sur son propre calque : le décor animé dessous ne le force pas à se redessiner */
 .fh-menu{will-change:transform;contain:layout paint}
@@ -530,6 +537,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.15.0', d: '2026-11-05', items: ['Carte mentale : suppression d’une carte sauvegardée, avec la poubelle.|Mind map: delete a saved map with the bin.'] },
   { v: '2.14.1', d: '2026-11-05', items: ['Carte mentale : icône « Remettre à sa place » corrigée.|Mind map: “Put back in place” icon fixed.'] },
   { v: '2.14.0', d: '2026-11-05', items: [
     'Carte mentale : bouton Réinitialiser (touche R).|Mind map: Reset button (R key).',
@@ -2322,7 +2330,7 @@ class Component extends DCLogic {
     if (this.state.mindDD) return;
     this.ddOpenT = setTimeout(() => { if (el.isConnected && el.matches(':hover')) this.mindDDAt(el, false); }, 80);
   };
-  mindTabLeave = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.ddT = setTimeout(() => { if (this.state.mindDD && !this.state.mindDD.click) this.mindDDClose(); }, 260); };
+  mindTabLeave = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.ddT = setTimeout(() => { if (this.ddHold) { this.mindTabLeave(); return; } if (this.state.mindDD && !this.state.mindDD.click) this.mindDDClose(); }, 260); };
   // clic : passe en Carte mentale si besoin et ouvre le menu (un 2e clic le referme)
   mindTabClick = (e) => {
     const el = e.currentTarget; clearTimeout(this.ddOpenT);
@@ -2334,6 +2342,126 @@ class Component extends DCLogic {
   mindDDClose = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.overBar = false; if (this.ddDoc) { document.removeEventListener('pointerdown', this.ddDoc, true); this.ddDoc = null; } if (this.state.mindDD) this.setState({ mindDD: null }); };
   mindBlank = () => { this.mindDDClose(); this.setState({ mindAll: false }); if (this.state.s.mode !== 'mind') this.setMode('mind'); this.mindNew(); };
   mindShowAll = () => { this.mindDDClose(); this.closeMenu(); this.setState({ mindAll: true }); };
+  // poubelle en deux parties : le couvercle (qui s'ouvre) et le corps
+  binEl = (E, id, title, color, style) => E('span', { role: 'button', tabIndex: 0, className: 'fh-bin', 'data-bin': '', title, 'aria-label': title, style: { color, ...style },
+    onClick: (e) => { e.stopPropagation(); e.preventDefault(); this.mindTrash(id, e.currentTarget); },
+    onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.stopPropagation(); e.preventDefault(); this.mindTrash(id, e.currentTarget); } } },
+    E('svg', { viewBox: '0 0 24 24', width: 20, height: 20, fill: 'none', stroke: 'currentColor', strokeWidth: 1.9, strokeLinecap: 'round', strokeLinejoin: 'round', 'aria-hidden': true },
+      E('g', { className: 'fh-bin-lid' }, E('path', { d: 'M9.6 4.5h4.8' }), E('path', { d: 'M4 7.2h16' })),
+      E('g', { className: 'fh-bin-body' }, E('path', { d: 'M6 9.6l.95 9.5a2 2 0 0 0 2 1.8h6.1a2 2 0 0 0 2-1.8L18 9.6' }), E('path', { d: 'M10.2 12.7v4.9' }), E('path', { d: 'M13.8 12.7v4.9' }))));
+  // ---------- supprimer une carte sauvegardée : le nom se froisse en boule, part dans la poubelle, le couvercle se referme ----------
+  mindTrash = (id, bin) => {
+    this.trashing = this.trashing || {}; if (this.trashing[id]) return;
+    const host = bin.closest('[data-set]'), label = host && host.querySelector('[data-name]'), svg = bin.querySelector('svg');
+    const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+    const finish = () => {
+      const end = () => { delete this.trashing[id]; this.ddHold = false; this.mindDelSet(id); };
+      if (host && host.animate && !reduce) {
+        const h = host.offsetHeight, card = host.hasAttribute('data-card');
+        host.style.pointerEvents = 'none';
+        const a = host.animate(card ? [{ transform: 'scale(1)', opacity: 1 }, { transform: 'scale(.86)', opacity: 0 }] : [{ height: h + 'px', opacity: 1, marginTop: '0px' }, { height: '0px', opacity: 0, marginTop: '0px', paddingTop: '0px', paddingBottom: '0px', minHeight: '0px' }], { duration: card ? 240 : 260, easing: 'cubic-bezier(.4,0,.2,1)', fill: 'forwards' });
+        a.onfinish = end;
+      } else end();
+    };
+    if (!label || !svg || !label.firstChild || reduce || !document.body.animate) { finish(); return; }
+    this.trashing[id] = true; this.ddHold = true;
+    // les lettres visibles du nom, chacune à sa place exacte
+    const cs = getComputedStyle(label), fs = parseFloat(cs.fontSize) || 14, lr = label.getBoundingClientRect(), txt = label.firstChild, rg = document.createRange(), chars = [];
+    for (let i = 0; i < txt.length && chars.length < 40; i++) {
+      const ch = txt.data[i]; if (!ch.trim()) continue;
+      rg.setStart(txt, i); rg.setEnd(txt, i + 1); const r = rg.getBoundingClientRect();
+      if (!r.width || r.right > lr.right + 0.5) continue;
+      chars.push({ ch, x: r.left, y: r.top, w: r.width, h: r.height });
+    }
+    if (!chars.length) { finish(); return; }
+    const sr = svg.getBoundingClientRect(), k = sr.width / 24, binX = sr.left + 12 * k, rimY = sr.top + 9.6 * k, botY = sr.top + 21 * k;
+    const n = chars.length, minX = Math.min(...chars.map(c => c.x)), maxX = Math.max(...chars.map(c => c.x + c.w));
+    const C0 = [(minX + maxX) / 2, lr.top + lr.height / 2], R = Math.max(9, Math.min(15, fs * 0.62 + n * 0.3));
+    const P = [binX, rimY - R * 0.95 - 5], B = [binX, botY + R * 1.4];
+    const dark = lum(cs.color.startsWith('rgb') ? '#' + cs.color.match(/\d+/g).slice(0, 3).map(v => (+v).toString(16).padStart(2, '0')).join('') : '#000000') > 0.4;
+    // le calque de l'animation, au-dessus de tout
+    const lay = document.createElement('div'); lay.style.cssText = 'position:fixed;inset:0;z-index:95;pointer-events:none';
+    const ballLay = document.createElement('div'); ballLay.style.cssText = 'position:absolute;inset:0';
+    const binC = svg.cloneNode(true); binC.style.cssText = `position:absolute;left:${sr.left}px;top:${sr.top}px;width:${sr.width}px;height:${sr.height}px;overflow:visible;color:#e5484d`;
+    lay.appendChild(binC); lay.appendChild(ballLay); document.body.appendChild(lay);
+    svg.style.visibility = 'hidden'; label.style.opacity = '0'; bin.classList.add('open');
+    // le reste de la ligne (nombre d'idées…) s'efface pendant que le nom se froisse
+    if (label.parentNode) [...label.parentNode.children].forEach(c => { if (c !== label && c !== bin && c.animate) c.animate([{ opacity: getComputedStyle(c).opacity }, { opacity: 0 }], { duration: 300, delay: 60, easing: 'ease', fill: 'forwards' }); });
+    // minutage (ms) : repli 0-440, froissage 440-620, lancer 620-1150, chute 1150-1330, couvercle 1330-1760
+    const T1 = 440, T2 = 620, T3 = 1150, T4 = 1330, TOT = T4;
+    const ez = (u) => (u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2), cl = (u) => Math.max(0, Math.min(1, u));
+    const H = Math.max(34, Math.abs(P[0] - C0[0]) * 0.3 + 18);
+    const center = (t) => {
+      if (t <= T3 && t >= T2) { const u = (t - T2) / (T3 - T2); return [C0[0] + (P[0] - C0[0]) * u, C0[1] + (P[1] - C0[1]) * u - 4 * H * u * (1 - u)]; }
+      if (t > T3) { const u = cl((t - T3) / (T4 - T3)), e = u * u; return [P[0] + (B[0] - P[0]) * e, P[1] + (B[1] - P[1]) * e]; }
+      return C0;
+    };
+    const spin = (t) => (t < T1 ? 0 : t < T2 ? 40 * (1 - Math.pow(1 - (t - T1) / (T2 - T1), 2)) : t < T3 ? 40 + 560 * (1 - Math.pow(1 - (t - T2) / (T3 - T2), 1.5)) : 600 + 110 * cl((t - T3) / (T4 - T3)));
+    const kScale = (t) => (t < T2 ? 1 : t < T3 ? 1 - 0.3 * ((t - T2) / (T3 - T2)) : 0.7 - 0.15 * cl((t - T3) / (T4 - T3)));
+    const squeeze = (t) => (t < T1 ? 1 : t < T2 ? 1 - 0.24 * Math.sin(Math.PI * (t - T1) / (T2 - T1)) : 1);
+    const rot = (v, a) => { const c = Math.cos(a), s2 = Math.sin(a); return [v[0] * c - v[1] * s2, v[0] * s2 + v[1] * c]; };
+    const dmax = Math.max(1, ...chars.map(c => Math.abs(c.x + c.w / 2 - C0[0])));
+    const steps = []; for (let t = 0; t <= TOT; t += 16) steps.push(t); if (steps[steps.length - 1] !== TOT) steps.push(TOT);
+    const anims = [];
+    chars.forEach((c, i) => {
+      const hx = c.x + c.w / 2, hy = c.y + c.h / 2, a0 = i * 2.39996, rr = R * 0.82 * Math.sqrt((i + 0.5) / n);
+      const off = [Math.cos(a0) * rr, Math.sin(a0) * rr], rz = (Math.random() * 2 - 1) * 170, sc = Math.max(0.42, Math.min(0.75, (R * 1.5) / fs));
+      const delay = (1 - Math.abs(hx - C0[0]) / dmax) * 120, sgn = hx < C0[0] ? -1 : 1;
+      const el = document.createElement('span'); el.textContent = c.ch;
+      el.style.cssText = `position:absolute;left:${c.x}px;top:${c.y}px;width:${c.w}px;height:${c.h}px;line-height:${c.h}px;font:${cs.font};font-feature-settings:normal;letter-spacing:0;color:${cs.color};white-space:pre;text-align:center;will-change:transform`;
+      ballLay.appendChild(el);
+      const kf = steps.map(t => {
+        let x, y, r, sca;
+        if (t < T1) {
+          const u = ez(cl((t - delay) / (T1 - 120))), tx = C0[0] + off[0], ty = C0[1] + off[1];
+          x = hx + (tx - hx) * u + sgn * Math.sin(Math.PI * u) * 2; y = hy + (ty - hy) * u - Math.sin(Math.PI * u) * fs * 0.45; r = rz * u; sca = 1 + (sc - 1) * u;
+        } else {
+          const C = center(t), ph = spin(t) * Math.PI / 180, kk = kScale(t), o = rot([off[0] * squeeze(t) * kk, off[1] * squeeze(t) * kk], ph);
+          x = C[0] + o[0]; y = C[1] + o[1]; r = rz + spin(t); sca = sc * kk * (t < T2 ? 1 + 0.08 * Math.sin(Math.PI * (t - T1) / (T2 - T1)) : 1);
+        }
+        return { offset: t / TOT, transform: `translate(${(x - hx).toFixed(2)}px, ${(y - hy).toFixed(2)}px) rotate(${r.toFixed(1)}deg) scale(${sca.toFixed(3)})` };
+      });
+      anims.push(el.animate(kf, { duration: TOT, easing: 'linear', fill: 'forwards' }));
+      // une fois froissées sur la boule de papier, les lettres deviennent de l'encre
+      el.animate([{ color: cs.color }, { color: cs.color, offset: 300 / TOT }, { color: '#3d352c', offset: 520 / TOT }, { color: '#3d352c' }], { duration: TOT, fill: 'forwards' });
+    });
+    // la boule de papier froissé qui se forme sous les lettres
+    const ball = document.createElement('div'), bs = R * 2.3;
+    ball.style.cssText = `position:absolute;left:${C0[0] - bs / 2}px;top:${C0[1] - bs / 2}px;width:${bs}px;height:${bs}px;border-radius:46% 54% 50% 50% / 52% 46% 54% 48%;opacity:0;` +
+      `background:linear-gradient(118deg, transparent 44%, rgba(0,0,0,.09) 46%, transparent 49%), linear-gradient(32deg, transparent 52%, rgba(0,0,0,.08) 54%, transparent 57%), linear-gradient(160deg, transparent 30%, rgba(255,255,255,.35) 33%, transparent 37%), radial-gradient(circle at 34% 30%, #ffffff, ${dark ? '#e6e1d7' : '#eeeae2'} 56%, ${dark ? '#bdb5a6' : '#cbc4b6'});` +
+      `box-shadow:inset -2px -3px 5px rgba(0,0,0,.22), 0 3px 8px rgba(0,0,0,.25)`;
+    ballLay.insertBefore(ball, ballLay.firstChild);
+    anims.push(ball.animate(steps.map(t => {
+      const C = center(t), kk = kScale(t), op = t < 330 ? 0 : t < 520 ? (t - 330) / 190 : 1, sq = squeeze(t);
+      return { offset: t / TOT, opacity: op, transform: `translate(${(C[0] - C0[0]).toFixed(2)}px, ${(C[1] - C0[1]).toFixed(2)}px) rotate(${spin(t).toFixed(1)}deg) scale(${(kk * (t < T1 ? 0.4 + 0.6 * ez(cl((t - 250) / 190)) : sq * 1.04)).toFixed(3)})` };
+    }), { duration: TOT, easing: 'linear', fill: 'forwards' }));
+    // ce qui passe sous le bord de la poubelle disparaît dedans
+    const vh = window.innerHeight, cut = Math.max(0, vh - rimY);
+    anims.push(ballLay.animate([{ offset: 0, clipPath: 'inset(-100px -100px -100px -100px)' }, { offset: T3 / TOT, clipPath: 'inset(-100px -100px -100px -100px)' }, { offset: T3 / TOT + 0.001, clipPath: `inset(-100px -100px ${cut}px -100px)` }, { offset: 1, clipPath: `inset(-100px -100px ${cut}px -100px)` }], { duration: TOT, fill: 'forwards' }));
+    // le couvercle : grand ouvert pendant le lancer, puis il se referme en rebondissant ; la poubelle s'écrase un peu sous le choc
+    const lid = binC.querySelector('.fh-bin-lid'), body = binC.querySelector('.fh-bin-body');
+    if (lid) {
+      lid.style.transition = 'none';
+      // (courbes posées étape par étape : une courbe globale décalerait la fermeture avant l'arrivée de la boule)
+      const LT = T4 + 430, at = (t) => t / LT;
+      lid.animate([{ transform: 'translate(-.4px,-2.6px) rotate(-17deg)', easing: 'cubic-bezier(.3,1.6,.5,1)' }, { transform: 'translate(-.8px,-5px) rotate(-28deg)', offset: at(220) }, { transform: 'translate(-.8px,-5px) rotate(-28deg)', offset: at(T4 - 10), easing: 'cubic-bezier(.55,0,.9,.45)' }, { transform: 'translate(0,.4px) rotate(5deg)', offset: at(T4 + 130), easing: 'ease-out' }, { transform: 'translate(0,-.8px) rotate(-4deg)', offset: at(T4 + 240), easing: 'ease-in-out' }, { transform: 'translate(0,0) rotate(1.5deg)', offset: at(T4 + 340), easing: 'ease-in-out' }, { transform: 'translate(0,0) rotate(0deg)' }], { duration: LT, easing: 'linear', fill: 'forwards' });
+    }
+    // la boule touche le fond (petit sursaut), puis le couvercle claque (la poubelle s'écrase un peu)
+    if (body) body.animate([{ transform: 'scale(1,1)' }, { transform: 'scale(1,1)', offset: (T4 - 30) / (T4 + 430) }, { transform: 'scale(1.03,.96)', offset: (T4 + 20) / (T4 + 430), easing: 'ease-out' }, { transform: 'scale(1,1)', offset: (T4 + 100) / (T4 + 430), easing: 'ease-in' }, { transform: 'scale(1.08,.88)', offset: (T4 + 150) / (T4 + 430), easing: 'ease-out' }, { transform: 'scale(.97,1.04)', offset: (T4 + 270) / (T4 + 430), easing: 'ease-in-out' }, { transform: 'scale(1,1)' }], { duration: T4 + 430, easing: 'linear', fill: 'forwards' });
+    // petit nuage de poussière quand le couvercle claque
+    for (let q = 0; q < 6; q++) {
+      const d = document.createElement('i'), side = q % 2 ? 1 : -1, sz = 2.5 + Math.random() * 2.5;
+      d.style.cssText = `position:absolute;left:${binX - sz / 2 + side * 8 * k}px;top:${rimY - 2 * k - sz / 2}px;width:${sz}px;height:${sz}px;border-radius:50%;background:${dark ? 'rgba(255,255,255,.55)' : 'rgba(80,72,64,.45)'};opacity:0`;
+      lay.appendChild(d);
+      const dx = side * (6 + Math.random() * 10), dy = -(4 + Math.random() * 9);
+      d.animate([{ opacity: 0, transform: 'translate(0,0) scale(.6)' }, { opacity: 0, transform: 'translate(0,0) scale(.6)', offset: (T4 + 135) / (T4 + 520), easing: 'ease-out' }, { opacity: 0.9, transform: `translate(${dx * 0.5}px, ${dy * 0.5}px) scale(1)`, offset: (T4 + 215) / (T4 + 520), easing: 'ease-in' }, { opacity: 0, transform: `translate(${dx}px, ${dy}px) scale(.4)` }], { duration: T4 + 520, easing: 'linear', fill: 'forwards' });
+    }
+    // fin (quand la dernière animation est finie) : on nettoie, la ligne se replie, la carte est supprimée (avec « Annuler »)
+    const last = lay.lastChild.getAnimations ? lay.lastChild.getAnimations()[0] : null;
+    let done = false;
+    const end = () => { if (done) return; done = true; lay.remove(); if (svg.isConnected) svg.style.visibility = ''; bin.classList.remove('open'); finish(); };
+    if (last && last.finished) last.finished.then(end, end); else setTimeout(end, T4 + 540);
+  };
   // le menu sous l'onglet, et la fenêtre « Mes cartes mentales »
   mindMenusEl = (E, st, L, ui, dark, accUi) => {
     const panelBg = dark ? 'rgba(31,30,29,.98)' : 'rgba(251,250,248,.99)', sets = st.mindSets, cur = st.mind.pid;
@@ -2341,26 +2469,27 @@ class Component extends DCLogic {
     const out = [];
     if (st.mindDD) {
       const D = st.mindDD, w = 260, x = Math.max(8, Math.min(st.vw - w - 8, D.x + D.w / 2 - 60));
-      const row = (key, icon, label, act, o = {}) => E('button', { key, type: 'button', className: 'fh-mi', onClick: act, style: { '--mh': ui.hover, display: 'flex', alignItems: 'center', gap: 10, width: '100%', minHeight: 38, padding: '7px 10px', boxSizing: 'border-box', border: 0, borderRadius: 9, background: o.on ? hexA(accUi, dark ? 0.2 : 0.12) : 'transparent', color: ui.fg, font: `${o.bold ? 600 : 500} 14px/1.2 Geist, system-ui, sans-serif`, textAlign: 'left', cursor: 'pointer', animation: `fh-mi-in .32s cubic-bezier(.2,.8,.2,1) ${o.i * 35}ms both` } },
+      const row = (key, icon, label, act, o = {}) => E(o.set ? 'div' : 'button', { key, type: o.set ? undefined : 'button', role: o.set ? 'menuitem' : undefined, tabIndex: o.set ? 0 : undefined, 'data-set': o.set || undefined, onKeyDown: o.set ? (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) act(); } : undefined, className: 'fh-mi', onClick: act, style: { overflow: 'hidden', '--mh': ui.hover, display: 'flex', alignItems: 'center', gap: 10, width: '100%', minHeight: 38, padding: '7px 10px', boxSizing: 'border-box', border: 0, borderRadius: 9, background: o.on ? hexA(accUi, dark ? 0.2 : 0.12) : 'transparent', color: ui.fg, font: `${o.bold ? 600 : 500} 14px/1.2 Geist, system-ui, sans-serif`, textAlign: 'left', cursor: 'pointer', animation: `fh-mi-in .32s cubic-bezier(.2,.8,.2,1) ${o.i * 35}ms both` } },
         o.lead !== false ? E('span', { style: { ...ICON, fontSize: 19, width: 20, flexShrink: 0, color: o.on ? accUi : ui.fg2 } }, icon) : null,
-        E('span', { style: { flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, label),
+        E('span', { 'data-name': '', style: { flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, label),
         o.meta ? E('span', { style: { flexShrink: 0, font: '500 11.5px/1 Geist, system-ui, sans-serif', color: ui.fg3 } }, o.meta) : null,
-        o.trail ? E('span', { style: { ...ICON, fontSize: 20, color: accUi, flexShrink: 0 } }, o.trail) : null);
+        o.trail ? E('span', { style: { ...ICON, fontSize: 20, color: accUi, flexShrink: 0 } }, o.trail) : null,
+        o.set ? this.binEl(E, o.set, L.mindDelSet, ui.fg3) : null);
       let i = 0;
       const kids = [row('blank', '', L.mindBlank, this.mindBlank, { bold: true, lead: false, trail: 'add', i: i++ }),
         E('div', { key: 'h', style: { padding: '10px 10px 5px', font: '600 10.5px/1 Geist, system-ui, sans-serif', letterSpacing: '.1em', textTransform: 'uppercase', color: ui.fg3 } }, L.mindSets)];
       if (!sets.length) kids.push(E('div', { key: 'none', style: { padding: '6px 10px 10px', font: '400 13px/1.35 Geist, system-ui, sans-serif', color: ui.fg3 } }, L.mindNone));
-      sets.slice(0, 5).forEach(p => kids.push(row('p' + p.id, p.id === cur ? 'check' : 'hub', p.name, () => this.mindLoad(p.id), { on: p.id === cur, meta: nIdeas(p), i: i++ })));
+      sets.slice(0, 5).forEach(p => kids.push(row('p' + p.id, p.id === cur ? 'check' : 'hub', p.name, () => { if (!(this.trashing || {})[p.id]) this.mindLoad(p.id); }, { on: p.id === cur, meta: nIdeas(p), i: i++, set: p.id })));
       if (sets.length) kids.push(E('div', { key: 'sep', style: { height: 1, margin: '5px 8px', background: ui.border } }), row('all', 'grid_view', sets.length > 5 ? `${L.mindAll} (${sets.length})` : L.mindAll, this.mindShowAll, { i: i++ }));
       out.push(E('div', { key: 'dd', className: 'fh-menu', 'data-menu': 'none', 'data-mind-dd': '', role: 'menu', onPointerEnter: this.mindDDEnter, onPointerLeave: this.mindDDLeave, style: { position: 'fixed', left: x, top: D.y, zIndex: 72, width: w, maxHeight: `calc(100vh - ${D.y + 16}px)`, overflowY: 'auto', boxSizing: 'border-box', padding: 6, borderRadius: 14, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: ui.shadow, color: ui.fg, transformOrigin: `${Math.round(D.x + D.w / 2 - x)}px 0`, animation: 'fh-mmdd-in .32s cubic-bezier(.2,.9,.3,1.15) both' } }, kids));
     }
     if (st.mindAll) {
       const fmt = (t) => { try { return new Intl.DateTimeFormat(UI_LOC[st.s.uiLang] || 'fr-FR', { day: 'numeric', month: 'short' }).format(new Date(t)); } catch (e) { return ''; } };
-      const card = (p, i) => E('div', { key: p.id, role: 'button', tabIndex: 0, className: 'fh-btn', onClick: () => this.mindLoad(p.id), onKeyDown: (e) => { if (e.key === 'Enter') this.mindLoad(p.id); }, style: { position: 'relative', padding: '14px 14px 12px', borderRadius: 14, background: p.id === cur ? hexA(accUi, dark ? 0.2 : 0.1) : ui.field, boxShadow: `inset 0 0 0 1px ${p.id === cur ? hexA(accUi, 0.6) : ui.border}`, cursor: 'pointer', animation: `fh-mi-in .4s cubic-bezier(.2,.8,.2,1) ${Math.min(i, 12) * 30}ms both` } },
+      const card = (p, i) => E('div', { key: p.id, role: 'button', tabIndex: 0, className: 'fh-btn', 'data-set': p.id, 'data-card': '', onClick: () => { if (!(this.trashing || {})[p.id]) this.mindLoad(p.id); }, onKeyDown: (e) => { if (e.key === 'Enter' && e.target === e.currentTarget) this.mindLoad(p.id); }, style: { position: 'relative', padding: '14px 14px 12px', borderRadius: 14, background: p.id === cur ? hexA(accUi, dark ? 0.2 : 0.1) : ui.field, boxShadow: `inset 0 0 0 1px ${p.id === cur ? hexA(accUi, 0.6) : ui.border}`, cursor: 'pointer', animation: `fh-mi-in .4s cubic-bezier(.2,.8,.2,1) ${Math.min(i, 12) * 30}ms both` } },
         E('div', { style: { display: 'flex', gap: 5, marginBottom: 10, minHeight: 12 } }, ...p.map.items.filter(x => x.t.trim()).slice(0, 7).map((x, k) => E('span', { key: k, style: { width: 12, height: 12, borderRadius: '50%', background: x.c || (this.mindPal || MIND_HEX)[p.map.items.indexOf(x) % 8], boxShadow: 'inset 0 -2px 3px rgba(0,0,0,.15), inset 0 2px 2px rgba(255,255,255,.6)' } }))),
-        E('div', { style: { font: '600 15px/1.25 Geist, system-ui, sans-serif', paddingRight: 26, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, p.name),
+        E('div', { 'data-name': '', style: { font: '600 15px/1.25 Geist, system-ui, sans-serif', paddingRight: 26, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } }, p.name),
         E('div', { style: { marginTop: 4, font: '400 12.5px/1.2 Geist, system-ui, sans-serif', color: ui.fg3 } }, `${nIdeas(p)} · ${fmt(p.at)}`),
-        E('button', { type: 'button', className: 'fh-btn', title: L.mindDelSet, 'aria-label': L.mindDelSet, onClick: (e) => { e.stopPropagation(); this.mindDelSet(p.id); }, style: { position: 'absolute', top: 8, right: 8, width: 30, height: 30, padding: 0, border: 0, borderRadius: 999, background: 'transparent', color: ui.fg3, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 18 } }, 'delete')));
+        this.binEl(E, p.id, L.mindDelSet, ui.fg3, { position: 'absolute', top: 10, right: 10, margin: 0 }));
       out.push(E('div', { key: 'all', 'data-menu': 'none', onClick: (e) => { if (e.target === e.currentTarget) this.setState({ mindAll: false }); }, style: { position: 'absolute', inset: 0, zIndex: 74, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, boxSizing: 'border-box', background: 'rgba(8,6,14,.5)', animation: 'fh-bar-fadein .3s ease both' } },
         E('div', { role: 'dialog', 'aria-modal': true, 'aria-label': L.mindAllT, style: { width: 'min(760px, 100%)', maxHeight: 'min(680px, calc(100vh - 32px))', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', borderRadius: 24, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: ui.shadow, color: ui.fg, overflow: 'hidden', animation: 'fh-pop .5s cubic-bezier(.2,.9,.3,1.25) both' } },
           E('div', { style: { padding: '22px 22px 12px 26px', display: 'flex', alignItems: 'center', gap: 12 } },
