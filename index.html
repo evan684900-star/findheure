@@ -98,6 +98,13 @@ transition:transform .55s cubic-bezier(.3,1.6,.5,1),box-shadow .4s ease}
 .fh-mm-x{position:absolute;right:6%;top:6%;z-index:2;width:28px;height:28px;border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#1f1d2b;
 background:radial-gradient(circle at 35% 25%,#fff,rgba(255,255,255,.75));box-shadow:inset 0 0 0 1px rgba(255,255,255,.9),0 4px 12px rgba(var(--c),.45);opacity:0;transform:scale(.6);transition:opacity .2s,transform .35s cubic-bezier(.3,1.6,.5,1)}
 .fh-mm-p:hover .fh-mm-x,.fh-mm-x:focus-visible{opacity:1;transform:scale(1)}
+/* « + » d'une bulle : ajoute une sous-bulle (visible au survol, ou quand on écrit dans la bulle) */
+.fh-mm-k{position:absolute;right:4%;bottom:10%;z-index:2;width:30px;height:30px;border-radius:50%;border:0;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;
+background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.45),rgba(var(--c),1) 70%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.7),0 4px 12px rgba(var(--c),.55);opacity:0;transform:scale(.6);transition:opacity .2s,transform .35s cubic-bezier(.3,1.6,.5,1)}
+.fh-mm-p:hover .fh-mm-k,.fh-mm-b.on .fh-mm-k,.fh-mm-k:focus-visible{opacity:1;transform:scale(1)}
+.fh-mm-k:hover{transform:scale(1.15)!important}
+@media (hover:none){.fh-mm-k{opacity:.9;transform:scale(1)}}
+.fh-mm-sub .fh-mm-x{width:22px;height:22px;right:2%;top:2%}
 @keyframes fh-mm-blob{0%,100%{border-radius:50% 50% 50% 50%/50% 50% 50% 50%}25%{border-radius:53% 47% 51% 49%/48% 53% 47% 52%}50%{border-radius:48% 52% 46% 54%/53% 47% 54% 46%}75%{border-radius:51% 49% 54% 46%/46% 52% 48% 54%}}
 @keyframes fh-mm-in{from{transform:translate(var(--fx),var(--fy)) scale(.2);opacity:0}}
 @keyframes fh-mm-out{to{transform:var(--to) scale(.15);opacity:0}}
@@ -541,6 +548,9 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.16.0', d: '2026-11-06', items: [
+    'Carte mentale : sous-bulles, avec le « + » d’une bulle.|Mind map: sub-bubbles, with a bubble’s “+”.',
+    'Carte mentale : les mots ne sont plus coupés avec les polices larges (Arcade, Néon).|Mind map: words no longer cut off with wide fonts (Arcade, Neon).'] },
   { v: '2.15.3', d: '2026-11-06', items: [
     'Carte mentale : couleurs des bulles assorties au décor de chaque thème.|Mind map: bubble colours match each theme’s scenery.',
     'Carte mentale : le menu des cartes se ferme bien après une suppression.|Mind map: the maps menu now closes properly after deleting a map.'] },
@@ -628,13 +638,18 @@ const MSETKEY = 'findheure:mindsets:v1';
 // une carte lue depuis le navigateur : on ne garde que ce qui est valide ; au moins 6 bulles, et une vide de plus si toutes sont écrites
 function mindClean(m0) {
   const m = m0 && typeof m0 === 'object' ? m0 : {};
-  const out = { title: typeof m.title === 'string' ? m.title.slice(0, 60) : '', items: Array.isArray(m.items) ? m.items.filter(x => x && typeof x.id === 'string').map(x => { const o = { id: x.id, t: String(x.t || '').slice(0, 120) }; if (/^#[0-9a-f]{6}$/i.test(x.c || '')) o.c = x.c.toLowerCase(); if (x.p && [x.p.x, x.p.y].every(v => Number.isFinite(v) && v >= 0 && v <= 1)) o.p = { x: x.p.x, y: x.p.y }; return o; }).slice(0, 24) : [] };
+  const out = { title: typeof m.title === 'string' ? m.title.slice(0, 60) : '', items: Array.isArray(m.items) ? m.items.filter(x => x && typeof x.id === 'string').map(x => { const o = { id: x.id, t: String(x.t || '').slice(0, 120) }; if (/^#[0-9a-f]{6}$/i.test(x.c || '')) o.c = x.c.toLowerCase(); if (x.p && [x.p.x, x.p.y].every(v => Number.isFinite(v) && v >= 0 && v <= 1)) o.p = { x: x.p.x, y: x.p.y };
+    // sous-bulles : petites idées rattachées à une bulle (6 au plus)
+    if (Array.isArray(x.k)) { const k = x.k.filter(y => y && typeof y.id === 'string' && String(y.t || '').trim()).slice(0, MIND_SUBS).map(y => { const z = { id: y.id, t: String(y.t).slice(0, 80) }; if (/^#[0-9a-f]{6}$/i.test(y.c || '')) z.c = y.c.toLowerCase(); if (y.p && [y.p.dx, y.p.dy].every(v => Number.isFinite(v) && v >= -1 && v <= 1)) z.p = { dx: y.p.dx, dy: y.p.dy }; return z; }); if (k.length) o.k = k; }
+    return o; }).slice(0, 24) : [] };
   if (/^#[0-9a-f]{6}$/i.test(m.cc || '')) out.cc = m.cc.toLowerCase();
   if (out.items.length) { const nid = (i) => 'b' + Date.now().toString(36) + i; while (out.items.length < 6) out.items.push({ id: nid(out.items.length), t: '' }); if (out.items.length < 24 && out.items.every(x => x.t.trim())) out.items.push({ id: nid(99), t: '' }); }
   return out;
 }
 // ce qu'on enregistre d'une carte (sans le lien vers sa sauvegarde)
-const mindSnap = (m) => { const o = { title: m.title, items: m.items.map(x => { const y = { id: x.id, t: x.t }; if (x.c) y.c = x.c; if (x.p) y.p = x.p; return y; }) }; if (m.cc) o.cc = m.cc; return o; };
+const mindSnap = (m) => { const o = { title: m.title, items: m.items.map(x => { const y = { id: x.id, t: x.t }; if (x.c) y.c = x.c; if (x.p) y.p = x.p;
+  const k = (x.k || []).filter(z => z.t.trim()).map(z => { const w = { id: z.id, t: z.t }; if (z.c) w.c = z.c; if (z.p) w.p = z.p; return w; }); if (k.length) y.k = k; return y; }) }; if (m.cc) o.cc = m.cc; return o; };
+const MIND_SUBS = 6;
 const hexHsl = (hex) => { const [r, g, b] = hexRgb(hex).split(',').map(v => +v / 255), mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let h = 0, sa = 0; if (mx !== mn) { const d = mx - mn; sa = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; } return [h, sa * 100, l * 100]; };
 // les 8 couleurs des bulles, tirées du thème : ses couleurs vives d'abord, puis des teintes voisines de l'accent
 // couleurs des bulles choisies à la main pour chaque décor : elles vont avec le fond (pas de bleu fluo en automne)
@@ -701,12 +716,20 @@ const mindSkin = (s) => MIND_SKIN[s.bgType === 'scene' ? s.scene : s.bgType] || 
 const MIND_FILL = { neon: '#0d0a16', pixel: '#140a28', chalk: '#2b3a33', ornate: '#0e0a06', paper: '#fffdf6', ice: '#eef6ff' };
 // largeur d'un mot dans une police donnée (mesurée une fois à 100 px, puis mise à l'échelle)
 const MW = new Map(); let MW_CTX = null;
+const FAM_OK = new Set(), FAM_GEN = /^(system-ui|sans-serif|serif|monospace|cursive|fantasy|ui-[a-z-]+|-apple-system|BlinkMacSystemFont)$/i;
+const famLoaded = (fam) => {
+  const name = String(fam).split(',')[0].replace(/["']/g, '').trim();
+  if (!name || FAM_GEN.test(name) || FAM_OK.has(name)) return true;
+  let ok = false; try { document.fonts.forEach(f => { if (!ok && f.status === 'loaded' && f.family.replace(/["']/g, '').trim() === name) ok = true; }); } catch (e) { ok = true; }
+  if (ok) FAM_OK.add(name); return ok;
+};
 const measure100 = (txt, fam, wt, it) => {
   const k = fam + '|' + wt + '|' + (it ? 1 : 0) + '|' + txt; let v = MW.get(k); if (v != null) return v;
   const cf = `${it ? 'italic ' : ''}${wt} 100px ${fam}`;
   try { if (!MW_CTX) MW_CTX = document.createElement('canvas').getContext('2d'); MW_CTX.font = cf; v = MW_CTX.measureText(txt).width; } catch (e) { v = txt.length * 56; }
   // police pas encore chargée : mesure provisoire, on ne la garde pas (on remesurera une fois la police là)
-  let ready = true; try { ready = !document.fonts || document.fonts.check(cf); } catch (e) {}
+  // (check() répond « oui » aussi quand la police n'est même pas encore déclarée : on veut une vraie police chargée)
+  let ready = true; try { ready = !document.fonts || (document.fonts.check(cf) && famLoaded(fam)); } catch (e) {}
   if (ready) { if (MW.size > 4000) MW.clear(); MW.set(k, v); }
   return v;
 };
@@ -823,6 +846,7 @@ const T_RAW = {
   md_mind: "Carte mentale|Mind map|Mapa mental|Mindmap", beta: "Bêta|Beta|Beta|Beta", mindBeta: "Carte mentale · version bêta|Mind map · beta version|Mapa mental · versión beta|Mindmap · Beta-Version", newsT: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?", newsVer: "Version|Version|Versión|Version", newsOk: "C’est noté !|Got it!|¡Entendido!|Verstanden!", newsMenu: "Quoi de neuf ?|What’s new?|Novedades|Was ist neu?",
   newsSub: "Depuis ta dernière visite|Since your last visit|Desde tu última visita|Seit deinem letzten Besuch", newsAll: "Toutes les nouveautés|All updates|Todas las novedades|Alle Neuerungen", mindTitlePh: "Le sujet…|The topic…|El tema…|Das Thema…", mindIdeaPh: "Une idée…|An idea…|Una idea…|Eine Idee…",
   mindHint: "Écris le sujet, puis Entrée|Write the topic, then Enter|Escribe el tema y pulsa Intro|Thema eingeben, dann Enter", mindNew: "Nouvelle carte mentale|New mind map|Nuevo mapa mental|Neue Mindmap",
+  mindSub: "Ajouter une sous-bulle|Add a sub-bubble|Añadir una sub-burbuja|Unterblase hinzufügen", mindSubPh: "Un détail…|A detail…|Un detalle…|Ein Detail…",
   mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindReset: "Réinitialiser|Reset|Restablecer|Zurücksetzen", mindBlank: "Page blanche|Blank page|Página en blanco|Leere Seite", mindSets: "Mes cartes|My maps|Mis mapas|Meine Karten", mindNone: "Aucune carte sauvegardée pour l’instant.|No saved maps yet.|Aún no hay mapas guardados.|Noch keine gespeicherten Karten.", mindAll: "Tout voir|See all|Ver todo|Alle anzeigen", mindAllT: "Mes cartes mentales|My mind maps|Mis mapas mentales|Meine Mindmaps", mindSave: "Sauvegarder|Save|Guardar|Speichern", mindSavedB: "Sauvegardée|Saved|Guardado|Gespeichert", mindSaved: "Carte sauvegardée|Map saved|Mapa guardado|Karte gespeichert", mindOpened: "Carte ouverte|Map opened|Mapa abierto|Karte geöffnet", mindDeleted: "Carte supprimée|Map deleted|Mapa eliminado|Karte gelöscht", mindDelSet: "Supprimer la carte|Delete map|Eliminar mapa|Karte löschen", mindUntitled: "Sans titre|Untitled|Sin título|Ohne Titel", mindIdea: "idée|idea|idea|Idee", mindIdeas: "idées|ideas|ideas|Ideen", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
   showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
@@ -1507,7 +1531,7 @@ const LONG_TOUR = [
   { t: ['coin', 'coin-go'], h: 'Lance la pièce', x: 'Clique sur la pièce ou sur « Lancer la pièce » : elle monte, tourne, retombe avec un petit « ting », et le côté tombé s’affiche dessous.', act: (st, b) => st.coinN > b.coinN, d: 'Lance la pièce.', prep: prepMode('coin') },
   { t: ['mode-mind'], h: 'La carte mentale', x: 'Pour un remue-méninges avec la classe : un sujet au centre, des idées tout autour. (Elle est encore en version bêta.)', act: modeIs('mind'), d: 'Clique sur « Carte mentale ».', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['mind-title'], h: 'Écris le sujet', x: 'Tape le sujet dans la grande bulle, puis Entrée : les bulles d’idées jaillissent autour. Entrée passe à la bulle suivante, et une bulle de plus arrive dès qu’elles sont toutes remplies.', act: (st, b) => st.mind.items.filter(x => x.t.trim()).length > b.mind.items.filter(x => x.t.trim()).length, d: 'Écris un sujet, Entrée, puis une idée.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); setTimeout(() => { const el = a.mindRefs && (a.state.mind.items.length ? a.mindRefs[(a.state.mind.items.find(x => !x.t.trim()) || {}).id] : a.mindRefs.title); if (el) el.focus(); }, 350); } },
-  { t: ['mind'], h: 'Bouge et colore les bulles', x: 'Attrape une bulle pour la déplacer : son trait la suit. Clic droit sur une bulle : changer sa couleur, la remettre à sa place ou la supprimer. Les bulles prennent la police, les couleurs et le décor du thème.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
+  { t: ['mind'], h: 'Bouge et colore les bulles', x: 'Attrape une bulle pour la déplacer : son trait la suit. Le « + » sur une bulle remplie ajoute une sous-bulle, pour détailler l’idée. Clic droit sur une bulle : changer sa couleur, la remettre à sa place ou la supprimer. Les bulles prennent la police, les couleurs et le décor du thème.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
   { t: ['mind-reset', 'mind-save'], h: 'Sauvegarder ou repartir de zéro', x: '« Sauvegarder » (Ctrl+S) range la carte dans « Mes cartes ». « Réinitialiser » (touche R) vide la carte pour en faire une nouvelle, avec « Annuler » si tu t’es trompé.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
   { t: ['mode-mind'], h: 'Mes cartes', x: 'Passe la souris sur l’onglet (ou clique dessus) : « Page blanche », tes dernières cartes, et « Tout voir ». La poubelle à droite d’une carte la supprime.', prep: (a) => { a.closeMenu(); a.mindDDClose(); } },
   { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. « Site ou image » affiche une page, une vidéo ou une image en grand, avec l’heure par-dessus.' },
@@ -2374,8 +2398,28 @@ class Component extends DCLogic {
   };
   mindDel = (id) => {
     if (this.state.mindGone.includes(id)) return;
-    this.setState(st => ({ mindGone: [...st.mindGone, id] }));
+    const own = ((this.state.mind.items.find(x => x.id === id) || {}).k || []).map(z => z.id);
+    this.setState(st => ({ mindGone: [...st.mindGone, id, ...own] }));
     setTimeout(() => { this.setState(st => ({ mindGone: st.mindGone.filter(x => x !== id) })); this.setMind(m => ({ ...m, items: this.mindFix(m.items.filter(x => x.id !== id)) })); }, 360);
+  };
+  // ---------- sous-bulles : ajoutées une par une avec le « + » d'une bulle (jamais toutes seules) ----------
+  mindSubOf = (id) => { for (const it of this.state.mind.items) { const z = (it.k || []).find(y => y.id === id); if (z) return [it, z]; } return null; };
+  mindSubSet = (pid, fn, after) => this.setMind(m => ({ ...m, items: m.items.map(x => { if (x.id !== pid) return x; const k = fn(x.k || []), o = { ...x, k }; if (!k.length) delete o.k; return o; }) }), after);
+  mindSubAdd = (pid) => {
+    const it = this.state.mind.items.find(x => x.id === pid); if (!it) return;
+    const empty = (it.k || []).find(z => !z.t.trim());
+    if (empty) { this.mindFocus(empty); return; }
+    if ((it.k || []).length >= MIND_SUBS) return;
+    const id = this.mindId();
+    this.mindSubSet(pid, k => [...k, { id, t: '' }], () => setTimeout(() => this.mindFocus({ id }), 40));
+  };
+  mindSubText = (pid, id, e) => { const v = e.target.value.replace(/\n/g, ' ').slice(0, 80); this.mindSubSet(pid, k => k.map(z => (z.id === id ? { ...z, t: v } : z))); };
+  // on quitte une sous-bulle restée vide : elle disparaît
+  mindSubDone = (pid, id) => { if (this.state.mindOn === id) this.setState({ mindOn: null }); const ps = this.mindSubOf(id); if (ps && !ps[1].t.trim()) this.mindSubSet(pid, k => k.filter(z => z.id !== id)); };
+  mindSubDel = (pid, id) => {
+    if (this.state.mindGone.includes(id)) return;
+    this.setState(st => ({ mindGone: [...st.mindGone, id] }));
+    setTimeout(() => { this.setState(st => ({ mindGone: st.mindGone.filter(x => x !== id) })); this.mindSubSet(pid, k => k.filter(z => z.id !== id)); }, 360);
   };
   mindNew = () => {
     const prev = this.state.mind;
@@ -2604,20 +2648,20 @@ class Component extends DCLogic {
   mindBgClick = (e) => { if (e.target !== e.currentTarget || this.mindWasTyping) return; this.menuAt(e.clientX, e.clientY, e.currentTarget); };
   // ---------- déplacer une bulle : on l'attrape (souris ou doigt), elle suit, puis rebondit en gélatine là où on la lâche ----------
   mindJ = {};
-  mindClamp = (x, y, out) => {
+  mindClamp = (x, y, out, r0) => {
     const g = this.mindGeo; if (!g) return { x, y };
+    const r = r0 || g.d / 2;
     if (out) {
       // lâchée sur la bulle du sujet : elle glisse juste à côté
-      const A = g.ca + g.d / 2 + 12, B = g.cb + g.d / 2 + 12, dx = x - g.cx, dy = y - g.cy, q = (dx / A) ** 2 + (dy / B) ** 2;
+      const A = g.ca + r + 12, B = g.cb + r + 12, dx = x - g.cx, dy = y - g.cy, q = (dx / A) ** 2 + (dy / B) ** 2;
       if (q < 1) { if (q < 1e-4) { y = g.cy - B; } else { const k = 1 / Math.sqrt(q); x = g.cx + dx * k; y = g.cy + dy * k; } }
     }
-    const r = g.d / 2;
     return { x: Math.max(r + 8, Math.min(g.vw - r - 8, x)), y: Math.max(g.top - 14 + r, Math.min(g.bot - r + 8, y)) };
   };
   mindDown = (e, id) => {
     if (e.button !== 0 || this.mmD) return;
     const t = e.target;
-    if (t.closest && t.closest('.fh-mm-x')) return;
+    if (t.closest && t.closest('.fh-mm-x, .fh-mm-k')) return;
     if (t === document.activeElement && t.classList.contains('fh-mm-t')) return; // en train d'écrire : on sélectionne le texte
     const el = e.currentTarget, cx = +el.dataset.cx, cy = +el.dataset.cy;
     this.mmD = { id, el, pid: e.pointerId, sx: e.clientX, sy: e.clientY, ox: cx - e.clientX, oy: cy - e.clientY, moved: false };
@@ -2639,25 +2683,31 @@ class Component extends DCLogic {
     this.mindNoClick = Date.now();
     const g = this.mindGeo, p = this.state.mindDrag; if (!p || !g) { this.setState({ mindDrag: null }); return; }
     // lâchée sur une autre bulle : elle se pousse juste à côté (sans la recouvrir)
-    let q = this.mindClamp(p.x, p.y, true);
-    const others = Object.entries(this.mindPos || {}).filter(([id]) => id !== d.id).map(([, v]) => v), gap = g.d + 10;
+    // une sous-bulle garde sa place par rapport à sa bulle (elle la suit quand on déplace la bulle)
+    const sub = this.mindSubOf(d.id), me = (this.mindPos || {})[d.id], r = (me && me.r) || g.d / 2;
+    const own = sub ? [] : ((this.state.mind.items.find(x => x.id === d.id) || {}).k || []).map(z => z.id);
+    let q = this.mindClamp(p.x, p.y, true, r);
+    const others = Object.entries(this.mindPos || {}).filter(([id]) => id !== d.id && !own.includes(id)).map(([, v]) => v);
     for (let k = 0; k < 24; k++) {
       let hit = false;
-      others.forEach(o => { const dx = q.x - o.x, dy = q.y - o.y, dd = Math.hypot(dx, dy); if (dd < gap) { hit = true; const a = dd < 1 ? -Math.PI / 2 + k : Math.atan2(dy, dx); q = { x: o.x + Math.cos(a) * gap, y: o.y + Math.sin(a) * gap }; } });
-      q = this.mindClamp(q.x, q.y, true);
+      others.forEach(o => { const gap = r + (o.r || g.d / 2) + 10, dx = q.x - o.x, dy = q.y - o.y, dd = Math.hypot(dx, dy); if (dd < gap) { hit = true; const a = dd < 1 ? -Math.PI / 2 + k : Math.atan2(dy, dx); q = { x: o.x + Math.cos(a) * gap, y: o.y + Math.sin(a) * gap }; } });
+      q = this.mindClamp(q.x, q.y, true, r);
       if (!hit) break;
     }
     this.mindJ[d.id] = (this.mindJ[d.id] || 0) + 1;
     this.setState({ mindDrag: null });
+    if (sub) { const P = this.mindPos[sub[0].id] || { x: g.cx, y: g.cy }; this.mindSubSet(sub[0].id, k => k.map(z => (z.id === d.id ? { ...z, p: { dx: +((q.x - P.x) / g.vw).toFixed(4), dy: +((q.y - P.y) / g.vh).toFixed(4) } } : z))); return; }
     this.setMind(m => ({ ...m, items: m.items.map(x => (x.id === d.id ? { ...x, p: { x: +(q.x / g.vw).toFixed(4), y: +(q.y / g.vh).toFixed(4) } } : x)) }));
   };
   mindTap = (it) => { if (Date.now() - (this.mindNoClick || 0) < 350) return; this.mindFocus(it); };
   mindPatch = (id, patch) => {
     if (id === 'title') { this.setMind(m => ({ ...m, cc: patch.c })); return; }
     if (patch.p === null) this.mindJ[id] = (this.mindJ[id] || 0) + 1;
+    const ps = this.mindSubOf(id);
+    if (ps) { this.mindSubSet(ps[0].id, k => k.map(z => { if (z.id !== id) return z; const o = { ...z, ...patch }; if (patch.p === null) delete o.p; return o; })); return; }
     this.setMind(m => ({ ...m, items: m.items.map(x => { if (x.id !== id) return x; const o = { ...x, ...patch }; if (patch.p === null) delete o.p; return o; }) }));
   };
-  mindTidy = () => { this.setMind(m => ({ ...m, items: m.items.map(x => { if (!x.p) return x; this.mindJ[x.id] = (this.mindJ[x.id] || 0) + 1; const o = { ...x }; delete o.p; return o; }) })); };
+  mindTidy = () => { this.setMind(m => ({ ...m, items: m.items.map(x => { const o = { ...x }; if (o.p) { this.mindJ[x.id] = (this.mindJ[x.id] || 0) + 1; delete o.p; } if (o.k) o.k = o.k.map(z => { if (!z.p) return z; this.mindJ[z.id] = (this.mindJ[z.id] || 0) + 1; const w = { ...z }; delete w.p; return w; }); return o; }) })); };
   mindView = (E, st, L, font, dk) => {
     const m = st.mind, vw = st.vw, vh = st.vh, top = 84, bot = vh - 24, cx = vw / 2, cy = (top + bot) / 2, accRgb = hexRgb(st.s.accent);
     // la carte suit le thème : ses couleurs pour les bulles, verre clair sur fond clair, verre sombre sur fond sombre
@@ -2715,7 +2765,7 @@ class Component extends DCLogic {
       if (drag) { x = drag.x; y = drag.y; }
       else if (it.p) { const q = this.mindClamp(it.p.x * vw, it.p.y * vh); x = q.x; y = q.y; }
       else { const a = angAt(i / n); x = cx + Math.cos(a) * rx; y = cy + Math.sin(a) * ry; }
-      this.mindPos[it.id] = { x, y };
+      this.mindPos[it.id] = { x, y, r: d / 2 };
       const c = hexRgb(it.c || pal[i % pal.length]), gone = st.mindGone.includes(it.id), on = st.mindOn === it.id;
       const tr = drag ? 'none' : null;
       // trait du centre à la bulle (part du bord de la bulle centrale, s'arrête au bord de la petite)
@@ -2732,7 +2782,67 @@ class Component extends DCLogic {
               onMouseDown: (e) => { if (e.currentTarget !== document.activeElement) e.preventDefault(); },
               onChange: (e) => this.mindText(it.id, e), onFocus: () => this.setState({ mindOn: it.id }), onBlur: () => this.mindDone(it.id), onKeyDown: (e) => this.mindKey(it.id, e),
               style: { width: Math.round(d * 0.74), height: tf.h, font: `${ital ? 'italic ' : ''}${wIdea} ${tf.fs}px/1.18 ${fam}`, letterSpacing: lsEm + 'em', cursor: 'inherit', transition: 'font-size .3s, height .3s' } }),
-            it.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindDel(it.id); } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null))));
+            it.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindDel(it.id); } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null,
+            // « + » : une sous-bulle de plus pour cette idée
+            it.t.trim() && (it.k || []).length < MIND_SUBS ? E('button', { type: 'button', className: 'fh-mm-k', 'data-tour': i === 0 ? 'mind-sub' : undefined, title: L.mindSub, 'aria-label': L.mindSub, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindSubAdd(it.id); } }, E('span', { style: { ...ICON, fontSize: 19 } }, 'add')) : null))));
+    });
+    // ---------- sous-bulles : plus petites, dans la couleur de leur bulle, placées vers l'extérieur là où il y a de la place ----------
+    // chaque sous-bulle a la taille de son texte (police fixe) : pas de vide autour d'un mot court
+    const fsS0 = Math.round(Math.max(12, Math.min(20, d * 0.095)));
+    const subSize = (txt) => {
+      const words = txt.split(/\s+/).filter(Boolean), sp = measure100(' ', fam, wIdea, ital);
+      const lay = (fs) => { const W = fs * 7, ww = (words.length ? words : [txt]).map(x => (measure100(x, fam, wIdea, ital) + lsEm * 100 * x.length) * fs / 100); let lines = 1, cur = 0, bw = 0;
+        ww.forEach(x => { const add = cur ? sp * fs / 100 + x : x; if (cur && cur + add > W) { bw = Math.max(bw, cur); lines++; cur = x; } else cur += add; }); bw = Math.max(bw, cur);
+        const tw = Math.ceil(bw + fs * 0.6), th = Math.round(lines * fs * 1.18); return { fs, tw, th, ds: Math.round(Math.max(fs * 3.4, Math.hypot(tw, th) + fs * 0.8)) }; };
+      let o = lay(fsS0); const cap = Math.round(d * 0.95);
+      if (o.ds > cap) { o = lay(Math.max(10, Math.floor(fsS0 * cap / o.ds))); o.ds = Math.min(o.ds, cap); }
+      return o;
+    };
+    // gêne d'une place : chevauchements avec les autres bulles et le sujet, ou sortie de l'écran (0 = place libre)
+    const clash = (x, y, rs) => {
+      let k = Math.max(0, 8 + rs - x) + Math.max(0, x + rs - vw + 8) + Math.max(0, top - 14 + rs - y) + Math.max(0, y + rs - bot - 8);
+      const e = Math.sqrt(((x - cx) / (ca + rs + 10)) ** 2 + ((y - cy) / (cb + rs + 10)) ** 2); if (e < 1) k += (1 - e) * (cb + rs) * 2;
+      Object.values(this.mindPos).forEach(o => { k += Math.max(0, o.r + rs + 8 - Math.hypot(o.x - x, o.y - y)); });
+      return k;
+    };
+    items.forEach((it, i) => {
+      const ks = it.k || []; if (!ks.length) return;
+      const P = this.mindPos[it.id], pc = it.c || pal[i % pal.length], pDrag = !!(st.mindDrag && st.mindDrag.id === it.id), pGone = st.mindGone.includes(it.id);
+      const a0 = Math.atan2(P.y - cy, P.x - cx);
+      ks.forEach((sb, j) => {
+        const sz = subSize(sb.t || L.mindSubPh), ds = sz.ds, rs = ds / 2, R = d / 2 + rs + 26;
+        const drag = st.mindDrag && st.mindDrag.id === sb.id ? st.mindDrag : null;
+        let x, y;
+        if (drag) { x = drag.x; y = drag.y; }
+        else if (sb.p) { const q = this.mindClamp(P.x + sb.p.dx * vw, P.y + sb.p.dy * vh, false, rs); x = q.x; y = q.y; }
+        else {
+          const want = a0 + (j - (ks.length - 1) / 2) * 0.7;
+          let spot = null;
+          // pendant qu'on traîne la bulle, ses sous-bulles la suivent sans chercher de place ; sinon, la place libre la plus proche de la direction voulue
+          // (sinon la moins gênée ; un peu plus loin ou un peu de côté compte un peu, pour rester près de la bulle)
+          if (!pDrag) { let best = Infinity; for (const rr of [R, R + ds * 0.7, R + ds * 1.4]) for (const off of [0, 0.35, -0.35, 0.7, -0.7, 1.05, -1.05, 1.4, -1.4, 1.8, -1.8, 2.3, -2.3, 2.8, -2.8]) { const xx = P.x + Math.cos(want + off) * rr, yy = P.y + Math.sin(want + off) * rr, sc = clash(xx, yy, rs) * 10 + Math.abs(off) * 4 + (rr - R) * 0.15; if (sc < best) { best = sc; spot = { x: xx, y: yy }; } } spot = this.mindClamp(spot.x, spot.y, false, rs); }
+          else spot = this.mindClamp(P.x + Math.cos(want) * R, P.y + Math.sin(want) * R, false, rs);
+          x = spot.x; y = spot.y;
+        }
+        this.mindPos[sb.id] = { x, y, r: rs };
+        const col = sb.c || pc, c = hexRgb(col), gone = pGone || st.mindGone.includes(sb.id), on = st.mindOn === sb.id;
+        // trait de la bulle à sa sous-bulle
+        const ang = Math.atan2(y - P.y, x - P.x), len = Math.max(0, Math.hypot(x - P.x, y - P.y) - d / 2 - rs + 6);
+        kids.push(E('div', { key: 'sl' + sb.id, 'data-sl': sb.id, 'data-sp': it.id, style: { position: 'absolute', left: P.x, top: P.y - 1, width: len, height: 2.5, transformOrigin: '0 50%', transform: `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(d / 2 - 3)}px)`, transition: 'opacity .3s', opacity: gone ? 0 : 1, pointerEvents: 'none' } },
+          E('div', { className: 'fh-mm-l', style: { '--a': hexRgb(pc), '--c': c, animation: 'fh-mm-line .5s ease backwards' } })));
+        const to = `translate(${Math.round(x - rs)}px, ${Math.round(y - rs)}px)`, jn = this.mindJ[sb.id] || 0, ink2 = bestInk(col);
+        kids.push(E('div', { key: 's' + sb.id, className: 'fh-mm-p fh-mm-sub', 'data-menu': 'mmb:' + sb.id, 'data-cx': Math.round(x), 'data-cy': Math.round(y),
+          onPointerDown: (e) => this.mindDown(e, sb.id), onMouseDown: (e) => { const t = e.target; if (!(t.closest && t.closest('.fh-mm-x')) && !(t === document.activeElement && t.classList.contains('fh-mm-t'))) e.preventDefault(); }, onPointerMove: this.mindMove, onPointerUp: this.mindUp, onPointerCancel: this.mindUp,
+          style: { position: 'absolute', left: 0, top: 0, width: ds, height: ds, zIndex: drag ? 6 : on ? 3 : 2, transform: to, touchAction: 'none', cursor: drag ? 'grabbing' : undefined, '--fx': `${Math.round(P.x - rs)}px`, '--fy': `${Math.round(P.y - rs)}px`, '--to': to, transition: drag || pDrag ? 'none' : `transform .8s ${ease}, width .35s ${ease}, height .35s ${ease}`, animation: gone ? 'fh-mm-out .36s cubic-bezier(.5,0,.8,.4) forwards' : `fh-mm-in .8s ${ease} backwards` } },
+          E('div', { key: 'j' + jn, className: 'fh-mm-f', style: { position: 'absolute', inset: 0, '--fl': `${-3 - (j % 3)}px`, animation: `fh-mm-jelly .9s ease ${jn ? 0 : 160}ms backwards, fh-mm-float ${(4.6 + (j % 4) * 0.7).toFixed(1)}s ease-in-out ${(0.9 + j * 0.43).toFixed(2)}s infinite` } },
+            E('div', { className: 'fh-mm-b' + (on ? ' on' : '') + (drag ? ' drag' : ''), onClick: () => this.mindTap(sb), style: { '--c': c, '--ti': ink2, '--tis': ink2 === '#ffffff' ? '0 1px 2px rgba(0,0,0,.35)' : 'none', cursor: drag ? 'grabbing' : on ? 'text' : 'grab' } },
+              E('textarea', { ref: this.mindRef(sb.id), className: 'fh-mm-t', rows: 1, value: sb.t, placeholder: L.mindSubPh, maxLength: 80, spellCheck: true, 'aria-label': L.mindSubPh,
+                onMouseDown: (e) => { if (e.currentTarget !== document.activeElement) e.preventDefault(); },
+                onChange: (e) => this.mindSubText(it.id, sb.id, e), onFocus: () => this.setState({ mindOn: sb.id }), onBlur: () => this.mindSubDone(it.id, sb.id),
+                onKeyDown: (e) => { if (e.key === 'Escape' || (e.key === 'Enter' && !e.shiftKey)) { e.preventDefault(); e.target.blur(); } },
+                style: { width: sz.tw, height: sz.th, font: `${ital ? 'italic ' : ''}${wIdea} ${sz.fs}px/1.18 ${fam}`, letterSpacing: lsEm + 'em', cursor: 'inherit', transition: 'font-size .3s, height .3s' } }),
+              sb.t.trim() ? E('button', { type: 'button', className: 'fh-mm-x', title: L.mindDel, 'aria-label': L.mindDel, onMouseDown: (e) => e.preventDefault(), onClick: (e) => { e.stopPropagation(); this.mindSubDel(it.id, sb.id); } }, E('span', { style: { ...ICON, fontSize: 15 } }, 'close')) : null))));
+      });
     });
     // la bulle du sujet, au centre
     const tt = fit(m.title || L.mindTitlePh, Wc * 0.92, 0.17, D, wTitle), onT = st.mindOn === 'title';
@@ -2772,6 +2882,17 @@ class Component extends DCLogic {
       const ang = Math.atan2(y - g.cy, x - g.cx), rc = (g.ca * g.cb) / Math.sqrt((g.cb * Math.cos(ang)) ** 2 + (g.ca * Math.sin(ang)) ** 2);
       l.style.width = Math.max(0, Math.hypot(x - g.cx, y - g.cy) - rc - r + 6).toFixed(1) + 'px';
       l.style.transform = `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(rc - 3)}px)`;
+    });
+    // sous-bulles : du bord de leur bulle au bord de la sous-bulle
+    const ctr = (t, w) => { if (!t || t === 'none') return null; let mx; try { mx = new DOMMatrixReadOnly(t); } catch (e) { return null; } return { x: mx.e + w / 2, y: mx.f + w / 2, r: (w / 2) * Math.hypot(mx.a, mx.b) }; };
+    const subs = [];
+    root.querySelectorAll('[data-sl]').forEach(l => { const a = root.querySelector(`[data-menu="mmb:${l.dataset.sp}"]`), b = root.querySelector(`[data-menu="mmb:${l.dataset.sl}"]`); if (a && b) subs.push([l, getComputedStyle(a).transform, a.offsetWidth, getComputedStyle(b).transform, b.offsetWidth]); });
+    subs.forEach(([l, ta, wa, tb, wb]) => {
+      const A = ctr(ta, wa), B = ctr(tb, wb); if (!A || !B) return;
+      const ang = Math.atan2(B.y - A.y, B.x - A.x);
+      l.style.left = A.x.toFixed(1) + 'px'; l.style.top = (A.y - 1).toFixed(1) + 'px';
+      l.style.width = Math.max(0, Math.hypot(B.x - A.x, B.y - A.y) - A.r - B.r + 6).toFixed(1) + 'px';
+      l.style.transform = `rotate(${(ang * 180 / Math.PI).toFixed(2)}deg) translateX(${Math.round(A.r - 3)}px)`;
     });
   };
   mindLinesRun = (ms) => {
@@ -4301,16 +4422,19 @@ class Component extends DCLogic {
           { key: 'ko', icon: 'open_in_full', label: L.mOpen, act: () => this.setMode(full) },
           sep, { key: 'ku', icon: 'close', label: L.unpin, act: () => this.pinTool(which) }];
       };
-      const mmb = M.kind === 'mmb' ? (M.id === 'title' ? { id: 'title', c: st.mind.cc || '' } : st.mind.items.find(x => x.id === M.id)) : null;
-      const mmbItems = () => { if (!mmb) return []; const i = st.mind.items.indexOf(mmb), pal = this.mindPal || MIND_HEX, cur = mmb.id === 'title' ? (mmb.c || s.accent || '').toLowerCase() : (mmb.c || pal[i % pal.length]);
+      const mmbSub = M.kind === 'mmb' && M.id !== 'title' ? this.mindSubOf(M.id) : null;
+      const mmb = M.kind === 'mmb' ? (M.id === 'title' ? { id: 'title', c: st.mind.cc || '' } : mmbSub ? mmbSub[1] : st.mind.items.find(x => x.id === M.id)) : null;
+      const mmbItems = () => { if (!mmb) return []; const i = st.mind.items.indexOf(mmbSub ? mmbSub[0] : mmb), pal = this.mindPal || MIND_HEX, cur = mmb.id === 'title' ? (mmb.c || s.accent || '').toLowerCase() : (mmb.c || (mmbSub && mmbSub[0].c) || pal[i % pal.length]);
+        const main = mmb.id !== 'title' && !mmbSub;
         return [{ key: 'mc', icon: 'palette', label: L.color, sub: () => [{ key: 'sw-mm', swatches: pal, cur, pick: (c) => this.mindPatch(mmb.id, { c }) }] },
+          main && mmb.t.trim() && (mmb.k || []).length < MIND_SUBS ? { key: 'mk', icon: 'add', label: L.mindSub, act: () => this.mindSubAdd(mmb.id) } : null,
           mmb.p ? { key: 'mp', icon: 'undo', label: L.mindPlace, act: () => this.mindPatch(mmb.id, { p: null }) } : null,
-          mmb.id !== 'title' ? sep : null, mmb.id !== 'title' ? { key: 'md', icon: 'delete', label: L.mindDel, danger: true, act: () => this.mindDel(mmb.id) } : null].filter(Boolean); };
+          mmb.id !== 'title' ? sep : null, mmb.id !== 'title' ? { key: 'md', icon: 'delete', label: L.mindDel, danger: true, act: () => (mmbSub ? this.mindSubDel(mmbSub[0].id, mmb.id) : this.mindDel(mmb.id)) } : null].filter(Boolean); };
       const mindItems = () => [
         { key: 'mnew', icon: 'restart_alt', label: kh(L.mindReset + ' (R)'), act: this.mindNew },
         st.mind.title.trim() || st.mind.items.some(x => x.t.trim()) ? { key: 'msave', icon: 'save', label: L.mindSave + ' (Ctrl+S)', act: this.mindStore } : null,
         { key: 'mall', icon: 'grid_view', label: L.mindAllT + '…', act: this.mindShowAll },
-        st.mind.items.some(x => x.p) ? { key: 'mtidy', icon: 'hub', label: L.mindTidy, act: this.mindTidy } : null,
+        st.mind.items.some(x => x.p || (x.k || []).some(z => z.p)) ? { key: 'mtidy', icon: 'hub', label: L.mindTidy, act: this.mindTidy } : null,
         sep,
         { key: 'note', icon: 'sticky_note_2', label: kh(L.noteNew), act: () => this.addNote(M.x, M.y) },
         { key: 'fs', icon: st.fs ? 'fullscreen_exit' : 'fullscreen', label: kh(L.fullscreen), act: this.toggleFs },
