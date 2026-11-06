@@ -541,6 +541,9 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.15.3', d: '2026-11-06', items: [
+    'Carte mentale : couleurs des bulles assorties au décor de chaque thème.|Mind map: bubble colours match each theme’s scenery.',
+    'Carte mentale : le menu des cartes se ferme bien après une suppression.|Mind map: the maps menu now closes properly after deleting a map.'] },
   { v: '2.15.2', d: '2026-11-05', items: ['Guide complet : étapes Pile ou face et carte mentale ajoutées.|Full guide: heads or tails and mind map steps added.'] },
   { v: '2.15.1', d: '2026-11-05', items: [
     'Oiseaux, mouettes et chauves-souris : vrais battements d’ailes.|Birds, gulls and bats: real wing flaps.',
@@ -634,13 +637,61 @@ function mindClean(m0) {
 const mindSnap = (m) => { const o = { title: m.title, items: m.items.map(x => { const y = { id: x.id, t: x.t }; if (x.c) y.c = x.c; if (x.p) y.p = x.p; return y; }) }; if (m.cc) o.cc = m.cc; return o; };
 const hexHsl = (hex) => { const [r, g, b] = hexRgb(hex).split(',').map(v => +v / 255), mx = Math.max(r, g, b), mn = Math.min(r, g, b), l = (mx + mn) / 2; let h = 0, sa = 0; if (mx !== mn) { const d = mx - mn; sa = l > 0.5 ? d / (2 - mx - mn) : d / (mx + mn); h = mx === r ? (g - b) / d + (g < b ? 6 : 0) : mx === g ? (b - r) / d + 2 : (r - g) / d + 4; h *= 60; } return [h, sa * 100, l * 100]; };
 // les 8 couleurs des bulles, tirées du thème : ses couleurs vives d'abord, puis des teintes voisines de l'accent
+// couleurs des bulles choisies à la main pour chaque décor : elles vont avec le fond (pas de bleu fluo en automne)
+const MIND_SCENE_PAL = {
+  autumn: ['#e0762f', '#c8452b', '#d9a12e', '#8f9a3a', '#a8323e', '#b8703a', '#6f8f45', '#e3b55a'],
+  xmas: ['#d93a3a', '#2f8f55', '#e0b23a', '#b02e4e', '#5aae6a', '#e07d3a', '#7aa6cc', '#9c3a2e'],
+  winter: ['#5b9bd5', '#7fc8e6', '#9a8fd8', '#4a76b8', '#6fbcbc', '#c497c9', '#e0b06a', '#8fb0e0'],
+  spooky: ['#f2851e', '#9b4fd6', '#6fbf3a', '#d9482b', '#e0b23a', '#c25fd6', '#3fa37a', '#a83a2b'],
+  newyear: ['#e0b84a', '#d65ac8', '#4a8fe0', '#e0607a', '#4ac8c0', '#e0894a', '#9b7ae0', '#c9b85a'],
+  bastille: ['#2f5fd6', '#e03a46', '#5a8fe8', '#e86a7a', '#e0b84a', '#3a46a8', '#c43a4a', '#7aa8e8'],
+  spring: ['#ff6fb5', '#6cc05a', '#f2c63a', '#5ab0e8', '#b38fe8', '#f29a50', '#4cb08a', '#e86a8a'],
+  easter: ['#ff8fab', '#8fd05a', '#f5cf5a', '#7ec0f0', '#b99af0', '#f5aa70', '#6fd0b5', '#e88fd0'],
+  summer: ['#ff7a59', '#1fa8d0', '#f5c33a', '#2fc4a0', '#e8506a', '#4a80e0', '#f29a3a', '#7ac94a'],
+  valentine: ['#ff4d8d', '#e0305a', '#ff8fb0', '#c2306e', '#e8607a', '#b85ad6', '#f27a6a', '#d64aa8'],
+  rentree: ['#ffe066', '#ff9fb0', '#8fcaf0', '#9fe09a', '#ffb87a', '#c8b0f5', '#8fe0d0', '#f0c890'],
+  april: ['#ffb703', '#2fa8e0', '#ff7a5a', '#2fd0b0', '#ff8fb8', '#6a8ff0', '#a6d64a', '#f2d24a'],
+  music: ['#f72585', '#7a3af0', '#4cc9f0', '#ffb703', '#b5179e', '#4361ee', '#f2603a', '#3ae0a0'],
+  sunset: ['#ffd166', '#ff7a4a', '#d63a6b', '#a8459e', '#ff9a4c', '#e8506a', '#7a4ab8', '#f2b04a'],
+  candy: ['#ff4f9a', '#8a5cf5', '#4fc8f0', '#ffb84f', '#5ad6a0', '#ff7ad0', '#b08af5', '#ffd24f'],
+  brutal: ['#ff4d4d', '#3a6bff', '#1fb85a', '#ff8a00', '#a855f7', '#00a8c9', '#ff5fa2', '#e0b000'],
+  cosmos: ['#7c5cff', '#3ab8ff', '#2ad0c0', '#c45cff', '#5a7cff', '#ff6ad5', '#4ae0ff', '#9a8cff'],
+  arcade: ['#ff7ad9', '#ffd23f', '#3af0ff', '#7a5cff', '#5aff8a', '#ff5a5a', '#ff9a3a', '#5a9cff'],
+  luxe: ['#e8c77c', '#b8863a', '#9a2f3a', '#2f7a5a', '#d9b26a', '#8a5a2f', '#c9a87a', '#6a3a6a'],
+  matrix: ['#ff5a36', '#ff9a3a', '#e8c24a', '#4ab0c8', '#d94a6a', '#8ab05a', '#c86a3a', '#7a8ab8'],
+  glacier: ['#2b7fff', '#4ac0f0', '#7a9cff', '#2fb5c8', '#5ab0ff', '#5a6ad8', '#3ad0d0', '#a08af0'],
+  iso: ['#ffb84d', '#ff6a8a', '#8a6aff', '#4ad0c0', '#ff8a4a', '#c05ae0', '#5aa8ff', '#ffd24a'],
+  gothic: ['#c0352b', '#8a2a3a', '#c9a24a', '#6a4a8a', '#a85a3a', '#3a7a5a', '#9a2a4a', '#b0905a'],
+  london: ['#d4213d', '#ffcf7a', '#3d5aa8', '#e9976b', '#2f7a6a', '#8a3a6a', '#c9a24a', '#5a7ab8'],
+  gotham: ['#f5c518', '#e08a2a', '#5a7ab8', '#c0352b', '#7a9ac0', '#d9a84a', '#4a6a9a', '#a85a3a'],
+  neon: ['#ff5ad8', '#5af2ff', '#a85aff', '#ff2fd0', '#5a8aff', '#ffe45a', '#5affb0', '#ff5a8a'],
+  terminal: ['#41ff8a', '#a8ff41', '#41ffd0', '#ffc841', '#1fd06a', '#7affb0', '#41d8ff', '#d8ff41'],
+  holo: ['#22d3ee', '#7ae8ff', '#5a8aff', '#a85aff', '#2fe0b0', '#ff5ad8', '#5ac8ff', '#5affe0'],
+  trippy: ['#ffe14d', '#ff4fd8', '#7b2ff7', '#00c2a8', '#ff7a3a', '#4fa8ff', '#a8ff4f', '#ff4f6a'],
+  paper: ['#d9480f', '#1c5fb8', '#2f8a4a', '#b8325a', '#e0a020', '#6a3ab8', '#0f8a8a', '#8a5a2a'],
+};
+const hueGap = (a, b) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));
 function mindPal(s) {
-  const out = [], hues = [];
-  const add = (hex) => { if (!/^#[0-9a-f]{6}$/i.test(hex || '')) return; const [h, sa, l] = hexHsl(hex); if (sa < 28 || l < 16 || l > 90) return; if (hues.some(x => Math.min(Math.abs(x - h), 360 - Math.abs(x - h)) < 24)) return; hues.push(h); out.push(hsl(h, Math.max(58, Math.min(90, sa)), Math.max(50, Math.min(64, l)))); };
-  [s.accent, s.glowColor, s.grad1, s.grad2, s.bg3, s.color, s.dateColor, s.bg1].forEach(add);
-  const [h0, s0, l0] = hexHsl(/^#[0-9a-f]{6}$/i.test(s.accent || '') ? s.accent : '#5b8cff');
-  for (const d of [45, -45, 90, -90, 140, -140, 180, 22, -22, 68, -68, 115, -115, 160, -160]) { if (out.length >= 8) break; add(hsl(h0 + d, Math.max(62, s0), Math.max(50, Math.min(62, l0)))); }
-  while (out.length < 8) out.push(MIND_HEX[out.length]);
+  const key = s.bgType === 'scene' ? s.scene : s.bgType, fixed = MIND_SCENE_PAL[key];
+  if (fixed) {
+    // décor connu : sa palette ; si on a changé la couleur d'accent pour une teinte absente, elle passe en premier
+    const a = /^#[0-9a-f]{6}$/i.test(s.accent || '') ? s.accent : null;
+    if (a) { const [h, sa, l] = hexHsl(a); if (sa >= 35 && l >= 20 && l <= 85 && !fixed.some(c => hueGap(hexHsl(c)[0], h) < 20)) return [a, ...fixed.slice(0, 7)]; }
+    return fixed.slice();
+  }
+  // autre fond (dégradé, uni, image, grille…) : seulement les teintes du thème et leurs voisines proches
+  const out = [], hues = [], src = [];
+  let satMax = 0;
+  // seulement les couleurs qu'on voit vraiment à l'écran (pas les réglages restés d'un ancien thème)
+  const bt = s.bgType, back = bt === 'grid' ? [s.gridLit] : bt === 'solid' ? [s.bgColor] : bt === 'image' ? [] : [s.bg1, s.bg2, s.bg3];
+  [s.accent, s.glow ? s.glowColor : null, s.color, s.dateColor, ...(s.gradText ? [s.grad1, s.grad2] : []), ...back].forEach(hex => { if (!/^#[0-9a-f]{6}$/i.test(hex || '')) return; const c = hexHsl(hex); if (c[1] < 25 || c[2] < 12 || c[2] > 92) return; src.push(c); satMax = Math.max(satMax, c[1]); });
+  const sMax = Math.min(92, Math.max(45, satMax + 8));
+  const add = (h, sa, l, gap) => { if (hues.some(x => hueGap(x, h) < gap)) return; hues.push(h); out.push(hsl(h, Math.max(45, Math.min(sMax, sa)), Math.max(48, Math.min(64, l)))); };
+  src.forEach(([h, sa, l]) => add(h, sa, l, 20));
+  const base = src.length ? src : [hexHsl('#5b8cff')];
+  for (const d of [24, -24, 40, -40, 12, -12, 56, -56]) for (const [h, sa, l] of base) { if (out.length >= 8) break; add(h + d, sa, l + (d > 0 ? 4 : -4), 10); }
+  // encore trop peu : mêmes teintes, plus claires ou plus foncées
+  for (let i = 0; out.length < 8; i++) { const [h, sa, l] = hexHsl(out[i % out.length]); out.push(hsl(h, sa, i % 2 ? Math.max(42, l - 12) : Math.min(70, l + 10))); }
   return out;
 }
 // l'habillage des bulles selon la famille du thème
@@ -2362,6 +2413,10 @@ class Component extends DCLogic {
     this.setState({ mindDD: { x: Math.round(r.left), y: Math.round(r.bottom + 10), w: Math.round(r.width), click: !!click } });
     // ouvert au clic : un clic ailleurs le referme, sans bloquer ce clic (on peut cliquer directement sur un autre onglet)
     if (click && !this.ddDoc) { this.ddDoc = (ev) => { const t = ev.target; if (!(t && t.closest && t.closest('[data-mind-dd], [data-tour="mode-mind"]'))) this.mindDDClose(); }; document.addEventListener('pointerdown', this.ddDoc, true); }
+    // souris : on suit nous-mêmes où elle est (une ligne supprimée sous la souris ne déclenche pas toujours « la souris est sortie ») ;
+    // hors du menu et de l'onglet → le menu se ferme, qu'il ait été ouvert au survol ou au clic
+    if (!this.ddMove) { this.ddOut = false; this.ddMove = (ev) => { if (ev.pointerType && ev.pointerType !== 'mouse') return; const t = ev.target, inside = !!(t && t.closest && t.closest('[data-mind-dd], [data-tour="mode-mind"]'));
+      if (inside) { if (this.ddOut) { this.ddOut = false; clearTimeout(this.ddT); } } else if (!this.ddOut) { this.ddOut = true; this.mindTabLeave(); } }; document.addEventListener('pointermove', this.ddMove, true); }
   };
   // survol (souris) : le menu s'ouvre presque tout de suite, quel que soit le mode affiché
   mindTabEnter = (e) => {
@@ -2371,7 +2426,7 @@ class Component extends DCLogic {
     if (this.state.mindDD) return;
     this.ddOpenT = setTimeout(() => { if (el.isConnected && el.matches(':hover')) this.mindDDAt(el, false); }, 80);
   };
-  mindTabLeave = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.ddT = setTimeout(() => { if (this.ddHold) { this.mindTabLeave(); return; } if (this.state.mindDD && !this.state.mindDD.click) this.mindDDClose(); }, 260); };
+  mindTabLeave = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.ddT = setTimeout(() => { if (this.ddHold) { this.mindTabLeave(); return; } if (this.state.mindDD) this.mindDDClose(); }, 260); };
   // clic : passe en Carte mentale si besoin et ouvre le menu (un 2e clic le referme)
   mindTabClick = (e) => {
     const el = e.currentTarget; clearTimeout(this.ddOpenT);
@@ -2381,7 +2436,7 @@ class Component extends DCLogic {
   };
   mindDDEnter = () => { clearTimeout(this.ddT); this.overBar = true; };
   mindDDLeave = () => { this.overBar = false; this.activity(); this.mindTabLeave(); };
-  mindDDClose = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.overBar = false; if (this.ddDoc) { document.removeEventListener('pointerdown', this.ddDoc, true); this.ddDoc = null; } if (this.state.mindDD) this.setState({ mindDD: null }); };
+  mindDDClose = () => { clearTimeout(this.ddT); clearTimeout(this.ddOpenT); this.overBar = false; if (this.ddMove) { document.removeEventListener('pointermove', this.ddMove, true); this.ddMove = null; } if (this.ddDoc) { document.removeEventListener('pointerdown', this.ddDoc, true); this.ddDoc = null; } if (this.state.mindDD) this.setState({ mindDD: null }); };
   mindBlank = () => { this.mindDDClose(); this.setState({ mindAll: false }); if (this.state.s.mode !== 'mind') this.setMode('mind'); this.mindNew(); };
   mindShowAll = () => { this.mindDDClose(); this.closeMenu(); this.setState({ mindAll: true }); };
   // poubelle en deux parties : le couvercle (qui s'ouvre) et le corps
@@ -2397,7 +2452,7 @@ class Component extends DCLogic {
     const host = bin.closest('[data-set]'), label = host && host.querySelector('[data-name]'), svg = bin.querySelector('svg');
     const reduce = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
     const finish = () => {
-      const end = () => { delete this.trashing[id]; this.ddHold = false; this.mindDelSet(id); };
+      const end = () => { delete this.trashing[id]; this.ddHold = false; this.mindDelSet(id); setTimeout(() => { if (this.state.mindDD && !document.querySelector('[data-mind-dd]:hover, [data-tour="mode-mind"]:hover')) this.mindDDClose(); }, 60); };
       if (host && host.animate && !reduce) {
         const h = host.offsetHeight, card = host.hasAttribute('data-card');
         host.style.pointerEvents = 'none';
@@ -2606,7 +2661,7 @@ class Component extends DCLogic {
   mindView = (E, st, L, font, dk) => {
     const m = st.mind, vw = st.vw, vh = st.vh, top = 84, bot = vh - 24, cx = vw / 2, cy = (top + bot) / 2, accRgb = hexRgb(st.s.accent);
     // la carte suit le thème : ses couleurs pour les bulles, verre clair sur fond clair, verre sombre sur fond sombre
-    const palKey = [st.s.accent, st.s.glowColor, st.s.grad1, st.s.grad2, st.s.bg3, st.s.color, st.s.dateColor, st.s.bg1].join('|');
+    const palKey = [st.s.bgType, st.s.scene, st.s.gridLit, st.s.bg2, st.s.bgColor, st.s.glow, st.s.gradText, st.s.accent, st.s.glowColor, st.s.grad1, st.s.grad2, st.s.bg3, st.s.color, st.s.dateColor, st.s.bg1].join('|');
     if (palKey !== this.mindPalKey) { this.mindPalKey = palKey; this.mindPal = mindPal(st.s); }
     const pal = this.mindPal, ink = dk ? '246,244,240' : '31,29,43', th = st.s, sk = mindSkin(th);
     // texte : la couleur du thème si elle se lit bien sur la bulle, sinon blanc cassé ou encre
