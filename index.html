@@ -572,6 +572,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.17.2', d: '2026-11-11', items: ['Associe les emojis : les cases déjà trouvées ne clignotent plus.|Match the emojis: matched boxes no longer flicker.'] },
   { v: '2.17.1', d: '2026-11-11', items: ['Associe les emojis : l’emoji vole jusqu’à sa case quand c’est juste.|Match the emojis: the emoji flies into its box when it’s right.', 'Associe les emojis : l’emoji glissé reste bien sous le doigt.|Match the emojis: the dragged emoji now stays under your finger.'] },
   { v: '2.17.0', d: '2026-11-11', items: [
     'Nouvel onglet Jeux : le pendu et « Associe les emojis ».|New Games tab: hangman and “Match the emojis”.',
@@ -3067,7 +3068,8 @@ class Component extends DCLogic {
       { transform: `translate(${dx}px, ${dy}px) scale(${k}) rotate(0deg)` }], { duration: 560, fill: 'forwards' });
     let ended = false;
     const fin = () => { if (ended) return; ended = true; fly.remove(); done(); };
-    anim.onfinish = fin; setTimeout(fin, 900);
+    // filet de sécurité si l'animation ne se termine jamais (onglet caché…) : assez long pour ne jamais couper un vol ralenti
+    anim.onfinish = fin; setTimeout(fin, 4000);
     return true;
   };
   mSlotClick = (slot) => { const g = this.gameNow(); if (g.sel) this.mDrop(g.sel, slot); };
@@ -3262,6 +3264,8 @@ class Component extends DCLogic {
     }
     // partie en cours (ou finie)
     const items = g.items || [], byId = {}; items.forEach(x => { byId[x.id] = x; });
+    // l'arrivée des tuiles et des cases ne se joue qu'au début de la partie (sinon elle se rejouait sur une case déjà trouvée, ou après une erreur)
+    const intro = Date.now() - (g.t0 || 0) < 1600;
     const n = items.length, done = g.done || [], end = g.phase === 'end';
     const cols = n <= 6 ? 3 : 4, tileS = Math.round(Math.max(64, Math.min(124, (vh - 330) / Math.ceil(n / cols) - 12, (Math.min(vw, 1180) * 0.46) / cols - 12)));
     const emo = (x, s) => (x.img ? E('img', { src: x.img, alt: '', draggable: false, style: { width: s, height: s, objectFit: 'cover', borderRadius: Math.round(s * 0.18), pointerEvents: 'none' } }) : E('span', { style: { fontSize: Math.round(s * 0.62), lineHeight: 1, pointerEvents: 'none' } }, x.e));
@@ -3269,14 +3273,14 @@ class Component extends DCLogic {
       ...(g.tiles || []).map((id, i) => {
         const x = byId[id], gone = done.includes(id), dragging = st.gDrag && st.gDrag.id === id, sel = g.sel === id, bad = g.bad && g.bad.id === id;
         return E('div', { key: id + (bad ? g.bad.k : ''), role: 'button', tabIndex: gone ? -1 : 0, className: 'fh-g-tile', 'data-tile': id, onPointerDown: (e) => this.mDown(e, id), onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.gSet(gg => ({ sel: gg.sel === id ? null : id })); } },
-          style: { width: tileS, height: tileS, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: sel ? hexA(acc, dk ? 0.32 : 0.22) : field, boxShadow: sel ? `inset 0 0 0 2.5px ${acc}, 0 10px 24px -10px rgba(${accRgb},.9)` : `inset 0 0 0 1px ${line}, 0 4px 0 ${line}`, cursor: gone ? 'default' : 'grab', touchAction: 'none', userSelect: 'none', opacity: gone ? 0 : dragging ? 0.25 : 1, transform: gone ? 'scale(.4)' : sel ? 'scale(1.06)' : 'none', transition: 'opacity .35s, transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .2s, background .2s', pointerEvents: gone ? 'none' : 'auto', animation: bad ? 'fh-g-shake .45s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${i * 40}ms both` } }, gone ? null : emo(x, tileS));
+          style: { width: tileS, height: tileS, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: sel ? hexA(acc, dk ? 0.32 : 0.22) : field, boxShadow: sel ? `inset 0 0 0 2.5px ${acc}, 0 10px 24px -10px rgba(${accRgb},.9)` : `inset 0 0 0 1px ${line}, 0 4px 0 ${line}`, cursor: gone ? 'default' : 'grab', touchAction: 'none', userSelect: 'none', opacity: gone ? 0 : dragging ? 0.25 : 1, transform: gone ? 'scale(.4)' : sel ? 'scale(1.06)' : 'none', transition: 'opacity .35s, transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .2s, background .2s', pointerEvents: gone ? 'none' : 'auto', animation: bad ? 'fh-g-shake .45s ease' : intro ? `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${i * 40}ms both` : 'none' } }, gone ? null : emo(x, tileS));
       }));
     const slotH = Math.max(46, Math.min(64, (vh - 320) / Math.ceil(n / 2) - 10)), wordFs = Math.round(Math.max(15, Math.min(24, slotH * 0.38)));
     const slots = E('div', { key: 'slots', 'data-g': 'slots', style: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10, alignContent: 'start' } },
       ...(g.slots || []).map((id, i) => {
         const x = byId[id], ok = done.includes(id), bad = g.bad && g.bad.slot === id, hot = st.gDrag && !ok;
         return E('div', { key: id + (bad ? g.bad.k : ''), 'data-gslot': id, role: 'button', tabIndex: 0, className: 'fh-g-slot', onClick: () => this.mSlotClick(id), onKeyDown: (e) => { if (e.key === 'Enter') this.mSlotClick(id); },
-          style: { minHeight: slotH, display: 'flex', alignItems: 'center', gap: 10, padding: '6px 14px', borderRadius: 16, boxSizing: 'border-box', cursor: g.sel && !ok ? 'pointer' : 'default', background: ok ? acc : bad ? 'rgba(229,72,77,.18)' : field, color: ok ? accInk : ink, boxShadow: ok ? `0 8px 22px -12px rgba(${accRgb},.9)` : bad ? 'inset 0 0 0 2px #e5484d' : hot || g.sel ? `inset 0 0 0 2px ${hexA(acc, 0.55)}` : `inset 0 0 0 1.5px ${line}`, transition: 'background .3s, box-shadow .2s, color .3s', animation: bad ? 'fh-g-shake .45s ease' : ok && g.ok && g.ok.id === id ? 'fh-g-pop .5s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${120 + i * 40}ms both` } },
+          style: { minHeight: slotH, display: 'flex', alignItems: 'center', gap: 10, padding: '6px 14px', borderRadius: 16, boxSizing: 'border-box', cursor: g.sel && !ok ? 'pointer' : 'default', background: ok ? acc : bad ? 'rgba(229,72,77,.18)' : field, color: ok ? accInk : ink, boxShadow: ok ? `0 8px 22px -12px rgba(${accRgb},.9)` : bad ? 'inset 0 0 0 2px #e5484d' : hot || g.sel ? `inset 0 0 0 2px ${hexA(acc, 0.55)}` : `inset 0 0 0 1.5px ${line}`, transition: 'background .3s, box-shadow .2s, color .3s', animation: bad ? 'fh-g-shake .45s ease' : ok && g.ok && g.ok.id === id ? 'fh-g-pop .5s ease' : intro && !ok ? `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${120 + i * 40}ms both` : 'none' } },
           E('span', { 'data-gbox': '', style: { width: Math.round(slotH * 0.7), height: Math.round(slotH * 0.7), flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, background: ok ? 'rgba(255,255,255,.22)' : 'transparent', boxShadow: ok ? 'none' : `inset 0 0 0 1.5px ${line}`, borderStyle: 'none', animation: ok && g.ok && g.ok.id === id ? 'fh-g-land .45s cubic-bezier(.2,.9,.3,1.6)' : 'none' } }, ok && !this.mFly[id] ? emo(x, Math.round(slotH * 0.6)) : null),
           E('span', { style: { flex: 1, minWidth: 0, font: titleF(wordFs), overflowWrap: 'anywhere' } }, x.w),
           ok ? E('span', { style: { ...ICON, fontSize: 22 } }, 'check') : null);
