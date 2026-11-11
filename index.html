@@ -103,6 +103,7 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-g-letter{0%{transform:translateY(14px) scale(.4);opacity:0}100%{transform:none;opacity:1}}
 @keyframes fh-g-pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
 @keyframes fh-g-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes fh-g-land{0%{transform:scale(.7)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
 @keyframes fh-g-in{from{transform:translateY(12px) scale(.85);opacity:0}}
 @keyframes fh-g-conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),110vh) rotate(var(--r));opacity:.9}}
 @media (prefers-reduced-motion:reduce){.fh-g-conf,.fh-g-bob{animation:none!important;display:none}}
@@ -571,6 +572,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.17.1', d: '2026-11-11', items: ['Associe les emojis : l’emoji vole jusqu’à sa case quand c’est juste.|Match the emojis: the emoji flies into its box when it’s right.', 'Associe les emojis : l’emoji glissé reste bien sous le doigt.|Match the emojis: the dragged emoji now stays under your finger.'] },
   { v: '2.17.0', d: '2026-11-11', items: [
     'Nouvel onglet Jeux : le pendu et « Associe les emojis ».|New Games tab: hangman and “Match the emojis”.',
     'Pendu : mot choisi en secret ou tiré dans 56 catégories, dessin classique ou ballons.|Hangman: secret word or drawn from 56 categories, classic or balloon drawing.',
@@ -3023,7 +3025,10 @@ class Component extends DCLogic {
     const g = this.gameNow(); if (g.kind !== 'match' || g.phase !== 'play' || g.done.includes(slot) || g.done.includes(id)) return;
     if (id === slot) {
       const done = [...g.done, id], end = done.length === g.items.length;
-      this.gSet({ done, sel: null, bad: null, ok: { id, k: Date.now() }, ...(end ? { phase: 'end', t1: Date.now() } : {}) });
+      // l'emoji vole jusqu'au petit carré de son nom en rétrécissant ; la case rebondit quand il y entre (la fin de partie attend qu'il soit arrivé)
+      const land = () => { delete this.mFly[id]; this.gSet(gg => ({ ok: { id, k: Date.now() }, ...(gg.phase === 'play' && gg.done.length === gg.items.length ? { phase: 'end', t1: Date.now() } : {}) })); };
+      const flew = this.mFlyTo(id, land);
+      this.gSet({ done, sel: null, bad: null, ...(flew ? {} : { ok: { id, k: Date.now() }, ...(end ? { phase: 'end', t1: Date.now() } : {}) }) });
     } else this.gSet({ errors: g.errors + 1, sel: null, bad: { slot, id, k: Date.now() } });
   };
   // glisser un emoji (souris ou doigt) ; un simple clic le sélectionne, puis un clic sur un nom le pose
@@ -3037,10 +3042,33 @@ class Component extends DCLogic {
       const d = this.mD; if (!d || ev.pointerId !== d.pid) return;
       document.removeEventListener('pointermove', mv, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', up, true);
       this.mD = null;
-      if (d.moved) { const t = document.elementFromPoint(ev.clientX, ev.clientY), s = t && t.closest && t.closest('[data-gslot]'); this.setState({ gDrag: null }); if (s) this.mDrop(d.id, s.dataset.gslot); }
+      if (d.moved) { const t = document.elementFromPoint(ev.clientX, ev.clientY), s = t && t.closest && t.closest('[data-gslot]'); if (s) this.mDrop(d.id, s.dataset.gslot); this.setState({ gDrag: null }); }
       else this.gSet(gg => ({ sel: gg.sel === d.id ? null : d.id }));
     };
     document.addEventListener('pointermove', mv, true); document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  };
+  mFly = {};
+  mFlyTo = (id, done) => {
+    try { if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) return false; } catch (e) {}
+    const src = document.querySelector('[data-gghost]') || document.querySelector(`[data-tile="${id}"]`), box = document.querySelector(`[data-gslot="${id}"] [data-gbox]`);
+    if (!src || !box || !document.body.animate) return false;
+    const a = src.getBoundingClientRect(), b = box.getBoundingClientRect(), inner = src.firstElementChild;
+    if (!inner || !a.width || !b.width) return false;
+    const fly = document.createElement('div');
+    fly.setAttribute('aria-hidden', 'true');
+    Object.assign(fly.style, { position: 'fixed', left: a.left + 'px', top: a.top + 'px', width: a.width + 'px', height: a.height + 'px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 95, pointerEvents: 'none', transformOrigin: '0 0', willChange: 'transform' });
+    fly.appendChild(inner.cloneNode(true));
+    document.body.appendChild(fly);
+    this.mFly[id] = true;
+    const k = b.width / a.width, dx = b.left - a.left, dy = b.top - a.top, lift = Math.min(90, 30 + Math.hypot(dx, dy) * 0.12);
+    const anim = fly.animate([
+      { transform: 'translate(0px, 0px) scale(1) rotate(0deg)', easing: 'cubic-bezier(.3,0,.55,1)' },
+      { transform: `translate(${dx * 0.5}px, ${dy * 0.5 - lift}px) scale(${(1 + k) / 2 + 0.08}) rotate(-8deg)`, offset: 0.45, easing: 'cubic-bezier(.45,0,.7,1)' },
+      { transform: `translate(${dx}px, ${dy}px) scale(${k}) rotate(0deg)` }], { duration: 560, fill: 'forwards' });
+    let ended = false;
+    const fin = () => { if (ended) return; ended = true; fly.remove(); done(); };
+    anim.onfinish = fin; setTimeout(fin, 900);
+    return true;
   };
   mSlotClick = (slot) => { const g = this.gameNow(); if (g.sel) this.mDrop(g.sel, slot); };
   mAgain = () => { const g = this.gameNow(); this.mStart(g.src); };
@@ -3125,7 +3153,9 @@ class Component extends DCLogic {
       E('div', { style: { display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 200 } }, emo ? E('span', { style: { fontSize: 36, lineHeight: 1 } }, emo) : null, E('div', { style: { font: titleF(Math.round(Math.max(24, Math.min(40, vw * 0.028)))), color: ink, letterSpacing: (th.letterSpacing || 0) / 100 * 0.4 + 'em' } }, title)),
       right || null);
     const wrap = (kids, o = {}) => E('div', { key: 'wrap', 'data-menu': 'none', 'data-tour': 'games', className: 'fh-g-root', style: { position: 'absolute', inset: 0, zIndex: 3, display: 'flex', alignItems: o.top ? 'flex-start' : 'center', justifyContent: 'center', padding: '86px 18px 22px', boxSizing: 'border-box', overflowY: 'auto', color: ink, '--a': accRgb } },
-      E('div', { key: g.kind + g.phase, style: { width: `min(${o.w || 1080}px, 100%)`, boxSizing: 'border-box', padding: o.pad || '24px 28px 26px', borderRadius: 28, background: panel, backdropFilter: 'blur(16px) saturate(1.2)', WebkitBackdropFilter: 'blur(16px) saturate(1.2)', boxShadow: `0 30px 80px -30px rgba(0,0,0,.55), inset 0 0 0 1px ${line}`, animation: 'fh-pop .45s cubic-bezier(.2,.9,.3,1.15) both' } }, kids));
+      E('div', { key: g.kind + g.phase, style: { width: `min(${o.w || 1080}px, 100%)`, boxSizing: 'border-box', padding: o.pad || '24px 28px 26px', borderRadius: 28, background: panel, backdropFilter: 'blur(16px) saturate(1.2)', WebkitBackdropFilter: 'blur(16px) saturate(1.2)', boxShadow: `0 30px 80px -30px rgba(0,0,0,.55), inset 0 0 0 1px ${line}`, animation: 'fh-pop .45s cubic-bezier(.2,.9,.3,1.15) both' } }, kids),
+      // (hors du panneau : son flou décalerait tout ce qui est en position fixe, comme l'emoji qu'on traîne ou les confettis)
+      ...(o.outside || []));
     const choice = (key, emo, title, sub, onClick, dg) => E('button', { key, type: 'button', className: 'fh-btn fh-g-card', onClick, 'data-g': dg, style: { flex: '1 1 260px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, padding: '22px 22px 20px', borderRadius: 20, border: 0, cursor: 'pointer', textAlign: 'left', color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}` } },
       E('span', { style: { fontSize: 44, lineHeight: 1 } }, emo), E('span', { style: { font: titleF(24), color: ink } }, title), E('span', { style: { font: ui(400, 14), color: ink2 } }, sub));
     // grille des catégories (le pendu et l'association s'en servent)
@@ -3187,8 +3217,7 @@ class Component extends DCLogic {
           E('div', { key: 'right', style: { flex: '1 1 380px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 } },
             info ? E('div', { key: 'info', style: { padding: '7px 14px', borderRadius: 999, background: field, font: ui(600, 14.5), color: ink2 } }, info) : null,
             wordEl, endEl)),
-        end ? null : E('div', { key: 'kb', style: { marginTop: 22 } }, keys),
-        g.win && end ? this.gConfetti(E, pal) : null]);
+        end ? null : E('div', { key: 'kb', style: { marginTop: 22 } }, keys)], { outside: [g.win && end ? this.gConfetti(E, pal) : null] });
     }
 
     // ==================== ASSOCIE LES EMOJIS ====================
@@ -3240,7 +3269,7 @@ class Component extends DCLogic {
       ...(g.tiles || []).map((id, i) => {
         const x = byId[id], gone = done.includes(id), dragging = st.gDrag && st.gDrag.id === id, sel = g.sel === id, bad = g.bad && g.bad.id === id;
         return E('div', { key: id + (bad ? g.bad.k : ''), role: 'button', tabIndex: gone ? -1 : 0, className: 'fh-g-tile', 'data-tile': id, onPointerDown: (e) => this.mDown(e, id), onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.gSet(gg => ({ sel: gg.sel === id ? null : id })); } },
-          style: { width: tileS, height: tileS, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: sel ? hexA(acc, dk ? 0.32 : 0.22) : field, boxShadow: sel ? `inset 0 0 0 2.5px ${acc}, 0 10px 24px -10px rgba(${accRgb},.9)` : `inset 0 0 0 1px ${line}, 0 4px 0 ${line}`, cursor: gone ? 'default' : 'grab', touchAction: 'none', userSelect: 'none', opacity: gone ? 0 : dragging ? 0.25 : 1, transform: gone ? 'scale(.4)' : sel ? 'scale(1.06)' : 'none', transition: 'opacity .35s, transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .2s, background .2s', pointerEvents: gone ? 'none' : 'auto', animation: bad ? 'fh-g-shake .45s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${i * 40}ms both` } }, emo(x, tileS));
+          style: { width: tileS, height: tileS, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: sel ? hexA(acc, dk ? 0.32 : 0.22) : field, boxShadow: sel ? `inset 0 0 0 2.5px ${acc}, 0 10px 24px -10px rgba(${accRgb},.9)` : `inset 0 0 0 1px ${line}, 0 4px 0 ${line}`, cursor: gone ? 'default' : 'grab', touchAction: 'none', userSelect: 'none', opacity: gone ? 0 : dragging ? 0.25 : 1, transform: gone ? 'scale(.4)' : sel ? 'scale(1.06)' : 'none', transition: 'opacity .35s, transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .2s, background .2s', pointerEvents: gone ? 'none' : 'auto', animation: bad ? 'fh-g-shake .45s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${i * 40}ms both` } }, gone ? null : emo(x, tileS));
       }));
     const slotH = Math.max(46, Math.min(64, (vh - 320) / Math.ceil(n / 2) - 10)), wordFs = Math.round(Math.max(15, Math.min(24, slotH * 0.38)));
     const slots = E('div', { key: 'slots', 'data-g': 'slots', style: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10, alignContent: 'start' } },
@@ -3248,14 +3277,14 @@ class Component extends DCLogic {
         const x = byId[id], ok = done.includes(id), bad = g.bad && g.bad.slot === id, hot = st.gDrag && !ok;
         return E('div', { key: id + (bad ? g.bad.k : ''), 'data-gslot': id, role: 'button', tabIndex: 0, className: 'fh-g-slot', onClick: () => this.mSlotClick(id), onKeyDown: (e) => { if (e.key === 'Enter') this.mSlotClick(id); },
           style: { minHeight: slotH, display: 'flex', alignItems: 'center', gap: 10, padding: '6px 14px', borderRadius: 16, boxSizing: 'border-box', cursor: g.sel && !ok ? 'pointer' : 'default', background: ok ? acc : bad ? 'rgba(229,72,77,.18)' : field, color: ok ? accInk : ink, boxShadow: ok ? `0 8px 22px -12px rgba(${accRgb},.9)` : bad ? 'inset 0 0 0 2px #e5484d' : hot || g.sel ? `inset 0 0 0 2px ${hexA(acc, 0.55)}` : `inset 0 0 0 1.5px ${line}`, transition: 'background .3s, box-shadow .2s, color .3s', animation: bad ? 'fh-g-shake .45s ease' : ok && g.ok && g.ok.id === id ? 'fh-g-pop .5s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${120 + i * 40}ms both` } },
-          E('span', { style: { width: Math.round(slotH * 0.7), height: Math.round(slotH * 0.7), flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, background: ok ? 'rgba(255,255,255,.22)' : 'transparent', boxShadow: ok ? 'none' : `inset 0 0 0 1.5px ${line}`, borderStyle: 'none' } }, ok ? emo(x, Math.round(slotH * 0.6)) : null),
+          E('span', { 'data-gbox': '', style: { width: Math.round(slotH * 0.7), height: Math.round(slotH * 0.7), flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, background: ok ? 'rgba(255,255,255,.22)' : 'transparent', boxShadow: ok ? 'none' : `inset 0 0 0 1.5px ${line}`, borderStyle: 'none', animation: ok && g.ok && g.ok.id === id ? 'fh-g-land .45s cubic-bezier(.2,.9,.3,1.6)' : 'none' } }, ok && !this.mFly[id] ? emo(x, Math.round(slotH * 0.6)) : null),
           E('span', { style: { flex: 1, minWidth: 0, font: titleF(wordFs), overflowWrap: 'anywhere' } }, x.w),
           ok ? E('span', { style: { ...ICON, fontSize: 22 } }, 'check') : null);
       }));
     const secs = Math.round(((g.t1 || Date.now()) - (g.t0 || Date.now())) / 1000), tStr = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
     const status = E('div', { key: 'st', style: { display: 'flex', alignItems: 'center', gap: 16, font: ui(600, 14), color: ink2 } },
       E('span', null, `${done.length} / ${n}`), E('span', null, L.gErrors + ' ', E('b', { 'data-g': 'errors', style: { font: titleF(20), color: ink } }, g.errors)));
-    const ghost = st.gDrag && byId[st.gDrag.id] ? E('div', { key: 'ghost', style: { position: 'fixed', left: st.gDrag.x - tileS / 2, top: st.gDrag.y - tileS / 2, width: tileS, height: tileS, zIndex: 90, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: panel, boxShadow: `inset 0 0 0 2.5px ${acc}, 0 24px 50px -16px rgba(0,0,0,.6)`, transform: 'rotate(-6deg) scale(1.08)' } }, emo(byId[st.gDrag.id], tileS)) : null;
+    const ghost = st.gDrag && byId[st.gDrag.id] ? E('div', { key: 'ghost', 'data-gghost': '', style: { position: 'fixed', left: st.gDrag.x - tileS / 2, top: st.gDrag.y - tileS / 2, width: tileS, height: tileS, zIndex: 90, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: panel, boxShadow: `inset 0 0 0 2.5px ${acc}, 0 24px 50px -16px rgba(0,0,0,.6)`, transform: 'rotate(-6deg) scale(1.08)' } }, emo(byId[st.gDrag.id], tileS)) : null;
     const endEl = end ? E('div', { key: 'end', 'data-g': 'end', style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '10px 0 4px', animation: 'fh-pop .5s cubic-bezier(.2,.9,.3,1.2) both' } },
       E('div', { style: { fontSize: 56, lineHeight: 1 } }, '🏆'),
       E('div', { style: { font: titleF(32), color: ink, textAlign: 'center' } }, L.gDone),
@@ -3264,7 +3293,7 @@ class Component extends DCLogic {
     return wrap([head(g.emoji, g.title, status, () => this.gSet({ phase: 'setup' })),
       end ? endEl : E('div', { key: 'hint', style: { font: ui(500, 13.5), color: ink3, marginTop: -6, marginBottom: 14 } }, L.gTap),
       end ? null : E('div', { key: 'board', style: { display: 'flex', gap: 28, alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' } }, tiles, E('div', { key: 'sw', style: { flex: '1 1 340px', minWidth: 280 } }, slots)),
-      ghost, end ? this.gConfetti(E, pal) : null], { w: 1180, top: n > 8 });
+    ], { w: 1180, top: n > 8, outside: [ghost, end ? this.gConfetti(E, pal) : null] });
   };
   // le pendu classique : la potence puis le bonhomme, un trait par erreur (chaque trait se dessine)
   hGallows = (E, g, ink, size) => {
