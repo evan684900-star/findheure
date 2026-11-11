@@ -14,6 +14,7 @@
 <script src="./vendor/react-dom.production.min.js"></script>
 <!-- décors animés des thèmes -->
 <script src="./scenes.js"></script>
+<script src="./jeux.js"></script>
 <script src="./support.js"></script>
 </head>
 <body>
@@ -25,7 +26,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,grid_view,help,hourglass_top,hub,image,landscape,link,mic,mic_off,more_vert,music_note,new_releases,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,save,schedule,settings,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,undo,upload_file,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,arrow_forward,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,grid_view,help,hourglass_top,hub,image,landscape,link,mic,mic_off,more_vert,music_note,new_releases,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,save,schedule,settings,sports_esports,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,undo,upload_file,visibility,visibility_off,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -83,6 +84,28 @@ a{color:inherit}a:hover{opacity:.8}
 ::view-transition-group(fh-menu0),::view-transition-group(fh-menu1),::view-transition-group(fh-menu2),::view-transition-group(fh-menu3),::view-transition-new(fh-menu0),::view-transition-new(fh-menu1),::view-transition-new(fh-menu2),::view-transition-new(fh-menu3){animation:none}
 @media (prefers-reduced-motion:reduce){.fh-row{animation:none!important}}
 .fh-mi:hover{background:var(--mh)!important}
+ /* boîte à jeux */
+.fh-g-btn:not(:disabled):hover{filter:brightness(1.08);transform:translateY(-1px)}
+.fh-g-btn{transition:transform .2s cubic-bezier(.3,1.5,.5,1),filter .2s}
+.fh-g-card,.fh-g-cat{transition:transform .25s cubic-bezier(.3,1.5,.5,1),box-shadow .2s}
+.fh-g-card:hover,.fh-g-cat:hover{transform:translateY(-2px) scale(1.02)}
+.fh-g-key:not(:disabled):hover{transform:translateY(-2px)}
+.fh-g-key{transition:transform .15s,background .2s,color .2s}
+.fh-g-tile:not([style*="opacity: 0"]):hover{transform:scale(1.05)}
+.fh-g-draw{stroke-dasharray:1;stroke-dashoffset:1;animation:fh-g-draw .55s cubic-bezier(.4,0,.2,1) forwards}
+.fh-g-fade{animation:fh-bar-fadein .6s ease .3s both}
+.fh-g-bob{animation:fh-g-bob 3.2s ease-in-out infinite}
+.fh-g-popb{animation:fh-g-popb .45s ease-out forwards}
+.fh-g-conf{position:absolute;top:-24px;border-radius:2px;animation:fh-g-conf 3s cubic-bezier(.3,.6,.5,1) both}
+@keyframes fh-g-draw{to{stroke-dashoffset:0}}
+@keyframes fh-g-bob{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-5px) rotate(2deg)}}
+@keyframes fh-g-popb{0%{transform:scale(1);opacity:1}40%{transform:scale(1.35);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+@keyframes fh-g-letter{0%{transform:translateY(14px) scale(.4);opacity:0}100%{transform:none;opacity:1}}
+@keyframes fh-g-pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes fh-g-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+@keyframes fh-g-in{from{transform:translateY(12px) scale(.85);opacity:0}}
+@keyframes fh-g-conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),110vh) rotate(var(--r));opacity:.9}}
+@media (prefers-reduced-motion:reduce){.fh-g-conf,.fh-g-bob{animation:none!important;display:none}}
 /* carte mentale : bulles en verre liquide (reflet en haut, lumière qui se concentre en bas, contour qui ondule) */
 .fh-mm-b{position:absolute;inset:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;
 background:radial-gradient(120% 120% at 30% 16%,rgba(255,255,255,.96) 0%,rgba(255,255,255,.6) 24%,rgba(var(--c),.12) 50%,rgba(var(--c),.32) 100%);
@@ -548,6 +571,10 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.17.0', d: '2026-11-11', items: [
+    'Nouvel onglet Jeux : le pendu et « Associe les emojis ».|New Games tab: hangman and “Match the emojis”.',
+    'Pendu : mot choisi en secret ou tiré dans 56 catégories, dessin classique ou ballons.|Hangman: secret word or drawn from 56 categories, classic or balloon drawing.',
+    'Associe les emojis : 6, 8 ou 12 paires, mots en anglais, français ou espagnol, et jeux à créer avec ses images.|Match the emojis: 6, 8 or 12 pairs, words in English, French or Spanish, and custom games with your own pictures.'] },
   { v: '2.16.0', d: '2026-11-06', items: [
     'Carte mentale : sous-bulles, avec le « + » d’une bulle.|Mind map: sub-bubbles, with a bubble’s “+”.',
     'Carte mentale : les mots ne sont plus coupés avec les polices larges (Arcade, Néon).|Mind map: words no longer cut off with wide fonts (Arcade, Neon).'] },
@@ -632,6 +659,10 @@ const NEWS = [
   { v: '1.0.0', d: '2026-10-06', items: ['Première version : heure, minuteur, chrono, notes, thème Halloween.|First release: clock, timer, stopwatch, notes, Halloween theme.'] },
 ];
 const MKEY = 'findheure:mind:v1';
+// boîte à jeux : jeux d'association créés par l'utilisateur, et derniers réglages des jeux
+const GKEY = 'findheure:games:v1', GOKEY = 'findheure:gameopts:v1', HANG_MAX = 10;
+const GDATA = () => window.FHGames || { cats: [] };
+const gShuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 // teintes des bulles de la carte mentale (en r,g,b pour les transparences)
 const MIND_C = ['91,140,255', '255,107,154', '46,196,182', '255,170,40', '155,107,255', '255,122,69', '58,176,255', '76,199,100'];
 const MSETKEY = 'findheure:mindsets:v1';
@@ -847,6 +878,19 @@ const T_RAW = {
   newsSub: "Depuis ta dernière visite|Since your last visit|Desde tu última visita|Seit deinem letzten Besuch", newsAll: "Toutes les nouveautés|All updates|Todas las novedades|Alle Neuerungen", mindTitlePh: "Le sujet…|The topic…|El tema…|Das Thema…", mindIdeaPh: "Une idée…|An idea…|Una idea…|Eine Idee…",
   mindHint: "Écris le sujet, puis Entrée|Write the topic, then Enter|Escribe el tema y pulsa Intro|Thema eingeben, dann Enter", mindNew: "Nouvelle carte mentale|New mind map|Nuevo mapa mental|Neue Mindmap",
   mindSub: "Ajouter une sous-bulle|Add a sub-bubble|Añadir una sub-burbuja|Unterblase hinzufügen", mindSubPh: "Un détail…|A detail…|Un detalle…|Ein Detail…",
+  md_games: "Jeux|Games|Juegos|Spiele", gHang: "Le pendu|Hangman|El ahorcado|Galgenmännchen", gMatch: "Associe les emojis|Match the emojis|Une los emojis|Emojis zuordnen", gSoon: "Plus à venir…|More coming soon…|Más próximamente…|Bald mehr…",
+  gHangSub: "Trouve le mot lettre par lettre|Guess the word letter by letter|Adivina la palabra letra a letra|Errate das Wort Buchstabe für Buchstabe", gMatchSub: "Glisse chaque emoji sur son nom|Drag each emoji onto its name|Arrastra cada emoji a su nombre|Ziehe jedes Emoji auf seinen Namen",
+  gSomeone: "Quelqu’un choisit le mot|Someone picks the word|Alguien elige la palabra|Jemand wählt das Wort", gSomeoneSub: "Il le tape en secret, la classe devine|They type it in secret, the class guesses|Lo escribe en secreto, la clase adivina|Geheim eintippen, die Klasse rät",
+  gAuto: "Un mot au hasard|A random word|Una palabra al azar|Ein zufälliges Wort", gAutoSub: "Dans une catégorie : littérature, sport, cuisine…|From a category: literature, sport, food…|De una categoría: literatura, deporte, comida…|Aus einer Kategorie: Literatur, Sport, Essen…",
+  gDrawing: "Dessin|Drawing|Dibujo|Zeichnung", gClassic: "Classique|Classic|Clásico|Klassisch", gGentle: "Ballons|Balloons|Globos|Ballons", gSecret: "Le mot secret|The secret word|La palabra secreta|Das geheime Wort", gSecretPh: "Tape le mot…|Type the word…|Escribe la palabra…|Wort eingeben…",
+  gHint: "Indice (facultatif)|Hint (optional)|Pista (opcional)|Hinweis (optional)", gBadWord: "Au moins 3 lettres, sans chiffres ni symboles.|At least 3 letters, no numbers or symbols.|Al menos 3 letras, sin números ni símbolos.|Mindestens 3 Buchstaben, ohne Zahlen oder Zeichen.", gPlay: "Jouer|Play|Jugar|Spielen", gShow: "Afficher|Show|Mostrar|Anzeigen", gHide: "Cacher|Hide|Ocultar|Verbergen",
+  gRandom: "Au hasard|Random|Al azar|Zufällig", gPickCat: "Choisis une catégorie|Pick a category|Elige una categoría|Wähle eine Kategorie", gErrors: "Erreurs|Mistakes|Errores|Fehler", gWin: "Bravo, trouvé !|Well done!|¡Bien hecho!|Super, gefunden!", gLose: "Perdu !|Out of tries!|¡Perdiste!|Verloren!",
+  gAgain: "Rejouer|Play again|Otra vez|Nochmal", gMenu: "Changer de partie|Change game|Cambiar de partida|Anders spielen", gBack: "Retour|Back|Volver|Zurück", gPairs: "Paires|Pairs|Parejas|Paare", gLangW: "Mots en|Words in|Palabras en|Wörter auf",
+  gMine: "Mes jeux|My games|Mis juegos|Meine Spiele", gCreate: "Créer mon jeu|Create my game|Crear mi juego|Eigenes Spiel", gNoGames: "Crée ton propre jeu avec tes emojis ou les images de ton ordinateur.|Make your own game with your emojis or pictures from your computer.|Crea tu propio juego con tus emojis o imágenes de tu ordenador.|Erstelle dein eigenes Spiel mit Emojis oder Bildern von deinem Computer.",
+  gName: "Nom du jeu (ex. : Les fruits en anglais)|Game name (e.g. Fruit in English)|Nombre del juego (p. ej.: Las frutas en inglés)|Name des Spiels (z. B. Obst auf Englisch)", gWord: "Mot|Word|Palabra|Wort", gEmoji: "Emoji|Emoji|Emoji|Emoji", gAddRow: "Ajouter une paire|Add a pair|Añadir una pareja|Paar hinzufügen", gAddPics: "Ajouter des images|Add pictures|Añadir imágenes|Bilder hinzufügen", gAddPic: "Mettre une image|Use a picture|Poner una imagen|Bild verwenden",
+  gSave: "Enregistrer|Save|Guardar|Speichern", gSavePlay: "Enregistrer et jouer|Save and play|Guardar y jugar|Speichern und spielen", gNeed: "Donne un nom au jeu et au moins 3 paires complètes.|Give the game a name and at least 3 complete pairs.|Ponle un nombre y al menos 3 parejas completas.|Gib dem Spiel einen Namen und mindestens 3 vollständige Paare.",
+  gEdHelp: "Un emoji (ou une image) et son mot sur chaque ligne, 12 paires au plus.|An emoji (or a picture) and its word on each line, up to 12 pairs.|Un emoji (o una imagen) y su palabra en cada línea, hasta 12 parejas.|Ein Emoji (oder Bild) und sein Wort pro Zeile, bis zu 12 Paare.", gEdit: "Modifier|Edit|Editar|Bearbeiten", gDelete: "Supprimer|Delete|Eliminar|Löschen", gDeleted: "Jeu supprimé|Game deleted|Juego eliminado|Spiel gelöscht", gFull: "Plus de place pour enregistrer (images trop lourdes)|No room left to save (pictures too large)|No queda espacio (imágenes demasiado grandes)|Kein Platz mehr (Bilder zu groß)",
+  gDone: "Toutes les paires trouvées !|All pairs matched!|¡Todas las parejas encontradas!|Alle Paare gefunden!", gTime: "Temps|Time|Tiempo|Zeit", gTap: "Glisse un emoji sur son nom (ou clique l’emoji, puis le nom).|Drag an emoji onto its name (or click the emoji, then the name).|Arrastra un emoji a su nombre (o haz clic en el emoji y luego en el nombre).|Ziehe ein Emoji auf seinen Namen (oder klicke erst das Emoji, dann den Namen).",
   mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindReset: "Réinitialiser|Reset|Restablecer|Zurücksetzen", mindBlank: "Page blanche|Blank page|Página en blanco|Leere Seite", mindSets: "Mes cartes|My maps|Mis mapas|Meine Karten", mindNone: "Aucune carte sauvegardée pour l’instant.|No saved maps yet.|Aún no hay mapas guardados.|Noch keine gespeicherten Karten.", mindAll: "Tout voir|See all|Ver todo|Alle anzeigen", mindAllT: "Mes cartes mentales|My mind maps|Mis mapas mentales|Meine Mindmaps", mindSave: "Sauvegarder|Save|Guardar|Speichern", mindSavedB: "Sauvegardée|Saved|Guardado|Gespeichert", mindSaved: "Carte sauvegardée|Map saved|Mapa guardado|Karte gespeichert", mindOpened: "Carte ouverte|Map opened|Mapa abierto|Karte geöffnet", mindDeleted: "Carte supprimée|Map deleted|Mapa eliminado|Karte gelöscht", mindDelSet: "Supprimer la carte|Delete map|Eliminar mapa|Karte löschen", mindUntitled: "Sans titre|Untitled|Sin título|Ohne Titel", mindIdea: "idée|idea|idea|Idee", mindIdeas: "idées|ideas|ideas|Ideen", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
   showSub: "L’heure reste par-dessus : déplacez-la où vous voulez.|The time stays on top: drag it wherever you like.|La hora queda encima: muévela donde quieras.|Die Uhrzeit bleibt darüber: Schiebe sie, wohin du willst.",
@@ -992,7 +1036,7 @@ const DFS = ['full', 'noyear', 'short', 'num', 'iso', 'day'];
 const ANIMS = ['none', 'fade', 'slide', 'drop', 'flip', 'blur', 'pop', 'zoom', 'spin', 'swirl', 'melt', 'bounce', 'jelly', 'glitch', 'slot'];
 const ANIM_DUR = { zoom: .7, spin: .9, swirl: .8, melt: .9, bounce: .9, jelly: .85, glitch: .55, slot: .7 };
 const WEIRDS = ['none', 'wave', 'jelly', 'shake', 'float', 'drunk', 'glitch', 'rainbow', 'liquid', 'holo', 'spin', 'mirror'];
-const MODES = ['clock', 'timer', 'stopwatch', 'coin', 'mind', 'sound', 'show'];
+const MODES = ['clock', 'timer', 'stopwatch', 'coin', 'mind', 'games', 'sound', 'show'];
 const pinView = (m) => m === 'clock' || m === 'show';
 // adresse tapée → adresse affichable (YouTube et Google Docs/Slides convertis en liens « intégrables »)
 function showUrl(u, forTab) {
@@ -1518,7 +1562,7 @@ const LONG_TOUR = [
   { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran, Paramètres et « Quoi de neuf ? » (les dernières nouveautés). Astuce : dans les décors, touche la lune, le soleil, un arbre ou une citrouille : le décor réagit !', prep: prepRoot('bg', 'bgspot') },
   { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepRoot('bg', 'bgspot') },
   { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut. Pour changer sa taille, tire les petits traits dans son coin en bas à droite. Un clic sur la barre ouvre son menu : couleur, taille, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
-  { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, l’essentiel : horloge, minuteur, chrono, pile ou face, carte mentale, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['mode-timer'], h: 'Le minuteur', x: 'En haut, l’essentiel : horloge, minuteur, chrono, pile ou face, carte mentale, jeux, sonomètre, site ou image, et les Paramètres.', act: modeIs('timer'), d: 'Clique sur « Minuteur ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
   { t: ['tm-10'], h: 'Une durée toute prête', x: 'Ces pastilles mettent le minuteur à une durée en un clic.', act: (st) => st.tm.dur === 600000, d: 'Clique sur « 10 min ».', prep: prepMode('timer') },
   { t: ['tm-custom', 'tm-ok'], h: 'Ta propre durée', x: 'Besoin de 7 min 30 ? « Personnaliser » te laisse taper les heures, minutes et secondes, puis OK (ou Entrée).', act: (st, b) => st.tm.dur !== b.tm.dur && !st.tmEdit, d: 'Clique sur « Personnaliser », tape par exemple 2 min, puis OK.', prep: prepMode('timer') },
   { t: ['tm-go'], h: 'Lance-le !', x: 'Le disque se vide et passe du vert à l’orange puis au rouge. La barre d’espace démarre et met en pause aussi.', act: (st) => !!st.tm.endAt, d: 'Clique sur « Démarrer ».', prep: prepMode('timer') },
@@ -1534,6 +1578,7 @@ const LONG_TOUR = [
   { t: ['mind'], h: 'Bouge et colore les bulles', x: 'Attrape une bulle pour la déplacer : son trait la suit. Le « + » sur une bulle remplie ajoute une sous-bulle, pour détailler l’idée. Clic droit sur une bulle : changer sa couleur, la remettre à sa place ou la supprimer. Les bulles prennent la police, les couleurs et le décor du thème.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
   { t: ['mind-reset', 'mind-save'], h: 'Sauvegarder ou repartir de zéro', x: '« Sauvegarder » (Ctrl+S) range la carte dans « Mes cartes ». « Réinitialiser » (touche R) vide la carte pour en faire une nouvelle, avec « Annuler » si tu t’es trompé.', prep: (a) => { a.closeMenu(); a.mindDDClose(); if (a.state.s.mode !== 'mind') a.setMode('mind'); } },
   { t: ['mode-mind'], h: 'Mes cartes', x: 'Passe la souris sur l’onglet (ou clique dessus) : « Page blanche », tes dernières cartes, et « Tout voir ». La poubelle à droite d’une carte la supprime.', prep: (a) => { a.closeMenu(); a.mindDDClose(); } },
+  { t: ['mode-games'], h: 'La boîte à jeux', x: 'Clique sur « Jeux » : le pendu (un mot choisi par quelqu’un, ou tiré dans une catégorie) et « Associe les emojis » (glisser chaque emoji sur son nom, ou créer ton propre jeu avec tes images). D’autres jeux arrivent.', prep: (a) => { a.closeMenu(); a.mindDDClose(); a.gameDDClose(); } },
   { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. « Site ou image » affiche une page, une vidéo ou une image en grand, avec l’heure par-dessus.' },
   { t: ['mode-clock'], h: 'Retour à l’horloge', x: 'On revient à l’heure.', act: modeIs('clock'), d: 'Clique sur « Horloge ».' },
   { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, qualité de l’image (Faible pour un vieil ordinateur), la barre du haut au repos (cachée ou juste ses icônes)… Tout en bas : les réglages avancés.', act: (st) => st.tab === 'display', d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
@@ -1771,7 +1816,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { news: null, mind, mindSets, mindDD: null, mindAll: false, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { news: null, game: null, gameDD: null, gDrag: null, mind, mindSets, mindDD: null, mindAll: false, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -2902,6 +2947,365 @@ class Component extends DCLogic {
     const f = () => { this.mindLinesSync(); if (performance.now() < this.mlUntil) this.mlRaf = requestAnimationFrame(f); else this.mlRaf = 0; };
     this.mlRaf = requestAnimationFrame(f);
   };
+  // ==================== BOÎTE À JEUX : le pendu et « associe les emojis » ====================
+  // l'onglet « Jeux » ouvre un petit menu (au clic, ou presque tout de suite au survol) ; on choisit un jeu, il s'affiche par-dessus le décor
+  gameDDOpen = (el, click) => {
+    const r = el.getBoundingClientRect(); clearTimeout(this.gdT); this.mindDDClose();
+    this.setState({ gameDD: { x: Math.round(r.left), y: Math.round(r.bottom + 10), w: Math.round(r.width), click: !!click } });
+    if (!this.gdMove) { this.gdOut = false; this.gdMove = (ev) => { if (ev.pointerType && ev.pointerType !== 'mouse') return; const t = ev.target, inside = !!(t && t.closest && t.closest('[data-game-dd], [data-tour="mode-games"]'));
+      if (inside) { this.gdOut = false; clearTimeout(this.gdT); } else if (!this.gdOut) { this.gdOut = true; clearTimeout(this.gdT); this.gdT = setTimeout(this.gameDDClose, 260); } }; document.addEventListener('pointermove', this.gdMove, true); }
+    if (!this.gdDoc) { this.gdDoc = (ev) => { const t = ev.target; if (!(t && t.closest && t.closest('[data-game-dd], [data-tour="mode-games"]'))) this.gameDDClose(); }; document.addEventListener('pointerdown', this.gdDoc, true); }
+  };
+  gameDDClose = () => { clearTimeout(this.gdT); clearTimeout(this.gdOpenT); if (this.gdMove) { document.removeEventListener('pointermove', this.gdMove, true); this.gdMove = null; } if (this.gdDoc) { document.removeEventListener('pointerdown', this.gdDoc, true); this.gdDoc = null; } if (this.state.gameDD) this.setState({ gameDD: null }); };
+  gameTabClick = (e) => { const el = e.currentTarget; clearTimeout(this.gdOpenT); if (this.state.gameDD && this.state.gameDD.click) this.gameDDClose(); else this.gameDDOpen(el, true); };
+  gameTabEnter = (e) => {
+    if (e.pointerType && e.pointerType !== 'mouse') return;
+    if (this.state.tab || this.state.tour != null || this.state.gameDD) return;
+    const el = e.currentTarget; clearTimeout(this.gdOpenT);
+    this.gdOpenT = setTimeout(() => { if (el.isConnected && el.matches(':hover')) this.gameDDOpen(el, false); }, 80);
+  };
+  gameTabLeave = () => { clearTimeout(this.gdOpenT); };
+  gamePick = (kind) => { this.gameDDClose(); this.gameOptsSet({ kind }); this.setState({ game: { kind, phase: 'setup' }, gDrag: null }); this.setMode('games'); };
+  // réglages gardés d'une fois sur l'autre : dernier jeu, dessin du pendu, nombre de paires, langue des mots
+  gameOpts = (() => { const o = loadJSON(GOKEY, {}) || {}; return { kind: o.kind === 'match' ? 'match' : 'hang', style: o.style === 'balloons' ? 'balloons' : 'classic', pairs: [6, 8, 12].includes(o.pairs) ? o.pairs : 8, wl: ['en', 'fr', 'es'].includes(o.wl) ? o.wl : 'en' }; })();
+  gameOptsSet = (patch) => { this.gameOpts = { ...this.gameOpts, ...patch }; try { localStorage.setItem(GOKEY, JSON.stringify(this.gameOpts)); } catch (e) {} this.forceUpdate(); };
+  gameNow = (st) => (st || this.state).game || { kind: this.gameOpts.kind, phase: 'setup' };
+  gSet = (patch) => this.setState(st => ({ game: { ...this.gameNow(st), ...(typeof patch === 'function' ? patch(this.gameNow(st)) : patch) } }));
+  gameLang = () => (['fr', 'en', 'es'].includes(this.state.s.uiLang) ? this.state.s.uiLang : 'en');
+  // ---------- le pendu ----------
+  hNorm = (ch) => ch.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  hIsL = (ch) => /^[a-z]$/.test(this.hNorm(ch));
+  hOk = (w) => !!w && [...w].every(ch => this.hIsL(ch) || " -'’".includes(ch)) && [...w].filter(this.hIsL).length >= 3;
+  hStart = (word, extra) => this.gSet({ kind: 'hang', phase: 'play', word, guessed: [], wrong: 0, win: false, ...extra });
+  hAuto = (catId) => {
+    const C = GDATA().cats, lang = this.gameLang();
+    const cat = catId === 'rand' ? C[Math.floor(Math.random() * C.length)] : C.find(c => c.id === catId); if (!cat) return;
+    this.hRecent = this.hRecent || [];
+    let pool = cat.items.filter(it => this.hOk(it[lang]));
+    const fresh = pool.filter(it => !this.hRecent.includes(it[lang])); if (fresh.length) pool = fresh;
+    const it = pool[Math.floor(Math.random() * pool.length)]; if (!it) return;
+    this.hRecent = [...this.hRecent, it[lang]].slice(-24);
+    this.hStart(it[lang], { src: 'auto', cat: cat.id, emoji: it.e, rand: catId === 'rand', hint: '' });
+  };
+  hSecretGo = () => {
+    const g = this.gameNow(), w = String(g.draft || '').replace(/œ/g, 'oe').replace(/Œ/g, 'OE').replace(/æ/g, 'ae').replace(/\s+/g, ' ').trim();
+    if (!this.hOk(w)) { this.gSet({ err: true }); return; }
+    this.hStart(w, { src: 'someone', hint: String(g.hintDraft || '').trim().slice(0, 60), cat: null, emoji: null, draft: '', hintDraft: '', err: false, peek: false });
+  };
+  hGuess = (ch) => {
+    const g = this.gameNow(); if (g.kind !== 'hang' || g.phase !== 'play') return;
+    const l = this.hNorm(ch); if (!/^[a-z]$/.test(l) || g.guessed.includes(l)) return;
+    const guessed = [...g.guessed, l], hit = [...g.word].some(c => this.hIsL(c) && this.hNorm(c) === l), wrong = g.wrong + (hit ? 0 : 1);
+    const win = [...g.word].filter(this.hIsL).every(c => guessed.includes(this.hNorm(c)));
+    this.gSet({ guessed, wrong, last: { l, hit, k: Date.now() }, ...(win || wrong >= HANG_MAX ? { phase: 'end', win } : {}) });
+  };
+  hAgain = () => { const g = this.gameNow(); if (g.src === 'auto') this.hAuto(g.rand ? 'rand' : g.cat); else this.gSet({ phase: 'secret', draft: '', hintDraft: '', err: false, peek: false }); };
+  // ---------- associe les emojis ----------
+  gMine = null;
+  gMineGet = () => { if (!this.gMine) { const v = loadJSON(GKEY, []); this.gMine = Array.isArray(v) ? v.filter(x => x && x.id && Array.isArray(x.items)) : []; } return this.gMine; };
+  gMineSet = (list) => { this.gMine = list; try { localStorage.setItem(GKEY, JSON.stringify(list)); } catch (e) { this.toast(this.L().gFull); } this.forceUpdate(); };
+  mStart = (src) => {
+    const o = this.gameOpts, lang = this.gameLang(); let items, title, emoji;
+    if (src.custom) {
+      const gm = this.gMineGet().find(x => x.id === src.custom); if (!gm) return;
+      items = gShuffle(gm.items).slice(0, 12).map((x, i) => ({ id: 'i' + i, e: x.e || '', img: x.img || null, w: x.w }));
+      title = gm.name; emoji = '🧩';
+    } else {
+      const C = GDATA().cats, cat = src.cat === 'rand' ? C[Math.floor(Math.random() * C.length)] : C.find(c => c.id === src.cat); if (!cat) return;
+      items = gShuffle(cat.items).slice(0, o.pairs).map((x, i) => ({ id: 'i' + i, e: x.e, w: x[o.wl] }));
+      title = cat.name[lang]; emoji = cat.e;
+    }
+    const ids = items.map(x => x.id);
+    this.setState({ gDrag: null });
+    this.gSet({ kind: 'match', phase: 'play', src, items, tiles: gShuffle(ids), slots: gShuffle(ids), done: [], errors: 0, sel: null, bad: null, title, emoji, t0: Date.now(), t1: null });
+  };
+  mDrop = (id, slot) => {
+    const g = this.gameNow(); if (g.kind !== 'match' || g.phase !== 'play' || g.done.includes(slot) || g.done.includes(id)) return;
+    if (id === slot) {
+      const done = [...g.done, id], end = done.length === g.items.length;
+      this.gSet({ done, sel: null, bad: null, ok: { id, k: Date.now() }, ...(end ? { phase: 'end', t1: Date.now() } : {}) });
+    } else this.gSet({ errors: g.errors + 1, sel: null, bad: { slot, id, k: Date.now() } });
+  };
+  // glisser un emoji (souris ou doigt) ; un simple clic le sélectionne, puis un clic sur un nom le pose
+  mDown = (e, id) => {
+    if (e.button !== 0 && e.pointerType === 'mouse') return;
+    const g = this.gameNow(); if (g.done.includes(id)) return;
+    e.preventDefault();
+    this.mD = { id, pid: e.pointerId, sx: e.clientX, sy: e.clientY, moved: false };
+    const mv = (ev) => { const d = this.mD; if (!d || ev.pointerId !== d.pid) return; if (!d.moved && Math.hypot(ev.clientX - d.sx, ev.clientY - d.sy) < 6) return; d.moved = true; this.setState({ gDrag: { id: d.id, x: ev.clientX, y: ev.clientY } }); };
+    const up = (ev) => {
+      const d = this.mD; if (!d || ev.pointerId !== d.pid) return;
+      document.removeEventListener('pointermove', mv, true); document.removeEventListener('pointerup', up, true); document.removeEventListener('pointercancel', up, true);
+      this.mD = null;
+      if (d.moved) { const t = document.elementFromPoint(ev.clientX, ev.clientY), s = t && t.closest && t.closest('[data-gslot]'); this.setState({ gDrag: null }); if (s) this.mDrop(d.id, s.dataset.gslot); }
+      else this.gSet(gg => ({ sel: gg.sel === d.id ? null : d.id }));
+    };
+    document.addEventListener('pointermove', mv, true); document.addEventListener('pointerup', up, true); document.addEventListener('pointercancel', up, true);
+  };
+  mSlotClick = (slot) => { const g = this.gameNow(); if (g.sel) this.mDrop(g.sel, slot); };
+  mAgain = () => { const g = this.gameNow(); this.mStart(g.src); };
+  // ---------- créer son propre jeu : emojis ou images de l'ordinateur ----------
+  edOpen = (id) => {
+    const gm = id && this.gMineGet().find(x => x.id === id);
+    const rows = gm ? gm.items.map(x => ({ e: x.e || '', img: x.img || null, w: x.w })) : [];
+    while (rows.length < 3) rows.push({ e: '', img: null, w: '' });
+    this.gSet({ kind: 'match', phase: 'edit', ed: { id: gm ? gm.id : null, name: gm ? gm.name : '', rows, err: false } });
+  };
+  edSet = (fn) => this.gSet(g => ({ ed: fn(g.ed) }));
+  edRow = (i, patch) => this.edSet(ed => ({ ...ed, err: false, rows: ed.rows.map((r, k) => (k === i ? { ...r, ...patch } : r)) }));
+  edAdd = () => this.edSet(ed => (ed.rows.length >= 12 ? ed : { ...ed, rows: [...ed.rows, { e: '', img: null, w: '' }] }));
+  edDel = (i) => this.edSet(ed => ({ ...ed, rows: ed.rows.filter((r, k) => k !== i) }));
+  edFileRef = React.createRef();
+  edFileFor = null;
+  edPickPics = (i) => { this.edFileFor = i; if (this.edFileRef.current) { this.edFileRef.current.multiple = i == null; this.edFileRef.current.click(); } };
+  edFiles = async (e) => {
+    const files = Array.from(e.target.files || []).filter(f => /^image\//.test(f.type)).slice(0, 12); e.target.value = '';
+    if (!files.length) return;
+    const shrink = (f) => new Promise((res) => { const url = URL.createObjectURL(f), im = new Image(); im.onload = () => { const k = Math.min(1, 220 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.max(1, Math.round(im.width * k)); c.height = Math.max(1, Math.round(im.height * k)); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(url); let d = ''; try { d = c.toDataURL('image/webp', 0.82); if (!/^data:image\/webp/.test(d)) d = c.toDataURL('image/jpeg', 0.82); } catch (er) {} res(d); }; im.onerror = () => { URL.revokeObjectURL(url); res(''); }; im.src = url; });
+    const imgs = []; for (const f of files) { const d = await shrink(f); if (d) imgs.push({ img: d, w: f.name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').slice(0, 40) }); }
+    const at = this.edFileFor;
+    this.edSet(ed => {
+      if (at != null && ed.rows[at]) { const rows = ed.rows.slice(); rows[at] = { ...rows[at], img: imgs[0].img, e: '', w: rows[at].w || imgs[0].w }; return { ...ed, rows }; }
+      // plusieurs images : chacune remplit une ligne vide, sinon une nouvelle ligne (le nom du fichier sert de mot, à corriger)
+      const rows = ed.rows.slice(); imgs.forEach(x => { const k = rows.findIndex(r => !r.img && !r.e.trim() && !r.w.trim()); if (k >= 0) rows[k] = { e: '', ...x }; else if (rows.length < 12) rows.push({ e: '', ...x }); });
+      return { ...ed, rows, err: false };
+    });
+  };
+  edSave = (play) => {
+    const ed = this.gameNow().ed; if (!ed) return;
+    const items = ed.rows.filter(r => (r.img || r.e.trim()) && r.w.trim()).map(r => (r.img ? { img: r.img, w: r.w.trim().slice(0, 40) } : { e: r.e.trim().slice(0, 16), w: r.w.trim().slice(0, 40) }));
+    if (items.length < 3 || !ed.name.trim()) { this.edSet(x => ({ ...x, err: true })); return; }
+    const id = ed.id || 'g' + Date.now().toString(36), list = this.gMineGet().filter(x => x.id !== id);
+    this.gMineSet([{ id, name: ed.name.trim().slice(0, 40), items, at: Date.now() }, ...list]);
+    if (play) this.mStart({ custom: id }); else this.gSet({ phase: 'setup', ed: null });
+  };
+  gMineDel = (id) => { const before = this.gMineGet(); this.gMineSet(before.filter(x => x.id !== id)); this.toast(this.L().gDeleted, () => { this.gMineSet(before); this.setState({ toast: null }); }); };
+  // clavier : les lettres jouent au pendu (au lieu des raccourcis du site)
+  gameKey = (e) => {
+    const g = this.gameNow();
+    if (g.kind === 'hang' && g.phase === 'play' && e.key.length === 1 && this.hIsL(e.key)) { e.preventDefault(); this.hGuess(e.key); return true; }
+    if (g.kind === 'hang' && g.phase === 'play' && e.key.length === 1 && /\S/.test(e.key)) return true;
+    if (g.phase === 'end' && e.key === 'Enter') { e.preventDefault(); if (g.kind === 'hang') this.hAgain(); else this.mAgain(); return true; }
+    return false;
+  };
+  // ---------- le petit menu sous l'onglet ----------
+  gameDDEl = (E, st, L, ui, dark, accUi) => {
+    if (!st.gameDD) return null;
+    const D = st.gameDD, w = 290, x = Math.max(8, Math.min(st.vw - w - 8, D.x + D.w / 2 - 70)), panelBg = dark ? 'rgba(31,30,29,.98)' : 'rgba(251,250,248,.99)', cur = st.s.mode === 'games' ? this.gameNow(st).kind : null;
+    const row = (key, emo, label, sub, act, on) => E('button', { key, type: 'button', className: 'fh-mi', role: 'menuitem', 'data-game': act ? key : undefined, disabled: !act, onClick: act || undefined, style: { display: 'flex', alignItems: 'center', gap: 12, width: '100%', padding: '9px 10px', border: 0, borderRadius: 10, background: on ? hexA(st.s.accent, dark ? 0.18 : 0.12) : 'transparent', color: ui.fg, textAlign: 'left', cursor: act ? 'pointer' : 'default', opacity: act ? 1 : 0.55, '--mh': ui.hover, animation: `fh-row .28s ease ${key === 'hang' ? 0 : key === 'match' ? 40 : 80}ms both` } },
+      E('span', { style: { fontSize: 24, width: 30, textAlign: 'center', flexShrink: 0, lineHeight: 1 } }, emo),
+      E('span', { style: { display: 'flex', flexDirection: 'column', gap: 3, minWidth: 0 } },
+        E('span', { style: { font: `${act ? 600 : 500} 14.5px/1.15 Geist, system-ui, sans-serif`, fontStyle: act ? 'normal' : 'italic' } }, label),
+        sub ? E('span', { style: { font: '400 12px/1.25 Geist, system-ui, sans-serif', color: ui.fg3 } }, sub) : null));
+    return E('div', { key: 'gdd', className: 'fh-menu', 'data-menu': 'none', 'data-game-dd': '', role: 'menu', style: { position: 'fixed', left: x, top: D.y, zIndex: 72, width: w, boxSizing: 'border-box', padding: 6, borderRadius: 14, background: panelBg, border: `1px solid ${ui.border}`, boxShadow: ui.shadow, animation: 'fh-pop .3s cubic-bezier(.2,.9,.3,1.2) both', transformOrigin: 'top center' } },
+      row('hang', '🔤', L.gHang, L.gHangSub, () => this.gamePick('hang'), cur === 'hang'),
+      row('match', '🧩', L.gMatch, L.gMatchSub, () => this.gamePick('match'), cur === 'match'),
+      E('div', { key: 'sep', style: { height: 1, margin: '5px 8px', background: ui.border } }),
+      row('soon', '✨', L.gSoon, null, null, false));
+  };
+  // ---------- l'écran des jeux ----------
+  gamesView = (E, st, L, font, dk) => {
+    const g = this.gameNow(st), th = st.s, vw = st.vw, vh = st.vh, lang = this.gameLang();
+    if (COLORF.has(font.name)) font = (th.dateFont !== 'same' && FONT_BY[th.dateFont]) || FONT_BY.Fredoka || font;
+    const fam = stack(font), wT = clampW(font, Math.max(th.weight || 400, 600)), ital = th.italic ? 'italic ' : '';
+    const palKey = [th.bgType, th.scene, th.accent, th.bg1, th.bg2, th.bg3, th.color].join('|');
+    if (palKey !== this.gPalKey) { this.gPalKey = palKey; this.gPal = mindPal(th); }
+    const pal = this.gPal, acc = th.accent, accRgb = hexRgb(acc), accInk = bestInk(acc);
+    const ink = dk ? '#f6f4f0' : '#1f1d2b', ink2 = dk ? 'rgba(246,244,240,.72)' : 'rgba(31,29,43,.66)', ink3 = dk ? 'rgba(246,244,240,.5)' : 'rgba(31,29,43,.45)';
+    const panel = dk ? 'rgba(16,14,24,.74)' : 'rgba(255,255,255,.84)', field = dk ? 'rgba(255,255,255,.08)' : 'rgba(31,29,43,.06)', line = dk ? 'rgba(255,255,255,.14)' : 'rgba(31,29,43,.12)';
+    const titleF = (px) => `${ital}${wT} ${px}px/1.1 ${fam}`, ui = (w, px) => `${w} ${px}px/1.25 Geist, system-ui, sans-serif`;
+    const btn = (key, label, onClick, o = {}) => E('button', { key, type: 'button', className: 'fh-btn fh-g-btn', onClick, disabled: o.disabled, title: o.title, 'data-g': o.dg, style: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: 8, height: o.h || 44, padding: o.icon && !label ? 0 : '0 20px', width: o.icon && !label ? (o.h || 44) : undefined, borderRadius: 999, border: 0, cursor: o.disabled ? 'default' : 'pointer', font: ui(650, o.fs || 15), color: o.primary ? accInk : ink, background: o.primary ? `linear-gradient(180deg, rgba(255,255,255,.25), rgba(255,255,255,0) 55%), ${acc}` : o.on ? hexA(acc, dk ? 0.3 : 0.2) : field, boxShadow: o.primary ? `inset 0 1px 0 rgba(255,255,255,.4), 0 10px 24px -10px rgba(${accRgb},.9)` : o.on ? `inset 0 0 0 1.5px ${hexA(acc, 0.7)}` : `inset 0 0 0 1px ${line}`, opacity: o.disabled ? 0.45 : 1, flexShrink: 0, ...(o.style || {}) } },
+      o.icon ? E('span', { style: { ...ICON, fontSize: 20 } }, o.icon) : null, label);
+    const seg = (key, label, opts, cur, pick) => E('div', { key, style: { display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' } },
+      E('span', { style: { font: ui(600, 13), color: ink2, textTransform: 'uppercase', letterSpacing: '.06em' } }, label),
+      E('div', { style: { display: 'flex', gap: 4, padding: 4, borderRadius: 999, background: field } }, ...opts.map(([v, l]) => E('button', { key: String(v), type: 'button', className: 'fh-btn', onClick: () => pick(v), style: { height: 34, padding: '0 14px', border: 0, borderRadius: 999, cursor: 'pointer', font: ui(600, 14), color: cur === v ? accInk : ink, background: cur === v ? acc : 'transparent' } }, l))));
+    const back = (to) => btn('back', L.gBack, to, { icon: 'arrow_back', h: 40, fs: 14 });
+    const head = (emo, title, right, onBack) => E('div', { key: 'head', style: { display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', marginBottom: 18 } },
+      onBack ? back(onBack) : null,
+      E('div', { style: { display: 'flex', alignItems: 'center', gap: 12, flex: 1, minWidth: 200 } }, emo ? E('span', { style: { fontSize: 36, lineHeight: 1 } }, emo) : null, E('div', { style: { font: titleF(Math.round(Math.max(24, Math.min(40, vw * 0.028)))), color: ink, letterSpacing: (th.letterSpacing || 0) / 100 * 0.4 + 'em' } }, title)),
+      right || null);
+    const wrap = (kids, o = {}) => E('div', { key: 'wrap', 'data-menu': 'none', 'data-tour': 'games', className: 'fh-g-root', style: { position: 'absolute', inset: 0, zIndex: 3, display: 'flex', alignItems: o.top ? 'flex-start' : 'center', justifyContent: 'center', padding: '86px 18px 22px', boxSizing: 'border-box', overflowY: 'auto', color: ink, '--a': accRgb } },
+      E('div', { key: g.kind + g.phase, style: { width: `min(${o.w || 1080}px, 100%)`, boxSizing: 'border-box', padding: o.pad || '24px 28px 26px', borderRadius: 28, background: panel, backdropFilter: 'blur(16px) saturate(1.2)', WebkitBackdropFilter: 'blur(16px) saturate(1.2)', boxShadow: `0 30px 80px -30px rgba(0,0,0,.55), inset 0 0 0 1px ${line}`, animation: 'fh-pop .45s cubic-bezier(.2,.9,.3,1.15) both' } }, kids));
+    const choice = (key, emo, title, sub, onClick, dg) => E('button', { key, type: 'button', className: 'fh-btn fh-g-card', onClick, 'data-g': dg, style: { flex: '1 1 260px', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, padding: '22px 22px 20px', borderRadius: 20, border: 0, cursor: 'pointer', textAlign: 'left', color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}` } },
+      E('span', { style: { fontSize: 44, lineHeight: 1 } }, emo), E('span', { style: { font: titleF(24), color: ink } }, title), E('span', { style: { font: ui(400, 14), color: ink2 } }, sub));
+    // grille des catégories (le pendu et l'association s'en servent)
+    const catGrid = (onPick) => E('div', { key: 'cats', className: 'fh-g-cats', style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 } },
+      E('button', { key: 'rand', type: 'button', className: 'fh-btn fh-g-cat', 'data-cat': 'rand', onClick: () => onPick('rand'), style: { display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 14, border: 0, cursor: 'pointer', color: accInk, background: acc, font: ui(650, 14), textAlign: 'left' } }, E('span', { style: { fontSize: 24, lineHeight: 1 } }, '🎲'), L.gRandom),
+      ...GDATA().cats.map((c, i) => E('button', { key: c.id, type: 'button', className: 'fh-btn fh-g-cat', 'data-cat': c.id, onClick: () => onPick(c.id), style: { display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 14, border: 0, cursor: 'pointer', color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}`, font: ui(550, 13.5), textAlign: 'left', animation: `fh-row .3s ease ${Math.min(i, 30) * 12}ms both` } }, E('span', { style: { fontSize: 24, lineHeight: 1, flexShrink: 0 } }, c.e), E('span', { style: { minWidth: 0 } }, c.name[lang]))));
+    const kids = [];
+
+    // ==================== LE PENDU ====================
+    if (g.kind === 'hang') {
+      if (g.phase === 'setup') {
+        return wrap([head('🔤', L.gHang),
+          E('div', { key: 'ch', style: { display: 'flex', gap: 14, flexWrap: 'wrap' } },
+            choice('someone', '🤫', L.gSomeone, L.gSomeoneSub, () => this.gSet({ phase: 'secret', draft: '', hintDraft: '', err: false, peek: false }), 'someone'),
+            choice('auto', '🎲', L.gAuto, L.gAutoSub, () => this.gSet({ phase: 'cats' }), 'auto')),
+          E('div', { key: 'opt', style: { marginTop: 20 } }, seg('style', L.gDrawing, [['classic', L.gClassic], ['balloons', L.gGentle]], this.gameOpts.style, (v) => this.gameOptsSet({ style: v })))], { w: 760 });
+      }
+      if (g.phase === 'cats') return wrap([head('🎲', L.gPickCat, null, () => this.gSet({ phase: 'setup' })), catGrid(this.hAuto)], { top: true });
+      if (g.phase === 'secret') {
+        const inp = { height: 52, padding: '0 18px', borderRadius: 14, border: 0, outline: 0, font: titleF(24), color: ink, background: field, boxShadow: `inset 0 0 0 1.5px ${g.err ? '#e5484d' : line}`, width: '100%', boxSizing: 'border-box' };
+        return wrap([head('🤫', L.gSecret, null, () => this.gSet({ phase: 'setup' })),
+          E('div', { key: 'f', style: { display: 'flex', flexDirection: 'column', gap: 12 } },
+            E('div', { style: { position: 'relative' } },
+              E('input', { key: 'w', type: g.peek ? 'text' : 'password', autoFocus: true, autoComplete: 'off', spellCheck: false, value: g.draft || '', placeholder: L.gSecretPh, maxLength: 30, 'data-g': 'secret', onChange: (e) => this.gSet({ draft: e.target.value, err: false }), onKeyDown: (e) => { if (e.key === 'Enter') this.hSecretGo(); }, style: { ...inp, paddingRight: 60, letterSpacing: g.peek ? '.04em' : '.2em' } }),
+              E('button', { type: 'button', className: 'fh-btn', title: g.peek ? L.gHide : L.gShow, onClick: () => this.gSet({ peek: !g.peek }), style: { position: 'absolute', right: 8, top: 8, width: 36, height: 36, border: 0, borderRadius: 999, background: 'transparent', color: ink2, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 22 } }, g.peek ? 'visibility_off' : 'visibility'))),
+            g.err ? E('div', { key: 'err', style: { font: ui(500, 13.5), color: '#e5484d' } }, L.gBadWord) : null,
+            E('input', { key: 'h', type: 'text', autoComplete: 'off', value: g.hintDraft || '', placeholder: L.gHint, maxLength: 60, onChange: (e) => this.gSet({ hintDraft: e.target.value }), onKeyDown: (e) => { if (e.key === 'Enter') this.hSecretGo(); }, style: { ...inp, height: 44, font: ui(500, 15), boxShadow: `inset 0 0 0 1px ${line}` } }),
+            E('div', { style: { display: 'flex', justifyContent: 'flex-end', marginTop: 6 } }, btn('go', L.gPlay, this.hSecretGo, { primary: true, icon: 'play_arrow', dg: 'go' })))], { w: 620 });
+      }
+      // partie en cours (ou finie)
+      const word = g.word || '', letters = [...word], end = g.phase === 'end', left = HANG_MAX - g.wrong;
+      const nL = Math.max(...word.split(' ').map(x => x.length)), boxW = Math.max(26, Math.min(64, (Math.min(vw, 1080) - 380) / Math.max(6, nL) * 0.92));
+      const cat = g.cat ? GDATA().cats.find(c => c.id === g.cat) : null;
+      const info = cat ? `${cat.e} ${cat.name[lang]}` : g.hint ? `💡 ${g.hint}` : '';
+      const drawSize = Math.round(Math.max(200, Math.min(300, vh * 0.36)));
+      const draw = this.gameOpts.style === 'balloons' ? this.hBalloons(E, g, pal, ink, drawSize) : this.hGallows(E, g, ink, drawSize);
+      // un groupe par mot : à la ligne entre deux mots, jamais au milieu d'un mot
+      let pos = 0;
+      const wordEl = E('div', { key: 'word', 'data-g': 'word', style: { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', columnGap: Math.round(boxW * 0.7), rowGap: Math.round(boxW * 0.45) } },
+        ...word.split(' ').map((part, wi) => E('span', { key: 'w' + wi, style: { display: 'flex', gap: Math.round(boxW * 0.16) } }, ...[...part].map((c) => {
+          const i = pos++, isL = this.hIsL(c), shown = !isL || g.guessed.includes(this.hNorm(c)) || end, missed = end && isL && !g.guessed.includes(this.hNorm(c));
+          return E('span', { key: i, style: { width: boxW, height: boxW * 1.25, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', borderBottom: isL ? `${Math.max(3, Math.round(boxW / 14))}px solid ${missed ? '#e5484d' : hexA(acc, 0.85)}` : 0, font: titleF(Math.round(boxW * 0.9)), color: missed ? '#e5484d' : ink, textTransform: 'uppercase', paddingBottom: 4 } },
+            shown ? E('span', { key: 'c', style: { animation: isL && !missed ? 'fh-g-letter .5s cubic-bezier(.2,.9,.3,1.4) both' : 'none' } }, c) : null);
+        }))));
+      const keys = E('div', { key: 'keys', 'data-g': 'keys', style: { display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: 6, maxWidth: 760, margin: '0 auto' } },
+        ...'abcdefghijklmnopqrstuvwxyz'.split('').map(k => {
+          const used = g.guessed.includes(k), hit = used && letters.some(c => this.hIsL(c) && this.hNorm(c) === k);
+          return E('button', { key: k, type: 'button', className: 'fh-btn fh-g-key', 'data-key': k, disabled: used || end, onClick: () => this.hGuess(k), style: { width: 46, height: 48, border: 0, borderRadius: 12, cursor: used || end ? 'default' : 'pointer', font: titleF(22), textTransform: 'uppercase', color: used ? (hit ? accInk : ink3) : ink, background: used ? (hit ? acc : 'transparent') : field, boxShadow: used ? (hit ? 'none' : `inset 0 0 0 1px ${line}`) : `inset 0 0 0 1px ${line}, 0 3px 0 ${line}`, textDecoration: used && !hit ? 'line-through' : 'none', opacity: end && !used ? 0.5 : 1, animation: g.last && g.last.l === k ? (hit ? 'fh-g-pop .4s ease' : 'fh-g-shake .4s ease') : 'none' } }, k);
+        }));
+      const status = E('div', { key: 'st', style: { display: 'flex', alignItems: 'center', gap: 8, font: ui(600, 14), color: ink2 } },
+        E('span', null, L.gErrors), E('span', { 'data-g': 'wrong', style: { font: titleF(22), color: g.wrong >= HANG_MAX - 2 ? '#e5484d' : ink } }, `${g.wrong} / ${HANG_MAX}`));
+      const endEl = end ? E('div', { key: 'end', 'data-g': 'end', style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginTop: 6, animation: 'fh-pop .5s cubic-bezier(.2,.9,.3,1.2) both' } },
+        E('div', { style: { display: 'flex', alignItems: 'center', gap: 14 } }, g.emoji ? E('span', { style: { fontSize: 54, lineHeight: 1, animation: 'fh-g-letter .7s cubic-bezier(.2,.9,.3,1.4) both' } }, g.emoji) : null,
+          E('div', { style: { font: titleF(30), color: g.win ? ink : '#e5484d' } }, g.win ? L.gWin : L.gLose)),
+        E('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' } }, btn('again', L.gAgain, this.hAgain, { primary: true, icon: 'replay', dg: 'again' }), btn('menu', L.gMenu, () => this.gSet({ phase: 'setup' }), { icon: 'tune' }))) : null;
+      return wrap([head('🔤', L.gHang, status, () => this.gSet({ phase: 'setup' })),
+        E('div', { key: 'board', style: { display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap', justifyContent: 'center' } },
+          E('div', { key: 'draw', style: { flexShrink: 0, width: drawSize, height: drawSize } }, draw),
+          E('div', { key: 'right', style: { flex: '1 1 380px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 18 } },
+            info ? E('div', { key: 'info', style: { padding: '7px 14px', borderRadius: 999, background: field, font: ui(600, 14.5), color: ink2 } }, info) : null,
+            wordEl, endEl)),
+        end ? null : E('div', { key: 'kb', style: { marginTop: 22 } }, keys),
+        g.win && end ? this.gConfetti(E, pal) : null]);
+    }
+
+    // ==================== ASSOCIE LES EMOJIS ====================
+    if (g.phase === 'setup') {
+      const mine = this.gMineGet();
+      return wrap([head('🧩', L.gMatch),
+        E('div', { key: 'opts', style: { display: 'flex', gap: 22, flexWrap: 'wrap', marginBottom: 16 } },
+          seg('pairs', L.gPairs, [[6, '6'], [8, '8'], [12, '12']], this.gameOpts.pairs, (v) => this.gameOptsSet({ pairs: v })),
+          seg('wl', L.gLangW, [['en', 'English'], ['fr', 'Français'], ['es', 'Español']], this.gameOpts.wl, (v) => this.gameOptsSet({ wl: v }))),
+        catGrid((id) => this.mStart({ cat: id })),
+        E('div', { key: 'mineH', style: { display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0 10px' } },
+          E('div', { style: { flex: 1, font: ui(650, 13), color: ink2, textTransform: 'uppercase', letterSpacing: '.08em' } }, L.gMine),
+          btn('create', L.gCreate, () => this.edOpen(null), { icon: 'add', h: 38, fs: 14, dg: 'create' })),
+        mine.length ? E('div', { key: 'mine', style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 8 } }, ...mine.map(m => E('div', { key: m.id, style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 8px 8px 12px', borderRadius: 14, background: field, boxShadow: `inset 0 0 0 1px ${line}` } },
+          E('button', { type: 'button', className: 'fh-btn', 'data-mine': m.id, onClick: () => this.mStart({ custom: m.id }), style: { flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 10, border: 0, background: 'transparent', color: ink, cursor: 'pointer', textAlign: 'left', padding: 0 } },
+            E('span', { style: { display: 'flex', gap: 2, flexShrink: 0 } }, ...m.items.slice(0, 3).map((x, k) => x.img ? E('img', { key: k, src: x.img, alt: '', style: { width: 24, height: 24, objectFit: 'cover', borderRadius: 6 } }) : E('span', { key: k, style: { fontSize: 20, lineHeight: '24px' } }, x.e))),
+            E('span', { style: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', font: ui(600, 14) } }, m.name)),
+          btn('e' + m.id, '', () => this.edOpen(m.id), { icon: 'edit', h: 32, title: L.gEdit }),
+          btn('d' + m.id, '', () => this.gMineDel(m.id), { icon: 'delete', h: 32, title: L.gDelete })))) : E('div', { key: 'none', style: { font: ui(400, 14), color: ink3 } }, L.gNoGames)], { top: true });
+    }
+    if (g.phase === 'edit') {
+      const ed = g.ed || { rows: [], name: '' };
+      const inp = { height: 42, padding: '0 14px', borderRadius: 12, border: 0, outline: 0, font: ui(500, 15), color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}`, boxSizing: 'border-box' };
+      return wrap([head('✏️', L.gCreate, null, () => this.gSet({ phase: 'setup', ed: null })),
+        E('input', { key: 'name', type: 'text', value: ed.name, placeholder: L.gName, maxLength: 40, autoFocus: !ed.name, 'data-g': 'name', onChange: (e) => this.edSet(x => ({ ...x, name: e.target.value, err: false })), style: { ...inp, width: '100%', height: 48, font: titleF(22), marginBottom: 14 } }),
+        E('div', { key: 'rows', style: { display: 'flex', flexDirection: 'column', gap: 8 } }, ...ed.rows.map((r, i) => E('div', { key: i, 'data-row': i, style: { display: 'flex', alignItems: 'center', gap: 8 } },
+          r.img ? E('div', { style: { position: 'relative', width: 56, height: 42, flexShrink: 0 } }, E('img', { src: r.img, alt: '', style: { width: 56, height: 42, objectFit: 'cover', borderRadius: 10 } }),
+            E('button', { type: 'button', className: 'fh-btn', title: L.gDelete, onClick: () => this.edRow(i, { img: null }), style: { position: 'absolute', top: -6, right: -6, width: 22, height: 22, padding: 0, border: 0, borderRadius: 99, background: dk ? '#2a2733' : '#fff', color: ink, boxShadow: '0 2px 6px rgba(0,0,0,.3)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 14 } }, 'close')))
+            : E('input', { type: 'text', value: r.e, placeholder: '🙂', maxLength: 16, 'aria-label': L.gEmoji, onChange: (e) => this.edRow(i, { e: e.target.value }), style: { ...inp, width: 56, textAlign: 'center', fontSize: 24, padding: 0, flexShrink: 0 } }),
+          btn('img' + i, '', () => this.edPickPics(i), { icon: 'add_photo_alternate', h: 42, title: L.gAddPic }),
+          E('span', { style: { ...ICON, fontSize: 20, color: ink3, flexShrink: 0 } }, 'arrow_forward'),
+          E('input', { type: 'text', value: r.w, placeholder: L.gWord, maxLength: 40, 'data-g': 'w' + i, onChange: (e) => this.edRow(i, { w: e.target.value }), style: { ...inp, flex: 1, minWidth: 0 } }),
+          btn('del' + i, '', () => this.edDel(i), { icon: 'delete', h: 42, title: L.gDelete, disabled: ed.rows.length <= 1 })))),
+        E('div', { key: 'add', style: { display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 } },
+          btn('addRow', L.gAddRow, this.edAdd, { icon: 'add', h: 40, fs: 14, disabled: ed.rows.length >= 12 }),
+          btn('addPics', L.gAddPics, () => this.edPickPics(null), { icon: 'add_photo_alternate', h: 40, fs: 14 })),
+        E('input', { key: 'file', ref: this.edFileRef, type: 'file', accept: 'image/*', multiple: true, onChange: this.edFiles, style: { display: 'none' } }),
+        E('div', { key: 'foot', style: { display: 'flex', alignItems: 'center', gap: 10, marginTop: 20, flexWrap: 'wrap' } },
+          E('div', { style: { flex: 1, font: ui(500, 13.5), color: ed.err ? '#e5484d' : ink3 } }, ed.err ? L.gNeed : L.gEdHelp),
+          btn('save', L.gSave, () => this.edSave(false), { icon: 'save' }),
+          btn('saveplay', L.gSavePlay, () => this.edSave(true), { icon: 'play_arrow', primary: true, dg: 'saveplay' }))], { w: 760, top: true });
+    }
+    // partie en cours (ou finie)
+    const items = g.items || [], byId = {}; items.forEach(x => { byId[x.id] = x; });
+    const n = items.length, done = g.done || [], end = g.phase === 'end';
+    const cols = n <= 6 ? 3 : 4, tileS = Math.round(Math.max(64, Math.min(124, (vh - 330) / Math.ceil(n / cols) - 12, (Math.min(vw, 1180) * 0.46) / cols - 12)));
+    const emo = (x, s) => (x.img ? E('img', { src: x.img, alt: '', draggable: false, style: { width: s, height: s, objectFit: 'cover', borderRadius: Math.round(s * 0.18), pointerEvents: 'none' } }) : E('span', { style: { fontSize: Math.round(s * 0.62), lineHeight: 1, pointerEvents: 'none' } }, x.e));
+    const tiles = E('div', { key: 'tiles', 'data-g': 'tiles', style: { display: 'grid', gridTemplateColumns: `repeat(${cols}, ${tileS}px)`, gap: 12, justifyContent: 'center', alignContent: 'start' } },
+      ...(g.tiles || []).map((id, i) => {
+        const x = byId[id], gone = done.includes(id), dragging = st.gDrag && st.gDrag.id === id, sel = g.sel === id, bad = g.bad && g.bad.id === id;
+        return E('div', { key: id + (bad ? g.bad.k : ''), role: 'button', tabIndex: gone ? -1 : 0, className: 'fh-g-tile', 'data-tile': id, onPointerDown: (e) => this.mDown(e, id), onKeyDown: (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.gSet(gg => ({ sel: gg.sel === id ? null : id })); } },
+          style: { width: tileS, height: tileS, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: sel ? hexA(acc, dk ? 0.32 : 0.22) : field, boxShadow: sel ? `inset 0 0 0 2.5px ${acc}, 0 10px 24px -10px rgba(${accRgb},.9)` : `inset 0 0 0 1px ${line}, 0 4px 0 ${line}`, cursor: gone ? 'default' : 'grab', touchAction: 'none', userSelect: 'none', opacity: gone ? 0 : dragging ? 0.25 : 1, transform: gone ? 'scale(.4)' : sel ? 'scale(1.06)' : 'none', transition: 'opacity .35s, transform .35s cubic-bezier(.3,1.5,.5,1), box-shadow .2s, background .2s', pointerEvents: gone ? 'none' : 'auto', animation: bad ? 'fh-g-shake .45s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${i * 40}ms both` } }, emo(x, tileS));
+      }));
+    const slotH = Math.max(46, Math.min(64, (vh - 320) / Math.ceil(n / 2) - 10)), wordFs = Math.round(Math.max(15, Math.min(24, slotH * 0.38)));
+    const slots = E('div', { key: 'slots', 'data-g': 'slots', style: { display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 10, alignContent: 'start' } },
+      ...(g.slots || []).map((id, i) => {
+        const x = byId[id], ok = done.includes(id), bad = g.bad && g.bad.slot === id, hot = st.gDrag && !ok;
+        return E('div', { key: id + (bad ? g.bad.k : ''), 'data-gslot': id, role: 'button', tabIndex: 0, className: 'fh-g-slot', onClick: () => this.mSlotClick(id), onKeyDown: (e) => { if (e.key === 'Enter') this.mSlotClick(id); },
+          style: { minHeight: slotH, display: 'flex', alignItems: 'center', gap: 10, padding: '6px 14px', borderRadius: 16, boxSizing: 'border-box', cursor: g.sel && !ok ? 'pointer' : 'default', background: ok ? acc : bad ? 'rgba(229,72,77,.18)' : field, color: ok ? accInk : ink, boxShadow: ok ? `0 8px 22px -12px rgba(${accRgb},.9)` : bad ? 'inset 0 0 0 2px #e5484d' : hot || g.sel ? `inset 0 0 0 2px ${hexA(acc, 0.55)}` : `inset 0 0 0 1.5px ${line}`, transition: 'background .3s, box-shadow .2s, color .3s', animation: bad ? 'fh-g-shake .45s ease' : ok && g.ok && g.ok.id === id ? 'fh-g-pop .5s ease' : `fh-g-in .5s cubic-bezier(.2,.9,.3,1.3) ${120 + i * 40}ms both` } },
+          E('span', { style: { width: Math.round(slotH * 0.7), height: Math.round(slotH * 0.7), flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 10, background: ok ? 'rgba(255,255,255,.22)' : 'transparent', boxShadow: ok ? 'none' : `inset 0 0 0 1.5px ${line}`, borderStyle: 'none' } }, ok ? emo(x, Math.round(slotH * 0.6)) : null),
+          E('span', { style: { flex: 1, minWidth: 0, font: titleF(wordFs), overflowWrap: 'anywhere' } }, x.w),
+          ok ? E('span', { style: { ...ICON, fontSize: 22 } }, 'check') : null);
+      }));
+    const secs = Math.round(((g.t1 || Date.now()) - (g.t0 || Date.now())) / 1000), tStr = `${Math.floor(secs / 60)}:${String(secs % 60).padStart(2, '0')}`;
+    const status = E('div', { key: 'st', style: { display: 'flex', alignItems: 'center', gap: 16, font: ui(600, 14), color: ink2 } },
+      E('span', null, `${done.length} / ${n}`), E('span', null, L.gErrors + ' ', E('b', { 'data-g': 'errors', style: { font: titleF(20), color: ink } }, g.errors)));
+    const ghost = st.gDrag && byId[st.gDrag.id] ? E('div', { key: 'ghost', style: { position: 'fixed', left: st.gDrag.x - tileS / 2, top: st.gDrag.y - tileS / 2, width: tileS, height: tileS, zIndex: 90, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 20, background: panel, boxShadow: `inset 0 0 0 2.5px ${acc}, 0 24px 50px -16px rgba(0,0,0,.6)`, transform: 'rotate(-6deg) scale(1.08)' } }, emo(byId[st.gDrag.id], tileS)) : null;
+    const endEl = end ? E('div', { key: 'end', 'data-g': 'end', style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: '10px 0 4px', animation: 'fh-pop .5s cubic-bezier(.2,.9,.3,1.2) both' } },
+      E('div', { style: { fontSize: 56, lineHeight: 1 } }, '🏆'),
+      E('div', { style: { font: titleF(32), color: ink, textAlign: 'center' } }, L.gDone),
+      E('div', { style: { font: ui(500, 15), color: ink2 } }, `${L.gTime} ${tStr} · ${L.gErrors} ${g.errors}`),
+      E('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 } }, btn('again', L.gAgain, this.mAgain, { primary: true, icon: 'replay', dg: 'again' }), btn('menu', L.gMenu, () => this.gSet({ phase: 'setup' }), { icon: 'tune' }))) : null;
+    return wrap([head(g.emoji, g.title, status, () => this.gSet({ phase: 'setup' })),
+      end ? endEl : E('div', { key: 'hint', style: { font: ui(500, 13.5), color: ink3, marginTop: -6, marginBottom: 14 } }, L.gTap),
+      end ? null : E('div', { key: 'board', style: { display: 'flex', gap: 28, alignItems: 'flex-start', justifyContent: 'center', flexWrap: 'wrap' } }, tiles, E('div', { key: 'sw', style: { flex: '1 1 340px', minWidth: 280 } }, slots)),
+      ghost, end ? this.gConfetti(E, pal) : null], { w: 1180, top: n > 8 });
+  };
+  // le pendu classique : la potence puis le bonhomme, un trait par erreur (chaque trait se dessine)
+  hGallows = (E, g, ink, size) => {
+    const P = ['M18 212H134', 'M52 212V16', 'M52 16H150', 'M52 50L86 16', 'M150 16V42', 'C', 'M150 78V140', 'M150 96L124 122', 'M150 96L176 122', 'M150 140L128 180', 'M150 140L172 180'].slice(0, HANG_MAX + 1);
+    // 10 erreurs : sol, poteau, poutre, corde, tête, corps, deux bras, deux jambes (l'équerre n'est gardée que s'il y a 11 essais)
+    const steps = P.length > HANG_MAX ? P.slice(0, 3).concat(P.slice(4)) : P;
+    const lost = g.phase === 'end' && !g.win;
+    return E('svg', { viewBox: '0 0 200 220', width: size, height: size, style: { overflow: 'visible' } },
+      ...steps.slice(0, g.wrong).map((d, i) => d === 'C' ? E('circle', { key: i, cx: 150, cy: 60, r: 18, pathLength: 1, fill: 'none', stroke: ink, strokeWidth: 6, strokeLinecap: 'round', className: 'fh-g-draw' })
+        : E('path', { key: i, d, pathLength: 1, fill: 'none', stroke: ink, strokeWidth: i < 4 ? 7 : 6, strokeLinecap: 'round', strokeLinejoin: 'round', className: 'fh-g-draw' })),
+      lost ? E('g', { key: 'x', stroke: ink, strokeWidth: 3, strokeLinecap: 'round', className: 'fh-g-fade' }, E('path', { d: 'M141 54l6 6m0-6l-6 6M153 54l6 6m0-6l-6 6' })) : null,
+      g.wrong === 0 ? E('path', { key: 'ground', d: 'M18 212H134', stroke: ink, strokeOpacity: 0.18, strokeWidth: 7, strokeLinecap: 'round', strokeDasharray: '2 14' }) : null);
+  };
+  // version douce : un petit personnage tenu par 10 ballons ; chaque erreur en fait éclater un, il descend doucement
+  hBalloons = (E, g, pal, ink, size) => {
+    const left = Math.max(0, HANG_MAX - g.wrong), lost = g.phase === 'end' && !g.win, won = g.phase === 'end' && g.win;
+    // tout le groupe (personnage + ballons) descend d'un cran à chaque ballon perdu ; dessiné autour de la tête en (120, 0)
+    const y0 = 196 - left * 8, hx = 120, hy = -22;
+    const spots = [[-50, -96], [-17, -108], [17, -110], [50, -94], [-68, -62], [-34, -74], [0, -80], [34, -74], [68, -60], [0, -46]];
+    const balloons = spots.map(([dx, dy], i) => {
+      const popped = i >= left, just = popped && i === left && g.last && !g.last.hit, x = hx + dx, y = hy + dy, c = pal[i % pal.length];
+      if (popped && !just) return null;
+      return E('g', { key: 'b' + i + (just ? 'p' + g.last.k : ''), className: just ? 'fh-g-popb' : 'fh-g-bob', style: { transformOrigin: `${x}px ${y}px`, transformBox: 'view-box', animationDelay: just ? '0s' : `${-(i * 0.37).toFixed(2)}s` } },
+        E('path', { d: `M${hx} ${hy}Q${(hx + x) / 2 + (i % 2 ? 6 : -6)} ${(hy + y) / 2} ${x} ${y + 21}`, stroke: ink, strokeOpacity: 0.45, strokeWidth: 1.2, fill: 'none' }),
+        E('ellipse', { cx: x, cy: y, rx: 16, ry: 20, fill: c }),
+        E('ellipse', { cx: x - 6, cy: y - 7, rx: 4, ry: 6.5, fill: '#ffffff', opacity: 0.45, transform: `rotate(-24 ${x - 6} ${y - 7})` }),
+        E('path', { d: `M${x - 3} ${y + 22}l3-3 3 3z`, fill: c }),
+        just ? E('g', { stroke: c, strokeWidth: 2.5, strokeLinecap: 'round' }, E('path', { d: `M${x} ${y - 28}v-8M${x + 23} ${y - 13}l7-5M${x - 23} ${y - 13}l-7-5M${x + 25} ${y + 9}l8 3M${x - 25} ${y + 9}l-8 3` })) : null);
+    });
+    const mouth = lost ? E('ellipse', { cx: 120, cy: 7, rx: 4, ry: 5, fill: ink }) : E('path', { d: won ? 'M110 3q10 12 20 0' : 'M112 5q8 6 16 0', stroke: ink, strokeWidth: 2.6, fill: 'none', strokeLinecap: 'round' });
+    return E('svg', { viewBox: '0 -60 240 310', width: size, height: size, style: { overflow: 'visible' } },
+      E('path', { key: 'ground', d: 'M30 246H210', stroke: ink, strokeOpacity: 0.25, strokeWidth: 4, strokeLinecap: 'round' }),
+      E('g', { key: 'all', style: { transform: `translateY(${y0}px)`, transition: 'transform 1s cubic-bezier(.45,0,.3,1.25)' } },
+        ...balloons,
+        E('path', { d: lost ? 'M120 18v18M120 26l-14 4M120 26l14 4M120 36l-10 13M120 36l10 13' : 'M120 18v18M120 26l-12 -10M120 26l12 -10M120 36l-9 14M120 36l9 14', stroke: ink, strokeWidth: 4, strokeLinecap: 'round', fill: 'none' }),
+        E('circle', { cx: 120, cy: 0, r: 17, fill: pal[2 % pal.length], stroke: ink, strokeWidth: 2.5 }),
+        E('circle', { cx: 114, cy: -4, r: 2.4, fill: ink }), E('circle', { cx: 126, cy: -4, r: 2.4, fill: ink }), mouth));
+  };
+  // confettis aux couleurs du thème quand on gagne
+  gConfetti = (E, pal) => E('div', { key: 'conf', style: { position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 80, overflow: 'hidden' } },
+    ...Array.from({ length: 36 }, (_, i) => E('i', { key: i, className: 'fh-g-conf', style: { left: `${(i * 37.3) % 100}%`, background: pal[i % pal.length], width: 8 + (i % 3) * 3, height: 12 + (i % 4) * 3, animationDelay: `${((i * 0.13) % 1.4).toFixed(2)}s`, animationDuration: `${2.4 + (i % 5) * 0.35}s`, '--dx': `${((i * 53) % 120) - 60}px`, '--r': `${(i * 97) % 720 - 360}deg` } })));
   // ---------- élan : la note ou l'image penche quand on la tire, puis glisse un peu quand on la lâche ----------
   track = (d, e) => {
     const now = performance.now(), dt = now - d.lt;
@@ -3168,6 +3572,7 @@ class Component extends DCLogic {
     // Échap ferme toujours un menu ou annule le déplacement, même si le curseur est dans un champ
     if (e.key === 'Escape' && this.state.news) { this.newsClose(); return; }
     if (e.key === 'Escape' && (this.state.mindDD || this.state.mindAll)) { this.mindDDClose(); this.setState({ mindAll: false }); return; }
+    if (e.key === 'Escape' && this.state.gameDD) { this.gameDDClose(); return; }
     if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's' && this.state.s.mode === 'mind') { e.preventDefault(); this.mindStore(); return; }
     if (e.key === 'Escape' && (this.state.menu || this.state.moveMode)) { this.closeMenu(); if (this.state.moveMode) this.placeClock(null); return; }
     if (tn === 'INPUT' || tn === 'TEXTAREA' || tn === 'SELECT' || (tg && tg.isContentEditable)) return;
@@ -3184,6 +3589,8 @@ class Component extends DCLogic {
         return;
       }
     }
+    // boîte à jeux : les lettres servent au pendu, pas aux raccourcis
+    if (mode === 'games' && e.key !== 'Escape' && this.gameKey(e)) return;
     if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); this.closeMenu(); if (this.state.moveMode) this.placeClock(null); }
     else if (!keysOn) return; // raccourcis coupés dans les Paramètres
     else if (k === 'f') this.toggleFs();
@@ -3594,7 +4001,7 @@ class Component extends DCLogic {
   lightRef = (el) => { this.lightEl = el; };
   reflRef = (el) => { this.reflEl = el; };
   depthSync = () => {
-    const on = this.state.s.quality === 'ultra' && this.state.s.mode !== 'show' && this.state.s.mode !== 'mind';
+    const on = this.state.s.quality === 'ultra' && this.state.s.mode !== 'show' && this.state.s.mode !== 'mind' && this.state.s.mode !== 'games';
     if (on && !this.depthRaf) {
       this.dp = this.dp || { x: 0, y: 0, lx: 0, ly: 0 };
       const frame = (t) => {
@@ -3985,7 +4392,7 @@ class Component extends DCLogic {
     if (s.quality === 'low') Object.assign(ui, { bar: dark ? 'rgba(22,21,20,.95)' : 'rgba(252,251,249,.96)', panel: dark ? 'rgba(22,21,20,.98)' : 'rgba(252,251,249,.99)' });
     // ---------- effets selon la qualité ----------
     let qEl = null;
-    if ((Q === 'high' || Q === 'ultra') && mode !== 'show' && mode !== 'mind') {
+    if ((Q === 'high' || Q === 'ultra') && mode !== 'show' && mode !== 'mind' && mode !== 'games') {
       const ultra = Q === 'ultra', sceneId = s.bgType === 'scene' ? s.scene : s.bgType === 'spooky' ? 'spooky' : '', nightNow = skyL ? skyL.night : 0, darkBg = bgL < 0.4 || nightNow > 0.55;
       const sw0 = Math.max(st.vw, st.vh * 16 / 9), kk = sw0 / 1600, sy0 = st.vh - sw0 * 9 / 16, parts = [];
       // rayons de soleil qui scintillent doucement (pas la nuit)
@@ -4048,7 +4455,7 @@ class Component extends DCLogic {
     const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
     const timerBusy = tmRun || st.ringing, swBusy = !!sw.start;
-    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['mind', 'hub', L.md_mind, false], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, beta: id === 'mind', betaBg: hexA(s.accent, dark ? 0.3 : 0.2), betaFg: dark ? '#ffffff' : ui.fg, pick: id === 'mind' ? this.mindTabClick : () => this.setMode(id), enter: id === 'mind' ? this.mindTabEnter : undefined, leave: id === 'mind' ? this.mindTabLeave : undefined, bg: 'transparent', ring: 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
+    const modes = [['clock', 'schedule', L.md_clock, false], ['timer', 'hourglass_top', L.md_timer, timerBusy], ['stopwatch', 'timer', L.md_sw, swBusy], ['coin', 'toll', L.md_coin, st.coinBusy], ['mind', 'hub', L.md_mind, false], ['games', 'sports_esports', L.md_games, false], ['sound', 'mic', L.md_snd, st.snd.on], ['show', 'web', L.md_show, false]].map(([id, icon, title, busy]) => ({ icon, title, label: title, tour: 'mode-' + id, beta: id === 'mind', betaBg: hexA(s.accent, dark ? 0.3 : 0.2), betaFg: dark ? '#ffffff' : ui.fg, pick: id === 'mind' ? this.mindTabClick : id === 'games' ? this.gameTabClick : () => this.setMode(id), enter: id === 'mind' ? this.mindTabEnter : id === 'games' ? this.gameTabEnter : undefined, leave: id === 'mind' ? this.mindTabLeave : id === 'games' ? this.gameTabLeave : undefined, bg: 'transparent', ring: 'none', fg: mode === id ? ui.fg : busy ? accUi : ui.fg2, hover: mode === id ? hexA(s.accent, dark ? 0.32 : 0.22) : ui.hover, anim: busy && mode !== id ? 'fh-pulse 1.6s ease-in-out infinite' : mode === id ? 'fh-tabpop .5s cubic-bezier(.3,1.5,.5,1)' : 'none' }));
     const sample = `${String(h12).padStart(2, '0')}:${String(p.m).padStart(2, '0')}`;
     const preview = (ps) => {
       let b;
@@ -4527,7 +4934,7 @@ class Component extends DCLogic {
     }
 
     // images posées à côté de l'heure (cachées en mode « site ou image » pour ne pas couvrir le contenu)
-    const picsEl = mode === 'show' || mode === 'mind' ? null : st.pics.map(q => {
+    const picsEl = mode === 'show' || mode === 'mind' || mode === 'games' ? null : st.pics.map(q => {
       const m = st.media.find(x => x.id === q.m); if (!m) return null;
       const w = Math.max(40, q.w * st.vw), x = Math.max(60 - w, Math.min(st.vw - 60, q.x * st.vw)), y = Math.max(0, Math.min(st.vh - 50, q.y * st.vh)), drag = st.picDrag === q.id;
       const lift = st.lift && st.lift.id === q.id ? st.lift : null, gone = st.gone.includes(q.id);
@@ -4582,6 +4989,7 @@ class Component extends DCLogic {
     // mode « site ou image »
     let showEl = null, showing = false;
     if (mode === 'mind') { showing = true; showEl = this.mindView(E, st, L, f, bgL < 0.4); }
+    else if (mode === 'games') { showing = true; showEl = this.gamesView(E, st, L, f, bgL < 0.4); }
     else if (mode === 'show') {
       const sm = s.showType === 'media' ? st.media.find(m => m.id === s.showMedia) : null;
       const src = s.showType === 'url' && showUrl(s.showUrl) ? { kind: 'url', url: showUrl(s.showUrl), tab: showUrl(s.showUrl, true) } : sm ? { kind: sm.type, url: sm.url, name: sm.name } : null;
@@ -4637,7 +5045,7 @@ class Component extends DCLogic {
       }
     }
 
-    const bgOff = showing && mode !== 'mind';
+    const bgOff = showing && mode !== 'mind' && mode !== 'games';
     return {
       s, L: sRaw.keys === false ? { ...L, fullscreen: L.fullscreen.replace(/\s*\([A-Z]\)$/, '') } : L, ui, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : 'default',
       // la carte mentale laisse voir le décor du thème ; « site ou image » le cache
@@ -4650,7 +5058,7 @@ class Component extends DCLogic {
       sky: { on: !!skyL, el: skyEl },
       q: { level: s.quality || 'medium', on: !!qEl, el: qEl, farRef: this.farRef, skyRef: this.skyRef },
       taps: { on: st.taps.length > 0, el: st.taps.map(tp => E('div', { key: tp.id, style: { position: 'absolute', left: tp.x, top: tp.y, width: 0, height: 0 } }, tapParts(E, tp, L.boo))) }, onStageMove: this.onStageMove,
-      halo: { on: s.bgType === 'scene' && mode !== 'show' && mode !== 'mind', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
+      halo: { on: s.bgType === 'scene' && mode !== 'show' && mode !== 'mind' && mode !== 'games', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : st.moveMode === 'drag' ? 'grabbing' : 'pointer', gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: s.dateColor, opacity: Math.min(1, dateOp + 0.15), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
       date: { show: mode === 'clock' && !!(s.showDate || zoneText), hasText: !!dateText, text: dateText, hasZone: !!zoneText, zone: zoneText, style: dateStyle },
@@ -4659,7 +5067,7 @@ class Component extends DCLogic {
       chrome: { barAnim: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? (hidden ? 'fh-bar-fadeout .4s ease forwards' : 'fh-bar-fadein .3s ease both') : hidden ? 'fh-bar-out .5s cubic-bezier(.5,0,.75,.3) forwards' : 'fh-bar-in .72s cubic-bezier(.22,.8,.3,1) both', labels: st.vw > 820, btnPad: st.vw > 820 ? (compact ? '0 9px' : '0 13px 0 10px') : '0', ez: '.6s cubic-bezier(.45,0,.2,1)', lblCol: compact ? '0fr' : '1fr', lblOp: compact ? 0 : 1, lblFade: compact ? '.22s ease' : '.32s ease .14s', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       menuUi, zones, blockRef: this.blockRef, clockDown: this.clockDown, onCtx: this.onCtx, openSettings: this.openSettings,
       modes, modePillRef: this.modePillRef, pill: { bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` }, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
-      tools: { show: mode !== 'clock' && mode !== 'show' && mode !== 'mind', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' || mode === 'mind' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
+      tools: { show: mode !== 'clock' && mode !== 'show' && mode !== 'mind' && mode !== 'games', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' || mode === 'mind' || mode === 'games' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);
         if (!m) return { show: false, el: null };
@@ -4668,7 +5076,7 @@ class Component extends DCLogic {
           E('button', { type: 'button', className: 'fh-btn', 'data-tour': 'bgpic-del', title: L.bgPicDel, onClick: this.dropBgPic, style: { display: 'inline-flex', alignItems: 'center', gap: 5, height: 28, padding: '0 12px 0 9px', borderRadius: 999, border: 0, background: '#e5484d', color: '#fff', font: '600 13px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } },
             E('span', { style: { ...ICON, fontSize: 17 } }, 'delete'), L.bgPicDel)) };
       })(),
-      news: { show: !!newsEl, el: newsEl }, mm: (() => { const el = this.mindMenusEl(E, st, L, ui, dark, accUi); return { show: !!el, el }; })(),
+      news: { show: !!newsEl, el: newsEl }, mm: (() => { const a = this.mindMenusEl(E, st, L, ui, dark, accUi), b = this.gameDDEl(E, st, L, ui, dark, accUi), el = [...(a || []), ...(b ? [b] : [])]; return { show: el.length > 0, el: el.length ? el : null }; })(),
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
       surprise: this.surprise, toggleFs: this.toggleFs, reset: this.reset, closePanel: this.closePanel, onStage: this.onStage, barEnter: this.barEnter, barLeave: this.barLeave,
