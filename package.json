@@ -1,0 +1,9 @@
+{
+  "name": "findheure",
+  "private": true,
+  "type": "module",
+  "description": "Horloge plein écran pour la classe. Le site est statique ; seul api/jeu-ia.js tourne sur le serveur (création de jeux par l'IA).",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.8.0"
+  }
+}

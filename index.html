@@ -103,6 +103,8 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-g-letter{0%{transform:translateY(14px) scale(.4);opacity:0}100%{transform:none;opacity:1}}
 @keyframes fh-g-pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
 @keyframes fh-g-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(3px)}}
+.fh-g-think::after{content:'';animation:fh-g-dots 1.2s steps(4) infinite}
+@keyframes fh-g-dots{0%{content:''}25%{content:'.'}50%{content:'..'}75%{content:'...'}}
 @keyframes fh-g-land{0%{transform:scale(.7)}55%{transform:scale(1.25)}100%{transform:scale(1)}}
 @keyframes fh-g-in{from{transform:translateY(12px) scale(.85);opacity:0}}
 @keyframes fh-g-conf{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx),110vh) rotate(var(--r));opacity:.9}}
@@ -572,6 +574,9 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.18.0', d: '2026-11-16', items: [
+    'Jeux : « Créer avec l’IA » fait un pendu ou un jeu d’association sur le thème de ton choix (5 par jour).|Games: “Create with AI” makes a hangman or matching game on any topic (5 per day).',
+    'Pendu : les listes de mots de l’IA se jouent mot après mot et se gardent dans « Mes listes de mots ».|Hangman: AI word lists play one word after another and are kept in “My word lists”.'] },
   { v: '2.17.2', d: '2026-11-11', items: ['Associe les emojis : les cases déjà trouvées ne clignotent plus.|Match the emojis: matched boxes no longer flicker.'] },
   { v: '2.17.1', d: '2026-11-11', items: ['Associe les emojis : l’emoji vole jusqu’à sa case quand c’est juste.|Match the emojis: the emoji flies into its box when it’s right.', 'Associe les emojis : l’emoji glissé reste bien sous le doigt.|Match the emojis: the dragged emoji now stays under your finger.'] },
   { v: '2.17.0', d: '2026-11-11', items: [
@@ -664,6 +669,8 @@ const NEWS = [
 const MKEY = 'findheure:mind:v1';
 // boîte à jeux : jeux d'association créés par l'utilisateur, et derniers réglages des jeux
 const GKEY = 'findheure:games:v1', GOKEY = 'findheure:gameopts:v1', HANG_MAX = 10;
+// créations par l'IA : compteur du jour (5 par jour et par navigateur) et listes de mots du pendu qu'elle a faites
+const IAKEY = 'findheure:ia:v1', HLKEY = 'findheure:hanglists:v1', IA_MAX = 5;
 const GDATA = () => window.FHGames || { cats: [] };
 const gShuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 // teintes des bulles de la carte mentale (en r,g,b pour les transparences)
@@ -893,6 +900,16 @@ const T_RAW = {
   gName: "Nom du jeu (ex. : Les fruits en anglais)|Game name (e.g. Fruit in English)|Nombre del juego (p. ej.: Las frutas en inglés)|Name des Spiels (z. B. Obst auf Englisch)", gWord: "Mot|Word|Palabra|Wort", gEmoji: "Emoji|Emoji|Emoji|Emoji", gAddRow: "Ajouter une paire|Add a pair|Añadir una pareja|Paar hinzufügen", gAddPics: "Ajouter des images|Add pictures|Añadir imágenes|Bilder hinzufügen", gAddPic: "Mettre une image|Use a picture|Poner una imagen|Bild verwenden",
   gSave: "Enregistrer|Save|Guardar|Speichern", gSavePlay: "Enregistrer et jouer|Save and play|Guardar y jugar|Speichern und spielen", gNeed: "Donne un nom au jeu et au moins 3 paires complètes.|Give the game a name and at least 3 complete pairs.|Ponle un nombre y al menos 3 parejas completas.|Gib dem Spiel einen Namen und mindestens 3 vollständige Paare.",
   gEdHelp: "Un emoji (ou une image) et son mot sur chaque ligne, 12 paires au plus.|An emoji (or a picture) and its word on each line, up to 12 pairs.|Un emoji (o una imagen) y su palabra en cada línea, hasta 12 parejas.|Ein Emoji (oder Bild) und sein Wort pro Zeile, bis zu 12 Paare.", gEdit: "Modifier|Edit|Editar|Bearbeiten", gDelete: "Supprimer|Delete|Eliminar|Löschen", gDeleted: "Jeu supprimé|Game deleted|Juego eliminado|Spiel gelöscht", gFull: "Plus de place pour enregistrer (images trop lourdes)|No room left to save (pictures too large)|No queda espacio (imágenes demasiado grandes)|Kein Platz mehr (Bilder zu groß)",
+  gAiChoice: "Créer avec l’IA|Create with AI|Crear con IA|Mit KI erstellen", gAiChoiceSub: "Décris le thème, l’IA trouve les mots|Describe the topic, the AI finds the words|Describe el tema, la IA encuentra las palabras|Beschreibe das Thema, die KI findet die Wörter",
+  gAiHangT: "Un pendu fait par l’IA|A hangman made by AI|Un ahorcado hecho por IA|Galgenmännchen von der KI", gAiMatchT: "Un jeu d’association fait par l’IA|A matching game made by AI|Un juego de parejas hecho por IA|Zuordnungsspiel von der KI",
+  gAiExHang: "Ex. : 10 mots sur la Révolution française pour des CM2|E.g. 10 words about the solar system for 10-year-olds|Ej.: 10 palabras sobre el sistema solar para niños de 10 años|Z. B.: 10 Wörter zum Sonnensystem für 10-Jährige",
+  gAiExMatch: "Ex. : les animaux de la jungle, 8 paires|E.g. jungle animals, 8 pairs|Ej.: animales de la selva, 8 parejas|Z. B.: Dschungeltiere, 8 Paare",
+  gAiLeft: "{n} / 5 aujourd’hui|{n} / 5 today|{n} / 5 hoy|{n} / 5 heute", gAiGo: "Créer le jeu|Create the game|Crear el juego|Spiel erstellen", gAiMaking: "Création…|Creating…|Creando…|Wird erstellt…",
+  gAiWait: "L’IA prépare ton jeu|The AI is making your game|La IA prepara tu juego|Die KI erstellt dein Spiel", gAiHelp: "Thème, niveau, nombre de mots : plus c’est précis, mieux c’est. 5 créations par jour.|Topic, level, number of words: the more precise, the better. 5 per day.|Tema, nivel, número de palabras: cuanto más preciso, mejor. 5 al día.|Thema, Niveau, Anzahl der Wörter: je genauer, desto besser. 5 pro Tag.",
+  gAiLimit: "Tu as utilisé tes 5 créations d’aujourd’hui. Reviens demain !|You’ve used your 5 creations for today. Come back tomorrow!|Ya usaste tus 5 creaciones de hoy. ¡Vuelve mañana!|Du hast deine 5 Erstellungen für heute verbraucht. Bis morgen!", gAiOff: "L’IA n’est pas encore activée sur ce site.|AI isn’t switched on for this site yet.|La IA aún no está activada en este sitio.|Die KI ist auf dieser Seite noch nicht aktiviert.",
+  gAiNet: "Pas de connexion à Internet : réessaie dans un moment.|No Internet connection: try again in a moment.|Sin conexión a Internet: inténtalo en un momento.|Keine Internetverbindung: versuche es gleich noch einmal.", gAiBusyErr: "L’IA est très demandée : réessaie dans une minute.|The AI is busy: try again in a minute.|La IA está ocupada: inténtalo en un minuto.|Die KI ist ausgelastet: versuche es in einer Minute.",
+  gAiRefused: "L’IA n’a pas pu faire ce jeu : essaie un autre thème.|The AI couldn’t make this game: try another topic.|La IA no pudo hacer este juego: prueba otro tema.|Die KI konnte dieses Spiel nicht erstellen: versuche ein anderes Thema.", gAiFail: "Ça n’a pas marché : réessaie, en reformulant un peu.|That didn’t work: try again, rephrasing a little.|No funcionó: inténtalo de nuevo, reformulando un poco.|Das hat nicht geklappt: versuche es noch einmal, etwas anders formuliert.",
+  gLists: "Mes listes de mots|My word lists|Mis listas de palabras|Meine Wortlisten", gNextWord: "Mot suivant|Next word|Palabra siguiente|Nächstes Wort",
   gDone: "Toutes les paires trouvées !|All pairs matched!|¡Todas las parejas encontradas!|Alle Paare gefunden!", gTime: "Temps|Time|Tiempo|Zeit", gTap: "Glisse un emoji sur son nom (ou clique l’emoji, puis le nom).|Drag an emoji onto its name (or click the emoji, then the name).|Arrastra un emoji a su nombre (o haz clic en el emoji y luego en el nombre).|Ziehe ein Emoji auf seinen Namen (oder klicke erst das Emoji, dann den Namen).",
   mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindReset: "Réinitialiser|Reset|Restablecer|Zurücksetzen", mindBlank: "Page blanche|Blank page|Página en blanco|Leere Seite", mindSets: "Mes cartes|My maps|Mis mapas|Meine Karten", mindNone: "Aucune carte sauvegardée pour l’instant.|No saved maps yet.|Aún no hay mapas guardados.|Noch keine gespeicherten Karten.", mindAll: "Tout voir|See all|Ver todo|Alle anzeigen", mindAllT: "Mes cartes mentales|My mind maps|Mis mapas mentales|Meine Mindmaps", mindSave: "Sauvegarder|Save|Guardar|Speichern", mindSavedB: "Sauvegardée|Saved|Guardado|Gespeichert", mindSaved: "Carte sauvegardée|Map saved|Mapa guardado|Karte gespeichert", mindOpened: "Carte ouverte|Map opened|Mapa abierto|Karte geöffnet", mindDeleted: "Carte supprimée|Map deleted|Mapa eliminado|Karte gelöscht", mindDelSet: "Supprimer la carte|Delete map|Eliminar mapa|Karte löschen", mindUntitled: "Sans titre|Untitled|Sin título|Ohne Titel", mindIdea: "idée|idea|idea|Idee", mindIdeas: "idées|ideas|ideas|Ideen", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
   showTitle: "Afficher un site ou une image|Show a website or an image|Mostrar un sitio o una imagen|Website oder Bild anzeigen",
@@ -3002,7 +3019,36 @@ class Component extends DCLogic {
     const win = [...g.word].filter(this.hIsL).every(c => guessed.includes(this.hNorm(c)));
     this.gSet({ guessed, wrong, last: { l, hit, k: Date.now() }, ...(win || wrong >= HANG_MAX ? { phase: 'end', win } : {}) });
   };
-  hAgain = () => { const g = this.gameNow(); if (g.src === 'auto') this.hAuto(g.rand ? 'rand' : g.cat); else this.gSet({ phase: 'secret', draft: '', hintDraft: '', err: false, peek: false }); };
+  hAgain = () => { const g = this.gameNow(); if (g.src === 'auto') this.hAuto(g.rand ? 'rand' : g.cat); else if (g.src === 'list') this.hList(g.list, g.idx + 1); else this.gSet({ phase: 'secret', draft: '', hintDraft: '', err: false, peek: false }); };
+  // une liste de mots (faite par l'IA) : les mots se jouent l'un après l'autre
+  hList = (id, idx) => { const L0 = this.hLists().find(x => x.id === id); if (!L0 || !L0.words.length) { this.gSet({ phase: 'setup' }); return; } const i = ((idx || 0) % L0.words.length + L0.words.length) % L0.words.length, w = L0.words[i]; this.hStart(w.w, { src: 'list', list: id, idx: i, listN: L0.words.length, listT: L0.title, hint: w.h || '', cat: null, emoji: null }); };
+  hLists = () => { if (!this.hListsC) { const v = loadJSON(HLKEY, []); this.hListsC = Array.isArray(v) ? v.filter(x => x && x.id && Array.isArray(x.words)) : []; } return this.hListsC; };
+  hListsSet = (list) => { this.hListsC = list; try { localStorage.setItem(HLKEY, JSON.stringify(list)); } catch (e) {} this.forceUpdate(); };
+  hListDel = (id) => { const before = this.hLists(); this.hListsSet(before.filter(x => x.id !== id)); this.toast(this.L().gDeleted, () => { this.hListsSet(before); this.setState({ toast: null }); }); };
+  // ---------- créer un jeu avec l'IA (fonction serveur api/jeu-ia) ----------
+  iaLeft = () => { const v = loadJSON(IAKEY, {}) || {}, d = new Date().toISOString().slice(0, 10); return v.d === d ? Math.max(0, IA_MAX - (v.n || 0)) : IA_MAX; };
+  iaUse = () => { const d = new Date().toISOString().slice(0, 10), v = loadJSON(IAKEY, {}) || {}; try { localStorage.setItem(IAKEY, JSON.stringify({ d, n: (v.d === d ? v.n || 0 : 0) + 1 })); } catch (e) {} };
+  iaOpen = () => this.gSet({ phase: 'ai', aiDraft: '', aiBusy: false, aiErr: null });
+  iaGo = async () => {
+    const g = this.gameNow(), prompt = String(g.aiDraft || '').trim();
+    if (g.aiBusy || prompt.length < 3) return;
+    if (!this.iaLeft()) { this.gSet({ aiErr: 'limit' }); return; }
+    const kind = g.kind, ui = this.gameLang();
+    this.gSet({ aiBusy: true, aiErr: null });
+    let r = null, err = null;
+    try {
+      const resp = await fetch('./api/jeu-ia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt, kind, ui, wl: kind === 'match' ? this.gameOpts.wl : ui }) });
+      r = await resp.json().catch(() => null);
+      if (!r) err = resp.status === 404 ? 'no_key' : 'server';
+      else if (r.error) err = r.error;
+    } catch (e) { err = 'network'; }
+    const now = this.gameNow(); if (now.phase !== 'ai' || now.kind !== kind) return; // on a quitté l'écran entre-temps
+    if (err) { this.gSet({ aiBusy: false, aiErr: err, aiReason: (r && r.reason) || '' }); return; }
+    this.iaUse();
+    const id = (kind === 'match' ? 'g' : 'h') + Date.now().toString(36);
+    if (r.kind === 'match') { this.gMineSet([{ id, name: r.title, items: r.pairs.map(x => ({ e: x.e, w: x.w })), at: Date.now(), ai: true }, ...this.gMineGet()]); this.gSet({ aiBusy: false }); this.mStart({ custom: id }); }
+    else { this.hListsSet([{ id, title: r.title, words: r.words, at: Date.now() }, ...this.hLists()].slice(0, 30)); this.gSet({ aiBusy: false }); this.hList(id, 0); }
+  };
   // ---------- associe les emojis ----------
   gMine = null;
   gMineGet = () => { if (!this.gMine) { const v = loadJSON(GKEY, []); this.gMine = Array.isArray(v) ? v.filter(x => x && x.id && Array.isArray(x.items)) : []; } return this.gMine; };
@@ -3166,14 +3212,34 @@ class Component extends DCLogic {
       ...GDATA().cats.map((c, i) => E('button', { key: c.id, type: 'button', className: 'fh-btn fh-g-cat', 'data-cat': c.id, onClick: () => onPick(c.id), style: { display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 14, border: 0, cursor: 'pointer', color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}`, font: ui(550, 13.5), textAlign: 'left', animation: `fh-row .3s ease ${Math.min(i, 30) * 12}ms both` } }, E('span', { style: { fontSize: 24, lineHeight: 1, flexShrink: 0 } }, c.e), E('span', { style: { minWidth: 0 } }, c.name[lang]))));
     const kids = [];
 
+    // ==================== CRÉER AVEC L'IA (les deux jeux) ====================
+    if (g.phase === 'ai') {
+      const left = this.iaLeft(), busy = !!g.aiBusy, ex = g.kind === 'hang' ? L.gAiExHang : L.gAiExMatch;
+      const errTxt = { limit: L.gAiLimit, no_key: L.gAiOff, network: L.gAiNet, busy: L.gAiBusyErr, refused: g.aiReason || L.gAiRefused }[g.aiErr] || (g.aiErr ? L.gAiFail : '');
+      return wrap([head(g.kind === 'hang' ? '🔤' : '🧩', `✨ ${L.gAiChoice}`, E('span', { key: 'left', 'data-g': 'ialeft', style: { font: ui(600, 13.5), color: left ? ink2 : '#e5484d' } }, L.gAiLeft.replace('{n}', left)), () => this.gSet({ phase: 'setup' })),
+        E('textarea', { key: 'p', autoFocus: true, rows: 3, maxLength: 300, value: g.aiDraft || '', disabled: busy, placeholder: ex, 'data-g': 'aiprompt', onChange: (e) => this.gSet({ aiDraft: e.target.value, aiErr: null }), onKeyDown: (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.iaGo(); } },
+          style: { width: '100%', boxSizing: 'border-box', padding: '14px 16px', borderRadius: 16, border: 0, outline: 0, resize: 'none', font: ui(500, 17), color: ink, background: field, boxShadow: `inset 0 0 0 1.5px ${g.aiErr ? '#e5484d' : line}` } }),
+        g.kind === 'match' ? E('div', { key: 'wl', style: { marginTop: 12 } }, seg('wl', L.gLangW, [['en', 'English'], ['fr', 'Français'], ['es', 'Español']], this.gameOpts.wl, (v) => this.gameOptsSet({ wl: v }))) : null,
+        E('div', { key: 'foot', style: { display: 'flex', alignItems: 'center', gap: 12, marginTop: 14, flexWrap: 'wrap' } },
+          E('div', { 'data-g': 'aimsg', style: { flex: 1, minWidth: 220, font: ui(500, 13.5), color: errTxt ? '#e5484d' : ink3 } }, busy ? E('span', { className: 'fh-g-think' }, L.gAiWait) : errTxt || L.gAiHelp),
+          btn('ai', busy ? L.gAiMaking : L.gAiGo, this.iaGo, { primary: true, icon: 'auto_awesome', dg: 'aigo', disabled: busy || !left || String(g.aiDraft || '').trim().length < 3 }))], { w: 700 });
+    }
+
     // ==================== LE PENDU ====================
     if (g.kind === 'hang') {
       if (g.phase === 'setup') {
         return wrap([head('🔤', L.gHang),
           E('div', { key: 'ch', style: { display: 'flex', gap: 14, flexWrap: 'wrap' } },
             choice('someone', '🤫', L.gSomeone, L.gSomeoneSub, () => this.gSet({ phase: 'secret', draft: '', hintDraft: '', err: false, peek: false }), 'someone'),
-            choice('auto', '🎲', L.gAuto, L.gAutoSub, () => this.gSet({ phase: 'cats' }), 'auto')),
-          E('div', { key: 'opt', style: { marginTop: 20 } }, seg('style', L.gDrawing, [['classic', L.gClassic], ['balloons', L.gGentle]], this.gameOpts.style, (v) => this.gameOptsSet({ style: v })))], { w: 760 });
+            choice('auto', '🎲', L.gAuto, L.gAutoSub, () => this.gSet({ phase: 'cats' }), 'auto'),
+            choice('ai', '✨', L.gAiChoice, L.gAiChoiceSub, this.iaOpen, 'ai')),
+          E('div', { key: 'opt', style: { marginTop: 20 } }, seg('style', L.gDrawing, [['classic', L.gClassic], ['balloons', L.gGentle]], this.gameOpts.style, (v) => this.gameOptsSet({ style: v }))),
+          // les listes de mots déjà faites par l'IA, à rejouer
+          this.hLists().length ? E('div', { key: 'lists', style: { marginTop: 22 } },
+            E('div', { style: { font: ui(650, 13), color: ink2, textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 10 } }, L.gLists),
+            E('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } }, ...this.hLists().map(x => E('div', { key: x.id, style: { display: 'flex', alignItems: 'center', gap: 2, padding: '4px 4px 4px 12px', borderRadius: 999, background: field, boxShadow: `inset 0 0 0 1px ${line}` } },
+              E('button', { type: 'button', className: 'fh-btn', 'data-list': x.id, onClick: () => this.hList(x.id, 0), style: { border: 0, background: 'transparent', color: ink, cursor: 'pointer', font: ui(600, 14), padding: '4px 4px' } }, `✨ ${x.title}`, E('span', { style: { color: ink3, fontWeight: 500, marginLeft: 6 } }, x.words.length)),
+              btn('d' + x.id, '', () => this.hListDel(x.id), { icon: 'close', h: 28, title: L.gDelete }))))) : null], { w: 900 });
       }
       if (g.phase === 'cats') return wrap([head('🎲', L.gPickCat, null, () => this.gSet({ phase: 'setup' })), catGrid(this.hAuto)], { top: true });
       if (g.phase === 'secret') {
@@ -3191,7 +3257,7 @@ class Component extends DCLogic {
       const word = g.word || '', letters = [...word], end = g.phase === 'end', left = HANG_MAX - g.wrong;
       const nL = Math.max(...word.split(' ').map(x => x.length)), boxW = Math.max(26, Math.min(64, (Math.min(vw, 1080) - 380) / Math.max(6, nL) * 0.92));
       const cat = g.cat ? GDATA().cats.find(c => c.id === g.cat) : null;
-      const info = cat ? `${cat.e} ${cat.name[lang]}` : g.hint ? `💡 ${g.hint}` : '';
+      const info = cat ? `${cat.e} ${cat.name[lang]}` : g.src === 'list' ? `✨ ${g.listT} · ${g.idx + 1}/${g.listN}${g.hint ? ' · 💡 ' + g.hint : ''}` : g.hint ? `💡 ${g.hint}` : '';
       const drawSize = Math.round(Math.max(200, Math.min(300, vh * 0.36)));
       const draw = this.gameOpts.style === 'balloons' ? this.hBalloons(E, g, pal, ink, drawSize) : this.hGallows(E, g, ink, drawSize);
       // un groupe par mot : à la ligne entre deux mots, jamais au milieu d'un mot
@@ -3212,7 +3278,7 @@ class Component extends DCLogic {
       const endEl = end ? E('div', { key: 'end', 'data-g': 'end', style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, marginTop: 6, animation: 'fh-pop .5s cubic-bezier(.2,.9,.3,1.2) both' } },
         E('div', { style: { display: 'flex', alignItems: 'center', gap: 14 } }, g.emoji ? E('span', { style: { fontSize: 54, lineHeight: 1, animation: 'fh-g-letter .7s cubic-bezier(.2,.9,.3,1.4) both' } }, g.emoji) : null,
           E('div', { style: { font: titleF(30), color: g.win ? ink : '#e5484d' } }, g.win ? L.gWin : L.gLose)),
-        E('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' } }, btn('again', L.gAgain, this.hAgain, { primary: true, icon: 'replay', dg: 'again' }), btn('menu', L.gMenu, () => this.gSet({ phase: 'setup' }), { icon: 'tune' }))) : null;
+        E('div', { style: { display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' } }, btn('again', g.src === 'list' ? L.gNextWord : L.gAgain, this.hAgain, { primary: true, icon: g.src === 'list' ? 'arrow_forward' : 'replay', dg: 'again' }), btn('menu', L.gMenu, () => this.gSet({ phase: 'setup' }), { icon: 'tune' }))) : null;
       return wrap([head('🔤', L.gHang, status, () => this.gSet({ phase: 'setup' })),
         E('div', { key: 'board', style: { display: 'flex', alignItems: 'center', gap: 28, flexWrap: 'wrap', justifyContent: 'center' } },
           E('div', { key: 'draw', style: { flexShrink: 0, width: drawSize, height: drawSize } }, draw),
@@ -3232,11 +3298,12 @@ class Component extends DCLogic {
         catGrid((id) => this.mStart({ cat: id })),
         E('div', { key: 'mineH', style: { display: 'flex', alignItems: 'center', gap: 12, margin: '24px 0 10px' } },
           E('div', { style: { flex: 1, font: ui(650, 13), color: ink2, textTransform: 'uppercase', letterSpacing: '.08em' } }, L.gMine),
+          btn('aimatch', L.gAiChoice, this.iaOpen, { icon: 'auto_awesome', h: 38, fs: 14, dg: 'aimatch' }),
           btn('create', L.gCreate, () => this.edOpen(null), { icon: 'add', h: 38, fs: 14, dg: 'create' })),
         mine.length ? E('div', { key: 'mine', style: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(230px, 1fr))', gap: 8 } }, ...mine.map(m => E('div', { key: m.id, style: { display: 'flex', alignItems: 'center', gap: 8, padding: '8px 8px 8px 12px', borderRadius: 14, background: field, boxShadow: `inset 0 0 0 1px ${line}` } },
           E('button', { type: 'button', className: 'fh-btn', 'data-mine': m.id, onClick: () => this.mStart({ custom: m.id }), style: { flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 10, border: 0, background: 'transparent', color: ink, cursor: 'pointer', textAlign: 'left', padding: 0 } },
             E('span', { style: { display: 'flex', gap: 2, flexShrink: 0 } }, ...m.items.slice(0, 3).map((x, k) => x.img ? E('img', { key: k, src: x.img, alt: '', style: { width: 24, height: 24, objectFit: 'cover', borderRadius: 6 } }) : E('span', { key: k, style: { fontSize: 20, lineHeight: '24px' } }, x.e))),
-            E('span', { style: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', font: ui(600, 14) } }, m.name)),
+            E('span', { style: { minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', font: ui(600, 14) } }, (m.ai ? '✨ ' : '') + m.name)),
           btn('e' + m.id, '', () => this.edOpen(m.id), { icon: 'edit', h: 32, title: L.gEdit }),
           btn('d' + m.id, '', () => this.gMineDel(m.id), { icon: 'delete', h: 32, title: L.gDelete })))) : E('div', { key: 'none', style: { font: ui(400, 14), color: ink3 } }, L.gNoGames)], { top: true });
     }
