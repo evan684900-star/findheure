@@ -15,6 +15,8 @@ import { GoogleGenAI, FunctionCallingConfigMode, ApiError, ThinkingLevel } from 
 // gemini-3.8-flash = 5/minute et seulement 20/jour (et souvent saturé) -> le premier sert d'habitude, le second en secours
 const MODELS = ['gemini-3.5-flash-lite', 'gemini-3.8-flash'];
 const IP_PER_DAY = 40;
+// jusqu'à trois essais (avec une pause) : on laisse à la fonction le temps de finir
+export const config = { maxDuration: 60 };
 const LANG_NAME = { fr: 'French', en: 'English', es: 'Spanish' };
 
 const TOOLS = [
@@ -162,7 +164,12 @@ export default async function handler(req, res) {
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const allowed = kind === 'hang' ? ['create_hangman', 'cannot_create'] : kind === 'match' ? ['create_match', 'cannot_create'] : TOOLS.map(t => t.name);
   let lastErr = null;
-  for (const model of MODELS) {
+  // offre gratuite : quand Google est très demandé, il répond « saturé » (503) aux comptes gratuits ;
+  // on essaie l'autre modèle, puis on retente le premier après une courte pause
+  const tries = [MODELS[0], MODELS[1], MODELS[0]];
+  for (let t = 0; t < tries.length; t++) {
+    const model = tries[t];
+    if (t === 2) { if (lastErr !== 'busy') break; await new Promise(r => setTimeout(r, 2500)); }
     try {
       const resp = await ai.models.generateContent({
         model,
