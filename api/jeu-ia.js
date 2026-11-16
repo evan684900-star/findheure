@@ -11,8 +11,9 @@
 // Offre gratuite : Google peut se servir des demandes pour améliorer ses produits (ici, seulement des thèmes de jeux).
 import { GoogleGenAI, FunctionCallingConfigMode, ApiError, ThinkingLevel } from '@google/genai';
 
-// modèle principal, puis un plus léger si le quota gratuit du premier est épuisé
-const MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash-lite'];
+// offre gratuite (quotas pour tout le site) : gemini-3.5-flash-lite = 15 demandes/minute et 500/jour,
+// gemini-3.8-flash = 5/minute et seulement 20/jour (et souvent saturé) -> le premier sert d'habitude, le second en secours
+const MODELS = ['gemini-3.5-flash-lite', 'gemini-3.8-flash'];
 const IP_PER_DAY = 40;
 const LANG_NAME = { fr: 'French', en: 'English', es: 'Spanish' };
 
@@ -169,8 +170,8 @@ export default async function handler(req, res) {
         config: {
           systemInstruction: system(kind, ui, wl),
           maxOutputTokens: 8000,
-          // un peu de réflexion pour vérifier chaque mot, sans traîner (le modèle de secours garde ses réglages par défaut)
-          ...(model === MODELS[0] ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } } : {}),
+          // gemini-3.8-flash (secours) : un peu de réflexion pour vérifier chaque mot, sans traîner ; flash-lite garde ses réglages
+          ...(model === 'gemini-3.8-flash' ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } } : {}),
           tools: [{ functionDeclarations: TOOLS }],
           // l'IA doit appeler un outil (celui du jeu choisi, ou le refus) : jamais de texte libre
           toolConfig: { functionCallingConfig: { mode: FunctionCallingConfigMode.ANY, allowedFunctionNames: allowed } },
