@@ -105,7 +105,10 @@ export function clean(name, input) {
     for (const x of Array.isArray(input.words) ? input.words : []) {
       const w = tidy(x && x.word, 30).replace(/œ/g, 'oe').replace(/Œ/g, 'OE').replace(/æ/g, 'ae'), k = [...w].filter(isL).map(norm).join('');
       if (!okWord(w) || seen.has(k)) continue;
-      seen.add(k); words.push({ w, h: tidy(x.hint, 80) });
+      // un indice qui contient le mot à deviner ne sert à rien : on le retire
+      let h = tidy(x.hint, 80); const hk = [...h].map(c => (isL(c) ? norm(c) : ' ')).join('');
+      if (k.length >= 3 && hk.replace(/ /g, '').includes(k)) h = '';
+      seen.add(k); words.push({ w, h });
       if (words.length >= 20) break;
     }
     if (!words.length) return { error: 'empty' };
@@ -173,6 +176,8 @@ export default async function handler(req, res) {
       if (out.error === 'empty') { lastErr = 'empty'; continue; }
       return res.status(200).json(out);
     } catch (err) {
+      // journal (visible dans Vercel → Logs) : modèle, code et message de Google, jamais la clé
+      console.error('jeu-ia', model, err instanceof ApiError ? err.status : 'réseau', String(err && err.message || err).slice(0, 300));
       if (err instanceof ApiError) {
         // 429 : quota gratuit de ce modèle épuisé, on essaie le suivant ; clé refusée : IA « pas activée »
         if (err.status === 429 || err.status >= 500) { lastErr = 'busy'; continue; }
