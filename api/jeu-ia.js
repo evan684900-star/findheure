@@ -1,15 +1,18 @@
 // findheure · création d'un jeu par l'IA (fonction serveur Vercel)
 // Le site est statique ; ce fichier est le seul code qui tourne sur le serveur. Il garde la clé secrète
-// (variable d'environnement ANTHROPIC_API_KEY, réglée dans Vercel) et demande à Claude de remplir UN des deux outils :
+// (variable d'environnement GEMINI_API_KEY, réglée dans Vercel : offre gratuite de l'API Gemini de Google)
+// et demande à Gemini de remplir UN des outils ci-dessous :
 //   - create_hangman : une liste de mots pour le pendu
 //   - create_match   : des paires emoji → mot pour « Associe les emojis »
+//   - cannot_create  : un refus poli si le thème ne convient pas à une classe
 // Tout ce que l'IA renvoie est revérifié ici (lettres, longueurs, nombre de paires) avant d'arriver dans la page.
 // Limites : 5 créations par jour et par navigateur (comptées dans la page) + une limite large par adresse IP ici,
-// contre les abus (une école entière partage souvent la même adresse). Le vrai garde-fou reste le plafond de dépense
-// mensuel réglé dans la console Anthropic.
-import Anthropic from '@anthropic-ai/sdk';
+// contre les abus (une école entière partage souvent la même adresse). L'offre gratuite de Google a aussi ses propres quotas.
+// Offre gratuite : Google peut se servir des demandes pour améliorer ses produits (ici, seulement des thèmes de jeux).
+import { GoogleGenAI, FunctionCallingConfigMode, ApiError } from '@google/genai';
 
-const MODEL = 'claude-haiku-5-5';
+// modèle principal, puis un plus léger si le quota gratuit du premier est épuisé
+const MODELS = ['gemini-3.8-flash', 'gemini-3.5-flash-lite'];
 const IP_PER_DAY = 40;
 const LANG_NAME = { fr: 'French', en: 'English', es: 'Spanish' };
 
@@ -17,8 +20,7 @@ const TOOLS = [
   {
     name: 'create_hangman',
     description: 'Create a hangman game: a list of words (or very short phrases) for the class to guess one by one, each with a short hint.',
-    strict: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: 'object',
       properties: {
         title: { type: 'string', description: 'Short title of the word list, in the interface language (max 40 characters).' },
@@ -43,8 +45,7 @@ const TOOLS = [
   {
     name: 'create_match',
     description: 'Create a matching game: pairs of one emoji and the word it shows. The class drags each emoji onto its word.',
-    strict: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: 'object',
       properties: {
         title: { type: 'string', description: 'Short title of the game, in the interface language (max 40 characters).' },
@@ -69,8 +70,7 @@ const TOOLS = [
   {
     name: 'cannot_create',
     description: 'Use only when the request is not suitable for a school classroom, or impossible to turn into this game.',
-    strict: true,
-    input_schema: {
+    parametersJsonSchema: {
       type: 'object',
       properties: { reason: { type: 'string', description: 'One kind, short sentence in the interface language explaining why, with an idea of what to ask instead.' } },
       required: ['reason'],
@@ -141,7 +141,7 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'method' });
   const origin = req.headers.origin;
   if (origin && !ORIGIN_OK.test(origin)) return res.status(403).json({ error: 'origin' });
-  if (!process.env.ANTHROPIC_API_KEY) return res.status(503).json({ error: 'no_key' });
+  if (!process.env.GEMINI_API_KEY) return res.status(503).json({ error: 'no_key' });
   let body = req.body;
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch (e) { body = {}; } }
   body = body || {};
@@ -151,28 +151,36 @@ export default async function handler(req, res) {
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'inconnue';
   if (tooMany(ip)) return res.status(429).json({ error: 'limit' });
 
-  const client = new Anthropic({ maxRetries: 1, timeout: 45000 });
-  try {
-    const msg = await client.messages.create({
-      model: MODEL,
-      max_tokens: 4000,
-      system: system(kind, ui, wl),
-      tools: TOOLS,
-      // le jeu est déjà choisi : on force son outil (ou le refus) ; sinon l'IA prend l'un des trois
-      tool_choice: { type: 'any' },
-      messages: [{ role: 'user', content: prompt }],
-    });
-    if (msg.stop_reason === 'refusal') return res.status(200).json({ error: 'refused', reason: '' });
-    const call = msg.content.find(b => b.type === 'tool_use');
-    if (!call) return res.status(502).json({ error: 'empty' });
-    if (kind !== 'auto' && call.name !== 'cannot_create' && call.name !== (kind === 'hang' ? 'create_hangman' : 'create_match')) return res.status(502).json({ error: 'empty' });
-    const out = clean(call.name, call.input || {});
-    return res.status(out.error ? (out.error === 'refused' ? 200 : 502) : 200).json(out);
-  } catch (err) {
-    if (err instanceof Anthropic.RateLimitError) return res.status(429).json({ error: 'busy' });
-    if (err instanceof Anthropic.AuthenticationError) return res.status(503).json({ error: 'no_key' });
-    if (err instanceof Anthropic.APIConnectionError) return res.status(504).json({ error: 'network' });
-    if (err instanceof Anthropic.APIError) return res.status(502).json({ error: 'api', status: err.status });
-    return res.status(500).json({ error: 'server' });
+  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const allowed = kind === 'hang' ? ['create_hangman', 'cannot_create'] : kind === 'match' ? ['create_match', 'cannot_create'] : TOOLS.map(t => t.name);
+  let lastErr = null;
+  for (const model of MODELS) {
+    try {
+      const resp = await ai.models.generateContent({
+        model,
+        contents: prompt,
+        config: {
+          systemInstruction: system(kind, ui, wl),
+          maxOutputTokens: 8000,
+          tools: [{ functionDeclarations: TOOLS }],
+          // l'IA doit appeler un outil (celui du jeu choisi, ou le refus) : jamais de texte libre
+          toolConfig: { functionCallingConfig: { mode: FunctionCallingConfigMode.ANY, allowedFunctionNames: allowed } },
+        },
+      });
+      const call = (resp.functionCalls || []).find(c => allowed.includes(c.name));
+      if (!call) { lastErr = 'empty'; continue; }
+      const out = clean(call.name, call.args || {});
+      if (out.error === 'empty') { lastErr = 'empty'; continue; }
+      return res.status(200).json(out);
+    } catch (err) {
+      if (err instanceof ApiError) {
+        // 429 : quota gratuit de ce modèle épuisé, on essaie le suivant ; clé refusée : IA « pas activée »
+        if (err.status === 429 || err.status >= 500) { lastErr = 'busy'; continue; }
+        if (err.status === 400 && /api key/i.test(err.message) || err.status === 401 || err.status === 403) return res.status(503).json({ error: 'no_key' });
+        lastErr = 'api'; continue;
+      }
+      lastErr = 'network';
+    }
   }
+  return res.status(lastErr === 'busy' ? 429 : 502).json({ error: lastErr || 'empty' });
 }
