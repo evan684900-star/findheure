@@ -574,6 +574,10 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.19.0', d: '2026-11-16', items: [
+    'Créer avec l’IA : le jeu s’ouvre d’abord pour être vérifié et corrigé, puis on joue.|Create with AI: the game opens first so you can check and fix it, then play.',
+    'Créer avec l’IA : mots mieux choisis (accents, nombre demandé, dans le thème) et réponse plus rapide.|Create with AI: better words (accents, requested number, on topic) and faster answers.',
+    'Pendu : les listes de mots se modifient (crayon).|Hangman: word lists can be edited (pencil).'] },
   { v: '2.18.1', d: '2026-11-16', items: ['Créer avec l’IA : fonctionne avec l’offre gratuite de Gemini (Google).|Create with AI: now runs on Gemini’s free tier (Google).'] },
   { v: '2.18.0', d: '2026-11-16', items: [
     'Jeux : « Créer avec l’IA » fait un pendu ou un jeu d’association sur le thème de ton choix (5 par jour).|Games: “Create with AI” makes a hangman or matching game on any topic (5 per day).',
@@ -910,6 +914,10 @@ const T_RAW = {
   gAiLimit: "Tu as utilisé tes 5 créations d’aujourd’hui. Reviens demain !|You’ve used your 5 creations for today. Come back tomorrow!|Ya usaste tus 5 creaciones de hoy. ¡Vuelve mañana!|Du hast deine 5 Erstellungen für heute verbraucht. Bis morgen!", gAiOff: "L’IA n’est pas encore activée sur ce site.|AI isn’t switched on for this site yet.|La IA aún no está activada en este sitio.|Die KI ist auf dieser Seite noch nicht aktiviert.",
   gAiNet: "Pas de connexion à Internet : réessaie dans un moment.|No Internet connection: try again in a moment.|Sin conexión a Internet: inténtalo en un momento.|Keine Internetverbindung: versuche es gleich noch einmal.", gAiBusyErr: "L’IA est très demandée : réessaie dans une minute.|The AI is busy: try again in a minute.|La IA está ocupada: inténtalo en un minuto.|Die KI ist ausgelastet: versuche es in einer Minute.",
   gAiRefused: "L’IA n’a pas pu faire ce jeu : essaie un autre thème.|The AI couldn’t make this game: try another topic.|La IA no pudo hacer este juego: prueba otro tema.|Die KI konnte dieses Spiel nicht erstellen: versuche ein anderes Thema.", gAiFail: "Ça n’a pas marché : réessaie, en reformulant un peu.|That didn’t work: try again, rephrasing a little.|No funcionó: inténtalo de nuevo, reformulando un poco.|Das hat nicht geklappt: versuche es noch einmal, etwas anders formuliert.",
+  gAiCheckT: "Vérifie le jeu|Check the game|Revisa el juego|Spiel prüfen", gAiCheck: "Créé par l’IA : vérifie, corrige ou supprime ce qui ne va pas, puis joue.|Made by AI: check it, fix or remove anything wrong, then play.|Hecho por la IA: revísalo, corrige o quita lo que no esté bien y juega.|Von der KI erstellt: prüfe, korrigiere oder lösche Falsches, dann spiele.",
+  gHintPh: "Indice (facultatif)|Hint (optional)|Pista (opcional)|Hinweis (optional)", gAddWord: "Ajouter un mot|Add a word|Añadir una palabra|Wort hinzufügen",
+  gHedHelp: "Un mot par ligne (lettres, espaces, tirets), 20 au plus. L’indice s’affiche pendant la partie.|One word per line (letters, spaces, hyphens), up to 20. The hint shows during the game.|Una palabra por línea (letras, espacios, guiones), hasta 20. La pista aparece durante la partida.|Ein Wort pro Zeile (Buchstaben, Leerzeichen, Bindestriche), bis zu 20. Der Hinweis erscheint im Spiel.",
+  gHedErr: "Donne un titre, et corrige les mots en rouge (au moins 3 lettres, sans chiffres ni symboles).|Give a title and fix the words in red (at least 3 letters, no numbers or symbols).|Pon un título y corrige las palabras en rojo (al menos 3 letras, sin números ni símbolos).|Gib einen Titel ein und korrigiere die roten Wörter (mindestens 3 Buchstaben, ohne Zahlen oder Zeichen).",
   gLists: "Mes listes de mots|My word lists|Mis listas de palabras|Meine Wortlisten", gNextWord: "Mot suivant|Next word|Palabra siguiente|Nächstes Wort",
   gDone: "Toutes les paires trouvées !|All pairs matched!|¡Todas las parejas encontradas!|Alle Paare gefunden!", gTime: "Temps|Time|Tiempo|Zeit", gTap: "Glisse un emoji sur son nom (ou clique l’emoji, puis le nom).|Drag an emoji onto its name (or click the emoji, then the name).|Arrastra un emoji a su nombre (o haz clic en el emoji y luego en el nombre).|Ziehe ein Emoji auf seinen Namen (oder klicke erst das Emoji, dann den Namen).",
   mindCleared: "Carte mentale effacée|Mind map cleared|Mapa mental borrado|Mindmap gelöscht", mindReset: "Réinitialiser|Reset|Restablecer|Zurücksetzen", mindBlank: "Page blanche|Blank page|Página en blanco|Leere Seite", mindSets: "Mes cartes|My maps|Mis mapas|Meine Karten", mindNone: "Aucune carte sauvegardée pour l’instant.|No saved maps yet.|Aún no hay mapas guardados.|Noch keine gespeicherten Karten.", mindAll: "Tout voir|See all|Ver todo|Alle anzeigen", mindAllT: "Mes cartes mentales|My mind maps|Mis mapas mentales|Meine Mindmaps", mindSave: "Sauvegarder|Save|Guardar|Speichern", mindSavedB: "Sauvegardée|Saved|Guardado|Gespeichert", mindSaved: "Carte sauvegardée|Map saved|Mapa guardado|Karte gespeichert", mindOpened: "Carte ouverte|Map opened|Mapa abierto|Karte geöffnet", mindDeleted: "Carte supprimée|Map deleted|Mapa eliminado|Karte gelöscht", mindDelSet: "Supprimer la carte|Delete map|Eliminar mapa|Karte löschen", mindUntitled: "Sans titre|Untitled|Sin título|Ohne Titel", mindIdea: "idée|idea|idea|Idee", mindIdeas: "idées|ideas|ideas|Ideen", mindDel: "Supprimer la bulle|Delete bubble|Eliminar burbuja|Blase löschen", mindPlace: "Remettre à sa place|Put back in place|Volver a su sitio|Zurück an ihren Platz", mindTidy: "Ranger les bulles|Tidy up bubbles|Ordenar las burbujas|Blasen ordnen",
@@ -3046,9 +3054,21 @@ class Component extends DCLogic {
     const now = this.gameNow(); if (now.phase !== 'ai' || now.kind !== kind) return; // on a quitté l'écran entre-temps
     if (err) { this.gSet({ aiBusy: false, aiErr: err, aiReason: (r && r.reason) || '' }); return; }
     this.iaUse();
-    const id = (kind === 'match' ? 'g' : 'h') + Date.now().toString(36);
-    if (r.kind === 'match') { this.gMineSet([{ id, name: r.title, items: r.pairs.map(x => ({ e: x.e, w: x.w })), at: Date.now(), ai: true }, ...this.gMineGet()]); this.gSet({ aiBusy: false }); this.mStart({ custom: id }); }
-    else { this.hListsSet([{ id, title: r.title, words: r.words, at: Date.now() }, ...this.hLists()].slice(0, 30)); this.gSet({ aiBusy: false }); this.hList(id, 0); }
+    // l'IA a fini : le jeu s'ouvre dans l'éditeur pour être vérifié (rien n'est enregistré tant qu'on n'a pas validé)
+    if (r.kind === 'match') this.gSet({ aiBusy: false, phase: 'edit', ed: { id: null, name: r.title, rows: r.pairs.map(x => ({ e: x.e, img: null, w: x.w })), err: false, ai: true, fresh: true } });
+    else this.gSet({ aiBusy: false, phase: 'hedit', hed: { id: null, title: r.title, rows: r.words.map(x => ({ w: x.w, h: x.h || '' })), err: false, ai: true, fresh: true } });
+  };
+  // ---------- éditeur d'une liste de mots du pendu ----------
+  hedOpen = (id) => { const x = this.hLists().find(q => q.id === id); if (!x) return; this.gSet({ kind: 'hang', phase: 'hedit', hed: { id: x.id, title: x.title, rows: x.words.map(w => ({ w: w.w, h: w.h || '' })), err: false, ai: true, fresh: false } }); };
+  hedSet = (fn) => this.gSet(g => ({ hed: fn(g.hed) }));
+  hedRow = (i, patch) => this.hedSet(h => ({ ...h, err: false, rows: h.rows.map((r, k) => (k === i ? { ...r, ...patch } : r)) }));
+  hedSave = (play) => {
+    const h = this.gameNow().hed; if (!h) return;
+    const words = h.rows.map(r => ({ w: r.w.replace(/\s+/g, ' ').trim().replace(/œ/g, 'oe').replace(/Œ/g, 'OE').replace(/æ/g, 'ae'), h: r.h.trim().slice(0, 80) })).filter(r => r.w);
+    if (!h.title.trim() || !words.length || words.some(r => !this.hOk(r.w))) { this.hedSet(x => ({ ...x, err: true })); return; }
+    const id = h.id || 'h' + Date.now().toString(36);
+    this.hListsSet([{ id, title: h.title.trim().slice(0, 40), words, at: Date.now() }, ...this.hLists().filter(x => x.id !== id)].slice(0, 30));
+    if (play) this.hList(id, 0); else this.gSet({ phase: 'setup', hed: null });
   };
   // ---------- associe les emojis ----------
   gMine = null;
@@ -3126,7 +3146,7 @@ class Component extends DCLogic {
     const gm = id && this.gMineGet().find(x => x.id === id);
     const rows = gm ? gm.items.map(x => ({ e: x.e || '', img: x.img || null, w: x.w })) : [];
     while (rows.length < 3) rows.push({ e: '', img: null, w: '' });
-    this.gSet({ kind: 'match', phase: 'edit', ed: { id: gm ? gm.id : null, name: gm ? gm.name : '', rows, err: false } });
+    this.gSet({ kind: 'match', phase: 'edit', ed: { id: gm ? gm.id : null, name: gm ? gm.name : '', rows, err: false, ai: !!(gm && gm.ai) } });
   };
   edSet = (fn) => this.gSet(g => ({ ed: fn(g.ed) }));
   edRow = (i, patch) => this.edSet(ed => ({ ...ed, err: false, rows: ed.rows.map((r, k) => (k === i ? { ...r, ...patch } : r)) }));
@@ -3153,7 +3173,7 @@ class Component extends DCLogic {
     const items = ed.rows.filter(r => (r.img || r.e.trim()) && r.w.trim()).map(r => (r.img ? { img: r.img, w: r.w.trim().slice(0, 40) } : { e: r.e.trim().slice(0, 16), w: r.w.trim().slice(0, 40) }));
     if (items.length < 3 || !ed.name.trim()) { this.edSet(x => ({ ...x, err: true })); return; }
     const id = ed.id || 'g' + Date.now().toString(36), list = this.gMineGet().filter(x => x.id !== id);
-    this.gMineSet([{ id, name: ed.name.trim().slice(0, 40), items, at: Date.now() }, ...list]);
+    this.gMineSet([{ id, name: ed.name.trim().slice(0, 40), items, at: Date.now(), ...(ed.ai ? { ai: true } : {}) }, ...list]);
     if (play) this.mStart({ custom: id }); else this.gSet({ phase: 'setup', ed: null });
   };
   gMineDel = (id) => { const before = this.gMineGet(); this.gMineSet(before.filter(x => x.id !== id)); this.toast(this.L().gDeleted, () => { this.gMineSet(before); this.setState({ toast: null }); }); };
@@ -3213,6 +3233,28 @@ class Component extends DCLogic {
       ...GDATA().cats.map((c, i) => E('button', { key: c.id, type: 'button', className: 'fh-btn fh-g-cat', 'data-cat': c.id, onClick: () => onPick(c.id), style: { display: 'flex', alignItems: 'center', gap: 10, padding: '11px 12px', borderRadius: 14, border: 0, cursor: 'pointer', color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}`, font: ui(550, 13.5), textAlign: 'left', animation: `fh-row .3s ease ${Math.min(i, 30) * 12}ms both` } }, E('span', { style: { fontSize: 24, lineHeight: 1, flexShrink: 0 } }, c.e), E('span', { style: { minWidth: 0 } }, c.name[lang]))));
     const kids = [];
 
+    // ==================== VÉRIFIER UNE LISTE DE MOTS DU PENDU ====================
+    if (g.phase === 'hedit') {
+      const h = g.hed || { rows: [], title: '' };
+      const inp = { height: 42, padding: '0 14px', borderRadius: 12, border: 0, outline: 0, font: ui(500, 15), color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}`, boxSizing: 'border-box' };
+      return wrap([head('✨', L.gAiCheckT, null, () => this.gSet({ phase: 'setup', hed: null })),
+        h.fresh ? E('div', { key: 'note', 'data-g': 'ainote', style: { display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', marginBottom: 14, borderRadius: 14, background: hexA(acc, dk ? 0.16 : 0.12), boxShadow: `inset 0 0 0 1px ${hexA(acc, 0.4)}`, font: ui(500, 14), color: ink } }, E('span', { style: { fontSize: 20 } }, '✨'), L.gAiCheck) : null,
+        E('input', { key: 'title', type: 'text', value: h.title, placeholder: L.gName, maxLength: 40, 'data-g': 'htitle', onChange: (e) => this.hedSet(x => ({ ...x, title: e.target.value, err: false })), style: { ...inp, width: '100%', height: 48, font: titleF(22), marginBottom: 14 } }),
+        E('div', { key: 'rows', style: { display: 'flex', flexDirection: 'column', gap: 8 } }, ...h.rows.map((r, i) => {
+          const bad = h.err && r.w.trim() && !this.hOk(r.w.trim());
+          return E('div', { key: i, 'data-hrow': i, style: { display: 'flex', alignItems: 'center', gap: 8 } },
+            E('span', { style: { width: 22, flexShrink: 0, textAlign: 'right', font: ui(600, 13), color: ink3 } }, i + 1),
+            E('input', { type: 'text', value: r.w, placeholder: L.gWord, maxLength: 30, 'data-g': 'hw' + i, onChange: (e) => this.hedRow(i, { w: e.target.value }), style: { ...inp, width: '34%', minWidth: 120, font: titleF(17), boxShadow: `inset 0 0 0 ${bad ? 2 : 1}px ${bad ? '#e5484d' : line}` } }),
+            E('input', { type: 'text', value: r.h, placeholder: L.gHintPh, maxLength: 80, onChange: (e) => this.hedRow(i, { h: e.target.value }), style: { ...inp, flex: 1, minWidth: 0 } }),
+            btn('del' + i, '', () => this.hedSet(x => ({ ...x, rows: x.rows.filter((q, k) => k !== i) })), { icon: 'delete', h: 42, title: L.gDelete, disabled: h.rows.length <= 1 }));
+        })),
+        E('div', { key: 'add', style: { marginTop: 12 } }, btn('addRow', L.gAddWord, () => this.hedSet(x => (x.rows.length >= 20 ? x : { ...x, rows: [...x.rows, { w: '', h: '' }] })), { icon: 'add', h: 40, fs: 14, disabled: h.rows.length >= 20 })),
+        E('div', { key: 'foot', style: { display: 'flex', alignItems: 'center', gap: 10, marginTop: 20, flexWrap: 'wrap' } },
+          E('div', { style: { flex: 1, minWidth: 200, font: ui(500, 13.5), color: h.err ? '#e5484d' : ink3 } }, h.err ? L.gHedErr : L.gHedHelp),
+          btn('save', L.gSave, () => this.hedSave(false), { icon: 'save' }),
+          btn('saveplay', L.gSavePlay, () => this.hedSave(true), { icon: 'play_arrow', primary: true, dg: 'hsaveplay' }))], { w: 820, top: true });
+    }
+
     // ==================== CRÉER AVEC L'IA (les deux jeux) ====================
     if (g.phase === 'ai') {
       const left = this.iaLeft(), busy = !!g.aiBusy, ex = g.kind === 'hang' ? L.gAiExHang : L.gAiExMatch;
@@ -3240,6 +3282,7 @@ class Component extends DCLogic {
             E('div', { style: { font: ui(650, 13), color: ink2, textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 10 } }, L.gLists),
             E('div', { style: { display: 'flex', flexWrap: 'wrap', gap: 8 } }, ...this.hLists().map(x => E('div', { key: x.id, style: { display: 'flex', alignItems: 'center', gap: 2, padding: '4px 4px 4px 12px', borderRadius: 999, background: field, boxShadow: `inset 0 0 0 1px ${line}` } },
               E('button', { type: 'button', className: 'fh-btn', 'data-list': x.id, onClick: () => this.hList(x.id, 0), style: { border: 0, background: 'transparent', color: ink, cursor: 'pointer', font: ui(600, 14), padding: '4px 4px' } }, `✨ ${x.title}`, E('span', { style: { color: ink3, fontWeight: 500, marginLeft: 6 } }, x.words.length)),
+              btn('e' + x.id, '', () => this.hedOpen(x.id), { icon: 'edit', h: 28, title: L.gEdit }),
               btn('d' + x.id, '', () => this.hListDel(x.id), { icon: 'close', h: 28, title: L.gDelete }))))) : null], { w: 900 });
       }
       if (g.phase === 'cats') return wrap([head('🎲', L.gPickCat, null, () => this.gSet({ phase: 'setup' })), catGrid(this.hAuto)], { top: true });
@@ -3311,7 +3354,9 @@ class Component extends DCLogic {
     if (g.phase === 'edit') {
       const ed = g.ed || { rows: [], name: '' };
       const inp = { height: 42, padding: '0 14px', borderRadius: 12, border: 0, outline: 0, font: ui(500, 15), color: ink, background: field, boxShadow: `inset 0 0 0 1px ${line}`, boxSizing: 'border-box' };
-      return wrap([head('✏️', L.gCreate, null, () => this.gSet({ phase: 'setup', ed: null })),
+      const aiNote = (key) => E('div', { key, 'data-g': 'ainote', style: { display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', marginBottom: 14, borderRadius: 14, background: hexA(acc, dk ? 0.16 : 0.12), boxShadow: `inset 0 0 0 1px ${hexA(acc, 0.4)}`, font: ui(500, 14), color: ink } }, E('span', { style: { fontSize: 20 } }, '✨'), L.gAiCheck);
+      return wrap([head(ed.ai ? '✨' : '✏️', ed.ai ? L.gAiCheckT : L.gCreate, null, () => this.gSet({ phase: 'setup', ed: null })),
+        ed.fresh ? aiNote('note') : null,
         E('input', { key: 'name', type: 'text', value: ed.name, placeholder: L.gName, maxLength: 40, autoFocus: !ed.name, 'data-g': 'name', onChange: (e) => this.edSet(x => ({ ...x, name: e.target.value, err: false })), style: { ...inp, width: '100%', height: 48, font: titleF(22), marginBottom: 14 } }),
         E('div', { key: 'rows', style: { display: 'flex', flexDirection: 'column', gap: 8 } }, ...ed.rows.map((r, i) => E('div', { key: i, 'data-row': i, style: { display: 'flex', alignItems: 'center', gap: 8 } },
           r.img ? E('div', { style: { position: 'relative', width: 56, height: 42, flexShrink: 0 } }, E('img', { src: r.img, alt: '', style: { width: 56, height: 42, objectFit: 'cover', borderRadius: 10 } }),
