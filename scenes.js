@@ -245,6 +245,9 @@
     alpine: { cab: 'stop', sm: 'wiggle:snow', ski: 'hop' },
     polar: { bear: 'hop', ow: 'zoom' },
     skating: { sk: 'hop' },
+    zen: { koi: 'zoom', lan: 'wiggle' },
+    farm: { cow: 'hop:hearts', sheep: 'hop', hen: 'zoom', tractor: 'stop' },
+    kites: { kite: 'spin', mill: 'spin', bd: 'zoom' },
   };
   const tapOf = (id, k) => { const m = TAPMAP[id]; return m ? m[String(k).replace(/\d+$/, '')] : undefined; };
 
@@ -2144,6 +2147,127 @@
         ...snowfall(t, 'sn', { far: 24, near: 8, crystals: 3 }),
       ];
     },
+  });
+
+  Object.assign(SPR2, {
+    koi: (c) => svg('0 0 90 40', path('M6 20Q30 2 62 14Q74 18 86 8Q82 20 86 32Q74 22 62 26Q30 38 6 20Z', c) + circ(18, 18, 2.4, '#1b1b1b') + path('M30 12Q40 16 48 12', 'none', ' stroke="#ffffff" stroke-width="3" opacity=".5"') + ell(44, 20, 6, 4, '#ffffff', ' opacity=".55"')),
+    lantern: () => svg('0 0 50 110', rect(22, 0, 6, 10, '#6b6b70') + path('M6 12L44 12L36 26L14 26Z', '#8a8a90') + rect(14, 26, 22, 26, '#ffe3a0') + rect(14, 26, 22, 26, 'none', ' stroke="#8a8a90" stroke-width="3"') + path('M4 54L46 54L38 64L12 64Z', '#8a8a90') + rect(19, 64, 12, 34, '#8a8a90') + rect(10, 98, 30, 10, '#77777c')),
+    cow: () => svg('0 0 140 100', ell(66, 50, 46, 26, '#ffffff') + ell(52, 44, 14, 10, '#2b2b2b') + ell(84, 58, 12, 9, '#2b2b2b') + ell(118, 40, 18, 15, '#ffffff') + ell(128, 48, 10, 8, '#f2b0b8') + circ(114, 34, 2.6, '#1b1b1b')
+      + path('M106 26L100 16L110 22Z', '#e8d9b0') + path('M126 24L132 14L134 26Z', '#e8d9b0') + rect(32, 70, 10, 26, '#ffffff') + rect(48, 72, 10, 24, '#eeeeee') + rect(78, 72, 10, 24, '#ffffff') + rect(94, 70, 10, 26, '#eeeeee') + line('M20 46Q8 56 12 70', '#ffffff', 4) + ell(70, 76, 10, 5, '#f2b0b8')),
+    sheep: () => svg('0 0 100 76', [[30, 30], [46, 24], [62, 28], [72, 40], [60, 50], [40, 52], [24, 44], [48, 38]].map(([x, y]) => circ(x, y, 15, '#f7f4ec')).join('') + ell(86, 36, 12, 10, '#3b3b40') + circ(90, 33, 2, '#ffffff') + rect(34, 56, 7, 18, '#3b3b40') + rect(58, 56, 7, 18, '#3b3b40')),
+    hen: () => svg('0 0 60 56', ell(30, 32, 20, 16, '#f2e4c8') + circ(46, 18, 9, '#f2e4c8') + path('M42 8Q46 2 50 8Q54 2 56 10Z', '#e63946') + path('M54 18L62 20L54 23Z', '#f2b84a') + circ(48, 16, 1.8, '#1b1b1b') + path('M10 26Q2 18 8 12Q14 20 16 26Z', '#e8d4b0') + line('M26 46L24 54M34 46L36 54', '#f2b84a', 3)),
+    kite: (a, b) => svg('0 0 120 300', path('M60 0L104 60L60 140L16 60Z', a) + path('M60 0L104 60L60 60Z', b) + path('M60 60L16 60L60 140Z', b) + line('M60 0V140M16 60H104', '#ffffff', 2, ' opacity=".7"')
+      + path('M60 140Q40 170 62 196Q84 222 60 250Q40 270 58 296', 'none', ' stroke="#ffffff" stroke-width="2" opacity=".8"') + [180, 214, 248, 280].map((y, i) => path(`M${i % 2 ? 66 : 50} ${y}l8 -6l0 12z`, i % 2 ? a : b)).join('')),
+  });
+
+  // ---------------- PRINTEMPS 2 : jardin japonais (cerisiers, pont rouge, carpes, lanterne) ----------------
+  def('zen', {
+    base: (o) => o.bg1,
+    layers: (t, o) => {
+      const pinkC = ['#ffb7d5', '#ff9cc5', '#ffd1e3', '#ffc2dc'];
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.6, o.bg1], [0.85, o.bg3]])),
+        ...movingSun(t, 'sun', 1280, 160, 240, (x, y, p) => glow(p + 'g', x, y, 240, '#ffd7c2', 0.65) + circ(x, y, 50, '#ffe9de')),
+        t.art('far', (p) => {
+          const r = t.r('fa');
+          let s = mountains(r, p + 'm', { y: 560, amp: 300, n: 5, valley: 0.6, fill: '#b8c4dc', shade: 'rgba(80,90,140,.2)', snow: '#ffffff', snowLine: 0.3, haze: '#f4e6ee', hazeA: 0.7 });
+          // pagode au loin
+          const px = 1350, pb = 600;
+          for (let k = 0; k < 4; k++) { const w = 90 - k * 16, y = pb - k * 36; s += rect(px - w * 0.35, y - 26, w * 0.7, 26, '#7a2a24') + path(`M${px - w / 2 - 10} ${y - 24}Q${px} ${y - 40} ${px + w / 2 + 10} ${y - 24}L${px + w / 2} ${y - 30}Q${px} ${y - 46} ${px - w / 2} ${y - 30}Z`, '#3a2a30'); }
+          s += line(`M${px} ${pb - 144}V${pb - 180}`, '#3a2a30', 4);
+          s += hill(r, { y: 640, amp: 50, n: 14 }, '#9bc48a');
+          return s;
+        }),
+        t.art('garden', (p) => {
+          const r = t.r('ga');
+          // étang
+          let s = `<defs>${lg(p + 'w', [[0, '#9fd6e8', 1], [1, '#5aa6c4', 1]])}</defs>` + path('M120 760Q400 700 800 712Q1200 700 1480 760Q1300 840 800 840Q300 840 120 760Z', `url(#${p}w)`);
+          for (let i = 0; i < 14; i++) s += ell(rr(r, 260, 1340), rr(r, 730, 820), rr(r, 30, 80), 2, '#ffffff', ' opacity=".35"');
+          // nénuphars
+          [[420, 790], [1180, 780], [980, 812], [560, 760]].forEach(([x, y]) => { s += ell(x, y, 26, 9, '#4f9a4a') + circ(x + 6, y - 4, 6, '#ffb7d5'); });
+          // pont rouge en arc
+          s += path('M560 760Q800 600 1040 760L1020 766Q800 626 580 766Z', '#d8402c') + path('M580 766Q800 640 1020 766', 'none', ' stroke="#a52a1c" stroke-width="5"');
+          for (let k = 0; k <= 10; k++) { const u = k / 10, x = 580 + 440 * u, y = 766 - 280 * u * (1 - u); s += line(`M${N(x)} ${N(y)}V${N(y - 28)}`, '#d8402c', 5); }
+          s += path('M570 738Q800 604 1030 738', 'none', ' stroke="#d8402c" stroke-width="6"');
+          // rochers, sable ratissé
+          s += path('M-20 905L-20 790Q200 770 320 800L360 905Z', '#e9dcc0') + path('M1260 905L1300 800Q1440 776 1620 790L1620 905Z', '#e9dcc0');
+          for (let k = 0; k < 6; k++) s += path(`M-20 ${812 + k * 15}Q150 ${798 + k * 15} 330 ${822 + k * 15}`, 'none', ' stroke="#d4c4a2" stroke-width="2"') + path(`M1290 ${822 + k * 15}Q1440 ${800 + k * 15} 1620 ${808 + k * 15}`, 'none', ' stroke="#d4c4a2" stroke-width="2"');
+          s += ell(220, 830, 60, 34, '#8a8a90') + ell(200, 818, 30, 14, '#a8a8ae') + ell(1430, 840, 70, 36, '#7a7a80');
+          // cerisiers en fleurs qui encadrent
+          s += leafy(r, 90, 905, 600, { trunk: '#4a2e2a', cols: pinkC, shadow: 'rgba(200,90,140,.3)', light: 'rgba(255,255,255,.35)', n: 28, dots: { n: 40, r: 4, c: ['#ffffff', '#ff7fb2'] } });
+          s += leafy(r, 1530, 905, 520, { trunk: '#4a2e2a', cols: pinkC, shadow: 'rgba(200,90,140,.3)', light: 'rgba(255,255,255,.35)', n: 24, dots: { n: 30, r: 4, c: ['#ffffff', '#ff7fb2'] } });
+          return s;
+        }),
+        t.el('lan', t.img(spr2('lantern'), { left: em(330), top: em(700), width: em(60), height: em(132) })),
+        t.still(`<image href="${spr2('lantern').slice(5, -2)}" x="330" y="700" width="60" height="132"/>`),
+        t.el('lglow', { position: 'absolute', left: em(300), top: em(700), width: em(120), height: em(90), background: 'radial-gradient(closest-side, rgba(255,220,140,.5), rgba(255,220,140,0))', '--o0': 0.5, animation: 'fhs-tw 4s ease-in-out infinite' }),
+        ...[[300, 790, 380, 18, '#f08a24', 0], [1100, 770, -360, 22, '#ffffff', -6], [700, 816, 300, 16, '#e63946', -10]].map(([x, y, dx, d, c, dl], i) => t.el('koi' + i, { position: 'absolute', left: em(x), top: em(y), width: em(70), height: em(30), '--x1': em(dx), animation: `fhs-move ${d}s ease-in-out ${dl}s infinite alternate` }, t.E('div', { style: { width: '100%', height: '100%', backgroundImage: spr2('koi', c), backgroundSize: '100% 100%', transform: dx < 0 ? 'scaleX(-1)' : undefined } }))),
+        ...drift(t, 'pt', t.n('pt', 16, (r) => ({ x: rr(r, 0, 1600), y: -40, w: rr(r, 14, 20), y1: 980, x1: rr(r, -200, 200), r1: rr(r, -400, 400), dur: rr(r, 12, 18), dl: -r() * 18, sw: rr(r, 3, 5), sr: 20, swd: 3, img: spr('petal', pick(r, pinkC)) }))),
+      ];
+    },
+  });
+
+  // ---------------- PRINTEMPS 3 : la ferme (vache, moutons, poules, grange, tracteur) ----------------
+  def('farm', {
+    base: (o) => o.bg1,
+    layers: (t, o) => [
+      t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.6, o.bg1], [0.85, o.bg3]])),
+      ...movingSun(t, 'sun', 260, 140, 260, (x, y, p) => glow(p + 'g', x, y, 260, '#fff4b8', 0.75) + circ(x, y, 50, '#fff8d6')),
+      ...clouds(t, 'cl', [{ x: -260, y: 90, k: 1.1, dx: 2000, dur: 120, dl: -30, c: '#ffffff', s: '#dcefff' }, { x: -260, y: 200, k: 0.7, dx: 2000, dur: 90, dl: -70, c: '#ffffff', s: '#dcefff' }]),
+      t.still(cloud(700, 100, 1.1, '#ffffff', '#dcefff') + cloud(1200, 200, 0.7, '#ffffff', '#dcefff')),
+      t.art('land', (p) => {
+        const r = t.r('la');
+        let s = hill(r, { y: 600, amp: 70, n: 12 }, '#a8d98e');
+        // champs en bandes
+        for (let k = 0; k < 5; k++) s += path(`M${-20 + k * 120} 640L${300 + k * 160} 590L${380 + k * 160} 590L${100 + k * 120} 640Z`, k % 2 ? '#c9e08a' : '#e6d27a', ' opacity=".8"');
+        // grande grange rouge
+        s += rect(1180, 500, 220, 150, '#c8321e') + path('M1160 506L1290 420L1420 506Z', '#7a2414') + rect(1255, 560, 70, 90, '#f3e3c3') + line('M1255 560L1325 650M1325 560L1255 650', '#c8321e', 6) + rect(1270, 470, 40, 28, '#f3e3c3');
+        s += rect(1420, 450, 50, 200, '#d9d2c2') + path('M1420 452Q1445 420 1470 452Z', '#9a958a');
+        s += hill(r, { y: 680, amp: 40, n: 14 }, '#8fcf6e');
+        // barrière
+        for (let x = -10; x < 1620; x += 60) s += rect(x, 700, 9, 56, '#f3efe6');
+        s += line('M-20 716H1620M-20 738H1620', '#f3efe6', 7);
+        s += path('M-20 905L-20 760Q400 740 800 760T1620 750L1620 905Z', '#79c564');
+        s += grass(r, 240, { x0: -10, x1: 1610, y0: 770, y1: 900, h: [10, 26], c: ['#4f9e3e', '#5fb04c', '#3f8f35'], w: 2 });
+        for (let i = 0; i < 50; i++) { const x = rr(r, -10, 1610), y = rr(r, 790, 900); s += flower(x, y, rr(r, 0.7, 1), pick(r, ['#ffffff', '#fff6d6', '#ffd1e3']), '#ffcc33', 6); }
+        return s;
+      }),
+      t.el('cow', t.img(spr2('cow'), { left: em(200), top: em(740), width: em(150), height: em(108), transformOrigin: '50% 100%', '--a': '1.5deg', animation: 'fhs-rock 7s ease-in-out infinite' })),
+      t.still(`<image href="${spr2('cow').slice(5, -2)}" x="200" y="740" width="150" height="108"/>`),
+      ...[[1040, 780, 0], [1150, 800, -1.4], [960, 812, -2.7]].map(([x, y, dl], i) => t.el('sheep' + i, t.img(spr2('sheep'), { left: em(x), top: em(y), width: em(90), height: em(68), '--hy': em(-14), animation: `fhs-hop 7s ease-in-out ${dl}s infinite` }))),
+      t.still(`<image href="${spr2('sheep').slice(5, -2)}" x="1040" y="780" width="90" height="68"/>`),
+      ...[[460, 840, 160, 7, 0], [560, 860, -140, 9, -3], [1420, 830, -150, 8, -5]].map(([x, y, dx, d, dl], i) => t.el('hen' + i, { position: 'absolute', left: em(x), top: em(y), width: em(46), height: em(43), '--x1': em(dx), animation: `fhs-move ${d}s ease-in-out ${dl}s infinite alternate` }, t.E('div', { style: { width: '100%', height: '100%', backgroundImage: spr2('hen'), backgroundSize: '100% 100%', transform: dx < 0 ? 'scaleX(-1)' : undefined } }))),
+      t.el('tractor', t.img(spr2('tractor'), { left: em(-240), top: em(612), width: em(130), height: em(80), '--x1': em(2000), animation: 'fhs-move 55s linear -20s infinite' })),
+      butterflies(t, 'bf', 3, [300, 300, 1300, 650], [['#ff9f43', '#ffd166'], ['#7ec8ff', '#c9a7ff'], ['#ff6fb5', '#ffd1e3']]),
+    ],
+  });
+
+  // ---------------- PRINTEMPS 4 : prairie aux cerfs-volants (collines, coquelicots, moulin) ----------------
+  def('kites', {
+    base: (o) => o.bg1,
+    layers: (t, o) => [
+      t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.6, o.bg1], [0.88, o.bg3]])),
+      ...movingSun(t, 'sun', 1320, 150, 260, (x, y, p) => glow(p + 'g', x, y, 260, '#fff4b8', 0.7) + circ(x, y, 48, '#fff8d6')),
+      ...clouds(t, 'cl', [{ x: -260, y: 120, k: 1, dx: 2000, dur: 100, dl: -20, c: '#ffffff', s: '#dcefff' }, { x: -260, y: 260, k: 0.6, dx: 2000, dur: 80, dl: -50, c: '#ffffff', s: '#dcefff' }, { x: -260, y: 40, k: 0.8, dx: 2000, dur: 130, dl: -90, c: '#ffffff', s: '#dcefff' }]),
+      t.still(cloud(300, 140, 1, '#ffffff', '#dcefff') + cloud(1000, 260, 0.6, '#ffffff', '#dcefff')),
+      t.art('hills', (p) => {
+        const r = t.r('hi');
+        let s = hill(r, { y: 640, amp: 90, n: 10 }, '#b6e09a') + hill(r, { y: 700, amp: 70, n: 10 }, '#97d880');
+        // moulin à vent au loin (ailes animées à part)
+        s += path('M1385 640L1395 520L1425 520L1435 640Z', '#f3efe6') + path('M1386 524L1410 494L1434 524Z', '#c8603a');
+        s += hill(r, { y: 770, amp: 50, n: 12 }, '#7cc46a') + hill(r, { y: 840, amp: 30, n: 10 }, '#64b356');
+        for (let i = 0; i < 160; i++) { const x = rr(r, -10, 1610), y = rr(r, 760, 900); s += circ(x, y, rr(r, 3, 6), pick(r, ['#e63946', '#ff5a4a', '#d62d20'])) + circ(x, y, 1.3, '#1b1b1b'); }
+        s += grass(r, 180, { x0: -10, x1: 1610, y0: 820, y1: 905, h: [14, 30], c: ['#3f8f35', '#4e9e3e', '#6cbf57'], w: 2 });
+        return s;
+      }),
+      t.el('mill', t.img(cached('kmill', () => svg('-60 -60 120 120', [0, 90, 180, 270].map(a => `<g transform="rotate(${a})">${rect(-5, -58, 10, 52, '#f3efe6')}${rect(-12, -56, 7, 46, '#d9d2c2')}</g>`).join('') + circ(0, 0, 6, '#8a5a34'))), { left: em(1350), top: em(450), width: em(120), height: em(120), animation: 'fhs-spin 9s linear infinite' })),
+      // cerfs-volants qui tanguent au vent
+      ...[[180, 120, '#e63946', '#ffd166', 4.2, '8deg'], [560, 70, '#3a7bd5', '#7ec8ff', 5, '-6deg'], [1050, 130, '#9d6bff', '#ff8ad8', 4.6, '7deg'], [1500, 230, '#2f9e44', '#ffd166', 3.8, '-9deg']].map(([x, y, a, b, d, ang], i) =>
+        t.el('kite' + i, t.img(spr2('kite', a, b), { left: em(x - 40), top: em(y), width: em(80), height: em(200), transformOrigin: '50% 100%', '--a': ang, '--bx': em(i % 2 ? 30 : -30), '--by': em(-20), animation: `fhs-rock ${d}s ease-in-out ${-i}s infinite` }))),
+      t.still(`<image href="${spr2('kite', '#e63946', '#ffd166').slice(5, -2)}" x="140" y="120" width="80" height="200"/><image href="${spr2('kite', '#3a7bd5', '#7ec8ff').slice(5, -2)}" x="1460" y="230" width="80" height="200"/>`),
+      butterflies(t, 'bf', 4, [200, 400, 1400, 750], [['#ff9f43', '#ffd166'], ['#7ec8ff', '#c9a7ff'], ['#ff6fb5', '#ffd1e3'], ['#ffd166', '#ffe9a8']]),
+      ...drift(t, 'bd', t.n('bd', 3, (r, i) => ({ x: -120, y: rr(r, 280, 380), w: 30, h: 16, x1: 1900, y1: rr(r, -40, 40), dur: rr(r, 22, 28), dl: -i * 8, wing: 'bird', wc: '#3b3b44', flap: 0.55 }))),
+    ],
   });
 
   function render(id, E, o, env) {
