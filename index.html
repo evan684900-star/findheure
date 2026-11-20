@@ -27,7 +27,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@400..600&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Creepster&family=Griffy&family=Caveat:wght@400..700&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=add,add_photo_alternate,air,animation,arrow_back,arrow_forward,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,grid_view,help,hourglass_top,hub,image,landscape,link,mic,mic_off,more_vert,music_note,new_releases,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,save,schedule,settings,sports_esports,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,undo,upload_file,visibility,visibility_off,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add,add_photo_alternate,air,animation,apps,arrow_back,arrow_forward,auto_awesome,autorenew,blur_on,bookmark_add,border_style,calendar_today,casino,chat,check,chevron_right,close,close_fullscreen,delete,edit,event,exposure_zero,flag,flip_to_front,format_color_fill,format_italic,format_size,fullscreen,fullscreen_exit,gradient,grid_view,help,hourglass_top,hub,image,landscape,link,mic,mic_off,more_vert,music_note,new_releases,notifications,notifications_active,notifications_off,open_in_full,open_in_new,open_with,palette,pause,picture_in_picture_alt,pie_chart,play_arrow,public,push_pin,remove,reorder,replay,restart_alt,save,schedule,search,settings,sports_esports,star,sticky_note_2,stop,swap_horiz,text_fields,timer,title,toll,touch_app,translate,tune,undo,upload_file,visibility,visibility_off,volume_off,volume_up,wallpaper,watch,wb_twilight,web,zoom_in,zoom_out&display=block">
 <style>
 html,body{margin:0;height:100%;background:#05020a;overflow:hidden}
 a{color:inherit}a:hover{opacity:.8}
@@ -76,6 +76,14 @@ a{color:inherit}a:hover{opacity:.8}
 .fh-thc-img:hover{transform:translateY(-5px) scale(1.025)}
 .fh-thc-img:active{transform:scale(.97)}
 .fh-thc-img:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+.fh-star{opacity:0;transform:scale(.8);transition:opacity .2s,transform .25s cubic-bezier(.3,1.6,.5,1)}
+.fh-thc:hover .fh-star,.fh-star.on,.fh-star:focus-visible{opacity:1;transform:scale(1)}
+.fh-star:hover{transform:scale(1.15)!important}
+.fh-star.on span{animation:fh-starpop .45s cubic-bezier(.3,1.8,.5,1)}
+@keyframes fh-starpop{0%{transform:scale(.4) rotate(-40deg)}100%{transform:none}}
+@media (hover: none){.fh-star{opacity:1;transform:none}}
+.fh-chips{scrollbar-width:none}.fh-chips::-webkit-scrollbar{display:none}
+[data-thp-page] input[type=search]::-webkit-search-cancel-button{display:none}
 [data-q="low"] .fh-thc{animation:none!important}
 @media (prefers-reduced-motion: reduce){.fh-thc{animation-duration:.01s!important}}
 [data-q="low"] .fh-row{animation:none!important}
@@ -587,6 +595,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.27.0', d: '2026-11-20', items: ['Page Thèmes : recherche (« neige », « nuit », « mer »…), filtres par saison, favoris ⭐ épinglés en haut, et décor animé dans la carte au survol.|Themes page: search (“snow”, “night”, “sea”…), season filters, ⭐ favorites pinned on top, and the live scene inside the card on hover.'] },
   { v: '2.26.0', d: '2026-11-20', items: ['Thèmes : une page à eux, en grandes cartes, ouverte par une transition propre au thème actuel (feuille d’automne, chauves-souris, givre, papier cadeau…).|Themes: their own page with big cards, opened by a transition matching the current theme (autumn leaf, bats, frost, gift wrap…).'] },
   { v: '2.25.0', d: '2026-11-20', items: ['Les 12 nouveaux décors ont été redessinés : plus de détails, de vrais arbres, des sols partout.|The 12 new scenes have been redrawn: more detail, real trees, proper ground everywhere.', 'La carte mentale n’est plus en bêta.|The mind map is no longer in beta.'] },
   { v: '2.24.0', d: '2026-11-20', items: ['Trois nouveaux décors d’été : Camping, Île tropicale et Fête foraine.|Three new summer scenes: Camping, Tropical island and Funfair.'] },
@@ -821,6 +830,10 @@ const T_RAW = {
   tFx: "Effets|Effects|Efectos|Effekte", tClock: "Horloge|Clock|Reloj|Uhr", tDate: "Date & langue|Date & language|Fecha e idioma|Datum & Sprache", tLayout: "Disposition|Layout|Diseño|Layout",
   surprise: "Surprends-moi|Surprise me|Sorpréndeme|Überrasch mich", surpriseK: "Surprends-moi (S)|Surprise me (S)|Sorpréndeme (S)|Überrasch mich (S)",
   fullscreen: "Plein écran (F)|Fullscreen (F)|Pantalla completa (F)|Vollbild (F)", reset: "Réinitialiser|Reset|Restablecer|Zurücksetzen",
+  thSearch: "Chercher : neige, nuit, mer…|Search: snow, night, sea…|Buscar: nieve, noche, mar…|Suchen: Schnee, Nacht, Meer…", thClear: "Effacer|Clear|Borrar|Löschen",
+  thFav: "Ajouter aux favoris|Add to favorites|Añadir a favoritos|Zu Favoriten", thUnfav: "Retirer des favoris|Remove from favorites|Quitar de favoritos|Aus Favoriten entfernen", thFavs: "Mes favoris|My favorites|Mis favoritos|Meine Favoriten",
+  thNone: "Aucun thème pour « {q} ».|No theme for “{q}”.|Ningún tema para «{q}».|Kein Thema für „{q}“.", thShowAll: "Voir tous les thèmes|Show all themes|Ver todos los temas|Alle Themen anzeigen",
+  thc_all: "Tout|All|Todo|Alle", thc_autumn: "Automne|Autumn|Otoño|Herbst", thc_winter: "Hiver|Winter|Invierno|Winter", thc_spring: "Printemps|Spring|Primavera|Frühling", thc_summer: "Été|Summer|Verano|Sommer", thc_fetes: "Fêtes|Holidays|Fiestas|Feste", thc_styles: "Styles|Styles|Estilos|Stile",
   close: "Fermer (Échap)|Close (Esc)|Cerrar (Esc)|Schließen (Esc)", undo: "Annuler|Undo|Deshacer|Rückgängig",
   resetDone: "Réglages réinitialisés|Settings reset|Ajustes restablecidos|Einstellungen zurückgesetzt", remove: "Supprimer|Remove|Eliminar|Entfernen",
   custom: "Couleur personnalisée|Custom color|Color personalizado|Eigene Farbe",
@@ -1737,6 +1750,37 @@ const PRESETS = [
   { n: 'Hologramme|Hologram|Holograma|Hologramm', s: { font: 'Tektur', weight: 500, letterSpacing: 6, color: '#9ff8ff', dateColor: '#9ff8ff', dateOpacity: 70, accent: '#22d3ee', glow: 55, glowColor: '#22d3ee', bgType: 'scene', scene: 'holo', bg1: '#06283a', bg2: '#020409', bg3: '#0a3a50', vignette: 45, anim: 'glitch', weird: 'holo', dateUpper: true } },
   { n: 'Psyché|Trippy|Psicodélico|Psychedelisch', s: { font: 'Shrikhand', weight: 400, color: '#ffffff', dateColor: '#fff3fb', dateOpacity: 85, accent: '#ffe14d', glow: 0, glowColor: '#ff4fd8', shadow: 30, gradText: true, grad1: '#fff1a8', grad2: '#ff4fd8', bgType: 'scene', scene: 'trippy', bg1: '#7b2ff7', bg2: '#12002b', bg3: '#00c2a8', bgSpeed: 70, vignette: 30, anim: 'jelly', weird: 'wave' } },
 ].map(p => ({ id: p.id || '', fete: !!p.id, n: four(p.n), s: p.s }));
+// page Thèmes : clé d'un thème (favoris), saisons pour les filtres, et mots pour la recherche (« neige », « nuit », « mer »…)
+const thKey = (p) => p.id || p.s.scene || p.n[0];
+const TH_CATS = [['all', 'apps'], ['autumn', '🍂'], ['winter', '❄️'], ['spring', '🌸'], ['summer', '☀️'], ['fetes', '🎉'], ['styles', '🎨']];
+const TH_CAT = {
+  rentree: 'autumn fetes', autumn: 'autumn', rainwood: 'autumn', vineyard: 'autumn', orchard: 'autumn', halloween: 'autumn fetes',
+  winter: 'winter', alpine: 'winter', polar: 'winter', skating: 'winter', xmas: 'winter fetes', newyear: 'winter fetes', valentine: 'winter fetes',
+  spring: 'spring', zen: 'spring', farm: 'spring', kites: 'spring', april: 'spring fetes', easter: 'spring fetes',
+  music: 'summer fetes', summer: 'summer', camping: 'summer', tropical: 'summer', fair: 'summer fetes', bastille: 'summer fetes',
+};
+const TH_TAGS = {
+  rentree: 'école ecole classe tableau craie septembre school chalk', autumn: 'feuilles forêt arbres orange octobre leaves forest',
+  rainwood: 'pluie forêt champignons gris rain forest', vineyard: 'raisin vigne vin campagne grapes', orchard: 'pommes arbres fruits campagne apples',
+  halloween: 'citrouille fantôme chauve-souris nuit lune cimetière peur pumpkin ghost bats night moon',
+  winter: 'neige montagne aurore boréale chalet froid snow mountain', alpine: 'neige montagne village téléphérique ski snow',
+  polar: 'neige nuit aurore boréale glace ours igloo froid snow night', skating: 'patin glace neige ville nuit ice snow',
+  xmas: 'sapin neige cadeau père noël décembre snow gift tree', newyear: 'feux d’artifice nuit ville fête janvier fireworks night',
+  valentine: 'cœur coeur amour rose février heart love', spring: 'fleurs cerisier papillons rose flowers', zen: 'japon cerisier pont jardin calme japan',
+  farm: 'animaux vache tracteur campagne animals', kites: 'vent ciel nuages wind sky', april: 'poisson mer eau sous-marin blague bulles fish sea',
+  easter: 'lapin œufs oeufs poussins chocolat bunny eggs', music: 'concert scène musique guitare juin',
+  summer: 'mer plage soleil vacances bateau sable sea beach sun', camping: 'tente feu nuit étoiles forêt tent night stars',
+  tropical: 'mer île palmiers plage soleil sea beach island', fair: 'manège grande roue nuit fête', bastille: 'tour eiffel paris france feux d’artifice drapeau nuit fireworks night',
+  paper: 'papier cahier école avion paper', neon: 'nuit ville rue lumière pluie night city', terminal: 'ordinateur code vert informatique computer',
+  sunset: 'soleil soir synthwave rose sun', candy: 'rose sucre bonbons pastel', brutal: 'jaune noir simple', cosmos: 'espace planètes étoiles nuit astronaute space stars night',
+  arcade: 'jeu vidéo pixels game', luxe: 'or noir élégant gold', matrix: 'points led orange', glacier: 'glace mer banquise pingouins manchots froid neige ice sea snow',
+  iso: 'ville cubes 3d', gothic: 'église vitraux bougies sombre nuit', london: 'ville angleterre big ben pont nuit pluie city night rain',
+  gotham: 'batman ville nuit orage chauve-souris city night', Grille: 'carreaux vert simple', holo: 'futur bleu', trippy: 'couleurs arc-en-ciel rainbow',
+};
+const thNorm = (x) => String(x || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[’']/g, ' ');
+const thCats = (p) => (p.fete ? TH_CAT[p.id] || 'fetes' : 'styles').split(' ');
+const thHay = (p) => thNorm(p.n.join(' ') + ' ' + (TH_TAGS[thKey(p)] || ''));
+const FAVKEY = 'findheure:themefav:v1';
 const GRAIN = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`;
 
 // Décor Halloween : données fixes (graine déterministe) pour que le décor ne bouge pas à chaque rendu
@@ -1903,7 +1947,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { thPage: false, news: null, game: null, gameDD: null, gDrag: null, mind, mindSets, mindDD: null, mindAll: false, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { thPage: false, thpQ: '', thpCat: 'all', thpHover: null, thFav: (() => { const f = loadJSON(FAVKEY, []); return Array.isArray(f) ? f.filter(x => typeof x === 'string') : []; })(), news: null, game: null, gameDD: null, gDrag: null, mind, mindSets, mindDD: null, mindAll: false, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -2098,7 +2142,7 @@ class Component extends DCLogic {
     this.warmThumbs(PRESETS.map(p => ({ ...VDEF, ...p.s })), true);
     this.thumbs.forEach(u => { const m = /url\("(.+)"\)/.exec(u); if (m) { const im = new Image(); im.src = m[1]; if (im.decode) im.decode().catch(() => {}); } });
     this.ensureFonts(PRESETS.map(p => p.s.font));
-    const show = () => { this.thpBusy = false; const f = () => this.setState({ thPage: true, thpK: (this.state.thpK || 0) + 1 }); if (window.ReactDOM && ReactDOM.flushSync) ReactDOM.flushSync(f); else f(); };
+    const show = () => { this.thpBusy = false; const f = () => this.setState({ thPage: true, thpK: (this.state.thpK || 0) + 1, thpAt: Date.now(), thpQ: '', thpCat: 'all', thpHover: null }); if (window.ReactDOM && ReactDOM.flushSync) ReactDOM.flushSync(f); else f(); };
     if (instant === true || !window.FHTrans || s.quality === 'low' || this.state.tour != null || document.hidden) { show(); return; }
     this.thpBusy = true;
     this.thpStop = FHTrans.play(this.thpId(s), { bg1: s.bg1, bg2: s.bg2, bg3: s.bg3, accent: s.accent }, show);
@@ -2110,6 +2154,13 @@ class Component extends DCLogic {
     this.setState({ thPage: 'out' }); clearTimeout(this.thpT); this.thpT = setTimeout(() => this.setState({ thPage: false }), 260);
   };
   thpPickPreset = (ps, name) => { this.thpPick = true; this.pickPreset(ps, name); };
+  thpFav = (k) => {
+    const on = this.state.thFav.includes(k), thFav = on ? this.state.thFav.filter(x => x !== k) : [...this.state.thFav, k];
+    this.setState({ thFav }); try { localStorage.setItem(FAVKEY, JSON.stringify(thFav)); } catch (e) {}
+  };
+  thpSearchRef = (el) => { this.thpSearchEl = el; };
+  thpEnter = (k) => { clearTimeout(this.thpHT); this.thpHT = setTimeout(() => this.setState({ thpHover: k }), 380); };
+  thpLeave = (k) => { clearTimeout(this.thpHT); if (this.state.thpHover === k) this.setState({ thpHover: null }); };
   thpPickStyle = (x) => { this.thpPick = true; this.applyStyle(x); };
   // « Thème selon la date » : on met tout de suite le thème du jour (annulable aussi)
   autoOn = () => {
@@ -3798,7 +3849,10 @@ class Component extends DCLogic {
     const tg = e.target, tn = tg && tg.tagName;
     // Échap ferme toujours un menu ou annule le déplacement, même si le curseur est dans un champ
     if (e.key === 'Escape' && this.state.news) { this.newsClose(); return; }
-    if (e.key === 'Escape' && this.state.thPage && this.state.tour == null) { this.closeThemes(); return; }
+    if (e.key === 'Escape' && this.state.thPage && this.state.tour == null) { if (this.state.thpQ) { this.setState({ thpQ: '' }); if (this.thpSearchEl) this.thpSearchEl.blur(); } else this.closeThemes(); return; }
+    if (this.state.thPage === true && this.state.tour == null && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey && this.thpSearchEl && document.activeElement !== this.thpSearchEl && !(e.target && e.target.closest && e.target.closest('input, textarea'))) {
+      e.preventDefault(); this.setState({ thpQ: (this.state.thpQ + e.key).slice(0, 40) }); this.thpSearchEl.focus(); return;
+    }
     if (e.key === 'Escape' && (this.state.mindDD || this.state.mindAll)) { this.mindDDClose(); this.setState({ mindAll: false }); return; }
     if (e.key === 'Escape' && this.state.gameDD) { this.gameDDClose(); return; }
     if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's' && this.state.s.mode === 'mind') { e.preventDefault(); this.mindStore(); return; }
@@ -5170,39 +5224,72 @@ class Component extends DCLogic {
 
     // tuto : projecteur sur l'élément, flèche dessinée à la main et texte juste dessous
     // page « Thèmes » : 4 grandes cartes par ligne, qui arrivent une à une de gauche à droite, ligne après ligne
+    // en haut : recherche (« neige », « nuit », « mer »…), filtres par saison, et les favoris ⭐ épinglés
     let thpEl = null;
     if (st.thPage) {
       const vw = st.vw, pad = vw < 640 ? 16 : vw < 1100 ? 32 : 56, cols = vw >= 900 ? 4 : vw >= 600 ? 3 : 2, gap = vw < 640 ? 14 : 28;
       const cw = Math.min(vw - pad * 2, 1600), cardW = (cw - gap * (cols - 1)) / cols, cardH = Math.round(cardW * 9 / 16);
       const pageBg = dark ? `radial-gradient(90% 60% at 50% -10%, ${hexA(s.accent, 0.2)}, transparent 70%), #121114` : `radial-gradient(90% 60% at 50% -10%, ${hexA(s.accent, 0.16)}, transparent 70%), #f6f4f1`;
+      const FHS2 = window.FHScenes, live = s.quality !== 'low' && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+      // à l'ouverture les cartes arrivent une à une ; ensuite (filtre, recherche) elles apparaissent vite
+      const fast = Date.now() - (st.thpAt || 0) > 1800;
+      const q = thNorm(st.thpQ).trim(), words = q ? q.split(/\s+/) : [];
+      const keep = (p) => (st.thpCat === 'all' || thCats(p).includes(st.thpCat)) && (!words.length || words.every(w => thHay(p).includes(w)));
       let n = 0;
-      const card = (key, name, ps, deco, active, pick) => {
-        const i = n++, pf = FONT_BY[ps.font] || FONTS[0], d = 200 + Math.min(i, 24) * 55 + Math.max(0, i - 24) * 12;
-        const txt = { ...this.cardText(ps), fontSize: Math.round(Math.min(cardW * 0.22, (cardW * 0.8) / (4 * pf.w + 0.4))) + 'px' };
-        return E('div', { key, className: 'fh-thc', style: { animationDelay: d + 'ms', minWidth: 0 } },
-          E('button', { type: 'button', className: 'fh-thc-img', 'data-tour': i === 0 ? 'thp-first' : undefined, title: name, onClick: pick, style: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: cardH, padding: 0, border: 0, borderRadius: 18, overflow: 'hidden', cursor: 'pointer', background: preview(ps), boxShadow: active ? `0 0 0 3px ${accUi}, 0 14px 34px rgba(0,0,0,.32)` : `0 10px 28px rgba(0,0,0,${dark ? 0.45 : 0.18}), inset 0 0 0 1px ${hexA(ui.fg, 0.08)}` } },
-            E('span', { style: txt }, sample),
-            deco ? E('span', { style: { position: 'absolute', right: 12, top: 10, fontSize: Math.round(Math.max(18, Math.min(28, cardW * 0.07))), lineHeight: 1 } }, deco) : null,
-            active ? E('span', { style: { position: 'absolute', left: 10, top: 10, width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: accUi, color: bestInk(accUi), boxShadow: '0 3px 10px rgba(0,0,0,.3)' } }, E('span', { style: { ...ICON, fontSize: 19 } }, 'check')) : null),
+      const card = (key, name, ps, deco, active, pick, favKey) => {
+        const i = n++, pf = FONT_BY[ps.font] || FONTS[0], d = fast ? Math.min(i, 16) * 22 : 200 + Math.min(i, 24) * 55 + Math.max(0, i - 24) * 12;
+        const txt = { ...this.cardText(ps), position: 'relative', fontSize: Math.round(Math.min(cardW * 0.22, (cardW * 0.8) / (4 * pf.w + 0.4))) + 'px' };
+        const isFav = favKey && st.thFav.includes(favKey), hov = st.thpHover === key;
+        const canLive = live && ps.bgType === 'scene' && FHS2 && FHS2.has(ps.scene);
+        return E('div', { key, className: 'fh-thc', style: { animationDelay: d + 'ms', minWidth: 0 }, onMouseEnter: canLive ? () => this.thpEnter(key) : undefined, onMouseLeave: canLive ? () => this.thpLeave(key) : undefined },
+          E('div', { style: { position: 'relative' } },
+            E('button', { type: 'button', className: 'fh-thc-img', 'data-tour': i === 0 ? 'thp-first' : undefined, title: name, onClick: pick, style: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: cardH, padding: 0, border: 0, borderRadius: 18, overflow: 'hidden', cursor: 'pointer', background: preview(ps), boxShadow: active ? `0 0 0 3px ${accUi}, 0 14px 34px rgba(0,0,0,.32)` : `0 10px 28px rgba(0,0,0,${dark ? 0.45 : 0.18}), inset 0 0 0 1px ${hexA(ui.fg, 0.08)}` } },
+              // aperçu animé : le vrai décor qui bouge, dans la carte, quand la souris reste dessus
+              hov && canLive ? E('div', { key: 'live', style: { position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none', background: sceneBase(ps), animation: 'fh-fade .45s ease both', '--fhsx': 'initial', '--fhsy': 'initial', '--fhso': 'initial' } }, FHS2.render(ps.scene, E, ps, { vw: Math.round(cardW), vh: cardH })) : null,
+              E('span', { style: txt }, sample),
+              deco ? E('span', { style: { position: 'absolute', right: 12, top: 10, fontSize: Math.round(Math.max(18, Math.min(28, cardW * 0.07))), lineHeight: 1 } }, deco) : null,
+              active ? E('span', { style: { position: 'absolute', left: 10, top: 10, width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: accUi, color: bestInk(accUi), boxShadow: '0 3px 10px rgba(0,0,0,.3)' } }, E('span', { style: { ...ICON, fontSize: 19 } }, 'check')) : null),
+            favKey ? E('button', { type: 'button', className: 'fh-star' + (isFav ? ' on' : ''), title: isFav ? L.thUnfav : L.thFav, 'aria-pressed': isFav, onClick: (e) => { e.stopPropagation(); this.thpFav(favKey); },
+              style: { position: 'absolute', right: 10, bottom: 10, width: 36, height: 36, borderRadius: '50%', border: 0, padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', background: 'rgba(12,10,16,.62)', color: isFav ? '#ffcf3d' : '#ffffff', boxShadow: '0 3px 10px rgba(0,0,0,.3)' } },
+              E('span', { style: { ...ICON, fontSize: 22, fontVariationSettings: isFav ? "'FILL' 1" : "'FILL' 0" } }, 'star')) : null),
           E('div', { style: { marginTop: 10, padding: '0 4px', textAlign: 'center', font: `600 ${vw < 640 ? 14 : 16}px/1.25 Geist, system-ui, sans-serif`, color: active ? accUi : ui.fg, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, name));
       };
-      const pr = (x) => { const ps = { ...VDEF, ...x.s }, nm = x.n[li]; return card('p-' + (x.id || x.s.scene || x.n[0]), nm, ps, DECO[x.id || x.s.scene] || '', VKEYS.every(k => s[k] === ps[k]), () => this.thpPickPreset(ps, nm)); };
+      const pr = (pre) => (x) => { const ps = { ...VDEF, ...x.s }, nm = x.n[li], k = thKey(x); return card(pre + k, nm, ps, DECO[x.id || x.s.scene] || '', VKEYS.every(kk => s[kk] === ps[kk]), () => this.thpPickPreset(ps, nm), k); };
       const grid = (key, kids) => E('div', { key, style: { display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: `${gap + 6}px ${gap}px` } }, kids);
-      const head = (key, label) => E('h2', { key, style: { margin: '34px 0 16px', font: '650 13px/1 Geist, system-ui, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: ui.fg2 } }, label);
-      const btn = (key, icon, label, onClick, on) => E('button', { key, type: 'button', className: 'fh-btn', onClick, title: label, style: { display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: label ? '0 16px 0 12px' : 0, width: label ? undefined : 40, justifyContent: 'center', borderRadius: 999, border: `1px solid ${on ? accUi : ui.border}`, background: on ? hexA(accUi, 0.18) : hexA(ui.fg, 0.06), color: ui.fg, font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer', whiteSpace: 'nowrap' } },
+      const head = (key, label, icon) => E('h2', { key, style: { display: 'flex', alignItems: 'center', gap: 7, margin: '30px 0 16px', font: '650 13px/1 Geist, system-ui, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: ui.fg2 } }, icon ? E('span', { style: { ...ICON, fontSize: 17, color: '#f5b400', fontVariationSettings: "'FILL' 1" } }, icon) : null, label);
+      const btn = (key, icon, label, onClick, on) => E('button', { key, type: 'button', className: 'fh-btn', onClick, title: label || L.close, style: { display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: label ? '0 16px 0 12px' : 0, width: label ? undefined : 40, justifyContent: 'center', borderRadius: 999, border: `1px solid ${on ? accUi : ui.border}`, background: on ? hexA(accUi, 0.18) : hexA(ui.fg, 0.06), color: ui.fg, font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 } },
         E('span', { style: { ...ICON, fontSize: 20, color: on ? accUi : ui.fg2 } }, icon), label || null);
-      const mineCards = st.styles.map((x, i) => { const ps = { ...VDEF, ...x.s }; return card('m-' + i, x.name, ps, '', false, () => this.thpPickStyle(x)); });
+      const chip = ([id, ic]) => { const on = st.thpCat === id; return E('button', { key: 'c-' + id, type: 'button', className: 'fh-btn', 'aria-pressed': on, onClick: () => this.setState({ thpCat: id }), style: { display: 'inline-flex', alignItems: 'center', gap: 6, height: 34, padding: '0 14px 0 11px', borderRadius: 999, border: `1px solid ${on ? accUi : ui.border}`, background: on ? accUi : 'transparent', color: on ? bestInk(accUi) : ui.fg, font: '600 13.5px/1 Geist, system-ui, sans-serif', cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0 } },
+        id === 'all' ? E('span', { style: { ...ICON, fontSize: 17 } }, ic) : E('span', { style: { fontSize: 15, lineHeight: 1 } }, ic), L['thc_' + id]); };
+      const search = E('label', { key: 'q', style: { display: 'flex', alignItems: 'center', gap: 8, height: 40, flex: '1 1 220px', maxWidth: 420, minWidth: 0, padding: '0 12px', borderRadius: 999, border: `1px solid ${st.thpQ ? accUi : ui.border}`, background: hexA(ui.fg, 0.06), boxSizing: 'border-box', cursor: 'text' } },
+        E('span', { style: { ...ICON, fontSize: 20, color: ui.fg2 } }, 'search'),
+        E('input', { ref: this.thpSearchRef, type: 'search', value: st.thpQ, placeholder: L.thSearch, 'aria-label': L.thSearch, onChange: (e) => this.setState({ thpQ: e.target.value.slice(0, 40) }), onKeyDown: (e) => { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); if (st.thpQ) this.setState({ thpQ: '' }); else { e.target.blur(); this.closeThemes(); } } },
+          style: { flex: 1, minWidth: 0, height: '100%', border: 0, outline: 0, background: 'transparent', color: ui.fg, font: '500 15px/1 Geist, system-ui, sans-serif', userSelect: 'text' } }),
+        st.thpQ ? E('button', { type: 'button', title: L.thClear, onClick: () => { this.setState({ thpQ: '' }); if (this.thpSearchEl) this.thpSearchEl.focus(); }, style: { border: 0, padding: 0, width: 26, height: 26, borderRadius: '50%', background: hexA(ui.fg, 0.1), color: ui.fg, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, E('span', { style: { ...ICON, fontSize: 17 } }, 'close')) : null);
+      const favs = st.thFav.map(k => PRESETS.find(x => thKey(x) === k)).filter(x => x && keep(x));
+      const fetes = PRESETS.filter(x => x.fete && keep(x)), others = PRESETS.filter(x => !x.fete && keep(x));
+      const mineCards = st.thpCat === 'all' || st.thpCat === 'styles' ? st.styles.filter(x => !words.length || words.every(w => thNorm(x.name).includes(w))).map((x, i) => { const ps = { ...VDEF, ...x.s }; return card('m-' + i, x.name, ps, '', false, () => this.thpPickStyle(x), null); }) : [];
+      const sections = [
+        ...(favs.length ? [head('hf', L.thFavs, 'star'), grid('gf', favs.map(pr('f-')))] : []),
+        ...(fetes.length ? [head('h1', L.hSeasons), grid('g1', fetes.map(pr('p-')))] : []),
+        ...(others.length ? [head('h2', L.hStyles), grid('g2', others.map(pr('p-')))] : []),
+        ...(mineCards.length ? [head('h3', L.hMine), grid('g3', mineCards)] : []),
+      ];
+      const empty = !fetes.length && !others.length && !mineCards.length;
       thpEl = E('div', { key: 'thp-' + (st.thpK || 0), 'data-thp-page': '', 'data-menu': 'none', role: 'dialog', 'aria-modal': true, 'aria-label': L.tPresets, onContextMenu: (e) => { e.preventDefault(); e.stopPropagation(); },
         style: { position: 'absolute', inset: 0, zIndex: 74, overflowY: 'auto', overflowX: 'hidden', overscrollBehavior: 'contain', background: pageBg, color: ui.fg, colorScheme: dark ? 'dark' : 'light', animation: st.thPage === 'out' ? 'fh-thp-out .26s ease both' : undefined, cursor: 'default' } },
-        E('div', { style: { position: 'sticky', top: 0, zIndex: 2, background: dark ? 'linear-gradient(#121114 75%, rgba(18,17,20,0))' : 'linear-gradient(#f6f4f1 75%, rgba(246,244,241,0))' } },
-          E('div', { style: { maxWidth: cw, margin: '0 auto', padding: `${vw < 640 ? 18 : 30}px 0 22px`, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' } },
-            E('div', { style: { flex: 1, minWidth: 0, font: `700 ${vw < 640 ? 26 : 36}px/1.05 Geist, system-ui, sans-serif`, letterSpacing: '-.02em' } }, L.tPresets),
-            btn('auto', 'autorenew', L.mAutoTheme, () => { if (s.autoTheme) this.setS({ autoTheme: false }); else this.autoOn(); }, !!s.autoTheme),
-            btn('x', 'close', '', this.closeThemes))),
+        E('div', { style: { position: 'sticky', top: 0, zIndex: 2, background: dark ? 'linear-gradient(#121114 82%, rgba(18,17,20,0))' : 'linear-gradient(#f6f4f1 82%, rgba(246,244,241,0))' } },
+          E('div', { style: { maxWidth: cw, margin: '0 auto', padding: `${vw < 640 ? 16 : 26}px 0 10px`, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' } },
+            E('div', { style: { flex: '0 0 auto', font: `700 ${vw < 640 ? 26 : 36}px/1.05 Geist, system-ui, sans-serif`, letterSpacing: '-.02em', marginRight: 'auto' } }, L.tPresets),
+            search,
+            btn('auto', 'autorenew', vw < 760 ? '' : L.mAutoTheme, () => { if (s.autoTheme) this.setS({ autoTheme: false }); else this.autoOn(); }, !!s.autoTheme),
+            btn('x', 'close', '', this.closeThemes)),
+          E('div', { className: 'fh-chips', style: { maxWidth: cw, margin: '0 auto', padding: '4px 0 18px', display: 'flex', gap: 8, overflowX: 'auto' } }, TH_CATS.map(chip))),
         E('div', { style: { maxWidth: cw, margin: '0 auto', padding: `0 0 ${pad + 20}px` } },
-          head('h1', L.hSeasons), grid('g1', PRESETS.filter(x => x.fete).map(pr)),
-          head('h2', L.hStyles), grid('g2', PRESETS.filter(x => !x.fete).map(pr)),
-          ...(mineCards.length ? [head('h3', L.hMine), grid('g3', mineCards)] : [])));
+          ...sections,
+          empty ? E('div', { key: 'none', style: { padding: '70px 0', textAlign: 'center', color: ui.fg2, font: '500 16px/1.5 Geist, system-ui, sans-serif' } },
+            E('div', { style: { fontSize: 44, marginBottom: 10 } }, '🔍'), L.thNone.replace('{q}', st.thpQ),
+            E('div', { style: { marginTop: 16 } }, E('button', { type: 'button', className: 'fh-btn', onClick: () => this.setState({ thpQ: '', thpCat: 'all' }), style: { height: 38, padding: '0 16px', borderRadius: 999, border: `1px solid ${ui.border}`, background: hexA(ui.fg, 0.06), color: ui.fg, font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } }, L.thShowAll))) : null));
     }
 
     let tourEl = null;
