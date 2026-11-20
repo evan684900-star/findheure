@@ -14,6 +14,7 @@
 <script src="./vendor/react-dom.production.min.js"></script>
 <!-- décors animés des thèmes -->
 <script src="./scenes.js"></script>
+<script src="./transitions.js"></script>
 <script src="./jeux.js"></script>
 <script src="./support.js"></script>
 </head>
@@ -66,6 +67,17 @@ a{color:inherit}a:hover{opacity:.8}
 @keyframes fh-menu-in{from{opacity:0;transform:scale(.97) translateY(-3px)}to{opacity:1;transform:none}}
 [data-q="low"] *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 [data-q="low"] .fh-still *{animation-play-state:paused!important}
+/* page Thèmes ouverte : le décor derrière ne bouge plus (rien à redessiner sous la page) */
+[data-thp="1"] > :not([data-thp-page]):not([data-tour-layer]), [data-thp="1"] > :not([data-thp-page]):not([data-tour-layer]) *{animation-play-state:paused!important}
+@keyframes fh-thc-in{0%{opacity:0;transform:translateY(28px) scale(.84)}60%{opacity:1;transform:translateY(-4px) scale(1.02)}100%{opacity:1;transform:none}}
+@keyframes fh-thp-out{to{opacity:0;transform:scale(1.015)}}
+.fh-thc{animation:fh-thc-in .55s cubic-bezier(.2,.8,.3,1) both}
+.fh-thc-img{transition:transform .28s cubic-bezier(.3,1.4,.5,1),box-shadow .28s}
+.fh-thc-img:hover{transform:translateY(-5px) scale(1.025)}
+.fh-thc-img:active{transform:scale(.97)}
+.fh-thc-img:focus-visible{outline:3px solid currentColor;outline-offset:3px}
+[data-q="low"] .fh-thc{animation:none!important}
+@media (prefers-reduced-motion: reduce){.fh-thc{animation-duration:.01s!important}}
 [data-q="low"] .fh-row{animation:none!important}
 @keyframes fh-amb{0%{transform:translate3d(0,0,0);opacity:0}15%{opacity:var(--a)}85%{opacity:var(--a)}100%{transform:translate3d(var(--dx),var(--dy),0);opacity:0}}
 @keyframes fh-amb-w{0%{transform:translate3d(0,0,0)}100%{transform:translate3d(var(--dx),var(--dy),0)}}
@@ -255,7 +267,7 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 @keyframes fh-aurora{0%{transform:translate3d(-6%,-4%,0) rotate(0deg) scale(1)}50%{transform:translate3d(5%,3%,0) rotate(10deg) scale(1.12)}100%{transform:translate3d(-2%,6%,0) rotate(-8deg) scale(1.04)}}
 </style>
 </helmet>
-<div data-q="{{ q.level }}" onContextMenu="{{ onCtx }}" style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
+<div data-q="{{ q.level }}" data-thp="{{ thpOn }}" onContextMenu="{{ onCtx }}" style="position: fixed; inset: 0; overflow: hidden; font-family: Geist, system-ui, sans-serif; color-scheme: {{ ui.scheme }}; cursor: {{ cursor }}; user-select: none;">
   <div style="position: absolute; inset: 0; background: {{ bg.base }};"></div>
   <sc-if value="{{ bg.isAurora }}" hint-placeholder-val="{{ false }}">
     <div class="fh-still" ref="{{ q.farRef }}" style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">{{ bg.aurora }}</div>
@@ -547,6 +559,7 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
   <sc-if value="{{ menuUi.on }}" hint-placeholder-val="{{ false }}">{{ menuUi.el }}</sc-if>
   <sc-if value="{{ tour.show }}" hint-placeholder-val="{{ false }}">{{ tour.el }}</sc-if>
 
+  <sc-if value="{{ thp.show }}" hint-placeholder-val="{{ false }}">{{ thp.el }}</sc-if>
   <sc-if value="{{ mm.show }}" hint-placeholder-val="{{ false }}">{{ mm.el }}</sc-if>
   <sc-if value="{{ news.show }}" hint-placeholder-val="{{ false }}">{{ news.el }}</sc-if>
 
@@ -574,6 +587,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.25.0', d: '2026-11-20', items: ['Thèmes : une page à eux, en grandes cartes, ouverte par une transition propre au thème actuel (feuille d’automne, chauves-souris, givre, papier cadeau…).|Themes: their own page with big cards, opened by a transition matching the current theme (autumn leaf, bats, frost, gift wrap…).'] },
   { v: '2.24.0', d: '2026-11-20', items: ['Trois nouveaux décors d’été : Camping, Île tropicale et Fête foraine.|Three new summer scenes: Camping, Tropical island and Funfair.'] },
   { v: '2.23.0', d: '2026-11-20', items: ['Trois nouveaux décors de printemps : Jardin japonais, À la ferme et Cerfs-volants.|Three new spring scenes: Japanese garden, On the farm and Kites.'] },
   { v: '2.22.0', d: '2026-11-20', items: ['Trois nouveaux décors d’hiver : Village de montagne, Nuit polaire et Patinoire.|Three new winter scenes: Mountain village, Polar night and Ice rink.'] },
@@ -1597,10 +1611,10 @@ const TIMER_PRESETS = [1, 3, 5, 10, 15, 25, 45, 60];
 // Guide complet (bouton Aide) : on montre, on explique, et à certaines étapes c'est l'utilisateur qui fait.
 // act(st, b) : vrai quand l'action demandée est faite (b = état au début de l'étape). prep(app) : remet le décor si on revient en arrière.
 const modeIs = (m) => (st) => st.s.mode === m;
-const prepMode = (m, close = true) => (a) => { if (close && a.state.tab) a.setState({ tab: null }); a.closeMenu(); a.setMode(m); };
+const prepMode = (m, close = true) => (a) => { if (close && a.state.tab) a.setState({ tab: null }); if (a.state.thPage) a.setState({ thPage: false }); a.closeMenu(); a.setMode(m); };
 // ouvre le menu d'un élément (au milieu de cet élément) pour l'étape du guide
 const tourSpot = (sel) => { const el = document.querySelector(`[data-tour="${sel}"]`), r = el ? el.getBoundingClientRect() : null; return r && r.width ? [r.left + r.width / 2, r.top + r.height / 2] : [window.innerWidth / 2, window.innerHeight / 2]; };
-const prepMenu = (kind, sel) => (a) => { if (a.state.tab) a.setState({ tab: null }); const m = a.state.menu; if (!m || m.kind !== kind) { const [x, y] = tourSpot(sel); a.openMenu(kind, x, y); } };
+const prepMenu = (kind, sel) => (a) => { if (a.state.tab) a.setState({ tab: null }); if (a.state.thPage) a.setState({ thPage: false }); const m = a.state.menu; if (!m || m.kind !== kind) { const [x, y] = tourSpot(sel); a.openMenu(kind, x, y); } };
 const prepRoot = (kind, sel) => (a) => { prepMenu(kind, sel)(a); setTimeout(() => { const m = a.state.menu; if (m && m.open.length) a.setState({ menu: { ...m, open: [] } }); }, 80); };
 const subIs = (key) => (st) => !!(st.menu && st.menu.open[0] && st.menu.open[0].key === key);
 const prepSub = (kind, sel, key) => (a) => {
@@ -1617,8 +1631,8 @@ const LONG_TOUR = [
   { t: ['clock'], h: 'Fermer un menu', x: 'Pour fermer un menu : clique à côté, ou appuie sur Échap. Tout est enregistré tout seul.', act: (st) => !st.menu, d: 'Clique à côté du menu.' },
   { t: ['clock'], h: 'Déplace l’heure', x: 'Appuie sur l’heure et glisse-la : neuf emplacements apparaissent, lâche-la dans celui que tu veux. (« Déplacer » dans son menu fait pareil.)', act: (st, b) => st.s.pos !== b.s.pos, d: 'Glisse l’heure vers un coin de l’écran.', prep: prepMode('clock') },
   { t: ['bgspot'], h: 'Clique sur le fond', x: 'Le fond a son menu à lui : thèmes, décor, couleurs, ta photo, notes, images…', act: (st) => !!(st.menu && st.menu.kind === 'bg'), d: 'Clique sur le fond, là où il n’y a rien.', prep: prepMode('clock') },
-  { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres.', act: subIs('theme'), d: 'Clique sur « Thèmes ».', prep: prepRoot('bg', 'bgspot') },
-  { t: ['menu1'], h: 'Choisis un thème', x: 'Chaque thème change d’un coup la police, les couleurs et le décor. Le menu reste ouvert : essaie-en plusieurs. Regretté ? Ctrl+Z revient au thème d’avant. Sur les décors de jour, le ciel et le soleil suivent l’heure de la journée.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: prepSub('bg', 'bgspot', 'theme') },
+  { t: ['mi-theme'], h: 'Les thèmes', x: 'Des thèmes tout prêts avec leur décor animé : saisons, fêtes et bien d’autres. Ils s’ouvrent sur une page à eux.', act: (st) => !!st.thPage, d: 'Clique sur « Thèmes ».', prep: prepRoot('bg', 'bgspot') },
+  { t: ['thp-first'], h: 'Choisis un thème', x: 'Chaque carte montre le thème avec son décor et sa police. Un clic dessus change d’un coup la police, les couleurs et le décor, et referme la page. Regretté ? Ctrl+Z revient au thème d’avant. Sur les décors de jour, le ciel et le soleil suivent l’heure de la journée.', act: (st, b) => ['scene', 'font', 'accent', 'bgType'].some(k => st.s[k] !== b.s[k]), d: 'Clique sur un thème, par exemple « Automne ».', prep: (a) => { a.closeMenu(); a.openThemes(true); } },
   { t: ['menu0'], h: 'Tout le reste est là', x: '« Thème selon la date » change de thème tout seul (Halloween, Noël…). Ensuite : type de fond, décor, couleurs, ta propre photo, ambiance, puis notes, images, Surprends-moi, plein écran, Paramètres et « Quoi de neuf ? » (les dernières nouveautés). Astuce : dans les décors, touche la lune, le soleil, un arbre ou une citrouille : le décor réagit !', prep: prepRoot('bg', 'bgspot') },
   { t: ['mi-note'], h: 'Une note', x: 'Pour une consigne, les devoirs ou le mot du jour (touche N).', act: (st, b) => st.notes.length > b.notes, d: 'Clique sur « Nouvelle note ».', prep: prepRoot('bg', 'bgspot') },
   { t: ['notecard'], h: 'Écris dedans', x: 'Clique dans la note pour écrire. Glisse-la par sa barre du haut. Pour changer sa taille, tire les petits traits dans son coin en bas à droite. Un clic sur la barre ouvre son menu : couleur, taille, supprimer. Pareil pour les images posées à côté de l’heure.', prep: (a) => a.closeMenu() },
@@ -1888,7 +1902,7 @@ class Component extends DCLogic {
     tm.dur = Math.max(0, fin(tm.dur, 300000)); tm.left = Math.max(0, fin(tm.left, tm.dur)); tm.endAt = Number.isFinite(tm.endAt) ? tm.endAt : null; tm.done = !!tm.done;
     sw.acc = Math.max(0, fin(sw.acc, 0)); sw.laps = sw.laps.filter(Number.isFinite);
     sw.start = null; // le chrono ne continue pas à tourner quand on a quitté le site
-    return { news: null, game: null, gameDD: null, gDrag: null, mind, mindSets, mindDD: null, mindAll: false, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
+    return { thPage: false, news: null, game: null, gameDD: null, gDrag: null, mind, mindSets, mindDD: null, mindAll: false, mindGone: [], mindOn: null, mindDrag: null, s, pinDrag: null, showDraft: '', showDrag: null, mediaReady: false, snd: { on: false, err: '', lv: 0, alert: false, count: 0 }, tour: null, tourRect: null, styles: Array.isArray(styles) ? styles : [], notes: Array.isArray(notes) ? notes.filter(n => n && n.id && Number.isFinite(n.x) && Number.isFinite(n.y)) : [], pics: Array.isArray(pics) ? pics.filter(q => q && q.id && q.m && [q.x, q.y, q.w].every(Number.isFinite)) : [], picDrag: '', tm, sw, ringing: false, testing: false, menu: null, coinBusy: false, coinRes: null, coinN: 0, pip: false, taps: [], lift: null, gone: [], moveMode: null, dropZone: null, tmEdit: false, tmDraft: { h: 0, m: 5, s: 0 }, tourLong: false, tourOk: false, acState: '', ind: null, panelDir: 'd', now: new Date(), tab: null, idle: false, fs: false, fontCat: 'all', media: [], dragOver: false, toast: null, saveName: '', vw: window.innerWidth, vh: window.innerHeight, ratio: 3, prevBg: null, fontsTick: 0 };
   })();
   timeRef = React.createRef();
   fileRef = React.createRef();
@@ -2046,7 +2060,8 @@ class Component extends DCLogic {
     // un changement encore en attente passe tout de suite : les thèmes s'appliquent toujours dans l'ordre (ex. S puis Ctrl+Z très vite)
     if (this.swapPending) this.swapPending();
     let done = false;
-    const doc = document, apply = () => { if (done) return; done = true; if (this.swapPending === apply) this.swapPending = null; this.vtPatch = null; this.vtNow = true; this.setS(patch); if (after) after(); };
+    const doc = document, thp = this.thpPick; this.thpPick = false;
+    const apply = () => { if (done) return; done = true; if (this.swapPending === apply) this.swapPending = null; this.vtPatch = null; this.vtNow = true; if (thp) this.setState({ thPage: false }); this.setS(patch); if (after) after(); };
     this.swapPending = apply;
     if (!doc.startViewTransition || !window.ReactDOM || !ReactDOM.flushSync || doc.hidden || this.state.tour != null || this.state.s.quality === 'low') { apply(); this.vtNow = false; return; }
     this.vtPatch = { ...this.vtPatch, ...patch };
@@ -2071,6 +2086,30 @@ class Component extends DCLogic {
   };
   themeHist = [];
   pickPreset = (ps, name) => { const L = this.L(), was = this.state.s.autoTheme; this.themeDo({ ...ps, autoTheme: false }, L.themeSet.replace('{n}', name || '') + (was ? ' · ' + L.autoOff : '')); };
+  // ---------- page « Thèmes » : tous les thèmes en grandes cartes, ouverte par une transition qui dépend du thème actuel ----------
+  thpId = (s) => (s.bgType === 'spooky' ? 'spooky' : s.bgType === 'grid' ? 'grid' : s.bgType === 'scene' ? s.scene : s.bgType);
+  openThemes = (instant) => {
+    if (this.state.thPage || this.thpBusy) return;
+    const s = this.state.s;
+    if (this.state.menu) this.setState({ menu: null });
+    if (this.state.tab) this.setState({ tab: null });
+    // vignettes et polices prêtes avant que la page arrive : les images sont décodées pendant la transition
+    this.warmThumbs(PRESETS.map(p => ({ ...VDEF, ...p.s })), true);
+    this.thumbs.forEach(u => { const m = /url\("(.+)"\)/.exec(u); if (m) { const im = new Image(); im.src = m[1]; if (im.decode) im.decode().catch(() => {}); } });
+    this.ensureFonts(PRESETS.map(p => p.s.font));
+    const show = () => { this.thpBusy = false; const f = () => this.setState({ thPage: true, thpK: (this.state.thpK || 0) + 1 }); if (window.ReactDOM && ReactDOM.flushSync) ReactDOM.flushSync(f); else f(); };
+    if (instant === true || !window.FHTrans || s.quality === 'low' || this.state.tour != null || document.hidden) { show(); return; }
+    this.thpBusy = true;
+    this.thpStop = FHTrans.play(this.thpId(s), { bg1: s.bg1, bg2: s.bg2, bg3: s.bg3, accent: s.accent }, show);
+  };
+  closeThemes = () => {
+    if (!this.state.thPage || this.state.thPage === 'out') return;
+    const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || this.state.s.quality === 'low') { this.setState({ thPage: false }); return; }
+    this.setState({ thPage: 'out' }); clearTimeout(this.thpT); this.thpT = setTimeout(() => this.setState({ thPage: false }), 260);
+  };
+  thpPickPreset = (ps, name) => { this.thpPick = true; this.pickPreset(ps, name); };
+  thpPickStyle = (x) => { this.thpPick = true; this.applyStyle(x); };
   // « Thème selon la date » : on met tout de suite le thème du jour (annulable aussi)
   autoOn = () => {
     const id = themeOfDay(new Date()), pr = PRESETS.find(x => x.id === id);
@@ -3631,7 +3670,7 @@ class Component extends DCLogic {
     for (let k = 1; k <= n; k++) this.lightCell(Math.floor((last[0] + du * k / n) / v.c), Math.floor((last[1] + dw * k / n) / v.c), 1);
   };
   gridDraw = (t) => {
-    const el = this.gridEl, s = this.state.s, v = this.gridView(); if (!el || !v) return;
+    const el = this.gridEl, s = this.state.s, v = this.gridView(); if (!el || !v || this.state.thPage === true) return;
     if (s.quality === 'low' && this.gT && t - this.gT < 66) return;
     const dpr = Math.min(2, window.devicePixelRatio || 1), cw = Math.round(v.W * dpr), ch = Math.round(v.H * dpr);
     if (el.width !== cw || el.height !== ch) { el.width = cw; el.height = ch; this.gKey = ''; }
@@ -3739,8 +3778,8 @@ class Component extends DCLogic {
       const im = new Image();
       im.onload = () => {
         try {
-          const c = document.createElement('canvas'); c.width = 256; c.height = 144;
-          const g = c.getContext('2d'); g.fillStyle = ps.bg2 || '#000'; g.fillRect(0, 0, 256, 144); g.drawImage(im, 0, 0, 256, 144);
+          const c = document.createElement('canvas'); c.width = 576; c.height = 324;
+          const g = c.getContext('2d'); g.fillStyle = ps.bg2 || '#000'; g.fillRect(0, 0, 576, 324); g.drawImage(im, 0, 0, 576, 324);
           c.toBlob((b) => { if (b) this.thumbs.set(k, `url("${URL.createObjectURL(b)}")`); next(); }, 'image/webp', 0.86);
         } catch (er) { this.thumbs.set(k, FHS.preview(ps.scene, ps)); next(); }
       };
@@ -3760,6 +3799,7 @@ class Component extends DCLogic {
     const tg = e.target, tn = tg && tg.tagName;
     // Échap ferme toujours un menu ou annule le déplacement, même si le curseur est dans un champ
     if (e.key === 'Escape' && this.state.news) { this.newsClose(); return; }
+    if (e.key === 'Escape' && this.state.thPage && this.state.tour == null) { this.closeThemes(); return; }
     if (e.key === 'Escape' && (this.state.mindDD || this.state.mindAll)) { this.mindDDClose(); this.setState({ mindAll: false }); return; }
     if (e.key === 'Escape' && this.state.gameDD) { this.gameDDClose(); return; }
     if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 's' && this.state.s.mode === 'mind') { e.preventDefault(); this.mindStore(); return; }
@@ -3778,6 +3818,7 @@ class Component extends DCLogic {
         return;
       }
     }
+    if (this.state.thPage) return; // page Thèmes ouverte : pas de raccourcis (Échap la ferme, plus haut)
     // boîte à jeux : les lettres servent au pendu, pas aux raccourcis
     if (mode === 'games' && e.key !== 'Escape' && this.gameKey(e)) return;
     if (e.key === 'Escape') { this.stopAlarm(); this.closePanel(); this.closeMenu(); if (this.state.moveMode) this.placeClock(null); }
@@ -4198,6 +4239,7 @@ class Component extends DCLogic {
       this.dp = this.dp || { x: 0, y: 0, lx: 0, ly: 0 };
       const frame = (t) => {
         this.depthRaf = requestAnimationFrame(frame);
+        if (this.state.thPage === true) return;
         const d = this.dp, idle = performance.now() - (this.lastMove || 0) > 4000;
         // sans souris (tableau, projection), la scène dérive très lentement toute seule
         const tx = idle ? Math.sin(t / 9000) * 0.55 : d.tx, ty = idle ? Math.sin(t / 13000) * 0.4 : d.ty;
@@ -4966,11 +5008,6 @@ class Component extends DCLogic {
         ...CATS.slice(1).flatMap(c => [head(L['cat_' + c]), ...FONTS.filter(f => f.cat === c).map(f => ({ key: k + '=' + f.name, label: f.name, font: stack(f), check: s[k] === f.name, act: () => this.setS(k === 'font' ? { font: f.name, weight: f.dw } : { [k]: f.name }), keep: true }))])];
       const msgItems = () => [...radio('msg', [['none', L.m_none], ['greet', L.m_greet], ['theme', L.m_theme], ['custom', L.m_custom]]),
         ...(s.msg === 'custom' ? [{ key: 'msgt', input: true, value: s.msgText, ph: L.msgPh, onText: (v) => this.setS({ msgText: v.slice(0, 80) }) }] : [])];
-      const themes = () => {
-        const it = (pr) => { const ps = { ...VDEF, ...pr.s }; return { key: 'th=' + (pr.id || pr.s.scene || pr.n[0]), label: pr.n[li], thumb: preview(ps), emoji: DECO[pr.id || pr.s.scene] || '', check: VKEYS.every(k => s[k] === ps[k]), act: () => this.pickPreset(ps, pr.n[li]), keep: true }; };
-        return [head(L.hSeasons), ...PRESETS.filter(x => x.fete).map(it), head(L.hStyles), ...PRESETS.filter(x => !x.fete).map(it),
-          ...(st.styles.length ? [head(L.hMine), ...st.styles.map((x, i) => ({ key: 'my=' + i, label: x.name, thumb: preview({ ...VDEF, ...x.s }), act: () => this.applyStyle(x), keep: true }))] : [])];
-      };
       const scenes = () => SCENE_IDS.filter(id => !window.FHScenes || FHScenes.has(id)).map(id => {
         const pr = PRESETS.find(x => x.id === id || x.s.scene === id);
         return { key: 'sc=' + id, label: pr ? pr.n[li] : id, emoji: DECO[id] || '', thumb: pr ? preview({ ...VDEF, ...pr.s }) : undefined, check: s.bgType === 'scene' && s.scene === id, act: () => this.setS({ bgType: 'scene', scene: id }), keep: true };
@@ -5021,7 +5058,7 @@ class Component extends DCLogic {
         { key: 'cities', icon: 'public', label: L.cities, sub: () => ZONES.map(([z, nm]) => { const on = s.cities.includes(z); return { key: 'c=' + z, label: nm[li], check: on, act: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), keep: true }; }) },
         sep, move, settings];
       const bgItems = () => [
-        { key: 'theme', icon: 'palette', label: L.tPresets, sub: themes },
+        { key: 'theme', icon: 'palette', label: L.tPresets, act: () => this.openThemes() },
         { key: 'auto', icon: 'autorenew', label: L.mAutoTheme, check: !!s.autoTheme, act: () => { if (s.autoTheme) this.setS({ autoTheme: false }); else { this.autoOn(); } }, keep: true },
         sep,
         { key: 'bgtype', icon: 'wallpaper', label: L.bgType, sub: () => [['solid', L.solid], ['gradient', L.gradient], ['aurora', L.animated], ['grid', L.grid], ['scene', L.scene], ['spooky', L.spooky], ['image', L.image]].map(([v, label]) => ({ key: 'bt=' + v, label, check: s.bgType === v, act: () => (v === 'image' && !hasPics ? this.pickFiles() : this.setS({ bgType: v })), keep: v !== 'image' || hasPics })) },
@@ -5133,6 +5170,42 @@ class Component extends DCLogic {
     }
 
     // tuto : projecteur sur l'élément, flèche dessinée à la main et texte juste dessous
+    // page « Thèmes » : 4 grandes cartes par ligne, qui arrivent une à une de gauche à droite, ligne après ligne
+    let thpEl = null;
+    if (st.thPage) {
+      const vw = st.vw, pad = vw < 640 ? 16 : vw < 1100 ? 32 : 56, cols = vw >= 900 ? 4 : vw >= 600 ? 3 : 2, gap = vw < 640 ? 14 : 28;
+      const cw = Math.min(vw - pad * 2, 1600), cardW = (cw - gap * (cols - 1)) / cols, cardH = Math.round(cardW * 9 / 16);
+      const pageBg = dark ? `radial-gradient(90% 60% at 50% -10%, ${hexA(s.accent, 0.2)}, transparent 70%), #121114` : `radial-gradient(90% 60% at 50% -10%, ${hexA(s.accent, 0.16)}, transparent 70%), #f6f4f1`;
+      let n = 0;
+      const card = (key, name, ps, deco, active, pick) => {
+        const i = n++, pf = FONT_BY[ps.font] || FONTS[0], d = 200 + Math.min(i, 24) * 55 + Math.max(0, i - 24) * 12;
+        const txt = { ...this.cardText(ps), fontSize: Math.round(Math.min(cardW * 0.22, (cardW * 0.8) / (4 * pf.w + 0.4))) + 'px' };
+        return E('div', { key, className: 'fh-thc', style: { animationDelay: d + 'ms', minWidth: 0 } },
+          E('button', { type: 'button', className: 'fh-thc-img', 'data-tour': i === 0 ? 'thp-first' : undefined, title: name, onClick: pick, style: { position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: cardH, padding: 0, border: 0, borderRadius: 18, overflow: 'hidden', cursor: 'pointer', background: preview(ps), boxShadow: active ? `0 0 0 3px ${accUi}, 0 14px 34px rgba(0,0,0,.32)` : `0 10px 28px rgba(0,0,0,${dark ? 0.45 : 0.18}), inset 0 0 0 1px ${hexA(ui.fg, 0.08)}` } },
+            E('span', { style: txt }, sample),
+            deco ? E('span', { style: { position: 'absolute', right: 12, top: 10, fontSize: Math.round(Math.max(18, Math.min(28, cardW * 0.07))), lineHeight: 1 } }, deco) : null,
+            active ? E('span', { style: { position: 'absolute', left: 10, top: 10, width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: accUi, color: bestInk(accUi), boxShadow: '0 3px 10px rgba(0,0,0,.3)' } }, E('span', { style: { ...ICON, fontSize: 19 } }, 'check')) : null),
+          E('div', { style: { marginTop: 10, padding: '0 4px', textAlign: 'center', font: `600 ${vw < 640 ? 14 : 16}px/1.25 Geist, system-ui, sans-serif`, color: active ? accUi : ui.fg, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' } }, name));
+      };
+      const pr = (x) => { const ps = { ...VDEF, ...x.s }, nm = x.n[li]; return card('p-' + (x.id || x.s.scene || x.n[0]), nm, ps, DECO[x.id || x.s.scene] || '', VKEYS.every(k => s[k] === ps[k]), () => this.thpPickPreset(ps, nm)); };
+      const grid = (key, kids) => E('div', { key, style: { display: 'grid', gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))`, gap: `${gap + 6}px ${gap}px` } }, kids);
+      const head = (key, label) => E('h2', { key, style: { margin: '34px 0 16px', font: '650 13px/1 Geist, system-ui, sans-serif', letterSpacing: '.08em', textTransform: 'uppercase', color: ui.fg2 } }, label);
+      const btn = (key, icon, label, onClick, on) => E('button', { key, type: 'button', className: 'fh-btn', onClick, title: label, style: { display: 'inline-flex', alignItems: 'center', gap: 7, height: 40, padding: label ? '0 16px 0 12px' : 0, width: label ? undefined : 40, justifyContent: 'center', borderRadius: 999, border: `1px solid ${on ? accUi : ui.border}`, background: on ? hexA(accUi, 0.18) : hexA(ui.fg, 0.06), color: ui.fg, font: '600 14px/1 Geist, system-ui, sans-serif', cursor: 'pointer', whiteSpace: 'nowrap' } },
+        E('span', { style: { ...ICON, fontSize: 20, color: on ? accUi : ui.fg2 } }, icon), label || null);
+      const mineCards = st.styles.map((x, i) => { const ps = { ...VDEF, ...x.s }; return card('m-' + i, x.name, ps, '', false, () => this.thpPickStyle(x)); });
+      thpEl = E('div', { key: 'thp-' + (st.thpK || 0), 'data-thp-page': '', 'data-menu': 'none', role: 'dialog', 'aria-modal': true, 'aria-label': L.tPresets, onContextMenu: (e) => { e.preventDefault(); e.stopPropagation(); },
+        style: { position: 'absolute', inset: 0, zIndex: 74, overflowY: 'auto', overflowX: 'hidden', overscrollBehavior: 'contain', background: pageBg, color: ui.fg, colorScheme: dark ? 'dark' : 'light', animation: st.thPage === 'out' ? 'fh-thp-out .26s ease both' : undefined, cursor: 'default' } },
+        E('div', { style: { position: 'sticky', top: 0, zIndex: 2, background: dark ? 'linear-gradient(#121114 75%, rgba(18,17,20,0))' : 'linear-gradient(#f6f4f1 75%, rgba(246,244,241,0))' } },
+          E('div', { style: { maxWidth: cw, margin: '0 auto', padding: `${vw < 640 ? 18 : 30}px 0 22px`, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' } },
+            E('div', { style: { flex: 1, minWidth: 0, font: `700 ${vw < 640 ? 26 : 36}px/1.05 Geist, system-ui, sans-serif`, letterSpacing: '-.02em' } }, L.tPresets),
+            btn('auto', 'autorenew', L.mAutoTheme, () => { if (s.autoTheme) this.setS({ autoTheme: false }); else this.autoOn(); }, !!s.autoTheme),
+            btn('x', 'close', '', this.closeThemes))),
+        E('div', { style: { maxWidth: cw, margin: '0 auto', padding: `0 0 ${pad + 20}px` } },
+          head('h1', L.hSeasons), grid('g1', PRESETS.filter(x => x.fete).map(pr)),
+          head('h2', L.hStyles), grid('g2', PRESETS.filter(x => !x.fete).map(pr)),
+          ...(mineCards.length ? [head('h3', L.hMine), grid('g3', mineCards)] : [])));
+    }
+
     let tourEl = null;
     if (st.tour != null && st.tourRect) {
       const steps = this.tourSteps(), r = st.tourRect, step = Math.min(st.tour, steps.length - 1), cur = steps[step], n = steps.length, pad = 8, last = step === n - 1, act = !!(st.tourLong && cur.act);
@@ -5310,6 +5383,7 @@ class Component extends DCLogic {
           E('button', { type: 'button', className: 'fh-btn', 'data-tour': 'bgpic-del', title: L.bgPicDel, onClick: this.dropBgPic, style: { display: 'inline-flex', alignItems: 'center', gap: 5, height: 28, padding: '0 12px 0 9px', borderRadius: 999, border: 0, background: '#e5484d', color: '#fff', font: '600 13px/1 Geist, system-ui, sans-serif', cursor: 'pointer' } },
             E('span', { style: { ...ICON, fontSize: 17 } }, 'delete'), L.bgPicDel)) };
       })(),
+      thp: { show: !!thpEl, el: thpEl }, thpOn: st.thPage === true ? '1' : '0',
       news: { show: !!newsEl, el: newsEl }, mm: (() => { const a = this.mindMenusEl(E, st, L, ui, dark, accUi), b = this.gameDDEl(E, st, L, ui, dark, accUi), el = [...(a || []), ...(b ? [b] : [])]; return { show: el.length > 0, el: el.length ? el : null }; })(),
       toast: { show: !!st.toast, msg: st.toast ? st.toast.msg : '', hasUndo: !!(st.toast && st.toast.undo), undo: () => { if (st.toast && st.toast.undo) st.toast.undo(); } },
       dragOver: st.dragOver, fileRef: this.fileRef, onFiles: this.onFiles, pickFiles: this.pickFiles,
