@@ -213,6 +213,35 @@
   ].join('');
   function injectCss() { if (typeof document === 'undefined' || document.getElementById('fhs-css')) return; const st = document.createElement('style'); st.id = 'fhs-css'; st.textContent = CSS; document.head.appendChild(st); }
 
+  // ---------- objets qui réagissent quand on clique dessus ----------
+  // décor -> clé de l'élément (sans son numéro) -> action, éventuellement suivie d'un effet (« hop:hearts »)
+  //   stop   : s'arrête quelques secondes puis repart (véhicules)     zoom : file à toute vitesse un instant (oiseaux, bateaux…)
+  //   spin   : tourne beaucoup plus vite un instant (roues, moulins)   hop  : fait un bond       wiggle : se secoue
+  // le clic est géré par la page (index.html) : elle cherche l'objet sous le doigt, même quand il bouge
+  const TAPMAP = {
+    london: { bus: 'stop', cab: 'stop', eye: 'spin', flag: 'wiggle', gl: 'zoom' },
+    iso: { car: 'stop', mill: 'spin', bal: 'hop' },
+    neon: { car: 'zoom' },
+    summer: { boat: 'zoom', crab: 'hop', gl: 'zoom' },
+    xmas: { sleigh: 'zoom:gold', star: 'spin:gold' },
+    autumn: { birds: 'zoom' },
+    spring: { bee: 'zoom' },
+    easter: { ch: 'hop:hearts' },
+    glacier: { pg: 'hop', ib: 'wiggle' },
+    april: { jelly: 'hop', ray: 'zoom', fi: 'zoom' },
+    arcade: { ufo: 'zoom:pixels', ship: 'hop', army: 'wiggle' },
+    cosmos: { sat: 'zoom', astro: 'spin' },
+    gotham: { bt: 'zoom', sig: 'wiggle' },
+    music: { eq: 'zoom' },
+    brutal: { ast: 'spin' },
+    candy: { lo: 'spin:sprinkles' },
+    terminal: { mon: 'wiggle' },
+    bastille: { flag: 'wiggle' },
+    gothic: { cg: 'wiggle' },
+    paper: { pl: 'zoom' },
+  };
+  const tapOf = (id, k) => { const m = TAPMAP[id]; return m ? m[String(k).replace(/\d+$/, '')] : undefined; };
+
   // ---------- registre des décors ----------
   const SC = {};
   const ids = [];
@@ -231,7 +260,7 @@
         return E('div', { key: 'art-' + k, style: { position: 'absolute', inset: 0, backgroundImage: cached('art|' + id + '|' + k + '|' + colorKey, () => svg(`0 0 ${W} ${H}`, fn(keyed(k)))), backgroundSize: '100% 100%' } });
       },
       // élément libre (positions et tailles en unités du dessin)
-      el: (k, st, kids) => (mode === 'preview' ? null : E('div', { key: k, style: st }, kids)),
+      el: (k, st, kids) => (mode === 'preview' ? null : E('div', { key: k, style: st, 'data-fhtap': tapOf(id, k) }, kids)),
       still: (svgBody) => { if (mode === 'preview') bodies.push(svgBody); return null; },
       img: (url, st) => ({ position: 'absolute', backgroundImage: url, backgroundSize: '100% 100%', backgroundRepeat: 'no-repeat', ...st }),
       // liste d'éléments tirés au hasard une fois pour toutes
@@ -255,7 +284,8 @@
   function drift(t, key, list) {
     if (t.preview) return [];
     const E = t.E;
-    return list.map((p, i) => E('div', { key: key + i, style: { position: 'absolute', left: em(p.x), top: em(p.y), width: em(p.w), height: em(p.h == null ? p.w : p.h), '--x0': em(p.x0 || 0), '--y0': em(p.y0 || 0), '--x1': em(p.x1 || 0), '--y1': em(p.y1 || 0), '--r0': (p.r0 || 0) + 'deg', '--r1': (p.r1 || 0) + 'deg', '--op': p.op == null ? 1 : p.op, opacity: p.fade ? 0 : p.op, animation: `${p.fade ? 'fhs-movef' : 'fhs-move'} ${N(p.dur)}s ${p.ease || 'linear'} ${N(p.dl || 0)}s infinite`, zIndex: p.z } },
+    const tap = tapOf(t.id, key);
+    return list.map((p, i) => E('div', { key: key + i, 'data-fhtap': tap, style: { position: 'absolute', left: em(p.x), top: em(p.y), width: em(p.w), height: em(p.h == null ? p.w : p.h), '--x0': em(p.x0 || 0), '--y0': em(p.y0 || 0), '--x1': em(p.x1 || 0), '--y1': em(p.y1 || 0), '--r0': (p.r0 || 0) + 'deg', '--r1': (p.r1 || 0) + 'deg', '--op': p.op == null ? 1 : p.op, opacity: p.fade ? 0 : p.op, animation: `${p.fade ? 'fhs-movef' : 'fhs-move'} ${N(p.dur)}s ${p.ease || 'linear'} ${N(p.dl || 0)}s infinite`, zIndex: p.z } },
       E('div', { style: { width: '100%', height: '100%', '--sw': em(p.sw || 0), '--sr': (p.sr || 0) + 'deg', animation: p.sw || p.sr ? `fhs-sway ${N(p.swd || 3)}s ease-in-out ${N(-(p.dl || 0) * 0.7)}s infinite` : undefined } },
         p.wing ? flyer(E, p.wing, p.wc, p.flap || 0.6, -(i * 0.37 % 1), { inset: 0, transform: p.flip ? 'scaleX(-1)' : undefined }) : E('div', { style: { width: '100%', height: '100%', ...(p.img ? { backgroundImage: p.img, backgroundSize: '100% 100%' } : { background: p.bg }), borderRadius: p.round, '--f': p.f, animation: p.flap ? `${p.flapx ? 'fhs-flapx' : 'fhs-flap'} ${N(p.flap)}s ease-in-out infinite` : undefined, transform: p.flip ? 'scaleX(-1)' : undefined } }))));
   }

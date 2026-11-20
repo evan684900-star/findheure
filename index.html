@@ -574,6 +574,8 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.20.0', d: '2026-11-20', items: [
+    'Décors : on peut toucher les objets qui bougent (le taxi et le bus de Londres s’arrêtent, la grande roue s’emballe, les oiseaux filent, les animaux sautent…).|Scenes: tap moving objects (London’s taxi and bus stop, the big wheel speeds up, birds dash off, animals jump…).'] },
   { v: '2.19.0', d: '2026-11-16', items: [
     'Créer avec l’IA : le jeu s’ouvre d’abord pour être vérifié et corrigé, puis on joue.|Create with AI: the game opens first so you can check and fix it, then play.',
     'Créer avec l’IA : mots mieux choisis (accents, nombre demandé, dans le thème) et réponse plus rapide.|Create with AI: better words (accents, requested number, on topic) and faster answers.',
@@ -905,6 +907,7 @@ const T_RAW = {
   gName: "Nom du jeu (ex. : Les fruits en anglais)|Game name (e.g. Fruit in English)|Nombre del juego (p. ej.: Las frutas en inglés)|Name des Spiels (z. B. Obst auf Englisch)", gWord: "Mot|Word|Palabra|Wort", gEmoji: "Emoji|Emoji|Emoji|Emoji", gAddRow: "Ajouter une paire|Add a pair|Añadir una pareja|Paar hinzufügen", gAddPics: "Ajouter des images|Add pictures|Añadir imágenes|Bilder hinzufügen", gAddPic: "Mettre une image|Use a picture|Poner una imagen|Bild verwenden",
   gSave: "Enregistrer|Save|Guardar|Speichern", gSavePlay: "Enregistrer et jouer|Save and play|Guardar y jugar|Speichern und spielen", gNeed: "Donne un nom au jeu et au moins 3 paires complètes.|Give the game a name and at least 3 complete pairs.|Ponle un nombre y al menos 3 parejas completas.|Gib dem Spiel einen Namen und mindestens 3 vollständige Paare.",
   gEdHelp: "Un emoji (ou une image) et son mot sur chaque ligne, 12 paires au plus.|An emoji (or a picture) and its word on each line, up to 12 pairs.|Un emoji (o una imagen) y su palabra en cada línea, hasta 12 parejas.|Ein Emoji (oder Bild) und sein Wort pro Zeile, bis zu 12 Paare.", gEdit: "Modifier|Edit|Editar|Bearbeiten", gDelete: "Supprimer|Delete|Eliminar|Löschen", gDeleted: "Jeu supprimé|Game deleted|Juego eliminado|Spiel gelöscht", gFull: "Plus de place pour enregistrer (images trop lourdes)|No room left to save (pictures too large)|No queda espacio (imágenes demasiado grandes)|Kein Platz mehr (Bilder zu groß)",
+  objHonk: "Bip bip !|Beep beep!|¡Pip pip!|Tüt tüt!",
   gAiChoice: "Créer avec l’IA|Create with AI|Crear con IA|Mit KI erstellen", gAiChoiceSub: "Décris le thème, l’IA trouve les mots|Describe the topic, the AI finds the words|Describe el tema, la IA encuentra las palabras|Beschreibe das Thema, die KI findet die Wörter",
   gAiHangT: "Un pendu fait par l’IA|A hangman made by AI|Un ahorcado hecho por IA|Galgenmännchen von der KI", gAiMatchT: "Un jeu d’association fait par l’IA|A matching game made by AI|Un juego de parejas hecho por IA|Zuordnungsspiel von der KI",
   gAiExHang: "Ex. : 10 mots sur la Révolution française pour des CM2|E.g. 10 words about the solar system for 10-year-olds|Ej.: 10 palabras sobre el sistema solar para niños de 10 años|Z. B.: 10 Wörter zum Sonnensystem für 10-Jährige",
@@ -4135,7 +4138,10 @@ class Component extends DCLogic {
     if (this.state.tab) { this.closePanel(); return; }
     if (this.noClick) return;
     // un objet du décor (lune, citrouille, arbre…) réagit au lieu d'ouvrir le menu du fond
-    const h = this.onBg(e) && !this.clockHit(e.clientX, e.clientY) && this.decoHit(e.clientX, e.clientY);
+    const bg = this.onBg(e) && !this.clockHit(e.clientX, e.clientY);
+    const o = bg && this.objHit(e.clientX, e.clientY);
+    if (o) { this.objTap(o); return; }
+    const h = bg && this.decoHit(e.clientX, e.clientY);
     if (h) { this.decoTap(h); return; }
     this.menuAt(e.clientX, e.clientY, e.target);
   };
@@ -4202,10 +4208,52 @@ class Component extends DCLogic {
     this.setState(s0 => ({ taps: [...s0.taps.slice(-5), { id, fx, x: h.x, y: h.y, r: h.r, c: h.c, u, lite: st.s.quality === 'low', seed: (Date.now() * 7919 + id * 104729) | 0 }] }));
     setTimeout(() => this.setState(s0 => ({ taps: s0.taps.filter(x => x.id !== id) })), 4200);
   };
+  // ---------- objets animés du décor qu'on peut toucher (taxi qui s'arrête, oiseaux qui filent, grande roue qui s'emballe…) ----------
+  // les décors marquent ces objets avec data-fhtap="action[:effet]" ; on cherche celui sous le doigt, même s'il bouge
+  objHit = (x, y) => {
+    const st = this.state, s = st.s;
+    if (s.decoTap === false || st.tour != null || st.moveMode || (s.bgType !== 'scene') || s.mode === 'games' || s.mode === 'mind' || s.mode === 'show') return null;
+    let best = null, area = Infinity;
+    document.querySelectorAll('[data-fhtap]').forEach(el => {
+      const r = el.getBoundingClientRect(); if (r.width < 2 || r.height < 2) return;
+      const pad = Math.max(0, 22 - Math.min(r.width, r.height) / 2); // les petits objets (abeille, crabe) sont plus faciles à attraper
+      if (x < r.left - pad || x > r.right + pad || y < r.top - pad || y > r.bottom + pad) return;
+      if (parseFloat(getComputedStyle(el).opacity) < 0.15) return;
+      const a = r.width * r.height; if (a < area) { area = a; best = el; }
+    });
+    return best;
+  };
+  objTap = (el) => {
+    if (el._fhBusy) return;
+    el._fhBusy = true; setTimeout(() => { el._fhBusy = false; }, 1200);
+    const [act, fx] = String(el.dataset.fhtap).split(':'), r = el.getBoundingClientRect();
+    const anims = el.getAnimations ? el.getAnimations({ subtree: true }) : [];
+    const rate = (k, ms) => { anims.forEach(a => { try { a.updatePlaybackRate ? a.updatePlaybackRate(k) : (a.playbackRate = k); } catch (e) {} }); setTimeout(() => anims.forEach(a => { try { a.updatePlaybackRate ? a.updatePlaybackRate(1) : (a.playbackRate = 1); } catch (e) {} }), ms); };
+    const add = (frames, o) => { try { el.animate(frames, { composite: 'add', ...o }); } catch (e) {} };
+    if (act === 'stop') {
+      // le véhicule pile, bascule un peu vers l'avant, attend, puis repart
+      anims.forEach(a => { try { a.pause(); } catch (e) {} });
+      add([{ transform: 'rotate(0deg)' }, { transform: 'rotate(-3deg)' }, { transform: 'rotate(1deg)' }, { transform: 'rotate(0deg)' }], { duration: 500, easing: 'ease-out' });
+      this.objSay(r, this.L().objHonk);
+      setTimeout(() => anims.forEach(a => { try { a.play(); } catch (e) {} }), 2800);
+    } else if (act === 'zoom') rate(7, 1300);
+    else if (act === 'spin') rate(12, 1800);
+    else if (act === 'hop') add([{ transform: 'translateY(0) scale(1,1)' }, { transform: 'translateY(0) scale(1.12,.86)', offset: 0.15 }, { transform: 'translateY(-1.4em) scale(.94,1.08)', offset: 0.45 }, { transform: 'translateY(0) scale(1.1,.9)', offset: 0.8 }, { transform: 'translateY(0) scale(1,1)' }], { duration: 700, easing: 'ease-out' });
+    else if (act === 'wiggle') add([0, -9, 8, -6, 4, -2, 0].map(d => ({ transform: `rotate(${d}deg)` })), { duration: 700, easing: 'ease-in-out' });
+    if (fx) this.decoTap({ x: r.left + r.width / 2, y: r.top + r.height / 2, r: Math.max(30, Math.min(r.width, r.height) / 2), fx });
+  };
+  // petite bulle au-dessus d'un véhicule qui s'arrête
+  objSay = (r, txt) => {
+    const b = document.createElement('div'); b.textContent = txt; b.setAttribute('aria-hidden', 'true');
+    Object.assign(b.style, { position: 'fixed', left: (r.left + r.width / 2) + 'px', top: (r.top - 8) + 'px', transform: 'translate(-50%, -100%)', zIndex: 60, pointerEvents: 'none', padding: '5px 11px', borderRadius: '14px', background: '#ffffff', color: '#1f1d2b', font: '700 15px/1 Geist, system-ui, sans-serif', boxShadow: '0 6px 18px rgba(0,0,0,.3)', whiteSpace: 'nowrap' });
+    document.body.appendChild(b);
+    try { b.animate([{ opacity: 0, transform: 'translate(-50%, -80%) scale(.6)' }, { opacity: 1, transform: 'translate(-50%, -100%) scale(1)', offset: 0.12 }, { opacity: 1, transform: 'translate(-50%, -105%) scale(1)', offset: 0.85 }, { opacity: 0, transform: 'translate(-50%, -125%) scale(.9)' }], { duration: 2400, easing: 'ease-out', fill: 'forwards' }); } catch (e) {}
+    setTimeout(() => b.remove(), 2500);
+  };
   // petite main au survol d'un objet qui réagit
   onStageMove = (e) => {
     if (e.pointerType && e.pointerType !== 'mouse') return;
-    const on = this.onBg(e) && !this.clockHit(e.clientX, e.clientY) && !!this.decoHit(e.clientX, e.clientY);
+    const on = this.onBg(e) && !this.clockHit(e.clientX, e.clientY) && !!(this.objHit(e.clientX, e.clientY) || this.decoHit(e.clientX, e.clientY));
     if (on !== !!this.hotOn) { this.hotOn = on; e.currentTarget.style.cursor = on ? 'pointer' : ''; }
   };
   L() { const li = Math.max(0, LANGS.indexOf(this.state.s.uiLang)); if (this._li !== li) { this._li = li; const o = {}; for (const k in T) o[k] = T[k][li]; this._L = o; } return this._L; }
