@@ -248,6 +248,9 @@
     zen: { koi: 'zoom', lan: 'wiggle' },
     farm: { cow: 'hop:hearts', sheep: 'hop', hen: 'zoom', tractor: 'stop' },
     kites: { kite: 'spin', mill: 'spin', bd: 'zoom' },
+    camping: { fire: 'hop:confetti', owl: 'wiggle', tent: 'wiggle', ff: 'zoom' },
+    tropical: { fish: 'zoom', turtle: 'zoom', sail: 'zoom' },
+    fair: { wheel: 'spin', horse: 'hop', cotton: 'wiggle:hearts', gl: 'zoom' },
   };
   const tapOf = (id, k) => { const m = TAPMAP[id]; return m ? m[String(k).replace(/\d+$/, '')] : undefined; };
 
@@ -2268,6 +2271,116 @@
       butterflies(t, 'bf', 4, [200, 400, 1400, 750], [['#ff9f43', '#ffd166'], ['#7ec8ff', '#c9a7ff'], ['#ff6fb5', '#ffd1e3'], ['#ffd166', '#ffe9a8']]),
       ...drift(t, 'bd', t.n('bd', 3, (r, i) => ({ x: -120, y: rr(r, 280, 380), w: 30, h: 16, x1: 1900, y1: rr(r, -40, 40), dur: rr(r, 22, 28), dl: -i * 8, wing: 'bird', wc: '#3b3b44', flap: 0.55 }))),
     ],
+  });
+
+  Object.assign(SPR2, {
+    tent: (a, b) => svg('0 0 220 140', path('M10 136L110 10L210 136Z', a) + path('M110 10L210 136L150 136Z', b) + path('M110 40L80 136L140 136Z', '#2b1d18') + path('M110 40L92 136L110 136Z', '#ffcf6e', ' opacity=".55"') + line('M110 10L110 0', '#5a3a24', 4)),
+    fire: () => svg('0 0 120 130', path('M20 120L100 104M24 104L98 122', 'none', ' stroke="#6b4128" stroke-width="12" stroke-linecap="round"') + path('M60 10Q90 50 80 84Q74 104 60 106Q46 104 40 84Q32 54 60 10Z', '#ff7a1c') + path('M60 40Q76 66 70 88Q66 100 60 100Q54 100 50 88Q44 68 60 40Z', '#ffc23d') + path('M60 66Q66 80 64 92Q62 96 60 96Q58 96 56 92Q54 80 60 66Z', '#fff2b0')),
+    owl: () => svg('0 0 60 70', ell(30, 40, 20, 26, '#8a6a4a') + ell(30, 46, 13, 17, '#c9a87a') + circ(21, 28, 9, '#f2e2c0') + circ(39, 28, 9, '#f2e2c0') + circ(21, 28, 4, '#1b1b1b') + circ(39, 28, 4, '#1b1b1b') + path('M27 34L30 40L33 34Z', '#f2b84a') + path('M12 16L18 26L22 18Z', '#8a6a4a') + path('M48 16L42 26L38 18Z', '#8a6a4a')),
+    turtle: () => svg('0 0 100 70', ell(50, 36, 32, 22, '#3f8f6a') + ell(50, 36, 24, 16, '#5fb08a') + [[40, 30], [58, 30], [50, 42]].map(([x, y]) => circ(x, y, 6, '#3f8f6a')).join('') + ell(88, 34, 10, 8, '#7cc4a0') + circ(92, 32, 1.8, '#1b1b1b') + ell(22, 18, 12, 6, '#7cc4a0', ' transform="rotate(-30 22 18)"') + ell(22, 54, 12, 6, '#7cc4a0', ' transform="rotate(30 22 54)"') + ell(72, 14, 10, 5, '#7cc4a0', ' transform="rotate(30 72 14)"') + ell(72, 58, 10, 5, '#7cc4a0', ' transform="rotate(-30 72 58)"')),
+    horse: (c) => svg('0 0 80 120', line('M40 0V120', '#d9b23c', 4) + path('M14 60Q16 44 34 44L56 44Q66 34 70 44Q74 54 64 58L60 76L54 76L52 64L26 64L22 80L16 80Z', c) + path('M58 40Q64 30 70 40L66 44Z', '#5a3a24') + circ(66, 46, 1.6, '#1b1b1b') + rect(30, 46, 18, 8, '#e63946', ' rx="3"')),
+    cotton: () => svg('0 0 50 110', line('M25 40V108', '#f3e3c3', 4) + [[25, 22], [14, 30], [36, 30], [20, 12], [32, 14], [25, 36]].map(([x, y]) => circ(x, y, 12, '#ffb3d9')).join('')),
+  });
+
+  // ---------------- ÉTÉ 2 : camping la nuit (tente, feu de camp, lucioles, hibou) ----------------
+  def('camping', {
+    base: (o) => o.bg2,
+    layers: (t, o) => [
+      t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.6, o.bg1], [0.85, o.bg3]]) + starsSvg(t.r('st'), 220, { y1: 520 }) + moonSvg(p + 'm', 1330, 140, 42, '#fffbe8', '#e9dfb8', 0.4)),
+      twinkles(t, 'tw', 14, [40, 20, 1560, 420]),
+      shooting(t, 'sh', 300, 120, 360, 140, 11, 3),
+      t.art('land', (p) => {
+        const r = t.r('la');
+        let s = mountains(r, p + 'm', { y: 610, amp: 200, n: 8, valley: 0.6, fill: '#22305a', shade: 'rgba(0,0,20,.3)' });
+        for (let i = 0; i < 60; i++) { const x = rr(r, -20, 1620); if (x > 560 && x < 1040 && r() < 0.8) continue; s += pine(x, rr(r, 640, 680), rr(r, 60, 120), '#14213d', { tiers: 4 }); }
+        // lac qui reflète la lune
+        s += path('M380 700Q800 670 1220 700Q1100 740 800 744Q500 740 380 700Z', '#1f2f5a') + ell(1000, 712, 70, 4, '#fffbe8', ' opacity=".35"') + ell(1010, 724, 40, 3, '#fffbe8', ' opacity=".25"');
+        s += path('M-20 905L-20 760Q400 730 800 750T1620 740L1620 905Z', '#1a2a24');
+        s += grass(r, 200, { x0: -10, x1: 1610, y0: 760, y1: 905, h: [10, 26], c: ['#22382c', '#2b4434', '#1a2e22'], w: 2 });
+        // lueur du feu sur le sol
+        s += glow(p + 'fg', 760, 840, 300, '#ff9a3c', 0.45);
+        s += [[60, 905, 320], [210, 910, 240], [1480, 905, 340], [1360, 910, 220]].map(([x, y, h]) => pine(x, y, h, '#0f1a2e', { tiers: 5 })).join('');
+        return s;
+      }),
+      t.el('tent', t.img(spr2('tent', '#e8763c', '#c8561e'), { left: em(420), top: em(690), width: em(240), height: em(152) })),
+      t.still(`<image href="${spr2('tent', '#e8763c', '#c8561e').slice(5, -2)}" x="420" y="690" width="240" height="152"/>`),
+      t.el('fire', t.img(spr2('fire'), { left: em(700), top: em(740), width: em(110), height: em(120), transformOrigin: '50% 100%', '--s': 1.08, '--o0': 0.9, animation: 'fhs-pulse 0.9s ease-in-out infinite' })),
+      t.still(`<image href="${spr2('fire').slice(5, -2)}" x="700" y="740" width="110" height="120"/>`),
+      t.el('fglow', { position: 'absolute', left: em(560), top: em(640), width: em(400), height: em(260), background: 'radial-gradient(closest-side, rgba(255,160,70,.35), rgba(255,160,70,0))', '--o0': 0.6, animation: 'fhs-tw 1.7s ease-in-out infinite' }),
+      ...drift(t, 'ember', t.n('ember', 10, (r, i) => ({ x: rr(r, 735, 775), y: 760, w: rr(r, 4, 7), x1: rr(r, -60, 60), y1: -rr(r, 160, 260), dur: rr(r, 2.5, 4), dl: -i * 0.4, fade: true, img: spr('dot', '#ffb347') }))),
+      // lucioles qui flottent
+      ...(t.preview ? [] : t.n('ff', 26, (r) => ({ x: rr(r, 40, 1560), y: rr(r, 560, 880), d: rr(r, 3, 6), dx: rr(r, -60, 60), dy: rr(r, -40, 40) })).map((p, i) => t.el('ff' + i, { position: 'absolute', left: em(p.x), top: em(p.y), width: em(9), height: em(9), borderRadius: '50%', background: '#e8ff8a', boxShadow: `0 0 ${em(16)} ${em(4)} rgba(220,255,120,.6)`, '--bx': em(p.dx), '--by': em(p.dy), animation: `fhs-bob ${N(p.d * 2)}s ease-in-out ${N(-i * 0.7)}s infinite, fhs-tw ${N(p.d)}s ease-in-out ${N(-i * 0.4)}s infinite` }))),
+      t.el('owl', t.img(spr2('owl'), { left: em(1380), top: em(560), width: em(56), height: em(66), transformOrigin: '50% 100%', '--a': '4deg', animation: 'fhs-rock 5s ease-in-out infinite' })),
+      t.still(`<image href="${spr2('owl').slice(5, -2)}" x="1380" y="560" width="56" height="66"/>`),
+    ],
+  });
+
+  // ---------------- ÉTÉ 3 : île tropicale, au-dessus et sous l'eau (poissons, tortue, voilier) ----------------
+  def('tropical', {
+    base: (o) => o.bg1,
+    layers: (t, o) => [
+      t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.42, o.bg1], [0.5, o.bg3]])),
+      ...movingSun(t, 'sun', 1300, 120, 240, (x, y, p) => glow(p + 'g', x, y, 240, '#fff6c8', 0.75) + circ(x, y, 46, '#fffbe0'), 430),
+      ...clouds(t, 'cl', [{ x: -260, y: 70, k: 0.9, dx: 2000, dur: 120, dl: -30, c: '#ffffff', s: '#dcefff' }]),
+      t.still(cloud(600, 90, 0.9, '#ffffff', '#dcefff')),
+      t.art('sea', (p) => {
+        const r = t.r('se');
+        // l'eau, claire en surface et profonde en bas
+        let s = `<defs>${lg(p + 'w', [[0, '#2ec4d6', 1], [0.35, '#1690b8', 1], [1, '#0a3a6a', 1]])}</defs>` + rect(-10, 430, 1620, 480, `url(#${p}w)`);
+        // îlot avec palmier (au-dessus de l'eau)
+        s += path('M120 440Q260 380 420 440Z', '#f2d38a') + path('M1150 440Q1280 400 1420 440Z', '#f2d38a');
+        s += palm(r, 270, 430, 180, -40, { trunk: '#a8743c', leaf: '#2f9e44' }) + palm(r, 1290, 432, 140, 30, { trunk: '#a8743c', leaf: '#3aa84c' });
+        // rayons de lumière sous l'eau
+        for (let i = 0; i < 7; i++) { const x = rr(r, 100, 1500); s += path(`M${N(x)} 440L${N(x + 60)} 440L${N(x + 160)} 900L${N(x + 40)} 900Z`, '#ffffff', ` opacity="${N(rr(r, 0.05, 0.12))}"`); }
+        // fond de sable, coraux et algues
+        s += path('M-20 905L-20 820Q300 790 700 820T1620 810L1620 905Z', '#e8cf94');
+        const coral = (x, y, c, h) => { let q = ''; for (let k = -2; k <= 2; k++) q += path(`M${x} ${y}Q${N(x + k * 14)} ${N(y - h * 0.6)} ${N(x + k * 22)} ${N(y - h + Math.abs(k) * 12)}`, 'none', ` stroke="${c}" stroke-width="9" stroke-linecap="round"`); return q; };
+        [[120, 840, '#ff6b8a', 90], [260, 850, '#ffb347', 70], [1340, 840, '#ff6b8a', 100], [1480, 846, '#c06bff', 80], [560, 852, '#ffb347', 50], [1100, 850, '#ff8ad8', 60]].forEach(([x, y, c, h]) => { s += coral(x, y, c, h); });
+        for (let i = 0; i < 12; i++) { const x = rr(r, 0, 1600); s += path(`M${N(x)} 860Q${N(x - 14)} 800 ${N(x + 4)} 740Q${N(x + 18)} 700 ${N(x + 6)} 670`, 'none', ` stroke="${pick(r, ['#3f9a5a', '#2f8a4a', '#5fb07a'])}" stroke-width="6" stroke-linecap="round"`); }
+        for (let i = 0; i < 20; i++) s += ell(rr(r, 0, 1600), rr(r, 840, 900), rr(r, 6, 12), rr(r, 3, 6), pick(r, ['#ffffff', '#f2b0b8', '#ffe0a0']));
+        s += rect(-10, 428, 1620, 6, '#ffffff', ' opacity=".5"');
+        return s;
+      }),
+      t.el('sail', t.img(cached('sail2', () => svg('0 0 100 100', path('M10 70L90 70L80 84L20 84Z', '#8a5a34') + line('M50 70V6', '#5a3a24', 3) + path('M52 8L52 66L88 66Z', '#ffffff') + path('M48 14L48 66L18 66Z', '#ff6b6b'))), { left: em(700), top: em(352), width: em(90), height: em(90), '--x1': em(260), animation: 'fhs-move 40s ease-in-out infinite alternate' })),
+      ...[[200, 560, 400, 14, ['#ffb347', '#ff7a1c'], 0], [1200, 640, -380, 18, ['#5ac8fa', '#ffd166'], -6], [700, 720, 360, 16, ['#ff6b8a', '#ffd1e3'], -3], [1000, 580, -300, 12, ['#9d6bff', '#ffd166'], -8], [400, 760, 300, 20, ['#ffd166', '#3a7bd5'], -11]].map(([x, y, dx, d, [a, b], dl], i) =>
+        t.el('fish' + i, { position: 'absolute', left: em(x), top: em(y), width: em(70), height: em(44), '--x1': em(dx), animation: `fhs-move ${d}s ease-in-out ${dl}s infinite alternate` }, t.E('div', { style: { width: '100%', height: '100%', backgroundImage: spr('fish', a, b), backgroundSize: '100% 100%', transform: dx < 0 ? 'scaleX(-1)' : undefined } }))),
+      t.el('turtle', t.img(spr2('turtle'), { left: em(-120), top: em(620), width: em(100), height: em(70), '--x1': em(1840), '--y1': em(-60), animation: 'fhs-move 50s linear -15s infinite' })),
+      ...drift(t, 'bub', t.n('bub', 14, (r) => ({ x: rr(r, 100, 1500), y: 880, w: rr(r, 8, 18), y1: -440, x1: rr(r, -30, 30), dur: rr(r, 6, 11), dl: -r() * 11, sw: 1.5, swd: 2, op: 0.7, img: spr('bubble') }))),
+    ],
+  });
+
+  // ---------------- ÉTÉ 4 : fête foraine au bord de la mer (grande roue, manège, barbe à papa) ----------------
+  def('fair', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const E = t.E, WX = 1250, WY = 470, bulbs = ['#ffd166', '#ff6b6b', '#5ee38a', '#5aa9ff', '#ff8ad8'];
+      const wheel = cached('fairwheel', () => svg('-240 -240 480 480', circ(0, 0, 220, 'none', ' stroke="#ffffff" stroke-width="8"') + circ(0, 0, 200, 'none', ' stroke="#ff8ad8" stroke-width="3"')
+        + Array.from({ length: 12 }, (_, i) => { const a = i * Math.PI / 6; return line(`M0 0L${N(Math.cos(a) * 220)} ${N(Math.sin(a) * 220)}`, '#ffffff', 4) + circ(Math.cos(a) * 220, Math.sin(a) * 220, 9, bulbs[i % 5]); }).join('') + circ(0, 0, 22, '#ffd166')));
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.5, o.bg1], [0.78, o.bg3]]) + starsSvg(t.r('st'), 40, { y1: 220 })),
+        t.art('sea', (p) => {
+          const r = t.r('se');
+          let s = `<defs>${lg(p + 'w', [[0, '#3a4a8a', 1], [1, '#1b2350', 1]])}</defs>` + rect(-10, 560, 1620, 160, `url(#${p}w)`);
+          for (let i = 0; i < 20; i++) s += rect(rr(r, 0, 1600), rr(r, 570, 700), rr(r, 40, 120), 2, pick(r, ['#ffd166', '#ff8ad8', '#5aa9ff']), ` opacity="${N(rr(r, 0.15, 0.35))}"`);
+          // pieds de la grande roue
+          s += path(`M${WX} ${WY}L${WX - 140} 760L${WX - 120} 760L${WX} ${WY + 20}L${WX + 120} 760L${WX + 140} 760Z`, '#e8e8f0');
+          // promenade en bois
+          s += rect(-10, 720, 1620, 190, '#6b4a3a') + Array.from({ length: 30 }, (_, i) => line(`M${i * 56} 720L${i * 56 - 30} 905`, '#5a3d30', 3)).join('');
+          // stands rayés
+          [[60, '#e63946'], [1440, '#3a7bd5']].forEach(([x, c]) => { s += rect(x, 600, 140, 120, '#fff3e0') + Array.from({ length: 7 }, (_, i) => path(`M${x + i * 20} 600L${x + i * 20 + 20} 600L${x + i * 20 + 20} 624Q${x + i * 20 + 10} 632 ${x + i * 20} 624Z`, i % 2 ? '#ffffff' : c)).join('') + rect(x + 20, 640, 100, 40, '#ffd27a'); });
+          return s;
+        }),
+        t.el('wheel', t.img(wheel, { left: em(WX - 240), top: em(WY - 240), width: em(480), height: em(480), animation: 'fhs-spin 40s linear infinite' })),
+        t.still(`<image href="${wheel.slice(5, -2)}" x="${WX - 240}" y="${WY - 240}" width="480" height="480"/>`),
+        // manège : toit, poteaux, chevaux qui montent et descendent
+        t.art('carousel', (p) => path('M260 560L420 500L580 560Z', '#e63946') + Array.from({ length: 8 }, (_, i) => path(`M${260 + i * 40} 560L${280 + i * 40} 560L${270 + i * 40} 580Z`, i % 2 ? '#ffffff' : '#ffd166')).join('') + rect(270, 576, 300, 10, '#ffd166') + rect(260, 700, 320, 24, '#c8321e') + rect(410, 586, 20, 114, '#ffd166')),
+        ...[[290, '#ffffff', 0], [370, '#ffd1e3', -0.7], [460, '#bfe2ff', -1.4], [530, '#ffe9a8', -2.1]].map(([x, c, dl], i) => t.el('horse' + i, t.img(spr2('horse', c), { left: em(x - 30), top: em(588), width: em(60), height: em(110), '--bx': '0em', '--by': em(-22), animation: `fhs-bob 2.8s ease-in-out ${dl}s infinite` }))),
+        ...(t.preview ? [] : Array.from({ length: 16 }, (_, i) => t.el('fb' + i, { position: 'absolute', left: em(-10 + i * 104), top: em(712), width: em(10), height: em(10), borderRadius: '50%', background: bulbs[i % 5], boxShadow: `0 0 ${em(12)} ${bulbs[i % 5]}`, '--o0': 0.3, animation: `fhs-tw ${N(1.2 + (i % 3) * 0.4)}s ease-in-out ${N(-i * 0.2)}s infinite` }))),
+        t.el('cotton', t.img(spr2('cotton'), { left: em(760), top: em(760), width: em(50), height: em(110), transformOrigin: '50% 100%', '--a': '4deg', animation: 'fhs-rock 3s ease-in-out infinite' })),
+        ...fireworks(t, 'fw', 3, { area: [200, 80, 1000, 260], colors: ['#ffd166', '#ff6b6b', '#5aa9ff', '#ff8ad8', '#5ee38a'], ground: 560, gap: 2.4 }),
+        ...drift(t, 'gl', t.n('gl', 2, (r, i) => ({ x: -100, y: rr(r, 300, 420), w: 50, h: 22, x1: 1900, y1: rr(r, -40, 40), dur: rr(r, 28, 36), dl: -i * 15, wing: 'gull', flap: 0.8 }))),
+      ];
+    },
   });
 
   function render(id, E, o, env) {

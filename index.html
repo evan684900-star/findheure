@@ -574,6 +574,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.24.0', d: '2026-11-20', items: ['Trois nouveaux décors d’été : Camping, Île tropicale et Fête foraine.|Three new summer scenes: Camping, Tropical island and Funfair.'] },
   { v: '2.23.0', d: '2026-11-20', items: ['Trois nouveaux décors de printemps : Jardin japonais, À la ferme et Cerfs-volants.|Three new spring scenes: Japanese garden, On the farm and Kites.'] },
   { v: '2.22.0', d: '2026-11-20', items: ['Trois nouveaux décors d’hiver : Village de montagne, Nuit polaire et Patinoire.|Three new winter scenes: Mountain village, Polar night and Ice rink.'] },
   { v: '2.21.0', d: '2026-11-20', items: ['Trois nouveaux décors d’automne : Forêt sous la pluie, Vendanges et Verger.|Three new autumn scenes: Rainy forest, Grape harvest and Orchard.'] },
@@ -706,6 +707,9 @@ const hexHsl = (hex) => { const [r, g, b] = hexRgb(hex).split(',').map(v => +v /
 // couleurs des bulles choisies à la main pour chaque décor : elles vont avec le fond (pas de bleu fluo en automne)
 const MIND_SCENE_PAL = {
   autumn: ['#e0762f', '#c8452b', '#d9a12e', '#8f9a3a', '#a8323e', '#b8703a', '#6f8f45', '#e3b55a'],
+  camping: ['#ff9a3c', '#e8ff8a', '#e8763c', '#5aa9ff', '#ffd166', '#9d6bff', '#5ee38a', '#ff6b6b'],
+  tropical: ['#ff7a59', '#2ec4d6', '#ffd166', '#5fb07a', '#ff6b8a', '#9d6bff', '#3a7bd5', '#ffb347'],
+  fair: ['#ff8ad8', '#ffd166', '#5aa9ff', '#5ee38a', '#ff6b6b', '#9d6bff', '#ffb347', '#e63946'],
   zen: ['#d8402c', '#ff9cc5', '#5aa6c4', '#4f9a4a', '#f08a24', '#9d6bff', '#e8b84a', '#7a2a24'],
   farm: ['#c8321e', '#f2b84a', '#5fb04c', '#3a7bd5', '#ff8ad8', '#8a5a34', '#79c564', '#f08a24'],
   kites: ['#e63946', '#3a7bd5', '#9d6bff', '#2f9e44', '#ffd166', '#ff8ad8', '#f08a24', '#5aa9ff'],
@@ -979,7 +983,7 @@ const T_RAW = {
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
   m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
   g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
-  g_summer: "Bel été ☀️|Happy summer ☀️|Feliz verano ☀️|Schönen Sommer ☀️", g_autumn: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂", g_zen: "Bon printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸", g_farm: "Bon printemps 🐣|Happy spring 🐣|Feliz primavera 🐣|Schönen Frühling 🐣", g_kites: "Bon printemps 🪁|Happy spring 🪁|Feliz primavera 🪁|Schönen Frühling 🪁", g_alpine: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_polar: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_skating: "Bel hiver ⛸️|Happy winter ⛸️|Feliz invierno ⛸️|Schönen Winter ⛸️", g_rainwood: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂", g_vineyard: "Bonnes vendanges 🍇|Happy harvest 🍇|Feliz vendimia 🍇|Schöne Weinlese 🍇", g_orchard: "Bel automne 🍎|Happy autumn 🍎|Feliz otoño 🍎|Schönen Herbst 🍎",
+  g_summer: "Bel été ☀️|Happy summer ☀️|Feliz verano ☀️|Schönen Sommer ☀️", g_autumn: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂", g_camping: "Bel été 🏕️|Happy summer 🏕️|Feliz verano 🏕️|Schönen Sommer 🏕️", g_tropical: "Bel été 🏝️|Happy summer 🏝️|Feliz verano 🏝️|Schönen Sommer 🏝️", g_fair: "Bel été 🎡|Happy summer 🎡|Feliz verano 🎡|Schönen Sommer 🎡", g_zen: "Bon printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸", g_farm: "Bon printemps 🐣|Happy spring 🐣|Feliz primavera 🐣|Schönen Frühling 🐣", g_kites: "Bon printemps 🪁|Happy spring 🪁|Feliz primavera 🪁|Schönen Frühling 🪁", g_alpine: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_polar: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_skating: "Bel hiver ⛸️|Happy winter ⛸️|Feliz invierno ⛸️|Schönen Winter ⛸️", g_rainwood: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂", g_vineyard: "Bonnes vendanges 🍇|Happy harvest 🍇|Feliz vendimia 🍇|Schöne Weinlese 🍇", g_orchard: "Bel automne 🍎|Happy autumn 🍎|Feliz otoño 🍎|Schönen Herbst 🍎",
   g_xmas: "Joyeux Noël 🎄|Merry Christmas 🎄|Feliz Navidad 🎄|Frohe Weihnachten 🎄", g_newyear: "Bonne année ! 🎆|Happy New Year! 🎆|¡Feliz año nuevo! 🎆|Frohes neues Jahr! 🎆",
   g_valentine: "Joyeuse Saint-Valentin 💘|Happy Valentine’s Day 💘|Feliz San Valentín 💘|Alles Liebe zum Valentinstag 💘", g_april: "Poisson d’avril ! 🐟|April Fools! 🐟|¡Inocente! 🐟|April, April! 🐟",
   g_easter: "Joyeuses Pâques 🐣|Happy Easter 🐣|Felices Pascuas 🐣|Frohe Ostern 🐣", g_music: "Fête de la musique 🎶|Happy Music Day 🎶|Feliz Día de la música 🎶|Fête de la Musique 🎶",
@@ -1158,11 +1162,11 @@ function renderAlarm(kind, sr) {
 const TAB_IDS = ['display', 'presets', 'font', 'colors', 'bg', 'fx'];
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
-const SCENE_FETES = ['rentree', 'autumn', 'rainwood', 'vineyard', 'orchard', 'winter', 'alpine', 'polar', 'skating', 'xmas', 'newyear', 'valentine', 'spring', 'zen', 'farm', 'kites', 'april', 'easter', 'music', 'summer', 'bastille'];
+const SCENE_FETES = ['rentree', 'autumn', 'rainwood', 'vineyard', 'orchard', 'winter', 'alpine', 'polar', 'skating', 'xmas', 'newyear', 'valentine', 'spring', 'zen', 'farm', 'kites', 'april', 'easter', 'music', 'summer', 'camping', 'tropical', 'fair', 'bastille'];
 // décors des autres thèmes (dessinés dans scenes.js)
 const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'london', 'gotham', 'holo', 'trippy'];
 const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
-const DECO = { rentree: '✏️', autumn: '🍂', rainwood: '🌧️', vineyard: '🍇', orchard: '🍎', alpine: '🏔️', polar: '🌌', skating: '⛸️', zen: '🌸', farm: '🐄', kites: '🪁', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', gotham: '🦇', holo: '🛰️', trippy: '🌀' };
+const DECO = { rentree: '✏️', autumn: '🍂', rainwood: '🌧️', vineyard: '🍇', orchard: '🍎', alpine: '🏔️', polar: '🌌', skating: '⛸️', zen: '🌸', farm: '🐄', kites: '🪁', camping: '🏕️', tropical: '🏝️', fair: '🎡', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', gotham: '🦇', holo: '🛰️', trippy: '🌀' };
 const TOUR = [['clock'], ['bgspot'], ['modes'], ['settings'], ['help']];
 // Salutations (option « Salutation » du message au-dessus de l'heure) : selon le moment de la journée et le jour,
 // tirées d'une réserve et changées toutes les demi-heures (stables entre-temps). Une liste par langue de l'interface.
@@ -1236,9 +1240,9 @@ function greeting(li, p) {
 }
 // ---------- ciel selon l'heure (décors de jour) ----------
 // lever et coucher du soleil calculés pour la France (latitude 46,5°, longitude 2,5°) à la date du jour
-const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy', 'autumn', 'vineyard', 'orchard', 'alpine', 'zen', 'farm', 'kites']);
+const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy', 'autumn', 'vineyard', 'orchard', 'alpine', 'zen', 'farm', 'kites', 'tropical']);
 // où se trouve le soleil de chaque décor (dessin de 1600 × 900) : la lune prend sa place la nuit
-const SKY_SUN = { zen: [1280, 160, 50], farm: [260, 140, 50], kites: [1320, 150, 48], alpine: [1300, 140, 46], autumn: [1180, 170, 46], vineyard: [1250, 330, 58], orchard: [300, 150, 52], spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
+const SKY_SUN = { tropical: [1300, 120, 46], zen: [1280, 160, 50], farm: [260, 140, 50], kites: [1320, 150, 48], alpine: [1300, 140, 46], autumn: [1180, 170, 46], vineyard: [1250, 330, 58], orchard: [300, 150, 52], spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
 const SKY_MODES = ['auto', 'day', 'dawn', 'gold', 'sunset', 'night'];
 const QUALITIES = ['ultra', 'high', 'medium', 'low'];
 const SKY_FIXED = { day: {}, dawn: { dawn: 1, night: 0.3 }, gold: { gold: 1 }, sunset: { sunset: 1, gold: 0.3, night: 0.1 }, night: { night: 1 } };
@@ -1282,6 +1286,9 @@ const DECO_TAP = {
   rainwood: [[420, 846, 80, 'ripple'], [1010, 872, 100, 'ripple'], [1330, 820, 60, 'ripple'], [60, 450, 150, 'leaves'], [1555, 470, 140, 'leaves']],
   vineyard: [[1400, 580, 110, 'confetti'], [1250, 330, 60, 'sun']],
   orchard: [[200, 480, 170, 'leaves'], [300, 150, 55, 'sun'], [1090, 880, 50, 'confetti']],
+  camping: [[1330, 140, 50, 'moon'], [760, 800, 70, 'warm'], [800, 220, 200, 'stars']],
+  tropical: [[1300, 120, 46, 'sun'], [800, 860, 120, 'bubbles'], [200, 830, 70, 'bubbles'], [1400, 830, 70, 'bubbles']],
+  fair: [[600, 170, 200, 'fw'], [130, 650, 70, 'confetti'], [1510, 650, 70, 'confetti']],
   zen: [[90, 470, 170, 'petals'], [1530, 520, 150, 'petals'], [800, 780, 90, 'ripple'], [1280, 160, 50, 'sun']],
   farm: [[260, 140, 50, 'sun'], [1290, 560, 80, 'hearts'], [800, 860, 120, 'petals']],
   kites: [[1320, 150, 48, 'sun'], [800, 860, 150, 'petals']],
@@ -1443,7 +1450,7 @@ function tapParts(E, tp, booText) {
 }
 // ---------- qualité de l'image : effets en plus en Haute et Ultra ----------
 // particules d'ambiance selon le décor ; la nuit, les décors de jour passent aux lucioles
-const SCENE_AMB = { zen: 'pollen', farm: 'pollen', kites: 'pollen', alpine: 'snow', polar: 'snow', skating: 'snow', rainwood: 'warm', vineyard: 'warm', orchard: 'pollen', spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', gotham: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
+const SCENE_AMB = { camping: 'ember', tropical: 'bubble', fair: 'bokeh', zen: 'pollen', farm: 'pollen', kites: 'pollen', alpine: 'snow', polar: 'snow', skating: 'snow', rainwood: 'warm', vineyard: 'warm', orchard: 'pollen', spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', gotham: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
 const AMB = {
   dust: { c: ['255,255,255'], shape: 'dot', move: 'drift', size: [2, 4.5], a: [0.25, 0.55] },
   pollen: { c: ['255,244,190', '255,255,255', '255,226,150'], shape: 'glow', move: 'drift', size: [7, 14], a: [0.6, 0.95] },
@@ -1463,7 +1470,7 @@ const AMB = {
 // ---------- le soleil traverse le ciel au fil de la journée (thèmes de jour, ciel « selon l'heure ») ----------
 // lever à gauche (est), coucher à droite (ouest), au plus haut à midi solaire ; sous l'horizon (derrière le décor) la nuit
 // [x au plus haut, y au plus haut, y de l'horizon (caché derrière les collines / la mer)]
-const SUN_PATH = { zen: [800, 130, 600], farm: [800, 120, 640], kites: [800, 120, 620], alpine: [800, 110, 600], autumn: [800, 190, 740], vineyard: [800, 170, 640], orchard: [800, 120, 700], spring: [800, 120, 720], easter: [800, 110, 740], summer: [800, 130, 660], glacier: [800, 150, 720] };
+const SUN_PATH = { tropical: [800, 90, 420], zen: [800, 130, 600], farm: [800, 120, 640], kites: [800, 120, 620], alpine: [800, 110, 600], autumn: [800, 190, 740], vineyard: [800, 170, 640], orchard: [800, 120, 700], spring: [800, 120, 720], easter: [800, 110, 740], summer: [800, 130, 660], glacier: [800, 150, 720] };
 function sunAt(s, now, tz) {
   if (s.bgType !== 'scene' || !SUN_PATH[s.scene] || !DAYLIT.has(s.scene) || (s.sky && s.sky !== 'auto')) return null;
   const p = zp(now, tz), t = p.h + p.m / 60 + p.s / 3600, { sr, ss } = sunTimes(p, now), [xm, ytop, yh] = SUN_PATH[s.scene];
@@ -1706,6 +1713,9 @@ const PRESETS = [
   { id: 'easter', n: 'Pâques|Easter|Pascua|Ostern', s: { font: 'Fredoka', weight: 600, color: '#6b3fa0', dateColor: '#7a5a9e', dateOpacity: 85, accent: '#ff8fab', bgType: 'scene', scene: 'easter', bg1: '#e8f7ff', bg2: '#b9e5ff', bg3: '#fff1cf', vignette: 0, anim: 'bounce' } },
   { id: 'music', n: 'Fête de la musique|Music Day|Día de la música|Fête de la Musique', s: { font: 'Righteous', weight: 400, color: '#ffffff', dateColor: '#f3d9ff', dateOpacity: 80, accent: '#f72585', sepAccent: true, bgType: 'scene', scene: 'music', bg1: '#3a0ca3', bg2: '#120a2e', bg3: '#f72585', vignette: 40, anim: 'pop' } },
   { id: 'summer', n: 'Été|Summer|Verano|Sommer', s: { font: 'Pacifico', weight: 400, color: '#ffffff', dateColor: '#ffffff', dateOpacity: 90, accent: '#ff7a59', shadow: 55, bgType: 'scene', scene: 'summer', bg1: '#3aa5e8', bg2: '#0f6fc4', bg3: '#ffe9b0', vignette: 0, anim: 'slide' } },
+  { id: 'camping', n: 'Camping|Camping|Camping|Zelten', s: { font: 'Caveat', weight: 700, color: '#fff3e0', dateColor: '#ffe0b8', dateOpacity: 85, accent: '#ff9a3c', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'camping', bg1: '#1d2b5a', bg2: '#070b1e', bg3: '#3a3a6a', vignette: 40, anim: 'fade' } },
+  { id: 'tropical', n: 'Île tropicale|Tropical island|Isla tropical|Tropeninsel', s: { font: 'Pacifico', weight: 400, color: '#ffffff', dateColor: '#ffffff', dateOpacity: 90, accent: '#ff7a59', shadow: 55, bgType: 'scene', scene: 'tropical', bg1: '#6fd0f0', bg2: '#2a9de0', bg3: '#d8f6ff', vignette: 0, anim: 'slide' } },
+  { id: 'fair', n: 'Fête foraine|Funfair|Feria|Jahrmarkt', s: { font: 'Righteous', weight: 400, color: '#ffffff', dateColor: '#ffe3f1', dateOpacity: 85, accent: '#ff8ad8', sepAccent: true, shadow: 35, glow: 20, glowColor: '#ff8ad8', bgType: 'scene', scene: 'fair', bg1: '#6a3a8a', bg2: '#1b1240', bg3: '#ff9a6a', vignette: 30, anim: 'pop' } },
   { id: 'bastille', n: '14 Juillet|Bastille Day|14 de julio|14. Juli', s: { font: 'Bebas Neue', weight: 400, letterSpacing: 3, color: '#ffffff', dateColor: '#cfe0ff', dateOpacity: 80, accent: '#e63946', sepAccent: true, bgType: 'scene', scene: 'bastille', bg1: '#0b1a4a', bg2: '#030614', bg3: '#e63946', vignette: 40, anim: 'drop' } },
   // autres thèmes
   { n: 'Grille|Grid|Cuadrícula|Raster', s: { font: 'Geist', dateFont: 'JetBrains Mono', weight: 300, letterSpacing: -2, color: '#f1fff5', dateColor: '#bdf5d0', dateOpacity: 60, accent: '#4ade80', glow: 18, glowColor: '#4ade80', bgType: 'grid', bgColor: '#000000', gridLit: '#4ade80', gridLine: '#ffffff', vignette: 40, anim: 'blur' } },
