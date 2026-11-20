@@ -574,6 +574,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.21.0', d: '2026-11-20', items: ['Trois nouveaux décors d’automne : Forêt sous la pluie, Vendanges et Verger.|Three new autumn scenes: Rainy forest, Grape harvest and Orchard.'] },
   { v: '2.20.0', d: '2026-11-20', items: [
     'Décors : on peut toucher les objets qui bougent (le taxi et le bus de Londres s’arrêtent, la grande roue s’emballe, les oiseaux filent, les animaux sautent…).|Scenes: tap moving objects (London’s taxi and bus stop, the big wheel speeds up, birds dash off, animals jump…).'] },
   { v: '2.19.0', d: '2026-11-16', items: [
@@ -703,6 +704,9 @@ const hexHsl = (hex) => { const [r, g, b] = hexRgb(hex).split(',').map(v => +v /
 // couleurs des bulles choisies à la main pour chaque décor : elles vont avec le fond (pas de bleu fluo en automne)
 const MIND_SCENE_PAL = {
   autumn: ['#e0762f', '#c8452b', '#d9a12e', '#8f9a3a', '#a8323e', '#b8703a', '#6f8f45', '#e3b55a'],
+  rainwood: ['#e2b43a', '#c8603a', '#6f9a7a', '#9c4a2c', '#5f8aa0', '#b8783a', '#8a9a5a', '#a35a30'],
+  vineyard: ['#8a3a8c', '#c8461d', '#e2a23a', '#6f9e34', '#b8502e', '#5b2a6e', '#d9862e', '#9aab3a'],
+  orchard: ['#d62d20', '#e8761c', '#f2c230', '#5f9a3a', '#4f7fb5', '#b8321c', '#86b04a', '#c97a3a'],
   xmas: ['#d93a3a', '#2f8f55', '#e0b23a', '#b02e4e', '#5aae6a', '#e07d3a', '#7aa6cc', '#9c3a2e'],
   winter: ['#5b9bd5', '#7fc8e6', '#9a8fd8', '#4a76b8', '#6fbcbc', '#c497c9', '#e0b06a', '#8fb0e0'],
   spooky: ['#f2851e', '#9b4fd6', '#6fbf3a', '#d9482b', '#e0b23a', '#c25fd6', '#3fa37a', '#a83a2b'],
@@ -967,7 +971,7 @@ const T_RAW = {
   noteSmaller: "Texte plus petit|Smaller text|Texto más pequeño|Kleinere Schrift", noteBigger: "Texte plus grand|Bigger text|Texto más grande|Größere Schrift",
   m_theme: "Message du thème|Theme greeting|Mensaje del tema|Gruß des Themas",
   g_winter: "Bel hiver ❄️|Happy winter ❄️|Feliz invierno ❄️|Schönen Winter ❄️", g_spring: "Joyeux printemps 🌸|Happy spring 🌸|Feliz primavera 🌸|Schönen Frühling 🌸",
-  g_summer: "Bel été ☀️|Happy summer ☀️|Feliz verano ☀️|Schönen Sommer ☀️", g_autumn: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂",
+  g_summer: "Bel été ☀️|Happy summer ☀️|Feliz verano ☀️|Schönen Sommer ☀️", g_autumn: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂", g_rainwood: "Bel automne 🍂|Happy autumn 🍂|Feliz otoño 🍂|Schönen Herbst 🍂", g_vineyard: "Bonnes vendanges 🍇|Happy harvest 🍇|Feliz vendimia 🍇|Schöne Weinlese 🍇", g_orchard: "Bel automne 🍎|Happy autumn 🍎|Feliz otoño 🍎|Schönen Herbst 🍎",
   g_xmas: "Joyeux Noël 🎄|Merry Christmas 🎄|Feliz Navidad 🎄|Frohe Weihnachten 🎄", g_newyear: "Bonne année ! 🎆|Happy New Year! 🎆|¡Feliz año nuevo! 🎆|Frohes neues Jahr! 🎆",
   g_valentine: "Joyeuse Saint-Valentin 💘|Happy Valentine’s Day 💘|Feliz San Valentín 💘|Alles Liebe zum Valentinstag 💘", g_april: "Poisson d’avril ! 🐟|April Fools! 🐟|¡Inocente! 🐟|April, April! 🐟",
   g_easter: "Joyeuses Pâques 🐣|Happy Easter 🐣|Felices Pascuas 🐣|Frohe Ostern 🐣", g_music: "Fête de la musique 🎶|Happy Music Day 🎶|Feliz Día de la música 🎶|Fête de la Musique 🎶",
@@ -1146,11 +1150,11 @@ function renderAlarm(kind, sr) {
 const TAB_IDS = ['display', 'presets', 'font', 'colors', 'bg', 'fx'];
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
-const SCENE_FETES = ['rentree', 'autumn', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
+const SCENE_FETES = ['rentree', 'autumn', 'rainwood', 'vineyard', 'orchard', 'winter', 'xmas', 'newyear', 'valentine', 'spring', 'april', 'easter', 'music', 'summer', 'bastille'];
 // décors des autres thèmes (dessinés dans scenes.js)
 const SCENE_STYLES = ['paper', 'neon', 'terminal', 'sunset', 'candy', 'brutal', 'cosmos', 'arcade', 'luxe', 'matrix', 'glacier', 'iso', 'gothic', 'london', 'gotham', 'holo', 'trippy'];
 const SCENE_IDS = [...SCENE_FETES, ...SCENE_STYLES];
-const DECO = { rentree: '✏️', autumn: '🍂', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', gotham: '🦇', holo: '🛰️', trippy: '🌀' };
+const DECO = { rentree: '✏️', autumn: '🍂', rainwood: '🌧️', vineyard: '🍇', orchard: '🍎', halloween: '🎃', winter: '❄️', xmas: '🎄', newyear: '🎆', valentine: '💘', spring: '🌸', april: '🐟', easter: '🐣', music: '🎶', summer: '☀️', bastille: '🎇', paper: '📝', neon: '🌃', terminal: '💻', sunset: '🌅', candy: '🍭', brutal: '◼️', cosmos: '🪐', arcade: '👾', luxe: '✨', matrix: '🔴', glacier: '🧊', iso: '🏙️', gothic: '🕯️', london: '💂', gotham: '🦇', holo: '🛰️', trippy: '🌀' };
 const TOUR = [['clock'], ['bgspot'], ['modes'], ['settings'], ['help']];
 // Salutations (option « Salutation » du message au-dessus de l'heure) : selon le moment de la journée et le jour,
 // tirées d'une réserve et changées toutes les demi-heures (stables entre-temps). Une liste par langue de l'interface.
@@ -1224,9 +1228,9 @@ function greeting(li, p) {
 }
 // ---------- ciel selon l'heure (décors de jour) ----------
 // lever et coucher du soleil calculés pour la France (latitude 46,5°, longitude 2,5°) à la date du jour
-const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy', 'autumn']);
+const DAYLIT = new Set(['spring', 'easter', 'summer', 'glacier', 'candy', 'autumn', 'vineyard', 'orchard']);
 // où se trouve le soleil de chaque décor (dessin de 1600 × 900) : la lune prend sa place la nuit
-const SKY_SUN = { autumn: [1180, 170, 46], spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
+const SKY_SUN = { autumn: [1180, 170, 46], vineyard: [1250, 330, 58], orchard: [300, 150, 52], spring: [1300, 140, 54], easter: [260, 130, 48], summer: [1290, 150, 62], glacier: [1250, 170, 40], candy: [1290, 150, 44] };
 const SKY_MODES = ['auto', 'day', 'dawn', 'gold', 'sunset', 'night'];
 const QUALITIES = ['ultra', 'high', 'medium', 'low'];
 const SKY_FIXED = { day: {}, dawn: { dawn: 1, night: 0.3 }, gold: { gold: 1 }, sunset: { sunset: 1, gold: 0.3, night: 0.1 }, night: { night: 1 } };
@@ -1267,6 +1271,9 @@ const DECO_TAP = {
   spooky: [['moon', 0, 0, 'moonBats'], [300, 266, 34, 'pumpkin'], [378, 276, 26, 'pumpkin'], [1320, 258, 30, 'pumpkin'], [1200, 150, 95, 'bats'], [540, 246, 30, 'boo'], [614, 251, 24, 'boo'], [698, 245, 30, 'boo'], [1409, 244, 28, 'boo'], [775, 226, 28, 'boo'], [1495, 231, 28, 'boo']],
   winter: [[1290, 138, 50, 'moon'], [1248, 708, 80, 'warm'], [84, 728, 100, 'snow'], [1504, 668, 110, 'snow'], [200, 790, 70, 'snow']],
   xmas: [[298, 166, 70, 'moon'], [1318, 676, 120, 'twinkle'], [1318, 476, 40, 'gold'], [298, 716, 70, 'snow'], [1328, 856, 60, 'confetti'], [592, 556, 40, 'bigben']],
+  rainwood: [[420, 846, 80, 'ripple'], [1010, 872, 100, 'ripple'], [1330, 820, 60, 'ripple'], [60, 450, 150, 'leaves'], [1555, 470, 140, 'leaves']],
+  vineyard: [[1400, 580, 110, 'confetti'], [1250, 330, 60, 'sun']],
+  orchard: [[200, 480, 170, 'leaves'], [300, 150, 55, 'sun'], [1090, 880, 50, 'confetti']],
   autumn: [[84, 496, 150, 'leaves'], [1504, 556, 140, 'leaves'], [300, 686, 80, 'leaves'], [1004, 576, 60, 'sun']],
   newyear: [[798, 570, 40, 'fw'], [798, 660, 50, 'fw'], [450, 680, 110, 'fw'], [1150, 680, 110, 'fw']],
   bastille: [[1248, 300, 55, 'fwFr'], [1248, 520, 75, 'fwFr'], [1248, 700, 110, 'fwFr'], [478, 628, 45, 'confettiFr']],
@@ -1422,7 +1429,7 @@ function tapParts(E, tp, booText) {
 }
 // ---------- qualité de l'image : effets en plus en Haute et Ultra ----------
 // particules d'ambiance selon le décor ; la nuit, les décors de jour passent aux lucioles
-const SCENE_AMB = { spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', gotham: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
+const SCENE_AMB = { rainwood: 'warm', vineyard: 'warm', orchard: 'pollen', spooky: 'ember', winter: 'snow', xmas: 'snow', glacier: 'snow', autumn: 'warm', spring: 'pollen', easter: 'pollen', summer: 'sparkle', valentine: 'hearts', rentree: 'chalk', april: 'bubble', music: 'bokeh', paper: 'dust', neon: 'bokeh', terminal: 'pixel', sunset: 'bokeh', candy: 'glitter', brutal: 'dust', cosmos: 'glitter', arcade: 'pixel', luxe: 'glitter', matrix: 'bokeh', iso: 'bokeh', gothic: 'warm', london: 'bokeh', gotham: 'bokeh', holo: 'bokeh', trippy: 'bokeh', newyear: 'glitter', bastille: 'glitter' };
 const AMB = {
   dust: { c: ['255,255,255'], shape: 'dot', move: 'drift', size: [2, 4.5], a: [0.25, 0.55] },
   pollen: { c: ['255,244,190', '255,255,255', '255,226,150'], shape: 'glow', move: 'drift', size: [7, 14], a: [0.6, 0.95] },
@@ -1442,7 +1449,7 @@ const AMB = {
 // ---------- le soleil traverse le ciel au fil de la journée (thèmes de jour, ciel « selon l'heure ») ----------
 // lever à gauche (est), coucher à droite (ouest), au plus haut à midi solaire ; sous l'horizon (derrière le décor) la nuit
 // [x au plus haut, y au plus haut, y de l'horizon (caché derrière les collines / la mer)]
-const SUN_PATH = { autumn: [800, 190, 740], spring: [800, 120, 720], easter: [800, 110, 740], summer: [800, 130, 660], glacier: [800, 150, 720] };
+const SUN_PATH = { autumn: [800, 190, 740], vineyard: [800, 170, 640], orchard: [800, 120, 700], spring: [800, 120, 720], easter: [800, 110, 740], summer: [800, 130, 660], glacier: [800, 150, 720] };
 function sunAt(s, now, tz) {
   if (s.bgType !== 'scene' || !SUN_PATH[s.scene] || !DAYLIT.has(s.scene) || (s.sky && s.sky !== 'auto')) return null;
   const p = zp(now, tz), t = p.h + p.m / 60 + p.s / 3600, { sr, ss } = sunTimes(p, now), [xm, ytop, yh] = SUN_PATH[s.scene];
@@ -1666,6 +1673,9 @@ const PRESETS = [
   // saisons & fêtes
   { id: 'rentree', n: 'Rentrée|Back to school|Vuelta al cole|Schulstart', s: { font: 'Caveat', weight: 600, color: '#f6f6ef', dateColor: '#ecece2', dateOpacity: 80, accent: '#ffe066', bgType: 'scene', scene: 'rentree', bg1: '#24452f', bg2: '#1c3a29', bg3: '#3c6b4c', vignette: 35, grain: 40, anim: 'fade' } },
   { id: 'autumn', n: 'Automne|Autumn|Otoño|Herbst', s: { font: 'Righteous', weight: 400, color: '#ffe8cc', dateColor: '#ffd9ae', dateOpacity: 80, accent: '#ff8c42', sepAccent: true, shadow: 30, bgType: 'scene', scene: 'autumn', bg1: '#b24a2b', bg2: '#3a1f3f', bg3: '#ffbe6b', vignette: 40, anim: 'swirl' } },
+  { id: 'rainwood', n: 'Forêt sous la pluie|Rainy forest|Bosque bajo la lluvia|Regenwald im Herbst', s: { font: 'Gloock', weight: 400, color: '#eef3ef', dateColor: '#d6e2dc', dateOpacity: 80, accent: '#e2b43a', sepAccent: true, shadow: 35, bgType: 'scene', scene: 'rainwood', bg1: '#4f6b66', bg2: '#1f2d2e', bg3: '#9fb3a8', vignette: 40, anim: 'fade' } },
+  { id: 'vineyard', n: 'Vendanges|Grape harvest|Vendimia|Weinlese', s: { font: 'Righteous', weight: 400, color: '#fff3e0', dateColor: '#ffe4bf', dateOpacity: 85, accent: '#8a3a8c', sepAccent: true, shadow: 35, bgType: 'scene', scene: 'vineyard', bg1: '#f2b866', bg2: '#7a4a8c', bg3: '#ffd89a', vignette: 25, anim: 'swirl' } },
+  { id: 'orchard', n: 'Verger|Orchard|Huerto|Obstgarten', s: { font: 'Fredoka', weight: 600, color: '#ffffff', dateColor: '#ffffff', dateOpacity: 90, accent: '#d62d20', sepAccent: true, shadow: 45, bgType: 'scene', scene: 'orchard', bg1: '#9fd3e8', bg2: '#5d9ccc', bg3: '#fde3b0', vignette: 0, anim: 'bounce' } },
   { id: 'halloween', n: 'Halloween|Halloween|Halloween|Halloween', s: HALLOWEEN },
   { id: 'winter', n: 'Hiver|Winter|Invierno|Winter', s: { font: 'Unbounded', weight: 300, color: '#f4fbff', dateColor: '#dcefff', dateOpacity: 75, accent: '#7cc4ff', shadow: 25, bgType: 'scene', scene: 'winter', bg1: '#4a7fb5', bg2: '#0b1d3a', bg3: '#cfe8ff', vignette: 25, anim: 'drop' } },
   { id: 'xmas', n: 'Noël|Christmas|Navidad|Weihnachten', s: { font: 'Mountains of Christmas', weight: 700, color: '#fff4e0', dateColor: '#ffe9c7', dateOpacity: 85, accent: '#e63946', sepAccent: true, shadow: 35, bgType: 'scene', scene: 'xmas', bg1: '#1d3a6b', bg2: '#0a1630', bg3: '#f3b56b', vignette: 40, anim: 'bounce' } },
