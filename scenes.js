@@ -242,6 +242,9 @@
     rainwood: { frog: 'hop', snail: 'wiggle', umb: 'wiggle' },
     vineyard: { tractor: 'stop', bal: 'hop', bd: 'zoom', crate: 'hop' },
     orchard: { sc: 'wiggle:leaves', sq: 'hop', cr: 'zoom' },
+    alpine: { cab: 'stop', sm: 'wiggle:snow', ski: 'hop' },
+    polar: { bear: 'hop', ow: 'zoom' },
+    skating: { sk: 'hop' },
   };
   const tapOf = (id, k) => { const m = TAPMAP[id]; return m ? m[String(k).replace(/\d+$/, '')] : undefined; };
 
@@ -2013,6 +2016,132 @@
         t.still(`<image href="${spr2('squirrel').slice(5, -2)}" x="1220" y="812" width="64" height="56"/>`),
         ...drift(t, 'cr', t.n('cr', 3, (r, i) => ({ x: -120, y: rr(r, 150, 300), w: 46, h: 24, x1: 1900, y1: rr(r, -60, 60), dur: rr(r, 22, 30), dl: -i * 9, wing: 'bird', wc: '#1d1b22', flap: 0.7 }))),
         ...drift(t, 'ap', t.n('ap', 4, (r, i) => ({ x: rr(r, 90, 330), y: rr(r, 420, 520), w: 16, y1: 900 - 470, dur: rr(r, 7, 11), dl: -i * 2.6, fade: true, ease: 'cubic-bezier(.5,0,1,.6)', img: spr('dot', '#d62d20') }))),
+      ];
+    },
+  });
+
+  Object.assign(SPR2, {
+    cabin: (c) => svg('0 0 70 90', line('M35 0V22', '#3b3b44', 4) + rect(20, 18, 30, 8, '#3b3b44', ' rx="2"') + rect(6, 26, 58, 58, c, ' rx="10"') + rect(12, 34, 46, 26, '#cfe8ff', ' rx="5"') + rect(12, 34, 46, 26, 'none', ' stroke="#ffffff" stroke-opacity=".5" stroke-width="2" rx="5"') + rect(6, 70, 58, 6, 'rgba(0,0,0,.15)')),
+    skier: (c) => svg('0 0 90 70', line('M4 62L86 50', '#3b3b44', 4) + line('M22 46L40 32L54 40L62 30', c, 9) + circ(66, 20, 8, '#f1c9a0') + path('M58 14Q66 4 74 14Z', '#e63946') + line('M30 40L14 62M50 42L56 56', '#2b3a55', 7) + line('M44 30L28 10M60 30L78 44', '#5a5a64', 2.5)),
+    snowman: () => svg('0 0 90 130', circ(45, 98, 30, '#f7fbff') + circ(45, 56, 22, '#f7fbff') + circ(45, 24, 16, '#f7fbff') + circ(39, 21, 2.2, '#1b1b1b') + circ(51, 21, 2.2, '#1b1b1b') + path('M45 25L60 28L45 29Z', '#f08a24')
+      + rect(30, 2, 30, 10, '#1b1b1b') + rect(25, 10, 40, 4, '#1b1b1b') + path('M26 40Q45 48 64 40L64 47Q45 54 26 47Z', '#e63946') + rect(56, 44, 8, 22, '#e63946') + circ(45, 54, 2.4, '#1b1b1b') + circ(45, 64, 2.4, '#1b1b1b') + line('M24 56L4 42M66 56L86 44', '#6b4128', 3)),
+    bear: () => svg('0 0 160 90', ell(78, 48, 56, 30, '#f4f6f2') + ell(132, 36, 20, 16, '#f4f6f2') + ell(148, 40, 9, 7, '#f4f6f2') + circ(152, 38, 2.6, '#1b1b1b') + circ(136, 30, 2.4, '#1b1b1b') + circ(124, 22, 5, '#e8ebe5')
+      + rect(30, 62, 18, 26, '#eceee8', ' rx="7"') + rect(56, 64, 18, 24, '#e2e5de', ' rx="7"') + rect(92, 62, 18, 26, '#eceee8', ' rx="7"') + rect(112, 60, 18, 28, '#e2e5de', ' rx="7"') + ell(70, 56, 40, 10, 'rgba(160,180,200,.18)')),
+    skater: (c, s) => svg('0 0 60 100', circ(32, 14, 9, '#f1c9a0') + path('M24 10Q32 0 40 10Z', s) + path('M22 26L42 26L46 58L18 58Z', c) + line('M24 32L8 46M40 32L56 40', c, 6) + rect(18, 56, 28, 8, s)
+      + line('M26 64L20 88M38 64L46 86', '#2b2f45', 7) + line('M12 92L28 92M40 90L56 90', '#c9d3e0', 3)),
+    stall: (a, b) => svg('0 0 200 170', rect(14, 60, 172, 104, '#8a5a34') + [0, 1, 2, 3, 4, 5, 6].map(i => rect(14, 70 + i * 14, 172, 2, '#6f4628')).join('') + rect(30, 82, 140, 50, '#ffcf7a') + rect(30, 120, 140, 14, '#6b4128')
+      + path('M2 64L100 6L198 64Z', '#7a4a2a') + path('M0 66Q100 52 200 66L200 74Q100 60 0 74Z', '#ffffff') + Array.from({ length: 8 }, (_, i) => path(`M${18 + i * 21} 60L${28 + i * 21} 60L${28 + i * 21} 80Q${23 + i * 21} 86 ${18 + i * 21} 80Z`, i % 2 ? a : b)).join('')
+      + [50, 80, 110, 140].map((x, i) => circ(x, 112, 7, ['#e63946', '#ffd166', '#5ee38a', '#f08a24'][i])).join('')),
+  });
+
+  // ---------------- HIVER 2 : village de montagne (téléphérique, skieur, chalets, bonhomme de neige) ----------------
+  def('alpine', {
+    base: (o) => o.bg1,
+    layers: (t, o) => [
+      t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.8, o.bg3]])),
+      ...movingSun(t, 'sun', 1300, 140, 260, (x, y, p) => glow(p + 'g', x, y, 260, '#ffffff', 0.7) + circ(x, y, 46, '#fffbea')),
+      ...clouds(t, 'cl', [{ x: -260, y: 80, k: 1, dx: 2000, dur: 140, dl: -50, c: '#ffffff', s: '#dbe8f6' }]),
+      t.still(cloud(500, 110, 1, '#ffffff', '#dbe8f6')),
+      t.art('mount', (p) => {
+        const r = t.r('mo');
+        let s = mountains(r, p + 'm1', { y: 600, amp: 380, n: 6, valley: 0.5, fill: '#8fb3d8', shade: 'rgba(40,70,120,.25)', snow: '#f4f9ff', snowLine: 0.55, haze: '#cfe2f4', hazeA: 0.6 });
+        s += mountains(r, p + 'm2', { y: 690, amp: 240, n: 8, valley: 0.5, fill: '#6f97c2', shade: 'rgba(20,40,80,.25)', snow: '#e8f1fb', snowLine: 0.45, haze: '#dbe9f6', hazeA: 0.5 });
+        // piste de ski qui descend de la gauche
+        s += path('M-20 420Q200 520 360 640Q440 700 520 760L380 790Q300 700 180 610Q60 520 -20 480Z', '#fbfdff', ' opacity=".95"');
+        for (let i = 0; i < 40; i++) { const x = rr(r, -20, 1620), y = rr(r, 640, 720); if (x > 560 && x < 1040) continue; s += pine(x, y, rr(r, 40, 80), '#2b4f5c', { snow: '#eef5fd', tiers: 3 }); }
+        // câble du téléphérique et pylônes
+        s += line('M1640 360L860 640', '#3b3b44', 2.6) + line('M1640 380L880 652', '#3b3b44', 1.6, ' opacity=".6"');
+        [[1460, 425], [1150, 537]].forEach(([x, y]) => { s += line(`M${x} ${y}L${x} ${y + 200}`, '#4a4a55', 7) + line(`M${x - 16} ${y}H${x + 16}`, '#4a4a55', 5); });
+        s += rect(840, 630, 70, 50, '#8a5a34') + path('M832 634L875 606L918 634Z', '#f4f9ff');
+        return s;
+      }),
+      t.el('cab', t.img(spr2('cabin', '#e63946'), { left: em(1560), top: em(368), width: em(60), height: em(78), '--x1': em(-700), '--y1': em(252), animation: 'fhs-move 32s ease-in-out infinite alternate' })),
+      t.el('cab2', t.img(spr2('cabin', '#f2b84a'), { left: em(1180), top: em(505), width: em(60), height: em(78), '--x1': em(380), '--y1': em(-137), animation: 'fhs-move 32s ease-in-out infinite alternate' })),
+      t.still(`<image href="${spr2('cabin', '#e63946').slice(5, -2)}" x="1300" y="460" width="60" height="78"/>`),
+      t.art('village', (p) => {
+        const r = t.r('vi');
+        let s = hill(r, { y: 760, amp: 40, n: 14 }, '#eef5fd');
+        [[1060, 790, 110, 70, '#9a5a34'], [1190, 780, 90, 80, '#b0703e'], [1300, 792, 120, 64, '#8a4a2a'], [1440, 785, 100, 74, '#a8683a'], [120, 800, 110, 62, '#9a5a34'], [250, 792, 90, 72, '#b0703e']].forEach(([x, b, w, h, wall]) => { s += house(r, x, b, w, h, { wall, roof: '#6b3a22', snow: '#ffffff', win: '#ffd27a' }); });
+        s += hill(r, { y: 830, amp: 26, n: 12 }, '#f7fbff') + hill(r, { y: 868, amp: 20, n: 10 }, '#ffffff');
+        [[40, 900, 260], [1560, 905, 280], [1470, 905, 190]].forEach(([x, y, h]) => { s += pine(x, y, h, '#1f4a44', { snow: '#f4f9ff', tiers: 5 }); });
+        return s;
+      }),
+      ...smoke(t, 'fume1', 1250, 690, 5), ...smoke(t, 'fume2', 1365, 700, 5),
+      t.el('sm', t.img(spr2('snowman'), { left: em(560), top: em(780), width: em(80), height: em(115), transformOrigin: '50% 100%', '--a': '2deg', animation: 'fhs-rock 6s ease-in-out infinite' })),
+      t.still(`<image href="${spr2('snowman').slice(5, -2)}" x="560" y="780" width="80" height="115"/>`),
+      t.el('ski', t.img(spr2('skier', '#3a7bd5'), { left: em(-60), top: em(440), width: em(80), height: em(62), '--x1': em(560), '--y1': em(330), '--r0': '18deg', '--r1': '24deg', animation: 'fhs-move 9s ease-in -2s infinite' })),
+      ...snowfall(t, 'sn', { far: 20, near: 6, crystals: 3 }),
+    ],
+  });
+
+  // ---------------- HIVER 3 : nuit polaire (aurores, banquise, igloo, ours polaire, harfang) ----------------
+  def('polar', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const aur = cached('aur-polar', () => auroraSvg(41, { y: 240, tilt: 80, low: '#6dffb0', mid: '#38d8ff', top: '#ff6bd5' }));
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.6, o.bg1], [0.85, o.bg3]]) + starsSvg(t.r('st'), 200, { y1: 480 })),
+        twinkles(t, 'tw', 16, [40, 20, 1560, 420]),
+        shooting(t, 'sh', 1300, 90, -420, 160, 13, 2),
+        t.el('aur', t.img(aur, { left: em(-120), top: em(-20), width: em(1840), height: em(500), '--o0': 0.5, '--bx': em(70), '--by': em(14), animation: 'fhs-tw 8s ease-in-out infinite, fhs-bob 24s ease-in-out infinite' })),
+        t.still(`<image href="${aur.slice(5, -2)}" x="-120" y="-20" width="1840" height="500" preserveAspectRatio="none"/>`),
+        t.art('ice', (p) => {
+          const r = t.r('ic');
+          let s = mountains(r, p + 'm', { y: 640, amp: 150, n: 9, valley: 0.6, fill: '#5d7aa8', shade: 'rgba(10,20,60,.3)', snow: '#dce8f8', snowLine: 0.6 });
+          // mer noire avec reflets d'aurore
+          s += `<defs>${lg(p + 'sea', [[0, '#1b3a5a', 1], [1, '#0a1628', 1]])}</defs>` + rect(-10, 640, 1620, 270, `url(#${p}sea)`);
+          for (let i = 0; i < 26; i++) s += rect(rr(r, -10, 1600), rr(r, 650, 760), rr(r, 60, 200), 2, pick(r, ['#6dffb0', '#38d8ff', '#a8c8ff']), ` opacity="${N(rr(r, 0.12, 0.35))}"`);
+          // plaques de banquise
+          [[60, 700, 260, 26], [520, 740, 200, 20], [1240, 710, 300, 30], [920, 770, 160, 16]].forEach(([x, y, w, h]) => { s += path(`M${x} ${y}L${x + w * 0.1} ${y - h}L${x + w * 0.9} ${y - h * 1.1}L${x + w} ${y}Z`, '#e8f1fb') + rect(x, y, w, h * 0.5, '#9fb8d6'); });
+          // grande banquise du premier plan + igloo
+          s += path('M-20 905L-20 800Q300 770 640 800L760 905Z', '#eef5fd') + path('M820 905L900 810Q1200 780 1620 800L1620 905Z', '#e6f0fb');
+          s += glow(p + 'ig', 1320, 800, 160, '#ffcf6e', 0.4) + path('M1220 812Q1220 720 1320 720Q1420 720 1420 812Z', '#f7fbff') + [0, 1, 2, 3].map(i => line(`M${1226 + i * 2} ${790 - i * 20}H${1414 - i * 2}`, '#cfdcec', 2)).join('')
+            + path('M1300 812Q1300 778 1320 778Q1340 778 1340 812Z', '#ffcf6e') + path('M1296 812Q1296 772 1320 772Q1344 772 1344 812', 'none', ' stroke="#dfe9f6" stroke-width="5"');
+          for (let i = 0; i < 60; i++) s += circ(rr(r, -10, 760), rr(r, 815, 900), rr(r, 1, 2.4), '#ffffff', ' opacity=".7"');
+          return s;
+        }),
+        t.el('bear', t.img(spr2('bear'), { left: em(80), top: em(745), width: em(150), height: em(84), '--x1': em(380), animation: 'fhs-move 60s ease-in-out infinite alternate' })),
+        t.still(`<image href="${spr2('bear').slice(5, -2)}" x="200" y="745" width="150" height="84"/>`),
+        t.el('glow', { position: 'absolute', left: em(1220), top: em(720), width: em(200), height: em(110), background: 'radial-gradient(closest-side, rgba(255,200,110,.4), rgba(255,200,110,0))', '--o0': 0.6, animation: 'fhs-tw 3.6s ease-in-out infinite' }),
+        ...drift(t, 'ow', t.n('ow', 1, () => ({ x: -120, y: 300, w: 60, h: 30, x1: 1900, y1: -80, dur: 34, dl: -10, wing: 'bird', wc: '#f4f6f2', flap: 0.8 }))),
+        ...snowfall(t, 'sn', { far: 18, near: 5, crystals: 2 }),
+      ];
+    },
+  });
+
+  // ---------------- HIVER 4 : patinoire en ville (patineurs, chalets du marché, guirlandes) ----------------
+  def('skating', {
+    base: (o) => o.bg2,
+    layers: (t, o) => {
+      const bulbs = ['#ffd166', '#ff6b6b', '#5ee38a', '#5aa9ff', '#ffffff'];
+      return [
+        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.82, o.bg3]]) + starsSvg(t.r('st'), 60, { y1: 260 })),
+        t.art('city', (p) => {
+          const r = t.r('ci');
+          let s = '';
+          // façades d'immeubles avec fenêtres allumées
+          for (let x = -20; x < 1620; x += rr(r, 90, 150)) {
+            if (x > 560 && x < 1000) { x = 1000; }
+            const w = rr(r, 90, 140), h = rr(r, 200, 340), top = 640 - h, c = pick(r, ['#3a3358', '#45395f', '#2f2a4a', '#4a3f66']);
+            s += rect(x, top, w, h + 20, c) + path(`M${x - 6} ${top}L${x + w / 2} ${top - rr(r, 20, 50)}L${x + w + 6} ${top}Z`, '#2a2440');
+            for (let yy = top + 18; yy < 620; yy += 34) for (let xx = x + 12; xx < x + w - 18; xx += 28) s += rect(xx, yy, 14, 18, r() < 0.65 ? pick(r, ['#ffd27a', '#ffc35c', '#ffe3a3']) : '#2a2440');
+          }
+          // patinoire ovale
+          s += ell(800, 820, 560, 92, '#cfe3f5') + ell(800, 814, 540, 82, '#e9f4ff') + ell(700, 800, 240, 18, '#ffffff', ' opacity=".6"') + ell(800, 820, 560, 92, 'none', ' stroke="#8fb2d6" stroke-width="10"');
+          s += rect(-10, 860, 1620, 50, '#d9e6f2');
+          return s;
+        }),
+        // guirlandes lumineuses (clignotent)
+        t.art('wires', (p) => [[-20, 250, 640, 330], [960, 330, 1620, 250]].map(([a, ya, b, yb]) => path(`M${a} ${ya}Q${(a + b) / 2} ${Math.max(ya, yb) + 70} ${b} ${yb}`, 'none', ' stroke="#2a2440" stroke-width="2.5"')).join('')),
+        ...[[-20, 250, 640, 330], [960, 330, 1620, 250]].flatMap(([a, ya, b, yb], k) => (t.preview ? [] : Array.from({ length: 14 }, (_, i) => { const u = (i + 0.5) / 14, x = (1 - u) ** 2 * a + 2 * (1 - u) * u * (a + b) / 2 + u * u * b, y = (1 - u) ** 2 * ya + 2 * (1 - u) * u * (Math.max(ya, yb) + 70) + u * u * yb; return t.E('div', { key: 'lb' + k + i, style: { position: 'absolute', left: em(x - 6), top: em(y), width: em(12), height: em(16), borderRadius: '50%', background: bulbs[(i + k) % bulbs.length], boxShadow: `0 0 ${em(14)} ${bulbs[(i + k) % bulbs.length]}`, '--o0': 0.35, animation: `fhs-tw ${N(1.4 + (i % 3) * 0.5)}s ease-in-out ${N(-i * 0.3)}s infinite` } }); }))),
+        // chalets du marché de Noël sur les côtés
+        ...[[30, 640, '#e63946', '#ffffff'], [230, 660, '#2f9e44', '#ffffff'], [1170, 660, '#e63946', '#ffd166'], [1380, 640, '#2f9e44', '#ffffff']].flatMap(([x, y, a, b], i) => [t.el('stall' + i, t.img(spr2('stall', a, b), { left: em(x), top: em(y), width: em(200), height: em(170) })), t.still(`<image href="${spr2('stall', a, b).slice(5, -2)}" x="${x}" y="${y}" width="200" height="170"/>`)]),
+        ...smoke(t, 'stm', 1260, 700, 5, '#ffffff'),
+        // patineurs qui font des allers-retours sur la glace
+        ...[[420, 740, 520, 14, '#e63946', '#ffffff', 0], [900, 770, -440, 11, '#3a7bd5', '#ffd166', -4], [620, 790, 380, 16, '#9d6bff', '#5ee38a', -9], [1100, 755, -360, 13, '#f08a24', '#3a7bd5', -2]].map(([x, y, dx, d, c, sc, dl], i) =>
+          t.el('sk' + i, t.img(spr2('skater', c, sc), { left: em(x), top: em(y), width: em(48), height: em(80), '--x1': em(dx), animation: `fhs-move ${d}s ease-in-out ${dl}s infinite alternate` }))),
+        t.still(`<image href="${spr2('skater', '#e63946', '#ffffff').slice(5, -2)}" x="520" y="740" width="48" height="80"/><image href="${spr2('skater', '#3a7bd5', '#ffd166').slice(5, -2)}" x="980" y="770" width="48" height="80"/>`),
+        ...snowfall(t, 'sn', { far: 24, near: 8, crystals: 3 }),
       ];
     },
   });
