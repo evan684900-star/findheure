@@ -32,17 +32,31 @@
   // un voile plein percé d'une forme (cercle, cœur, chauve-souris…) qui grandit : la page apparaît par le trou
   // shape : chemin dans un carré −100…100 ; k(f) : demi-taille de la forme en pixels selon l'instant
   const hole = (L, W, H, o) => {
-    const id = gid('fhm'), shape = o.path ? `<path d="${o.path}"/>` : '<circle r="100"/>';
-    const ring = o.ring ? `<g class="hr" fill="none" stroke-linejoin="round">${o.path ? `<path d="${o.path}" stroke="${o.ring}" stroke-opacity=".35" stroke-width="${(o.ringW || 6) * 4}" vector-effect="non-scaling-stroke"/><path d="${o.path}" stroke="${o.ring}" stroke-width="${o.ringW || 6}" vector-effect="non-scaling-stroke"/>` : `<circle r="100" stroke="${o.ring}" stroke-opacity=".35" stroke-width="${(o.ringW || 6) * 4}" vector-effect="non-scaling-stroke"/><circle r="100" stroke="${o.ring}" stroke-width="${o.ringW || 6}" vector-effect="non-scaling-stroke"/>`}</g>` : '';
-    const e = mk(`inset:0;opacity:0`, L, `<svg width="${W}" height="${H}" style="display:block"><defs>${o.defs || ''}<mask id="${id}" maskUnits="userSpaceOnUse" x="0" y="0" width="${W}" height="${H}"><rect width="${W}" height="${H}" fill="#fff"/><g class="hg" fill="#000">${shape}</g></mask></defs><rect width="${W}" height="${H}" fill="${o.fill}" mask="url(#${id})"/>${ring}</svg>`);
-    const g = e.querySelector('.hg'), r = e.querySelector('.hr'), cx = o.cx == null ? W / 2 : o.cx, cy = o.cy == null ? H / 2 : o.cy;
+    // dessiné dans un canvas (bien plus léger qu'un masque SVG plein écran sur un ordinateur sans carte graphique)
+    const dpr = Math.min(1.5, window.devicePixelRatio || 1), c = document.createElement('canvas');
+    c.width = Math.round(W * dpr); c.height = Math.round(H * dpr);
+    c.style.cssText = `position:absolute;left:0;top:0;width:${W}px;height:${H}px;opacity:0`;
+    L.appendChild(c);
+    const g = c.getContext('2d'), shape = new Path2D(o.path || 'M100 0 A100 100 0 1 0 -100 0 A100 100 0 1 0 100 0 Z'), cx = o.cx == null ? W / 2 : o.cx, cy = o.cy == null ? H / 2 : o.cy;
+    let lastKey = '';
     ticker(L, (f) => {
-      const on = f >= o.from && f < o.to, half = on ? o.k(f) : 0;
-      e.style.opacity = on ? '1' : '0';
-      const tr = `translate(${cx.toFixed(1)} ${cy.toFixed(1)}) rotate(${o.rot ? o.rot(f).toFixed(2) : 0}) scale(${Math.max(0.0001, half / 100).toFixed(5)})`;
-      g.setAttribute('transform', tr); if (r) { r.setAttribute('transform', tr); r.style.opacity = half < 2 ? '0' : '1'; }
+      const on = f >= o.from && f < o.to, half = on ? o.k(f) : 0, rot = o.rot ? o.rot(f) : 0, key = on + ':' + half.toFixed(1) + ':' + rot.toFixed(1);
+      c.style.opacity = on ? '1' : '0';
+      if (!on || key === lastKey) return;
+      lastKey = key;
+      g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'source-over'; g.clearRect(0, 0, c.width, c.height);
+      g.fillStyle = o.fill; g.fillRect(0, 0, c.width, c.height);
+      if (half < 0.5) return;
+      const k = half / 100;
+      g.setTransform(dpr * k, 0, 0, dpr * k, cx * dpr, cy * dpr); g.rotate(rot * Math.PI / 180);
+      g.globalCompositeOperation = 'destination-out'; g.fill(shape);
+      if (o.ring && half > 2) {
+        g.globalCompositeOperation = 'source-over'; g.strokeStyle = o.ring; g.lineJoin = 'round';
+        g.globalAlpha = 0.35; g.lineWidth = (o.ringW || 6) * 4 / k; g.stroke(shape);
+        g.globalAlpha = 1; g.lineWidth = (o.ringW || 6) / k; g.stroke(shape);
+      }
     });
-    return e;
+    return c;
   };
 
   // ---------- les transitions ----------
@@ -88,8 +102,9 @@
       { offset: 0.23, transform: tf(-W * 0.16, -H * 0.1, -30, 38, 0.2), easing: 'cubic-bezier(.4,0,.6,1)' },
       { offset: 0.33, transform: tf(-W * 0.04, -H * 0.02, -8, 12, 0.45), easing: 'cubic-bezier(.5,0,.7,.6)' },
       { offset: 0.42, transform: tf(0, 0, -20, 0, 1), easing: 'linear' },
-      { offset: 0.52, transform: tf(W * 0.012, -H * 0.01, -16, 0, 1.04), easing: 'cubic-bezier(.55,0,.75,.35)' },
-      { offset: 1, transform: tf(W / 2 + S * 0.72, -H * 0.6, 34, 25, 1.12) },
+      { offset: 0.52, transform: tf(W * 0.012, -H * 0.01, -16, 0, 1.04), easing: 'cubic-bezier(.45,0,.55,1)' },
+      { offset: 0.88, transform: tf(W / 2 + S * 0.8, -H * 0.75, 40, 25, 1.25) },
+      { offset: 1, transform: tf(W / 2 + S * 0.8, -H * 0.75, 40, 25, 1.25) },
     ]);
     for (let i = 0; i < 6; i++) small(i, 0.5 + i * 0.04, 0.45, [-120, rnd(0.3, 1.1) * H], [W + 60, rnd(-0.2, 0.5) * H]);
     return 0.43;
@@ -139,12 +154,12 @@
     A(beam, [{ offset: 0, transform: 'scaleY(0)', opacity: 0 }, { offset: 0.05, opacity: 1 }, { offset: 0.16, transform: 'scaleY(1)', opacity: 1 }, { offset: 0.3, opacity: 1 }, { offset: 0.36, opacity: 0 }, { offset: 1, opacity: 0 }]);
     const S = Math.min(W, H) * 0.7;
     const sig = centered(S, L, svgBox('-60 -40 120 80', `<defs><radialGradient id="bsg"><stop offset="0" stop-color="#fff6c2"/><stop offset=".72" stop-color="#ffd84a"/><stop offset="1" stop-color="#e0a800"/></radialGradient></defs>
-      <ellipse cx="0" cy="0" rx="58" ry="38" fill="url(#bsg)"/><g transform="translate(-40 -19.2) scale(.8)"><path d="${BAT}" fill="#05070d"/></g>`), 'filter:drop-shadow(0 0 40px rgba(255,216,74,.6))');
+      <radialGradient id="bsh"><stop offset=".6" stop-color="#ffd84a" stop-opacity=".45"/><stop offset="1" stop-color="#ffd84a" stop-opacity="0"/></radialGradient><ellipse rx="76" ry="54" fill="url(#bsh)"/><ellipse cx="0" cy="0" rx="58" ry="38" fill="url(#bsg)"/><g transform="translate(-40 -19.2) scale(.8)"><path d="${BAT}" fill="#05070d"/></g>`));
     const k = (H / S) * 12;
     A(sig, [{ offset: 0, transform: 'scale(.05) rotate(-8deg)', opacity: 0 }, { offset: 0.1, opacity: 1, easing: 'cubic-bezier(.2,.8,.3,1)' }, { offset: 0.26, transform: 'scale(1) rotate(0deg)', easing: 'cubic-bezier(.7,0,.95,.5)' }, { offset: 0.44, transform: `scale(${k})`, opacity: 1 }, { offset: 0.45, opacity: 0, transform: `scale(${k})` }, { offset: 1, opacity: 0, transform: `scale(${k})` }]);
     // tout noir (on est dans la chauve-souris), puis une chauve-souris cerclée de jaune s'ouvre et grandit
     const D = Math.hypot(W, H);
-    hole(L, W, H, { fill: '#05070d', path: BAT_C, ring: '#ffd84a', ringW: 4, from: 0.4, to: 0.985, k: (f) => (f < 0.54 ? 0 : 3 + ein(cl((f - 0.54) / 0.42)) * D * 14), rot: (f) => (f < 0.54 ? -8 : -8 + (f - 0.54) * 30) });
+    hole(L, W, H, { fill: '#05070d', path: BAT_C, ring: '#ffd84a', ringW: 4, from: 0.4, to: 0.985, k: (f) => (f < 0.51 ? 0 : 6 + Math.pow(cl((f - 0.51) / 0.42), 2.2) * D * 12), rot: (f) => (f < 0.51 ? -8 : -8 + (f - 0.51) * 30) });
     return 0.45;
   };
 
@@ -153,11 +168,22 @@
   const FLAKE = (() => { let d = ''; for (let i = 0; i < 6; i++) { const a = (i * 60) * Math.PI / 180, c = Math.cos(a), s = Math.sin(a), P = (x, y) => `${(x * c - y * s).toFixed(1)} ${(x * s + y * c).toFixed(1)}`; d += `M0 0 L${P(94, 0)} M${P(28, 0)} L${P(46, -18)} M${P(28, 0)} L${P(46, 18)} M${P(52, 0)} L${P(72, -22)} M${P(52, 0)} L${P(72, 22)} M${P(74, 0)} L${P(86, -11)} M${P(74, 0)} L${P(86, 11)} M${P(20, 0)} L${P(20 * Math.cos(Math.PI / 3), 20 * Math.sin(Math.PI / 3))} `; } return d; })();
   K.frost = (L, W, H, p) => {
     const D = Math.hypot(W, H), S = D * 2.4, ice = p.ice || ['#ffffff', '#e4f3ff', '#a9d4ff'];
-    const ICE = `linear-gradient(135deg, rgba(255,255,255,.6), rgba(255,255,255,0) 38%, rgba(255,255,255,.4) 58%, rgba(255,255,255,0) 80%), repeating-linear-gradient(115deg, rgba(255,255,255,.22) 0 2px, transparent 2px 46px), repeating-linear-gradient(28deg, rgba(255,255,255,.14) 0 1px, transparent 1px 74px), radial-gradient(${W}px ${H}px at 50% 50%, ${ice[0]}, ${ice[1]} 50%, ${ice[2]})`;
+    // la texture de glace est dessinée UNE fois (petit canvas) et partagée par le voile et tous les éclats :
+    // en dégradés CSS, chaque éclat recalculait son image plein écran (plus d'une seconde de blocage sur un vieux PC)
+    const ICE = `${ice[1]} 0 0 / ${W}px ${H}px no-repeat`, iced = [];
+    try {
+      const c = document.createElement('canvas'), cw = Math.ceil(W / 2), chh = Math.ceil(H / 2); c.width = cw; c.height = chh;
+      const g = c.getContext('2d'), rg = g.createRadialGradient(cw / 2, chh / 2, 0, cw / 2, chh / 2, Math.hypot(cw, chh) / 2);
+      rg.addColorStop(0, ice[0]); rg.addColorStop(0.5, ice[1]); rg.addColorStop(1, ice[2]); g.fillStyle = rg; g.fillRect(0, 0, cw, chh);
+      const lg = g.createLinearGradient(0, 0, cw, chh); lg.addColorStop(0, 'rgba(255,255,255,.6)'); lg.addColorStop(0.38, 'rgba(255,255,255,0)'); lg.addColorStop(0.58, 'rgba(255,255,255,.4)'); lg.addColorStop(0.8, 'rgba(255,255,255,0)'); g.fillStyle = lg; g.fillRect(0, 0, cw, chh);
+      g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1;
+      for (let i = 0; i < 40; i++) { const x = rnd(0, cw), y = rnd(0, chh), a = rnd(0, Math.PI), l = rnd(20, 120); g.beginPath(); g.moveTo(x, y); g.lineTo(x + Math.cos(a) * l, y + Math.sin(a) * l); g.stroke(); }
+      c.toBlob((b) => { if (!b) return; const u = URL.createObjectURL(b); iced.forEach(e => { e.style.backgroundImage = `url("${u}")`; }); setTimeout(() => URL.revokeObjectURL(u), T * 2); }, 'image/jpeg', 0.9);
+    } catch (e) {}
     // 1) le givre part des quatre coins
-    [[0, 0], [W, 0], [0, H], [W, H]].forEach(([x, y], i) => {
-      const e = mk(`left:${x - S / 2}px;top:${y - S / 2}px;width:${S}px;height:${S}px;will-change:transform`, L, svgBox('-100 -100 200 200', `<defs><radialGradient id="fr${i}${uid}"><stop offset="0" stop-color="${ice[0]}"/><stop offset=".55" stop-color="${ice[1]}"/><stop offset=".9" stop-color="${ice[2]}"/><stop offset="1" stop-color="#ffffff"/></radialGradient></defs><path d="${jag(46, 86, 100)}" fill="url(#fr${i}${uid})" stroke="#ffffff" stroke-width=".6"/>`));
-      A(e, [{ offset: 0, transform: 'scale(0) rotate(0deg)' }, { offset: 0.03 + i * 0.03, transform: 'scale(0) rotate(0deg)', easing: 'cubic-bezier(.25,.6,.35,1)' }, { offset: 0.42, transform: 'scale(1) rotate(22deg)' }, { offset: 1, transform: 'scale(1) rotate(22deg)' }]);
+    [[0, 0], [W, H]].forEach(([x, y], i) => {
+      const s3 = S / 3, e = mk(`left:${x - s3 / 2}px;top:${y - s3 / 2}px;width:${s3}px;height:${s3}px;will-change:transform`, L, svgBox('-100 -100 200 200', `<defs><radialGradient id="fr${i}${uid}"><stop offset="0" stop-color="${ice[0]}"/><stop offset=".55" stop-color="${ice[1]}"/><stop offset=".9" stop-color="${ice[2]}"/><stop offset="1" stop-color="#ffffff"/></radialGradient></defs><path d="${jag(46, 86, 100)}" fill="url(#fr${i}${uid})" stroke="#ffffff" stroke-width=".6"/>`));
+      A(e, [{ offset: 0, transform: 'scale(0) rotate(0deg)' }, { offset: 0.03 + i * 0.03, transform: 'scale(0) rotate(0deg)', easing: 'cubic-bezier(.25,.6,.35,1)' }, { offset: 0.42, transform: 'scale(3) rotate(22deg)', opacity: 1 }, { offset: 0.505, transform: 'scale(3) rotate(22deg)', opacity: 1 }, { offset: 0.506, opacity: 0 }, { offset: 1, transform: 'scale(3) rotate(22deg)', opacity: 0 }]);
     });
     // des aiguilles de glace qui poussent des coins
     for (let i = 0; i < 4; i++) {
@@ -165,10 +191,10 @@
       const e = mk(`left:${x - s / 2}px;top:${y - s / 2}px;width:${s}px;height:${s}px;will-change:transform,opacity`, L, svgBox('-100 -100 200 200', `<path d="${FLAKE}" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".9"/>`));
       A(e, [{ offset: 0, transform: 'scale(0) rotate(0deg)', opacity: 1 }, { offset: 0.06 + i * 0.03, transform: 'scale(0) rotate(0deg)', easing: 'ease-out' }, { offset: 0.38, transform: 'scale(1) rotate(30deg)', opacity: 1 }, { offset: 0.44, opacity: 0 }, { offset: 1, opacity: 0 }]);
     }
-    const sheet = mk(`inset:0;background:${ICE};opacity:0;will-change:opacity`, L);
+    const sheet = mk(`inset:0;background:${ICE};opacity:0;will-change:opacity`, L); iced.push(sheet);
     A(sheet, [{ offset: 0, opacity: 0 }, { offset: 0.32, opacity: 0, easing: 'ease-in-out' }, { offset: 0.42, opacity: 1 }, { offset: 0.505, opacity: 1 }, { offset: 0.506, opacity: 0 }, { offset: 1, opacity: 0 }]);
     // 2) les éclats (même texture, découpée en triangles) : invisibles jusqu'à la fissure
-    const nc = 7, nr = 5, P = [];
+    const nc = 5, nr = 4, P = [];
     for (let r = 0; r <= nr; r++) { P.push([]); for (let c = 0; c <= nc; c++) { const edge = r === 0 || c === 0 || r === nr || c === nc; P[r].push([c / nc * W + (edge && (c === 0 || c === nc) ? 0 : rnd(-0.32, 0.32) * W / nc), r / nr * H + (edge && (r === 0 || r === nr) ? 0 : rnd(-0.32, 0.32) * H / nr)]); } }
     const tris = [];
     for (let r = 0; r < nr; r++) for (let c = 0; c < nc; c++) { const a = P[r][c], b = P[r][c + 1], d = P[r + 1][c], e = P[r + 1][c + 1]; if ((r + c) % 2) tris.push([a, b, e], [a, e, d]); else tris.push([a, b, d], [b, e, d]); }
@@ -178,7 +204,7 @@
       const mx = (t[0][0] + t[1][0] + t[2][0]) / 3, my = (t[0][1] + t[1][1] + t[2][1]) / 3;
       // un tout petit débord pour que les éclats se touchent sans laisser passer la page
       const g = t.map(q => [q[0] + (q[0] - mx) * 0.012, q[1] + (q[1] - my) * 0.012]);
-      const e = mk(`left:${x0}px;top:${y0}px;width:${w}px;height:${h}px;background:${ICE};background-size:${W}px ${H}px;background-position:${-x0}px ${-y0}px;clip-path:polygon(${g.map(q => `${(q[0] - x0).toFixed(1)}px ${(q[1] - y0).toFixed(1)}px`).join(',')});opacity:0;will-change:transform,opacity`, L);
+      const e = mk(`left:${x0}px;top:${y0}px;width:${w}px;height:${h}px;background:${ice[1]} ${-x0}px ${-y0}px / ${W}px ${H}px no-repeat;clip-path:polygon(${g.map(q => `${(q[0] - x0).toFixed(1)}px ${(q[1] - y0).toFixed(1)}px`).join(',')});opacity:0;will-change:transform,opacity`, L); iced.push(e);
       const dist = Math.hypot(mx - W / 2, my - H / 2) / (D / 2), st = 0.53 + dist * 0.12, dx = (mx - W / 2) * rnd(0.15, 0.4), rot = rnd(-50, 50);
       A(e, [{ offset: 0, opacity: 0 }, { offset: 0.5, opacity: 0 }, { offset: 0.501, opacity: 1, transform: 'none' }, { offset: st, opacity: 1, transform: 'translate(0,0) rotate(0deg)', easing: 'cubic-bezier(.45,0,.9,.6)' }, { offset: Math.min(0.99, st + 0.3), opacity: 0.9, transform: `translate(${dx}px,${H * rnd(0.9, 1.3)}px) rotate(${rot}deg) scale(.85)` }, { offset: 1, opacity: 0, transform: `translate(${dx}px,${H * 1.4}px) rotate(${rot}deg) scale(.85)` }]);
       cracks += `M${t[0][0].toFixed(0)} ${t[0][1].toFixed(0)} L${t[1][0].toFixed(0)} ${t[1][1].toFixed(0)} L${t[2][0].toFixed(0)} ${t[2][1].toFixed(0)} Z `;
@@ -212,7 +238,7 @@
     };
     half(halfL, true); half(halfR, false);
     const S = Math.min(W, H) * 0.42;
-    const bow = centered(S, L, svgBox('-100 -100 200 200', `<defs><linearGradient id="bw${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#d9a227"/></linearGradient></defs><g fill="url(#bw${uid})" stroke="#a87410" stroke-width="4" stroke-linejoin="round"><path d="M-6 6 L-44 86 L-24 76 L-14 96 Z"/><path d="M6 6 L44 86 L24 76 L14 96 Z"/><path d="M0 0 C-30 -74 -100 -62 -84 -10 C-74 22 -30 12 0 0 Z"/><path d="M0 0 C30 -74 100 -62 84 -10 C74 22 30 12 0 0 Z"/><path d="M-14 -4 C-40 -40 -66 -36 -62 -14" fill="none" stroke-opacity=".5"/><path d="M14 -4 C40 -40 66 -36 62 -14" fill="none" stroke-opacity=".5"/><rect x="-18" y="-16" width="36" height="32" rx="10"/></g>`), 'filter:drop-shadow(0 10px 16px rgba(0,0,0,.35))');
+    const bow = centered(S, L, svgBox('-100 -100 200 200', `<defs><linearGradient id="bw${uid}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a8"/><stop offset="1" stop-color="#d9a227"/></linearGradient></defs><g fill="url(#bw${uid})" stroke="#a87410" stroke-width="4" stroke-linejoin="round"><path d="M-6 6 L-44 86 L-24 76 L-14 96 Z"/><path d="M6 6 L44 86 L24 76 L14 96 Z"/><path d="M0 0 C-30 -74 -100 -62 -84 -10 C-74 22 -30 12 0 0 Z"/><path d="M0 0 C30 -74 100 -62 84 -10 C74 22 30 12 0 0 Z"/><path d="M-14 -4 C-40 -40 -66 -36 -62 -14" fill="none" stroke-opacity=".5"/><path d="M14 -4 C40 -40 66 -36 62 -14" fill="none" stroke-opacity=".5"/><rect x="-18" y="-16" width="36" height="32" rx="10"/></g>`));
     A(bow, [{ offset: 0, transform: 'scale(0)' }, { offset: 0.36, transform: 'scale(0) rotate(-30deg)', easing: 'cubic-bezier(.3,1.7,.5,1)' }, { offset: 0.46, transform: 'scale(1) rotate(0deg)' }, { offset: 0.5, transform: 'scale(1)', easing: 'cubic-bezier(.4,0,.7,.4)' }, { offset: 0.78, transform: `translateY(${-H * 0.85}px) scale(.7) rotate(200deg)` }, { offset: 1, transform: `translateY(${-H * 0.85}px) scale(.7) rotate(200deg)` }]);
     // quelques flocons pendant que ça s'ouvre
     for (let i = 0; i < 18; i++) { const s = rnd(4, 10), e = mk(`left:0;top:0;width:${s}px;height:${s}px;border-radius:50%;background:#fff;will-change:transform`, L), x = rnd(0, W); A(e, [{ transform: `translate(${x}px,${-20}px)` }, { transform: `translate(${x + rnd(-60, 60)}px,${H + 20}px)` }], { delay: T * rnd(0.45, 0.6), duration: T * rnd(0.4, 0.55) }); }
@@ -296,7 +322,7 @@
   const HEART = 'M0 92 C-60 50 -100 14 -100 -30 C-100 -70 -66 -92 -40 -92 C-18 -92 -4 -78 0 -62 C4 -78 18 -92 40 -92 C66 -92 100 -70 100 -30 C100 14 60 50 0 92 Z';
   K.hearts = (L, W, H, p) => {
     backdrop(L, 'radial-gradient(circle, #ff7aa8, #c2185b 75%)', 0.32, 0.44, 0.5, 0.505);
-    const S = Math.min(W, H) * 0.5, h = centered(S, L, svgBox('-100 -100 200 200', `<defs><radialGradient id="hg${uid}" cx=".38" cy=".32"><stop offset="0" stop-color="#ffb3cc"/><stop offset=".45" stop-color="#ff4d8d"/><stop offset="1" stop-color="#c2185b"/></radialGradient></defs><path d="${HEART}" fill="url(#hg${uid})"/><path d="M-62 -52 C-56 -72 -36 -78 -24 -70" stroke="#fff" stroke-opacity=".6" stroke-width="8" fill="none" stroke-linecap="round"/>`), 'filter:drop-shadow(0 10px 30px rgba(120,0,40,.45))');
+    const S = Math.min(W, H) * 0.5, h = centered(S, L, svgBox('-100 -100 200 200', `<defs><radialGradient id="hg${uid}" cx=".38" cy=".32"><stop offset="0" stop-color="#ffb3cc"/><stop offset=".45" stop-color="#ff4d8d"/><stop offset="1" stop-color="#c2185b"/></radialGradient></defs><path d="${HEART}" fill="url(#hg${uid})"/><path d="M-62 -52 C-56 -72 -36 -78 -24 -70" stroke="#fff" stroke-opacity=".6" stroke-width="8" fill="none" stroke-linecap="round"/>`));
     const k = Math.hypot(W, H) / S * 3.2;
     A(h, [{ offset: 0, transform: 'scale(0)' }, { offset: 0.1, transform: 'scale(1)', easing: 'ease-in-out' }, { offset: 0.16, transform: 'scale(.82)', easing: 'ease-in-out' }, { offset: 0.22, transform: 'scale(1.22)', easing: 'ease-in-out' }, { offset: 0.27, transform: 'scale(.95)', easing: 'ease-in-out' }, { offset: 0.31, transform: 'scale(1.15)', easing: 'cubic-bezier(.6,0,.9,.5)' }, { offset: 0.45, transform: `scale(${k})`, opacity: 1 }, { offset: 0.5, transform: `scale(${k})`, opacity: 1 }, { offset: 0.501, opacity: 0 }, { offset: 1, opacity: 0 }]);
     // la page s'ouvre par un cœur qui grandit, bordé de blanc
@@ -392,7 +418,7 @@
     const dot = mk(`left:50%;top:50%;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;background:#fff;box-shadow:0 0 18px 6px ${g};will-change:transform,opacity`, L);
     A(dot, [{ offset: 0, opacity: 0 }, { offset: 0.34, opacity: 0, transform: 'scale(1)' }, { offset: 0.35, opacity: 1 }, { offset: 0.42, opacity: 0, transform: 'scale(.1)' }, { offset: 1, opacity: 0 }]);
     // dans le noir, une invite de commande tape « thèmes »
-    const fs = Math.max(22, Math.min(W, H) * 0.06), txt = p.cmd || '> thèmes', tw = mk(`left:50%;top:50%;transform:translate(-50%,-50%);font:400 ${fs}px/1 'VT323','JetBrains Mono',ui-monospace,monospace;color:${g};text-shadow:0 0 10px ${g};white-space:pre;opacity:0`, L);
+    const fs = Math.max(30, Math.min(W, H) * 0.11), txt = p.cmd || '> thèmes', tw = mk(`left:50%;top:50%;transform:translate(-50%,-50%);font:400 ${fs}px/1 'VT323','JetBrains Mono',ui-monospace,monospace;color:${g};text-shadow:0 0 10px ${g};white-space:pre;opacity:0`, L);
     const chars = []; for (const ch of txt) { const s = document.createElement('span'); s.textContent = ch; s.style.opacity = '0'; tw.appendChild(s); chars.push(s); }
     const cur = document.createElement('span'); cur.textContent = '_'; tw.appendChild(cur);
     A(tw, [{ offset: 0, opacity: 0 }, { offset: 0.4, opacity: 0 }, { offset: 0.41, opacity: 1 }, { offset: 0.56, opacity: 1 }, { offset: 0.58, opacity: 0 }, { offset: 1, opacity: 0 }]);
@@ -442,7 +468,7 @@
     const grid = mk(`left:-50%;top:${H * 0.62}px;width:200%;height:${H * 0.5}px;background:repeating-linear-gradient(90deg, rgba(255,90,216,.55) 0 2px, transparent 2px 80px), repeating-linear-gradient(0deg, rgba(255,90,216,.55) 0 2px, transparent 2px 40px);transform:perspective(${H * 0.6}px) rotateX(62deg);transform-origin:50% 0`, panel);
     A(panel, [{ offset: 0, opacity: 0, transform: 'translateY(0)' }, { offset: 0.16, opacity: 0, easing: 'ease-in-out' }, { offset: 0.38, opacity: 1, transform: 'translateY(0)' }, { offset: 0.54, opacity: 1, transform: 'translateY(0)', easing: 'cubic-bezier(.5,0,.6,1)' }, { offset: 0.92, opacity: 1, transform: `translateY(${H * 1.05}px)` }, { offset: 1, opacity: 1, transform: `translateY(${H * 1.05}px)` }]);
     void grid;
-    const S = Math.hypot(W, H) * 1.22, s = mk(`left:${W / 2 - S / 2}px;top:${H / 2 - S / 2}px;width:${S}px;height:${S}px;border-radius:50%;background:linear-gradient(180deg, transparent 52%, #2a0f4a 52% 54%, transparent 54% 62%, #2a0f4a 62% 65.5%, transparent 65.5% 74%, #2a0f4a 74% 78.5%, transparent 78.5% 86%, #2a0f4a 86% 92%, transparent 92%), linear-gradient(180deg, #fff1a8, #ffd166 30%, #ff9a4c 55%, #ff4f9a);box-shadow:0 0 140px 40px rgba(255,154,76,.45);will-change:transform`, L);
+    const S = Math.hypot(W, H) * 1.22, s = mk(`left:${W / 2 - S / 2}px;top:${H / 2 - S / 2}px;width:${S}px;height:${S}px;border-radius:50%;background:linear-gradient(180deg, transparent 52%, #2a0f4a 52% 54%, transparent 54% 62%, #2a0f4a 62% 65.5%, transparent 65.5% 74%, #2a0f4a 74% 78.5%, transparent 78.5% 86%, #2a0f4a 86% 92%, transparent 92%), linear-gradient(180deg, #fff1a8, #ffd166 30%, #ff9a4c 55%, #ff4f9a);will-change:transform`, L);
     A(s, [{ offset: 0, transform: `translateY(${H * 0.95}px) scale(.3)`, easing: 'cubic-bezier(.3,.4,.4,1)' }, { offset: 0.43, transform: 'translateY(0) scale(1)' }, { offset: 0.54, transform: 'translateY(0) scale(1.02)', easing: 'cubic-bezier(.5,0,.6,1)' }, { offset: 0.92, transform: `translateY(${H * 1.1 + S / 2}px) scale(1.02)` }, { offset: 1, transform: `translateY(${H * 1.1 + S / 2}px) scale(1.02)` }]);
     return 0.44;
   };
@@ -459,7 +485,7 @@
     const S = Math.hypot(W, H) * 1.1, fl = centered(S, L, '', 'border-radius:50%;background:radial-gradient(circle, #ffffff 0, #e6f6ff 45%, #b9d7ff 70%)');
     A(fl, [{ offset: 0, transform: 'scale(0)', opacity: 1 }, { offset: 0.32, transform: 'scale(0)', easing: 'cubic-bezier(.7,0,1,.5)' }, { offset: 0.44, transform: 'scale(1)', opacity: 1 }, { offset: 0.5, opacity: 1 }, { offset: 0.501, opacity: 0 }, { offset: 1, opacity: 0 }]);
     const D = Math.hypot(W, H);
-    hole(L, W, H, { fill: '#e8f4ff', ring: '#7cc4ff', ringW: 5, from: 0.495, to: 0.99, k: (f) => (f < 0.52 ? 0 : 2 + ein(cl((f - 0.52) / 0.4)) * D * 0.62) });
+    hole(L, W, H, { fill: '#e8f4ff', ring: '#7cc4ff', ringW: 5, from: 0.495, to: 0.99, k: (f) => (f < 0.51 ? 0 : 2 + eout(cl((f - 0.51) / 0.38)) * D * 0.62) });
     // en sortant de l'hyperespace, les étoiles filent encore par-dessus la page
     for (let i = 0; i < 40; i++) {
       const a = rnd(0, 360), e = mk(`left:${W / 2}px;top:${H / 2}px;width:${rnd(60, 200)}px;height:2px;margin-top:-1px;background:linear-gradient(90deg, transparent, #ffffff);transform-origin:0 50%;will-change:transform,opacity`, L);
@@ -494,7 +520,7 @@
     tx.textContent = 'Thèmes';
     A(tx, [{ offset: 0, clipPath: 'inset(0 100% 0 0)' }, { offset: 0.3, clipPath: 'inset(0 100% 0 0)', easing: 'cubic-bezier(.4,0,.6,1)' }, { offset: 0.5, clipPath: 'inset(0 0% 0 0)' }, { offset: 1, clipPath: 'inset(0 0% 0 0)' }]);
     A(sh, [{ offset: 0, transform: `translate(${W * 0.05}px,${H * 1.15}px) rotate(9deg)` }, { offset: 0.08, transform: `translate(${W * 0.05}px,${H * 1.15}px) rotate(9deg)`, easing: 'cubic-bezier(.25,.6,.3,1)' }, { offset: 0.38, transform: 'translate(0,0) rotate(-1deg)' }, { offset: 0.56, transform: 'translate(0,0) rotate(-1deg)', easing: 'cubic-bezier(.55,0,.6,1)' }, { offset: 0.94, transform: `translate(${-W * 0.9}px,${-H * 1.25}px) perspective(${H * 2}px) rotateX(35deg) rotate(-24deg)` }, { offset: 1, transform: `translate(${-W * 0.9}px,${-H * 1.25}px) perspective(${H * 2}px) rotateX(35deg) rotate(-24deg)` }]);
-    const s = Math.min(W, H) * 0.2, pl = mk(`left:0;top:0;width:${s}px;height:${s}px;will-change:transform;filter:drop-shadow(0 8px 6px rgba(0,0,0,.18))`, L, svgBox('0 0 100 100', '<path d="M2 50 L98 10 L60 92 L46 60 Z" fill="#ffffff" stroke="#9aa6c2" stroke-width="2" stroke-linejoin="round"/><path d="M98 10 L46 60 L40 82 Z" fill="#dfe5f2" stroke="#9aa6c2" stroke-width="2" stroke-linejoin="round"/>'));
+    const s = Math.min(W, H) * 0.2, pl = mk(`left:0;top:0;width:${s}px;height:${s}px;will-change:transform`, L, svgBox('0 0 100 100', '<path d="M2 50 L98 10 L60 92 L46 60 Z" fill="#ffffff" stroke="#9aa6c2" stroke-width="2" stroke-linejoin="round"/><path d="M98 10 L46 60 L40 82 Z" fill="#dfe5f2" stroke="#9aa6c2" stroke-width="2" stroke-linejoin="round"/>'));
     A(pl, [{ transform: `translate(${-s}px,${H * 0.8}px) rotate(-14deg)` }, { offset: 0.45, transform: `translate(${W * 0.4}px,${H * 0.62}px) rotate(-26deg)` }, { offset: 0.7, transform: `translate(${W * 0.7}px,${H * 0.3}px) rotate(-40deg)` }, { transform: `translate(${W + s}px,${H * 0.05}px) rotate(-10deg)` }], { duration: T * 0.98, easing: 'ease-in-out' });
     return 0.42;
   };
