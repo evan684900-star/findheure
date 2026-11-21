@@ -232,7 +232,7 @@
     arcade: { ufo: 'zoom:pixels', ship: 'hop', army: 'wiggle' },
     cosmos: { sat: 'zoom', astro: 'spin' },
     gotham: { bt: 'zoom', sig: 'wiggle' },
-    music: { eq: 'zoom' },
+    music: { eq: 'zoom', mus: 'hop', dr: 'wiggle', disco: 'spin:gold' },
     brutal: { ast: 'spin' },
     candy: { lo: 'spin:sprinkles' },
     terminal: { mon: 'wiggle' },
@@ -943,44 +943,108 @@
   });
 
   // ---------------- FÊTE DE LA MUSIQUE : scène de concert, faisceaux lumineux, foule, notes ----------------
+  // ---------------- FÊTE DE LA MUSIQUE : un concert en plein air, en ville, un soir de juin ----------------
+  // portique et banderole, boule à facettes, écran LED, un groupe qui joue, lasers, fumée, la foule qui saute, téléphones et confettis
+  // musicien en silhouette (100 × 200), liseré coloré par la lumière de la scène
+  const MUS = {
+    singer: (c) => svg('0 0 100 200', line('M50 64L50 200', '#2a2340', 3) + rect(36, 196, 28, 4, '#2a2340') + circ(50, 62, 5, '#3a3350') + path('M40 38C40 24 60 24 60 38C60 50 54 56 50 56C46 56 40 50 40 38Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + path('M34 60C40 56 60 56 66 60L70 120L62 122L60 196L52 196L50 130L48 196L40 196L38 122L30 120Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + line('M36 70Q30 86 44 70', '#120c22', 9) + line('M64 70Q74 50 52 62', '#120c22', 9)),
+    guitar: (c, g) => svg('0 0 120 200', path('M50 38C50 24 70 24 70 38C70 50 64 56 60 56C56 56 50 50 50 38Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + path('M44 60C50 56 70 56 76 60L80 120L72 122L72 196L62 196L60 132L58 196L48 196L48 122L40 120Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + line('M14 96L98 72', '#2a2340', 5) + path('M30 92C18 84 6 96 12 108C16 118 30 120 38 112C46 116 56 110 54 100C54 90 42 86 30 92Z', g, ' stroke="#120c22" stroke-width="3"') + circ(32, 102, 5, '#120c22') + line('M46 70Q34 88 40 100', '#120c22', 9) + line('M74 70Q90 76 94 78', '#120c22', 9)),
+    drums: (c) => svg('0 0 240 170', path('M100 30C100 16 120 16 120 30C120 42 114 48 110 48C106 48 100 42 100 30Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + path('M92 52C98 48 122 48 128 52L132 100L88 100Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + line('M94 60L64 40M126 60L160 34', '#120c22', 8) + line('M64 40L50 30M160 34L176 22', '#d9c7a1', 3) + ell(110, 130, 44, 40, '#1b1430', ` stroke="${c}" stroke-width="3"`) + ell(110, 130, 26, 24, 'none', ` stroke="${c}" stroke-opacity=".5" stroke-width="2"`) + ell(50, 104, 26, 9, '#d9a227') + line('M50 104L50 166', '#2a2340', 3) + ell(190, 92, 30, 9, '#d9a227') + line('M190 92L190 166', '#2a2340', 3) + rect(60, 112, 30, 26, '#1b1430', ` rx="4" stroke="${c}" stroke-width="2"`) + rect(132, 112, 30, 26, '#1b1430', ` rx="4" stroke="${c}" stroke-width="2"`)),
+    keys: (c) => svg('0 0 140 200', path('M60 40C60 26 80 26 80 40C80 52 74 58 70 58C66 58 60 52 60 40Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + path('M54 62C60 58 80 58 86 62L90 120L50 120Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + line('M56 72Q44 96 40 112M84 72Q96 96 100 112', '#120c22', 9) + rect(10, 110, 120, 18, '#1b1430', ` stroke="${c}" stroke-width="2"`) + rect(16, 114, 108, 8, '#f4f1e6') + Array.from({ length: 11 }, (_, i) => rect(22 + i * 9.6, 114, 4.5, 5, '#120c22')).join('') + line('M24 128L14 196M116 128L126 196M24 128L126 196M116 128L14 196', '#2a2340', 3)),
+    bass: (c, g) => svg('0 0 120 200', path('M54 38C54 24 74 24 74 38C74 50 68 56 64 56C60 56 54 50 54 38Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + path('M48 60C54 56 74 56 80 60L84 120L76 122L76 196L66 196L64 132L62 196L52 196L52 122L44 120Z', '#120c22', ` stroke="${c}" stroke-width="2"`) + line('M104 60L30 104', '#2a2340', 5) + path('M44 96C30 90 18 102 24 114C30 126 46 124 52 116C60 116 66 108 62 100C58 92 50 92 44 96Z', g, ' stroke="#120c22" stroke-width="3"') + line('M52 70Q42 90 44 104', '#120c22', 9) + line('M76 70Q92 68 98 64', '#120c22', 9)),
+    phone: (c) => svg('0 0 30 100', path('M12 100L13 46Q13 34 10 24L12 16L18 18L19 44L21 100Z', '#0b0814') + rect(6, 0, 18, 26, '#1b1430', ' rx="3"') + rect(8, 2, 14, 20, c, ' rx="2"')),
+    stick: (c) => svg('0 0 30 110', path('M12 110L13 50Q13 38 10 28L14 20L19 24L20 50L22 110Z', '#0b0814') + line('M14 24L24 0', c, 6) + line('M14 24L24 0', '#ffffff', 2)),
+    disco: () => svg('0 0 100 100', `<defs>${rg('db', [[0, '#ffffff'], [0.45, '#c9c9e8'], [1, '#55557a']], 0.38, 0.32, 0.7)}</defs>` + circ(50, 50, 46, 'url(#db)') + Array.from({ length: 7 }, (_, i) => line(`M${10 + i * 13} 12Q${50 + (i - 3) * 4} 50 ${10 + i * 13} 88`, 'rgba(40,40,70,.35)', 1.4)).join('') + Array.from({ length: 6 }, (_, i) => line(`M6 ${18 + i * 13}Q50 ${16 + i * 13 + (i - 2.5) * 3} 94 ${18 + i * 13}`, 'rgba(40,40,70,.35)', 1.4)).join('') + circ(36, 32, 7, '#ffffff', ' opacity=".9"')),
+    rays: (c) => svg('0 0 200 200', Array.from({ length: 34 }, (_, i) => { const a = i * 2.39996, d = 22 + ((i * 37) % 76); return circ(100 + Math.cos(a) * d, 100 + Math.sin(a) * d, 0.9 + (i % 4) * 0.45, i % 5 ? '#ffffff' : c, ` opacity="${(0.45 + (i % 3) * 0.2).toFixed(2)}"`); }).join('')),
+  };
   def('music', {
     base: (o) => o.bg2,
     layers: (t, o) => {
       const E = t.E, lc = ['#f72585', '#4cc9f0', '#ffd166', '#7cff6b', '#b5179e'];
+      const msp = (k, ...a) => cached('mus|' + k + '|' + a.join('|'), () => MUS[k](...a));
+      const still = (u, x, y, w, h) => `<image href="${u.slice(5, -2)}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="none"/>`;
+      // les musiciens : [clé, x, y du bas, largeur, hauteur, liseré, couleur de l'instrument, mouvement]
+      const band = [['singer', 700, 742, 70, 140, '#ffd166'], ['guitar', 520, 742, 96, 160, '#f72585', '#e63946'], ['bass', 1000, 742, 96, 160, '#4cc9f0', '#3a86ff'], ['drums', 800, 742, 200, 142, '#7cff6b'], ['keys', 1150, 742, 110, 157, '#b5179e']];
       return [
-        t.art('sky', (p) => sky(p + 's', [[0, o.bg2], [0.55, o.bg1], [0.8, '#5a1a7a']]) + starsSvg(t.r('st'), 80, { y1: 380 }) + glow(p + 'h1', 400, 640, 500, '#f72585', 0.3) + glow(p + 'h2', 1200, 640, 500, '#4cc9f0', 0.25)),
+        // ciel du soir, étoiles, halos de la scène
+        t.art('sky', (p) => sky(p + 's', [[0, '#120a2e'], [0.45, o.bg1], [0.72, '#7a1f7a'], [0.85, '#c2367a']]) + starsSvg(t.r('st'), 90, { y1: 360 }) + glow(p + 'h1', 380, 620, 520, '#f72585', 0.32) + glow(p + 'h2', 1220, 620, 520, '#4cc9f0', 0.28) + glow(p + 'h3', 800, 700, 420, '#ffd166', 0.18)),
+        // les toits de la ville derrière la scène, fenêtres allumées
+        t.art('city', (p) => skyline(t.r('cy'), { y: 760, minW: 60, maxW: 130, minH: 170, maxH: 330, fill: '#1e1240', roofs: true, win: ['#ffcf7a', '#ffe3a3', '#ff9ed2'], winW: 7, winH: 10, gapX: 9, gapY: 12, x0: -20, x1: 1620 }) + skyline(t.r('cy2'), { y: 760, minW: 80, maxW: 160, minH: 90, maxH: 200, fill: '#170d33', roofs: true, win: ['#ff9ed2', '#ffcf7a'], winW: 6, winH: 9, gapX: 10, gapY: 13, x0: -40, x1: 1640 })),
         // faisceaux des projecteurs qui balaient le ciel
-        ...[[250, 245, '#4cc9f0', 48, 6], [250, 245, '#f72585', 24, 8], [1350, 245, '#ffd166', -48, 7], [1350, 245, '#7cff6b', -24, 9]].map(([x, y, c, a, d], i) => t.el('bm' + i, { position: 'absolute', left: em(x - 110), top: em(y - 760), width: em(220), height: em(760), transformOrigin: '50% 100%', transform: `rotate(${a}deg)` },
+        ...[[250, 245, '#4cc9f0', 48, 6], [250, 245, '#f72585', 24, 8], [1350, 245, '#ffd166', -48, 7], [1350, 245, '#7cff6b', -24, 9]].map(([x, y, c, a, d], i) => t.el('bm' + i, { position: 'absolute', left: em(x - 110), top: em(y - 760), width: em(220), height: em(760), transformOrigin: '50% 100%', transform: `rotate(${a}deg)`, mixBlendMode: 'screen' },
           E('div', { style: t.img(spr('beam', c), { inset: 0, transformOrigin: '50% 100%', '--a': '15deg', animation: `fhs-rock ${d}s ease-in-out ${-i * 1.7}s infinite` }) }))),
         t.still([[250, 48, '#4cc9f0'], [1350, -48, '#ffd166']].map(([x, a, c]) => `<g transform="rotate(${a} ${x} 245)"><image href="${spr('beam', c).slice(5, -2)}" x="${x - 110}" y="-515" width="220" height="760" preserveAspectRatio="none"/></g>`).join('')),
-        t.art('stage', (p) => {
-          const r = t.r('st2');
+        // guirlandes de fanions et d'ampoules, des bords de l'écran jusqu'au portique
+        t.art('bunting', (p) => {
           let s = '';
-          // pylônes en treillis
-          const truss = (x) => { let q = rect(x - 22, 230, 44, 520, 'none', ' stroke="#2a2340" stroke-width="5"'); for (let y = 230; y < 740; y += 30) q += line(`M${x - 22} ${y}L${x + 22} ${y + 30}M${x + 22} ${y}L${x - 22} ${y + 30}`, '#2a2340', 3); return q + rect(x - 60, 220, 120, 22, '#2a2340') + [-40, 0, 40].map((d) => rect(x + d - 12, 242, 24, 28, '#1a1528', ' rx="4"') + circ(x + d, 266, 9, '#fff3c4')).join(''); };
+          [[-20, 90, 228, 96, 60], [1372, 96, 1620, 90, 60], [-20, 300, 250, 250, 60], [1350, 250, 1620, 300, 60]].forEach(([a, ya, b, yb, sag], g) => {
+            const q = (u) => [(1 - u) * (1 - u) * a + 2 * (1 - u) * u * ((a + b) / 2) + u * u * b, (1 - u) * (1 - u) * ya + 2 * (1 - u) * u * ((ya + yb) / 2 + sag) + u * u * yb];
+            s += line(`M${a} ${ya}Q${(a + b) / 2} ${(ya + yb) / 2 + sag} ${b} ${yb}`, '#2a2340', 2);
+            for (let i = 1; i < 12; i++) { const [x, y] = q(i / 12); s += g < 2 ? path(`M${N(x - 11)} ${N(y)}L${N(x + 11)} ${N(y)}L${N(x)} ${N(y + 24)}Z`, lc[(i + g) % lc.length]) : circ(x, y + 6, 6, '#fff3c4') + glow(p + 'b' + g + i, x, y + 6, 22, '#ffd166', 0.5); }
+          });
+          return s;
+        }),
+        // le portique : pylônes en treillis, poutre du haut, projecteurs
+        t.art('stage', (p) => {
+          let s = '';
+          const truss = (x) => { let q = rect(x - 22, 96, 44, 654, 'none', ' stroke="#2a2340" stroke-width="5"'); for (let y = 96; y < 740; y += 30) q += line(`M${x - 22} ${y}L${x + 22} ${y + 30}M${x + 22} ${y}L${x - 22} ${y + 30}`, '#2a2340', 3); return q + rect(x - 60, 220, 120, 22, '#2a2340') + [-40, 0, 40].map((d) => rect(x + d - 13, 242, 26, 22, '#1b1630', ' rx="4"')).join(''); };
           s += truss(250) + truss(1350);
-          // enceintes
+          let top = rect(228, 80, 1144, 32, 'none', ' stroke="#2a2340" stroke-width="5"'); for (let x = 228; x < 1372; x += 32) top += line(`M${x} 80L${x + 32} 112M${x + 32} 80L${x} 112`, '#2a2340', 3);
+          s += top;
+          // banderole
+          s += `<defs>${lg(p + 'bn', [[0, '#f72585'], [0.5, '#b5179e'], [1, '#4cc9f0']], 1, 0)}</defs>` + line('M360 112L360 124M680 112L680 124M920 112L920 124M1240 112L1240 124', '#2a2340', 3) + rect(330, 122, 380, 38, `url(#${p}bn)`, ' rx="6"') + rect(890, 122, 380, 38, `url(#${p}bn)`, ' rx="6"') +
+            `<text x="520" y="149" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="22" letter-spacing="3" fill="#ffffff">FÊTE DE LA MUSIQUE</text><text x="1080" y="149" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="22" letter-spacing="3" fill="#ffffff">★ 21 JUIN ★</text>` +
+            line('M800 112L800 124', '#c9c9e8', 2);
+          // enceintes empilées
           const spk = (x, y, w, h) => rect(x, y, w, h, '#15111f', ' rx="6"') + circ(x + w / 2, y + h * 0.32, w * 0.22, '#2b2440') + circ(x + w / 2, y + h * 0.32, w * 0.09, '#0b0912') + circ(x + w / 2, y + h * 0.74, w * 0.3, '#2b2440') + circ(x + w / 2, y + h * 0.74, w * 0.12, '#0b0912');
           s += spk(60, 560, 120, 190) + spk(80, 430, 100, 130) + spk(1420, 560, 120, 190) + spk(1420, 430, 100, 130);
-          // plateau, rampe de lumières
-          s += rect(150, 740, 1300, 40, '#1d1730') + rect(150, 736, 1300, 6, '#3a2f5c');
-          s += rect(330, 744, 940, 30, '#0d0a18', ' rx="4"');
+          // écran LED derrière le groupe (cadre)
+          s += rect(320, 520, 960, 222, '#0d0a18', ' rx="6"') + rect(320, 520, 960, 222, 'none', ' rx="6" stroke="#2a2340" stroke-width="6"');
+          // plateau, retours de scène, câbles
+          s += `<defs>${lg(p + 'gd', [[0, '#2a1846'], [1, '#0b0814']])}</defs>` + rect(-10, 762, 1620, 160, `url(#${p}gd)`);
+          s += rect(150, 740, 1300, 40, '#1d1730') + rect(150, 736, 1300, 6, '#3a2f5c') + rect(330, 744, 940, 30, '#0d0a18', ' rx="4"');
+          s += [420, 640, 960, 1180].map((x) => path(`M${x - 34} 736L${x - 26} 712L${x + 26} 712L${x + 34} 736Z`, '#120c22', ' stroke="#3a2f5c" stroke-width="2"')).join('');
           for (let i = 0; i < 4; i++) { const x = [200, 260, 1340, 1400][i], c = lc[i]; s += circ(x, 760, 9, c) + glow(p + 'rl' + i, x, 760, 34, c, 0.6); }
           return s;
         }),
+        // l'image de l'écran LED : des bandes de couleur qui défilent
+        t.el('led', { position: 'absolute', left: em(326), top: em(526), width: em(948), height: em(210), overflow: 'hidden', borderRadius: em(4), opacity: 0.85 },
+          t.preview ? null : E('div', { style: { position: 'absolute', left: 0, top: 0, width: '200%', height: '100%', background: `repeating-linear-gradient(90deg, #f72585 0 6%, #7209b7 6% 12%, #4cc9f0 12% 18%, #3a0ca3 18% 24%, #ffd166 24% 30%, #b5179e 30% 36%)`, '--sx': '-50%', animation: 'fhs-scroll 6s linear infinite' } }),
+          t.preview ? null : E('div', { style: { position: 'absolute', inset: 0, background: 'repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 2px, transparent 2px 6px), radial-gradient(60% 80% at 50% 60%, rgba(255,255,255,.18), transparent 70%)' } })),
+        t.still(rect(326, 526, 948, 210, '#7209b7', ' opacity=".55"') + rect(326, 526, 158, 210, '#f72585', ' opacity=".6"') + rect(642, 526, 158, 210, '#4cc9f0', ' opacity=".55"') + rect(958, 526, 158, 210, '#ffd166', ' opacity=".5"')),
+        // les lasers qui balaient depuis la scène
+        ...[[330, 740, '#7cff6b', 32, 2.6], [330, 740, '#f72585', -20, 3.4], [1270, 740, '#4cc9f0', -32, 2.9], [1270, 740, '#ffd166', 20, 3.8]].map(([x, y, c, a, d], i) => t.el('lz' + i, { position: 'absolute', left: em(x - 2), top: em(y - 900), width: em(4), height: em(900), transformOrigin: '50% 100%', transform: `rotate(${a}deg)`, opacity: 0.55, mixBlendMode: 'screen' },
+          E('div', { style: { position: 'absolute', inset: 0, background: `linear-gradient(0deg, ${c}, rgba(255,255,255,0))`, transformOrigin: '50% 100%', '--a': '26deg', animation: `fhs-rock ${d}s ease-in-out ${-i * 0.9}s infinite` } }))),
+        // le groupe : chacun bouge à sa façon
+        ...band.map(([k, x, yb, w, h, c, g], i) => t.el(k === 'drums' ? 'dr' : 'mus' + i, t.img(msp(k, c, g || ''), { left: em(x - w / 2), top: em(yb - h), width: em(w), height: em(h), transformOrigin: '50% 100%', ...(k === 'drums' ? { '--s': 1.03, '--o0': 1, animation: 'fhs-pulse .5s ease-in-out infinite' } : { '--by': em(k === 'singer' ? -6 : -3), '--br': (i % 2 ? 2 : -2) + 'deg', animation: `fhs-bob ${k === 'singer' ? 0.5 : 1}s ease-in-out ${-i * 0.13}s infinite` }) }))),
+        t.still(band.map(([k, x, yb, w, h, c, g]) => still(msp(k, c, g || ''), x - w / 2, yb - h, w, h)).join('')),
+        // la boule à facettes et ses éclats qui tournent
+        t.el('disco', { position: 'absolute', left: em(772), top: em(124), width: em(56), height: em(56) }, E('div', { style: t.img(msp('disco'), { inset: 0, animation: 'fhs-spin 9s linear infinite' }) })),
+        t.el('rays', t.img(msp('rays', '#f72585'), { left: em(500), top: em(-148), width: em(600), height: em(600), opacity: 0.85, animation: 'fhs-spin 14s linear infinite' })),
+        t.still(still(msp('disco'), 772, 124, 56, 56)),
         // égaliseur lumineux devant la scène
         t.el('eq', { position: 'absolute', left: em(340), top: em(746), width: em(920), height: em(26), display: 'flex', alignItems: 'flex-end', gap: em(4), opacity: 0.9 },
           t.preview ? null : t.n('eqb', 40, (r) => ({ d: rr(r, 0.45, 1.2), dl: -r() })).map((b, i) => E('div', { key: i, style: { flex: 1, height: '100%', transformOrigin: '50% 100%', borderRadius: '3px 3px 0 0', background: `linear-gradient(180deg, ${lc[i % lc.length]}, #7209b7)`, '--f': 0.2, animation: `fhs-flap ${N(b.d)}s ease-in-out ${N(b.dl)}s infinite` } }))),
-        ...t.n('bl', 6, (r, i) => t.el('bl' + i, { position: 'absolute', left: em([210, 250, 290, 1310, 1350, 1390][i] - 22), top: em(244), width: em(44), height: em(44), borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(255,250,210,.95), rgba(255,250,210,0))', '--o0': 0.25, animation: `fhs-tw ${N(rr(r, 0.6, 1.4))}s ease-in-out ${N(-r())}s infinite` })),
-        t.art('crowd', (p) => {
-          const r = t.r('cr');
-          let s = '';
-          for (let i = 0; i < 46; i++) { const x = rr(r, -20, 1620), y = rr(r, 800, 860), k = rr(r, 0.85, 1.25); s += ell(x, y + 60 * k, 44 * k, 60 * k, '#0b0814') + circ(x, y, 22 * k, '#0b0814'); }
-          s += rect(-10, 870, 1620, 40, '#0b0814');
+        ...t.n('bl', 6, (r, i) => t.el('bl' + i, { position: 'absolute', left: em([210, 250, 290, 1310, 1350, 1390][i] - 22), top: em(244), width: em(44), height: em(44), borderRadius: '50%', background: 'radial-gradient(closest-side, rgba(255,250,210,.95), rgba(255,250,210,0))', '--o0': 0.25, animation: `fhs-tw ${N(rr(r, 0.5, 1.2))}s ease-in-out ${N(-r())}s infinite` })),
+        // fumée sur la scène
+        t.el('fog', { position: 'absolute', left: em(100), top: em(660), width: em(1400), height: em(130), background: 'radial-gradient(40% 60% at 30% 60%, rgba(230,220,255,.28), transparent 70%), radial-gradient(40% 60% at 70% 55%, rgba(230,220,255,.24), transparent 70%)', '--sw': em(60), animation: 'fhs-sway 9s ease-in-out infinite' }),
+        // la foule : deux rangs qui sautent en rythme (le rang du fond un peu plus clair)
+        t.el('crowdB', { position: 'absolute', inset: 0, '--by': em(-5), animation: 'fhs-bob .5s ease-in-out infinite' }, t.art('crowd2', () => {
+          const r = t.r('cr2'); let s = '';
+          for (let i = 0; i < 40; i++) { const x = rr(r, -20, 1620), y = rr(r, 790, 815), k = rr(r, 0.7, 0.95); s += ell(x, y + 56 * k, 40 * k, 56 * k, '#22163d') + circ(x, y, 20 * k, '#22163d'); }
           return s;
-        }),
-        ...t.n('arm', 9, (r, i) => { const x = rr(r, 60, 1540); return t.el('ar' + i, t.img(spr('arm', '#0b0814'), { left: em(x), top: em(rr(r, 700, 760)), width: em(30), height: em(110), transformOrigin: '50% 100%', '--a': `${N(rr(r, 8, 16))}deg`, animation: `fhs-rock ${N(rr(r, 0.9, 1.6))}s ease-in-out ${N(-r() * 2)}s infinite` })); }),
+        })),
+        ...t.n('arm', 16, (r, i) => { const x = rr(r, 40, 1560), kind = i % 4 === 0 ? 'phone' : i % 4 === 2 ? 'stick' : 'arm', c = pick(r, lc); const u = kind === 'arm' ? spr('arm', '#0b0814') : msp(kind, kind === 'phone' ? '#e9f6ff' : c); return t.el('ar' + i, t.img(u, { left: em(x), top: em(rr(r, 690, 745)), width: em(30), height: em(kind === 'arm' ? 110 : 120), transformOrigin: '50% 100%', '--a': `${N(rr(r, 8, 18))}deg`, animation: `fhs-rock ${N(rr(r, 0.5, 1.1))}s ease-in-out ${N(-r() * 2)}s infinite` })); }),
+        ...t.n('ph', 12, (r, i) => t.el('ph' + i, { position: 'absolute', left: em(rr(r, 40, 1560)), top: em(rr(r, 770, 830)), width: em(8), height: em(8), borderRadius: '50%', background: '#ffffff', boxShadow: '0 0 1em #ffffff', '--o0': 0.1, animation: `fhs-tw ${N(rr(r, 0.8, 2.2))}s ease-in-out ${N(-r() * 2)}s infinite` })),
+        t.el('crowdF', { position: 'absolute', inset: 0, '--by': em(-7), animation: 'fhs-bob .5s ease-in-out -.25s infinite' }, t.art('crowd', () => {
+          const r = t.r('cr'); let s = '';
+          for (let i = 0; i < 46; i++) { const x = rr(r, -20, 1620), y = rr(r, 820, 870), k = rr(r, 0.9, 1.3); s += ell(x, y + 60 * k, 44 * k, 60 * k, '#0b0814') + circ(x, y, 22 * k, '#0b0814'); }
+          s += rect(-10, 880, 1620, 40, '#0b0814');
+          return s;
+        })),
+        // notes de musique qui s'envolent, confettis qui tombent
         ...drift(t, 'nt', t.n('nt', 12, (r) => { const c = pick(r, lc); return { x: rr(r, 80, 1520), y: 760, w: rr(r, 26, 40), h: rr(r, 36, 52), y1: -720, x1: rr(r, -80, 80), r1: rr(r, -40, 40), dur: rr(r, 9, 15), dl: -r() * 15, sw: 2.5, sr: 10, swd: 2.6, fade: true, op: 0.9, img: spr(r() < 0.5 ? 'note1' : 'note2', c) }; })),
+        ...drift(t, 'cf', t.n('cf', 26, (r) => ({ x: rr(r, 0, 1600), y: -30, w: rr(r, 8, 13), h: rr(r, 5, 8), y1: 960, x1: rr(r, -120, 120), r1: rr(r, 300, 900), dur: rr(r, 7, 13), dl: -r() * 13, sw: 3, sr: 30, swd: 1.6, bg: pick(r, [...lc, '#ffffff']), round: '2px', op: 0.95 }))),
       ];
     },
   });
