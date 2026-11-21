@@ -416,7 +416,8 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 
     <sc-if value="{{ panel.open }}" hint-placeholder-val="{{ false }}">
       <div style="width: 100%; box-sizing: border-box; pointer-events: auto; border-radius: 18px; background: {{ ui.panel }}; border: 1px solid {{ ui.border }}; backdrop-filter: blur(26px) saturate(1.5); box-shadow: {{ ui.shadow }}; overflow: hidden; transform-origin: 50% 0; animation: fh-panel-open .38s cubic-bezier(.2,.9,.25,1.1) both;">
-        <div key="{{ panel.key }}" style="max-height: {{ panel.maxH }}; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin; animation: {{ panel.anim }};">
+        <div style="display: flex; flex-direction: {{ panel.dir }}; max-height: {{ panel.maxH }};">{{ panel.nav }}
+        <div key="{{ panel.key }}" style="flex: 1; min-width: 0; max-height: {{ panel.maxH }}; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; box-sizing: border-box; padding: 14px 22px 24px; scrollbar-width: thin; animation: {{ panel.anim }};">
           <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 -8px 14px 0;">
             <div style="display: flex; align-items: center; gap: 10px; min-width: 0;">
               <sc-if value="{{ panel.back }}" hint-placeholder-val="{{ false }}">
@@ -579,6 +580,7 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
             </sc-for>
           </div>
         </div>
+        </div>
       </div>
     </sc-if>
   </div>
@@ -623,6 +625,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.30.0', d: '2026-11-21', items: ['Paramètres réorganisés : des rubriques à gauche (Horloge, Date, Langue et région, À l’écran, Thèmes, Police, Couleurs, Fond, Effets, Interface), une seule affichée à la fois.|Settings reorganized: sections on the left (Clock, Date, Language & region, On screen, Themes, Font, Colors, Background, Effects, Interface), one shown at a time.'] },
   { v: '2.29.0', d: '2026-11-21', items: ['Fête de la musique : nouveau décor, avec le groupe sur scène, l’écran géant, la boule à facettes, les lasers, la foule qui saute et les confettis.|Music Day: new scene with the band on stage, a giant screen, a disco ball, lasers, a jumping crowd and confetti.'] },
   { v: '2.28.0', d: '2026-11-21', items: ['Cinq nouvelles choses à toucher dans chaque décor (43 thèmes) : animaux qui sortent ou traversent, bulles de BD, fumée, nuages qui pleuvent, éclairs, ballons, objets lancés…|Five new things to tap in every scene (43 themes): animals peeking or crossing, speech bubbles, smoke, rain clouds, lightning, balloons, thrown objects…', 'Halloween a maintenant sa vraie miniature dans la page Thèmes.|Halloween now has its real thumbnail on the Themes page.', 'Clic sur le fond : marche aussi juste au-dessus de l’heure avec les polices qui débordent.|Background click now also works just above the clock with overflowing fonts.'] },
   { v: '2.27.0', d: '2026-11-20', items: ['Page Thèmes : recherche (« neige », « nuit », « mer »…), filtres par saison, favoris ⭐ épinglés en haut, et décor animé dans la carte au survol.|Themes page: search (“snow”, “night”, “sea”…), season filters, ⭐ favorites pinned on top, and the live scene inside the card on hover.'] },
@@ -864,6 +867,8 @@ const T_RAW = {
   thFav: "Ajouter aux favoris|Add to favorites|Añadir a favoritos|Zu Favoriten", thUnfav: "Retirer des favoris|Remove from favorites|Quitar de favoritos|Aus Favoriten entfernen", thFavs: "Mes favoris|My favorites|Mis favoritos|Meine Favoriten",
   thNone: "Aucun thème pour « {q} ».|No theme for “{q}”.|Ningún tema para «{q}».|Kein Thema für „{q}“.", thShowAll: "Voir tous les thèmes|Show all themes|Ver todos los temas|Alle Themen anzeigen",
   thc_all: "Tout|All|Todo|Alle", thc_autumn: "Automne|Autumn|Otoño|Herbst", thc_winter: "Hiver|Winter|Invierno|Winter", thc_spring: "Printemps|Spring|Primavera|Frühling", thc_summer: "Été|Summer|Verano|Sommer", thc_fetes: "Fêtes|Holidays|Fiestas|Feste", thc_styles: "Styles|Styles|Estilos|Stile",
+  st_clock: "Horloge|Clock|Reloj|Uhr", st_date: "Date|Date|Fecha|Datum", st_lang: "Langue et région|Language & region|Idioma y región|Sprache & Region", st_screen: "À l’écran|On screen|En pantalla|Auf dem Bildschirm", st_ui: "Interface|Interface|Interfaz|Oberfläche",
+  g_time: "L’heure|The time|La hora|Die Uhrzeit", g_style: "Le style|Style|El estilo|Der Stil", g_site: "Le site|The site|El sitio|Die Seite",
   close: "Fermer (Échap)|Close (Esc)|Cerrar (Esc)|Schließen (Esc)", undo: "Annuler|Undo|Deshacer|Rückgängig",
   resetDone: "Réglages réinitialisés|Settings reset|Ajustes restablecidos|Einstellungen zurückgesetzt", remove: "Supprimer|Remove|Eliminar|Entfernen",
   custom: "Couleur personnalisée|Custom color|Color personalizado|Eigene Farbe",
@@ -1217,7 +1222,10 @@ function renderAlarm(kind, sr) {
     });
   } catch (e) { return Promise.resolve(null); }
 }
-const TAB_IDS = ['display', 'presets', 'font', 'colors', 'bg', 'fx'];
+// Paramètres : une colonne de rubriques à gauche (l'heure, le style, le site), une seule rubrique affichée à la fois
+const TAB_IDS = ['clock', 'date', 'lang', 'screen', 'presets', 'font', 'colors', 'bg', 'fx', 'ui'];
+const SET_NAV = [['g_time', ['clock', 'date', 'lang', 'screen']], ['g_style', ['presets', 'font', 'colors', 'bg', 'fx']], ['g_site', ['ui']]];
+const SET_ICON = { clock: 'schedule', date: 'calendar_today', lang: 'translate', screen: 'chat', presets: 'palette', font: 'text_fields', colors: 'format_color_fill', bg: 'wallpaper', fx: 'auto_awesome', ui: 'tune' };
 const BG_TYPES = ['solid', 'gradient', 'aurora', 'grid', 'spooky', 'scene', 'image'];
 // décors « saisons & fêtes », dans l'ordre de l'année scolaire
 const SCENE_FETES = ['rentree', 'autumn', 'rainwood', 'vineyard', 'orchard', 'winter', 'alpine', 'polar', 'skating', 'xmas', 'newyear', 'valentine', 'spring', 'zen', 'farm', 'kites', 'april', 'easter', 'music', 'summer', 'camping', 'tropical', 'fair', 'bastille'];
@@ -1947,8 +1955,8 @@ const LONG_TOUR = [
   { t: ['mode-games'], h: 'La boîte à jeux', x: 'Clique sur « Jeux » : le pendu (un mot choisi par quelqu’un, ou tiré dans une catégorie) et « Associe les emojis » (glisser chaque emoji sur son nom, ou créer ton propre jeu avec tes images). D’autres jeux arrivent.', prep: (a) => { a.closeMenu(); a.mindDDClose(); a.gameDDClose(); } },
   { t: ['mode-sound', 'mode-show'], h: 'Sonomètre et présentation', x: 'Le sonomètre écoute le micro et montre le bruit de la classe (vert, orange, rouge) ; rien n’est enregistré. « Site ou image » affiche une page, une vidéo ou une image en grand, avec l’heure par-dessus.' },
   { t: ['mode-clock'], h: 'Retour à l’horloge', x: 'On revient à l’heure.', act: modeIs('clock'), d: 'Clique sur « Horloge ».' },
-  { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, qualité de l’image (Faible pour un vieil ordinateur), la barre du haut au repos (cachée ou juste ses icônes)… Tout en bas : les réglages avancés.', act: (st) => st.tab === 'display', d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
-  { t: ['close'], h: 'Ferme les paramètres', x: 'Tout est enregistré automatiquement dans ce navigateur.', act: (st) => !st.tab, d: 'Clique sur la croix.', prep: (a) => { if (a.state.tab !== 'display') a.openTab('display'); } },
+  { t: ['settings'], h: 'Les paramètres', x: 'Format de l’heure, date, langue, position, autres villes, qualité de l’image (Faible pour un vieil ordinateur), la barre du haut au repos (cachée ou juste ses icônes)… Les rubriques sont à gauche : l’heure, la date, la langue, ce qui s’affiche à l’écran, puis le style (thèmes, police, couleurs, fond, effets) et l’interface.', act: (st) => !!st.tab, d: 'Clique sur « Paramètres ».', prep: (a) => { a.closeMenu(); if (a.state.tab) a.setState({ tab: null }); } },
+  { t: ['close'], h: 'Ferme les paramètres', x: 'Tout est enregistré automatiquement dans ce navigateur.', act: (st) => !st.tab, d: 'Clique sur la croix.', prep: (a) => { if (!a.state.tab) a.openTab('clock'); } },
   { t: ['fs'], h: 'Plein écran', x: 'Pour projeter au tableau : ce bouton ou la touche F. Les boutons se cachent tout seuls quand la souris ne bouge plus.' },
   { t: ['help'], h: 'C’est toi qui joues !', x: 'Retiens juste ceci : clique sur ce que tu veux changer. Ce bouton relance ce guide quand tu veux. Bonne classe !' },
 ];
@@ -2830,7 +2838,7 @@ class Component extends DCLogic {
     el.style.transform = `translate(${Math.round(dx)}px, ${Math.round(dy)}px)`; el.getBoundingClientRect();
     el.style.transition = 'transform .5s cubic-bezier(.2,.9,.3,1.12)'; el.style.transform = '';
   };
-  openSettings = () => { this.closeMenu(); this.openTab('display'); };
+  openSettings = () => { this.closeMenu(); this.openTab(TAB_IDS.includes(this.lastSetTab) ? this.lastSetTab : 'clock'); };
 
   // Notes autocollantes
   saveNotes = () => { try { localStorage.setItem(NKEY, JSON.stringify(this.state.notes)); } catch (e) {} };
@@ -4566,14 +4574,17 @@ class Component extends DCLogic {
   delStyle = (id) => { const styles = this.state.styles.filter(x => x.id !== id); this.setState({ styles }); try { localStorage.setItem(STKEY, JSON.stringify(styles)); } catch (e) {} };
   applyStyle = (x) => { const p = { ...VDEF, ...x.s }; if (p.bgType === 'image' && !this.state.media.some(m => m.id === p.bgImage)) p.bgImage = this.state.media[0] ? this.state.media[0].id : null; this.themeDo(p, this.L().themeSet.replace('{n}', x.name)); };
   openTab = (id) => {
+    if (id === 'display') id = 'clock';
     const prev = this.state.tab, tab = prev === id ? null : id;
     const panelDir = !prev || !tab ? 'd' : TAB_IDS.indexOf(tab) > TAB_IDS.indexOf(prev) ? 'r' : 'l';
     this.setState({ tab, panelDir, menu: null });
+    if (tab) this.lastSetTab = tab;
     // Thèmes : seulement les polices des cartes ; Police : toutes
     if (tab === 'font') this.ensureFonts(FONTS.map(f => f.name));
     else if (tab === 'presets') this.ensureFonts([...PRESETS, ...this.state.styles].map(x => x.s.font));
     if (!tab) this.activity();
   };
+  navTab = (id) => { if (this.state.tab !== id) this.openTab(id); };
   closePanel = () => { if (this.state.tab) this.setState({ tab: null }); this.activity(); };
   onStage = (e) => {
     if (this.state.ringing) { this.stopAlarm(); return; }
@@ -5089,7 +5100,7 @@ class Component extends DCLogic {
     const ringOn = `0 0 0 2px ${ui.ringGap}, 0 0 0 3.5px ${ui.fg}`, ringOff = `inset 0 0 0 1px ${ui.border}`, ringSoft = `inset 0 0 0 1.5px ${hexA(ui.fg, 0.4)}`;
     const swRing = (c, on) => (on ? ringOn : contrast(c, ui.solid) < 1.6 ? ringSoft : ringOff);
     const accUi = readable(s.accent, ui.solid, ui.fg);
-    const TABS = [['display', L.settings], ['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx]];
+    const TABS = [['clock', L.st_clock], ['date', L.st_date], ['lang', L.st_lang], ['screen', L.st_screen], ['presets', L.tPresets], ['font', L.tFont], ['colors', L.tColors], ['bg', L.tBg], ['fx', L.tFx], ['ui', L.st_ui]];
     // repère de l'onglet actif, dans le même style que les boutons de mode : seule sa place change
     const ind = { ringC: `inset 0 0 0 1.5px ${hexA(s.accent, 0.6)}, 0 0 10px ${hexA(s.accent, dark ? 0.35 : 0.2)}`,
       bg: hexA(s.accent, dark ? 0.26 : 0.18), shadow: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}, 0 0 18px ${hexA(s.accent, dark ? 0.25 : 0.12)}` };
@@ -5181,8 +5192,8 @@ class Component extends DCLogic {
         if (s.weird !== 'none' && s.weird !== 'mirror') rng('weirdSpeed', L.weirdSpeed, 10, 100, 1, raw);
         H(L.hAtmos); rng('vignette', L.vignette, 0, 100, 1, raw); rng('grain', L.grain, 0, 100, 1, raw); tog('scanlines', L.scanlines); tog('tick', L.tick);
       }
-      const disp = t === 'display';
-      if (disp) {
+      // ---- Horloge : type, format, secondes, séparateur, taille et place à l'écran ----
+      if (t === 'clock') {
         H(L.hFormat);
         seg('clockType', L.clockType, [['digital', L.ct_digital], ['analog', L.ct_analog], ['both', L.ct_both]], { span: '1 / -1' });
         seg('hour12', L.format, [[false, '24 h'], [true, '12 h']]);
@@ -5190,35 +5201,44 @@ class Component extends DCLogic {
         seg('seconds', L.seconds, [['off', L.secOff], ['same', L.secSame], ['small', L.secSmall]]);
         seg('sep', L.separator, [[':', ':'], ['.', '.'], ['·', '·'], ['h', 'h'], [' ', '␣']]);
         tog('leadingZero', L.leadingZero); tog('blink', L.blink);
-        H(L.hZone);
-        sel('tz', L.timezone, [['local', `${L.localTz} · ${tzLabel(localTz)}`], ...ZONES.map(([z, n]) => { const o = offOf(z); return [z, `${n[li]}${o ? ' · ' + o : ''}`]; })]);
-        sel('digits', L.digits, NUMS.map(([v, n]) => [v, n[li]]));
-        tog('showZone', L.showZone);
+        H(L.hPlace);
+        add({ isPos: true, label: L.position, cells: POSK.map(k => ({ pick: () => this.setS({ pos: k }), bg: s.pos === k ? ui.invBg : 'transparent', dot: s.pos === k ? ui.invFg : ui.fg3 })) });
+        rng('size', L.size, 30, 130, 1, pct);
       }
-      if (disp) {
-        H(L.hLang);
-        seg('uiLang', L.uiLang, [['fr', 'Français'], ['en', 'English'], ['es', 'Español'], ['de', 'Deutsch']]);
-        sel('locale', L.dateLang, [['auto', L.sameUi], ...LOCALES]);
+      // ---- Date : affichage, format, calendrier, langue, taille et place ----
+      if (t === 'date') {
         H(L.hDate);
         tog('showDate', L.showDate);
         seg('dateFmt', L.dateFormat, DFS.map(k => [k, L['df_' + k]]), { span: '1 / -1' });
         sel('calendar', L.calendar, CALS.map(([v, n]) => [v, n[li]]));
+        sel('locale', L.dateLang, [['auto', L.sameUi], ...LOCALES]);
         tog('weekNum', L.weekNum); tog('dateUpper', L.upper);
-      }
-      if (disp) {
         H(L.hPlace);
-        add({ isPos: true, label: L.position, cells: POSK.map(k => ({ pick: () => this.setS({ pos: k }), bg: s.pos === k ? ui.invBg : 'transparent', dot: s.pos === k ? ui.invFg : ui.fg3 })) });
-        rng('size', L.size, 30, 130, 1, pct);
         rng('dateSize', L.dateSize, 50, 220, 1, pct);
         seg('datePos', L.datePos, [['above', L.above], ['below', L.below]]);
         rng('gap', L.gap, 0, 300, 5, pct);
-        H(L.picsH);
-        add({ isChips: true, hasLabel: false, span: '1 / -1', options: [{ label: '＋ ' + L.picAdd, pick: this.pickPic, bg: ui.invBg, fg: ui.invFg, border: ui.invBg }, ...st.pics.map((q, i) => ({ label: `✕ ${L.picN} ${i + 1}`, pick: () => this.delPic(q.id), bg: 'transparent', fg: ui.fg2, border: ui.border }))] });
+      }
+      // ---- Langue et région : langue des menus, fuseau, chiffres, autres villes ----
+      if (t === 'lang') {
+        H(L.hLang);
+        seg('uiLang', L.uiLang, [['fr', 'Français'], ['en', 'English'], ['es', 'Español'], ['de', 'Deutsch']]);
+        H(L.hZone);
+        sel('tz', L.timezone, [['local', `${L.localTz} · ${tzLabel(localTz)}`], ...ZONES.map(([z, n]) => { const o = offOf(z); return [z, `${n[li]}${o ? ' · ' + o : ''}`]; })]);
+        sel('digits', L.digits, NUMS.map(([v, n]) => [v, n[li]]));
+        tog('showZone', L.showZone);
+        add({ isChips: true, label: L.cities, span: '1 / -1', options: ZONES.map(([z, n]) => { const on = s.cities.includes(z); return { label: n[li], pick: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) });
+      }
+      // ---- À l'écran : message, progression de la journée, images à côté de l'heure ----
+      if (t === 'screen') {
         H(L.hExtras);
         seg('msg', L.message, [['none', L.m_none], ['greet', L.m_greet], ['theme', L.m_theme], ['custom', L.m_custom]]);
         if (s.msg === 'custom') add({ isText: true, label: L.m_custom, value: s.msgText, ph: L.msgPh, onText: (e) => this.setS({ msgText: e.target.value.slice(0, 80) }) });
         tog('progress', L.progress);
-        add({ isChips: true, label: L.cities, span: '1 / -1', options: ZONES.map(([z, n]) => { const on = s.cities.includes(z); return { label: n[li], pick: () => this.setS({ cities: on ? s.cities.filter(x => x !== z) : [...s.cities, z].slice(-4) }), bg: on ? ui.invBg : 'transparent', fg: on ? ui.invFg : ui.fg2, border: on ? ui.invBg : ui.border }; }) });
+        H(L.picsH);
+        add({ isChips: true, hasLabel: false, span: '1 / -1', options: [{ label: '＋ ' + L.picAdd, pick: this.pickPic, bg: ui.invBg, fg: ui.invFg, border: ui.invBg }, ...st.pics.map((q, i) => ({ label: `✕ ${L.picN} ${i + 1}`, pick: () => this.delPic(q.id), bg: 'transparent', fg: ui.fg2, border: ui.border }))] });
+      }
+      // ---- Interface : thème des menus, barre du haut, curseur, qualité, raccourcis ----
+      if (t === 'ui') {
         H(L.hUi);
         seg('uiTheme', L.uiTheme, [['auto', L.th_auto], ['dark', L.th_dark], ['light', L.th_light]]);
         tog('autoHide', L.autoHide);
@@ -5230,8 +5250,6 @@ class Component extends DCLogic {
         H(L.hKeys);
         tog('keys', L.keysOn);
         add({ label: L.keysList, span: '1 / -1', op: s.keys === false ? 0.5 : 1 });
-        H(L.mAdvanced);
-        add({ isChips: true, hasLabel: false, span: '1 / -1', options: TABS.slice(1).map(([id, label]) => ({ label: label + ' ›', pick: () => this.openTab(id), bg: 'transparent', fg: ui.fg, border: ui.border })) });
       }
     }
     const mine = {
@@ -5769,7 +5787,16 @@ class Component extends DCLogic {
       prog: { ...(mode === 'timer' ? { show: tm.dur > 0 && (tmRun || tm.done || tmLeft !== tm.dur), width: (tmFrac * 100).toFixed(3) + '%', label: pct0.format(tmFrac) } : { show: mode === 'clock' && !!s.progress, width: (dayPct * 100).toFixed(3) + '%', label: `${pct0.format(dayPct)} ${L.ofDay}` }), track: hexA(s.color, 0.16), fill: s.accent, labelColor: s.color, labelBg: lum(s.color) > 0.3 ? 'rgba(0,0,0,.5)' : 'rgba(255,255,255,.72)' },
       chrome: { barAnim: (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) ? (hidden ? 'fh-bar-fadeout .4s ease forwards' : 'fh-bar-fadein .3s ease both') : hidden ? 'fh-bar-out .5s cubic-bezier(.5,0,.75,.3) forwards' : 'fh-bar-in .72s cubic-bezier(.22,.8,.3,1) both', labels: st.vw > 820, btnPad: st.vw > 820 ? (compact ? '0 9px' : '0 13px 0 10px') : '0', ez: '.6s cubic-bezier(.45,0,.2,1)', lblCol: compact ? '0fr' : '1fr', lblOp: compact ? 0 : 1, lblFade: compact ? '.22s ease' : '.32s ease .14s', setBg: st.tab ? ui.active : 'transparent', tabsFlex: st.vw < 1240 ? '1 0 100%' : '1', tabsOrder: st.vw < 1240 ? 9 : 0, sepDisplay: st.vw < 1240 ? 'none' : 'block', opacity: hidden ? 0 : 1, pe: hidden ? 'none' : 'auto', brand: st.vw > 560, wide: st.vw > 1520, surprisePad: st.vw > 1520 ? '0 12px 0 9px' : '0', fsIcon: st.fs ? 'fullscreen_exit' : 'fullscreen', dotRing: hexA(s.accent, 0.22), pumpkin: spooky },
       menuUi, zones, blockRef: this.blockRef, clockDown: this.clockDown, onCtx: this.onCtx, openSettings: this.openSettings,
-      modes, modePillRef: this.modePillRef, pill: { bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` }, panel: { open: !!st.tab, back: !!st.tab && st.tab !== 'display', tip: st.tab === 'display', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
+      modes, modePillRef: this.modePillRef, pill: { bg: hexA(s.accent, dark ? 0.26 : 0.18), ring: `inset 0 0 0 1px ${hexA(s.accent, 0.45)}` }, panel: { open: !!st.tab, back: false, tip: st.tab === 'clock', maxH: st.vw < 1240 ? 'calc(100vh - 140px)' : 'calc(100vh - 96px)', dir: st.vw >= 760 ? 'row' : 'column', nav: (() => {
+        if (!st.tab) return null;
+        const side = st.vw >= 760;
+        const item = (id) => { const on = st.tab === id, label = (TABS.find(x => x[0] === id) || [])[1]; return E('button', { key: id, type: 'button', className: 'fh-btn', 'data-tour': 'set-' + id, 'aria-current': on ? 'page' : undefined, onClick: () => this.navTab(id),
+          style: { display: 'flex', alignItems: 'center', gap: 10, width: side ? '100%' : 'auto', flexShrink: 0, height: side ? 38 : 34, padding: side ? '0 12px' : '0 12px 0 9px', border: 0, borderRadius: 10, background: on ? ui.invBg : 'transparent', color: on ? ui.invFg : ui.fg, font: `${on ? 600 : 500} 13.5px/1 Geist, system-ui, sans-serif`, cursor: 'pointer', textAlign: 'left', whiteSpace: 'nowrap', transition: 'background .2s, color .2s' } },
+          E('span', { style: { ...ICON, fontSize: 19, color: on ? ui.invFg : ui.fg2 } }, SET_ICON[id]), label); };
+        return E('nav', { 'aria-label': L.settings, className: side ? '' : 'fh-chips', style: side ? { width: 212, flexShrink: 0, boxSizing: 'border-box', padding: '16px 10px 16px 12px', borderRight: `1px solid ${ui.border}`, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2 } : { display: 'flex', gap: 4, overflowX: 'auto', padding: '10px 12px', borderBottom: `1px solid ${ui.border}` } },
+          side ? E('div', { key: 'tt', style: { display: 'flex', alignItems: 'center', gap: 8, padding: '4px 10px 12px', font: '650 16px/1.2 Geist, system-ui, sans-serif' } }, E('span', { style: { ...ICON, fontSize: 20 } }, 'settings'), L.settings) : null,
+          ...SET_NAV.flatMap(([g, ids], gi) => [side ? E('div', { key: g, style: { padding: `${gi ? 14 : 4}px 12px 6px`, font: '600 10.5px/1 Geist, system-ui, sans-serif', letterSpacing: '.12em', textTransform: 'uppercase', color: ui.fg3 } }, L[g]) : (gi ? E('span', { key: g, style: { width: 1, flexShrink: 0, margin: '6px 4px', background: ui.border } }) : null), ...ids.map(item)]));
+      })(), title: tabLabel, key: 'p-' + st.tab, anim: `fh-pin-${st.panelDir || 'd'} .42s cubic-bezier(.2,.8,.2,1) both` }, controls, presets, mine, fontCats, fontTiles, media, fontGridKey: 'fg-' + st.fontCat,
       tools: { show: mode !== 'clock' && mode !== 'show' && mode !== 'mind' && mode !== 'games', el: toolsEl }, show: { on: !!showEl, el: showEl }, stageDisplay: mode === 'show' || mode === 'mind' || mode === 'games' ? 'none' : 'flex', pins: { show: !!pinsEl, el: pinsEl }, tour: { show: !!tourEl, el: tourEl }, startTour: this.startTour, notesEl, addNote: this.addNote, picsEl, pickPic: this.pickPic, picRef: this.picRef, onPicFiles: this.onPicFiles, stopEv: this.stopEv, gridRef: this.gridRef,
       bgPic: (() => {
         const m = s.bgType === 'image' && mode !== 'show' && !st.tab && st.media.find(x => x.id === s.bgImage);
