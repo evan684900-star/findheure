@@ -255,6 +255,34 @@ box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.28),inset 0 -16px 30px rgba(var(-
 @keyframes fh-tp-flick{0%{opacity:0}8%{opacity:1}18%{opacity:.62}26%{opacity:1}44%{opacity:.8}52%{opacity:1}70%{opacity:.86}100%{opacity:0}}
 @keyframes fh-tp-ring{0%{transform:scale(.15);opacity:.95}100%{transform:scale(1);opacity:0}}
 @keyframes fh-tp-shoot{0%{transform:translateX(0) scaleX(.2);opacity:0}15%{opacity:1}100%{transform:translateX(var(--dx)) scaleX(1);opacity:0}}
+/* interactions du décor (tapX) : uniquement transform / opacity */
+@keyframes fhx-in{0%{opacity:0}8%{opacity:1}86%{opacity:1}100%{opacity:0}}
+@keyframes fhx-walk{from{transform:translate(0,0) scale(var(--s0,1))}to{transform:translate(var(--tx),var(--ty)) scale(var(--s1,1))}}
+@keyframes fhx-hop{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(var(--hop,-8px)) rotate(4deg)}}
+@keyframes fhx-fly{0%{transform:translate(0,0) scale(.45);opacity:0}10%{opacity:1}40%{transform:translate(var(--ax),var(--ay)) scale(1)}100%{transform:translate(var(--tx),var(--ty)) scale(.85);opacity:1}}
+@keyframes fhx-flap{0%,100%{transform:rotate(-10deg) scaleY(1)}50%{transform:rotate(10deg) scaleY(.82)}}
+@keyframes fhx-x{to{transform:translateX(var(--tx))}}
+@keyframes fhx-fall{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.5,0,1,.6)}45%{transform:translateY(var(--gy));animation-timing-function:cubic-bezier(0,.5,.5,1)}62%{transform:translateY(calc(var(--gy) - var(--b1)));animation-timing-function:cubic-bezier(.5,0,1,.6)}78%{transform:translateY(var(--gy));animation-timing-function:cubic-bezier(0,.5,.5,1)}86%{transform:translateY(calc(var(--gy) - var(--b1) * .35));animation-timing-function:cubic-bezier(.5,0,1,.6)}94%,100%{transform:translateY(var(--gy))}}
+@keyframes fhx-roll{to{transform:rotate(var(--r,360deg))}}
+@keyframes fhx-grow{0%{transform:scale(0)}25%{transform:scale(1.22)}35%{transform:scale(.92)}45%,80%{transform:scale(1)}100%{transform:scale(0)}}
+@keyframes fhx-peek{0%{transform:translateY(60%) scale(.5);opacity:0}15%{transform:translateY(-12%) scale(1.06);opacity:1}24%{transform:translateY(0) scale(1)}34%{transform:rotate(-12deg)}44%{transform:rotate(12deg)}54%{transform:rotate(-8deg)}64%,80%{transform:none;opacity:1}100%{transform:translateY(60%) scale(.5);opacity:0}}
+@keyframes fhx-smoke{0%{transform:translate(0,0) scale(.3);opacity:0}15%{opacity:.8}100%{transform:translate(var(--tx),var(--ty)) scale(2.6);opacity:0}}
+@keyframes fhx-say{0%{transform:translate(-50%,-100%) scale(.2);opacity:0}12%{transform:translate(-50%,-100%) scale(1.08);opacity:1}18%{transform:translate(-50%,-100%) scale(1)}84%{transform:translate(-50%,-100%) scale(1);opacity:1}100%{transform:translate(-50%,-112%) scale(.92);opacity:0}}
+@keyframes fhx-bolt{0%,100%{opacity:0}4%{opacity:1}9%{opacity:.15}14%{opacity:1}34%{opacity:0}}
+@keyframes fhx-flash{0%,100%{opacity:0}4%{opacity:.55}9%{opacity:.05}14%{opacity:.4}30%{opacity:0}}
+@keyframes fhx-sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes fhx-orbit{0%{transform:rotate(0deg) scale(.2);opacity:0}12%{opacity:1;transform:rotate(60deg) scale(1)}75%{transform:rotate(var(--turn,500deg)) scale(1);opacity:1}100%{transform:rotate(calc(var(--turn,500deg) + 120deg)) scale(2.4);opacity:0}}
+@keyframes fhx-arc{0%{transform:translateY(0);animation-timing-function:cubic-bezier(.2,.6,.4,1)}50%{transform:translateY(var(--ay));animation-timing-function:cubic-bezier(.6,0,.8,.4)}100%{transform:translateY(var(--gy))}}
+@keyframes fhx-stamp{0%{transform:scale(2.6) rotate(var(--r,-8deg));opacity:0}14%{transform:scale(.92) rotate(var(--r,-8deg));opacity:1}22%{transform:scale(1.06) rotate(var(--r,-8deg))}30%,82%{transform:scale(1) rotate(var(--r,-8deg));opacity:1}100%{transform:scale(1.15) rotate(var(--r,-8deg));opacity:0}}
+@keyframes fhx-spin{0%{transform:scale(0) rotate(0deg);opacity:0}15%{opacity:1;transform:scale(1.2) rotate(200deg)}70%{transform:scale(1) rotate(720deg);opacity:1}100%{transform:scale(0) rotate(1080deg);opacity:0}}
+@keyframes fhx-beam{0%{transform:scaleY(0);opacity:0}16%{transform:scaleY(1);opacity:.85}80%{opacity:.85;transform:scaleY(1)}100%{opacity:0;transform:scaleY(.9)}}
+@keyframes fhx-hover{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes fhx-drop{0%{transform:translateY(0);opacity:0}10%{opacity:1}100%{transform:translateY(var(--ty));opacity:.5}}
+@keyframes fhx-show{0%{opacity:0}100%{opacity:1}}
+@keyframes fhx-cloud{0%{transform:scale(.3);opacity:0}14%{transform:scale(1.06);opacity:1}22%{transform:scale(1)}86%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.1)}}
+@keyframes fhx-ring{0%{transform:scale(.1);opacity:.9}100%{transform:scale(1);opacity:0}}
+@keyframes fhx-arcin{0%{transform:scale(.2);opacity:0}25%{transform:scale(1);opacity:.9}80%{opacity:.9}100%{opacity:0}}
+@media (prefers-reduced-motion: reduce){[data-fhx] *{animation-duration:.01s!important;animation-iteration-count:1!important}}
 @keyframes fh-ghost{0%{transform:translate3d(-14vw,0,0)}100%{transform:translate3d(118vw,-8vh,0)}}
 @keyframes fh-bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-16px) rotate(5deg)}}
 @keyframes fh-fog{0%{transform:translate3d(-7%,0,0)}100%{transform:translate3d(7%,-3%,0)}}
@@ -595,6 +623,7 @@ const UI_LOC = { fr: 'fr-FR', en: 'en-US', es: 'es-ES', de: 'de-DE' };
 // chaque texte : « français|anglais » (l'espagnol et l'allemand reprennent l'anglais)
 const NEWSKEY = 'findheure:news:v1';
 const NEWS = [
+  { v: '2.28.0', d: '2026-11-21', items: ['Cinq nouvelles choses à toucher dans chaque décor (43 thèmes) : animaux qui sortent ou traversent, bulles de BD, fumée, nuages qui pleuvent, éclairs, ballons, objets lancés…|Five new things to tap in every scene (43 themes): animals peeking or crossing, speech bubbles, smoke, rain clouds, lightning, balloons, thrown objects…', 'Halloween a maintenant sa vraie miniature dans la page Thèmes.|Halloween now has its real thumbnail on the Themes page.', 'Clic sur le fond : marche aussi juste au-dessus de l’heure avec les polices qui débordent.|Background click now also works just above the clock with overflowing fonts.'] },
   { v: '2.27.0', d: '2026-11-20', items: ['Page Thèmes : recherche (« neige », « nuit », « mer »…), filtres par saison, favoris ⭐ épinglés en haut, et décor animé dans la carte au survol.|Themes page: search (“snow”, “night”, “sea”…), season filters, ⭐ favorites pinned on top, and the live scene inside the card on hover.'] },
   { v: '2.26.0', d: '2026-11-20', items: ['Thèmes : une page à eux, en grandes cartes, ouverte par une transition propre au thème actuel (feuille d’automne, chauves-souris, givre, papier cadeau…).|Themes: their own page with big cards, opened by a transition matching the current theme (autumn leaf, bats, frost, gift wrap…).'] },
   { v: '2.25.0', d: '2026-11-20', items: ['Les 12 nouveaux décors ont été redessinés : plus de détails, de vrais arbres, des sols partout.|The 12 new scenes have been redrawn: more detail, real trees, proper ground everywhere.', 'La carte mentale n’est plus en bêta.|The mind map is no longer in beta.'] },
@@ -1351,6 +1380,57 @@ const DECO_TAP = {
   holo: [[1400, 702, 120, 'radar'], [194, 222, 120, 'neon', '#38e8ff'], [1404, 222, 110, 'neon', '#38e8ff']],
   trippy: [[140, 178, 60, 'rainbow'], [1298, 158, 70, 'rainbow'], [1378, 398, 60, 'rainbow'], [220, 448, 60, 'rainbow'], [1458, 638, 50, 'rainbow'], [298, 704, 50, 'rainbow'], [800, 818, 50, 'rainbow']],
 };
+// 5 interactions de plus par thème, posées sur des objets du dessin (1600 × 900 ; Halloween : bande du bas 1600 × 320, le ciel en négatif)
+// [x, y, rayon, effet, paramètres] — effets : xwalk (emoji|dx|dy|nombre|taille|échelle finale), xfly (emoji|nombre), xfall (emoji|nombre|sol),
+// xsink (emoji|profondeur|fil), xgrow (emoji|nombre), xpeek (emoji|taille|bulle), xsmoke (couleur), xsay (texte), xbolt, xzzz, xballoon (couleurs ou emoji|nombre),
+// xorbit (emoji|nombre), xthrow (emoji|dx|taille|back = saut|couleur des gouttes), xstamp (texte ou emoji|couleur), xspin (emoji), xbeam (emoji|couleur|hauteur),
+// xtype (texte|couleur|craie/stylo), xcloud (rain, snow, arc ou emoji), xsplash (couleur|emoji qui saute), xscurry (emoji|nombre), xwind (emoji|nombre)
+const DECO_X = {
+  spooky: [[960, 232, 70, 'xscurry', '🕷️|8'], [150, 285, 60, 'xpeek', '🧟|84|Grrr…'], [110, -250, 90, 'xwalk', '🧙|1500|-140|1|70'], [1060, 296, 55, 'xgrow', '🍬,🍭|5'], [150, -430, 90, 'xsay', '🍬 Un bonbon ou un sort !']],
+  alpine: [[1056, 640, 45, 'xsay', '🔔 Ding… dong !'], [704, 112, 90, 'xcloud', 'snow'], [330, 640, 80, 'xwalk', '⛷️|430|250|1|48'], [1168, 690, 40, 'xsmoke', '#e3e9f0'], [1120, 862, 70, 'xthrow', '⚪|-380|38']],
+  april: [[192, 700, 90, 'xwalk', '🐟|1500|-60|6|34'], [600, 780, 55, 'xpeek', '🐙'], [472, 846, 40, 'xgrow', '🦪|1'], [768, 880, 35, 'xwalk', '🦀|-520|0|1|42'], [130, 120, 70, 'xsink', '⚓|720']],
+  arcade: [[800, 880, 70, 'xtype', 'INSERT COIN… 1UP !|#ffd23f'], [300, 640, 80, 'xgrow', '👾|3'], [1150, 600, 80, 'xbeam', '🛸|#7cff6b|220'], [800, 810, 60, 'xwalk', '🚗|700|0|1|52'], [70, 440, 55, 'xsay', '🏆 HIGH SCORE : 99 999']],
+  autumn: [[520, 830, 45, 'xgrow', '🍄|4'], [1280, 800, 70, 'xwalk', '🦔|-520|0|1|44'], [480, 140, 120, 'xcloud', 'rain'], [720, 790, 55, 'xwalk', '🦊|60|-200|1|50|.5'], [1350, 120, 90, 'xfly', '🦆|5']],
+  bastille: [[240, 700, 60, 'xsay', 'Bonne fête nationale !'], [560, 875, 50, 'xwalk', '⛴️|-760|0|1|64'], [370, 230, 110, 'xorbit', '✨|10'], [592, 790, 50, 'xwalk', '🚴|620|0|1|46'], [1460, 170, 90, 'xballoon', '#0055a4,#ffffff,#ef4135|6']],
+  brutal: [[220, 142, 80, 'xstamp', 'N°1 !|#111111'], [560, 118, 90, 'xwalk', '➡️|900|0|1|64|1|nf'], [1525, 370, 60, 'xtype', 'LOREM IPSUM DOLOR|#111111'], [832, 838, 120, 'xsay', '⚠️ ATTENTION : TRAVAUX'], [70, 350, 50, 'xscurry', '⬛|10']],
+  camping: [[1152, 776, 60, 'xzzz'], [688, 830, 40, 'xpeek', '🦝'], [1024, 840, 55, 'xscurry', '🐜|9'], [900, 760, 70, 'xsplash', '#bfe0ff|🐟'], [90, 700, 60, 'xpeek', '🐻|90']],
+  candy: [[384, 140, 110, 'xcloud', '🍬,🍭'], [1152, 190, 60, 'xwalk', '🦄|-700|-80|1|64'], [432, 700, 50, 'xspin', '🍬'], [976, 820, 40, 'xgrow', '🧁|3'], [800, 690, 110, 'xfall', '🍩|5|90']],
+  cosmos: [[70, 300, 60, 'xfly', '🚀|1'], [960, 672, 90, 'xbeam', '🛸|#7cff6b|240'], [1535, 420, 60, 'xorbit', '☄️|4'], [300, 150, 100, 'xsay', '👽 Bip bop ?'], [800, 820, 90, 'xgrow', '⭐|5']],
+  easter: [[704, 100, 110, 'xfall', '🔔,🍫,🥚|7|640'], [928, 878, 40, 'xpeek', '🐣|60'], [1040, 846, 40, 'xwalk', '🐇|-720|0|1|44'], [1152, 198, 80, 'xballoon', '#ffc6ff,#caffbf,#9bf6ff,#fdffb6|5'], [70, 860, 50, 'xgrow', '🌷|5']],
+  fair: [[600, 830, 60, 'xsay', '🎠 Un tour gratuit !'], [1560, 800, 40, 'xstamp', '🧸'], [480, 850, 80, 'xwalk', '🤹|620|0|1|58'], [700, 770, 40, 'xballoon', '#ff4d6d,#ffd23f,#3ddc97,#4cc9f0,#b388ff|6'], [1000, 800, 60, 'xfall', '🍿|8|60']],
+  farm: [[1200, 180, 80, 'xcloud', 'rain'], [640, 790, 70, 'xwalk', '🦆|-320|0|3|36'], [1472, 600, 50, 'xfall', '🌽|6|150'], [1504, 734, 45, 'xpeek', '🐭|54'], [1296, 680, 60, 'xsay', '🐓 Cocorico !']],
+  glacier: [[1020, 860, 60, 'xpeek', '🐳|90'], [1400, 808, 45, 'xwalk', '🐧|-620|0|3|40'], [176, 830, 60, 'xsplash', '#d6f0ff|🐟'], [300, 200, 120, 'xcloud', 'snow'], [960, 800, 40, 'xspin', '🧊']],
+  gotham: [[600, 120, 120, 'xbolt'], [1545, 770, 45, 'xpeek', '🐈|60|Miaou'], [800, 830, 120, 'xwalk', '🚓|-820|0|1|60'], [500, 700, 80, 'xsay', '❓ Qui va là ?'], [1500, 420, 80, 'xbeam', '🚁|#fff6c2|260']],
+  gothic: [[800, 800, 100, 'xwalk', '👻|600|-120|1|64'], [160, 480, 60, 'xfly', '🦇|5'], [160, 720, 70, 'xsay', '🎶 Ooooh… (l’orgue)'], [1440, 800, 60, 'xscurry', '🐀|6'], [1440, 200, 60, 'xsink', '🕷️|300|fil']],
+  holo: [[800, 790, 110, 'xtype', 'ACCÈS AUTORISÉ ✔|#9ff8ff'], [240, 640, 80, 'xorbit', '💠|5'], [800, 180, 60, 'xbeam', '🤖|#22d3ee|220'], [120, 850, 60, 'xscurry', '◆|10|#22d3ee'], [1200, 850, 70, 'xsay', '🛰️ Signal reçu']],
+  iso: [[592, 700, 40, 'xfly', '🚁|1'], [800, 790, 45, 'xsay', '🏗️ Travaux en cours'], [300, 760, 70, 'xbeam', '🛸|#ffb84d|200'], [704, 700, 35, 'xfly', '🐦|4'], [250, 200, 110, 'xwalk', '✈️|1200|-60|1|60']],
+  kites: [[700, 885, 40, 'xscurry', '🐜|9'], [1520, 880, 45, 'xgrow', '🌼|4'], [320, 140, 110, 'xcloud', 'rain'], [1552, 610, 60, 'xfly', '🐦|4'], [60, 560, 60, 'xwind', '🌸|12']],
+  london: [[960, 840, 90, 'xwalk', '🚤|-700|0|1|56'], [330, 95, 40, 'xfly', '🕊️|5'], [700, 200, 130, 'xcloud', 'rain'], [96, 520, 60, 'xsay', '☕ Tea time !'], [500, 700, 60, 'xwalk', '💂|520|0|1|52']],
+  luxe: [[800, 130, 110, 'xsay', '🥂 Santé !'], [70, 420, 55, 'xfall', '💎|5|360'], [1530, 420, 55, 'xorbit', '🌟|5'], [500, 140, 70, 'xspin', '💍'], [1100, 145, 80, 'xfall', '✨,💰|6|560']],
+  matrix: [[800, 795, 100, 'xtype', 'RETENUE ANNULÉE ✔|#ff5a36'], [160, 640, 90, 'xsay', '🚆 Train à l’heure !'], [1360, 640, 90, 'xspin', '⏰'], [800, 144, 90, 'xscurry', '●|12|#ff7a1f'], [300, 860, 60, 'xwalk', '🏃|720|0|1|52']],
+  music: [[1350, 705, 50, 'xspin', '🎸|90'], [1040, 870, 100, 'xthrow', '🏐|-420|46'], [1120, 160, 100, 'xbeam', '✨|#f72585|300'], [100, 850, 60, 'xsay', '🎤 Encore ! Encore !'], [200, 758, 30, 'xsmoke', '#d9ccff']],
+  neon: [[480, 850, 90, 'xsplash', '#ff4fd8'], [1500, 790, 50, 'xorbit', '🦋|5'], [800, 660, 100, 'xwalk', '🐈|620|0|1|46'], [70, 400, 55, 'xsay', '🍜 Ramen 24 h/24'], [800, 150, 140, 'xcloud', 'rain']],
+  newyear: [[480, 150, 100, 'xballoon', '#ffd166,#ffffff,#ff6b9a,#7cc4ff|6'], [240, 660, 70, 'xsay', '🥂 Bonne année !'], [1300, 240, 120, 'xtype', '3… 2… 1… 🎉|#ffd166'], [800, 860, 100, 'xsplash', '#ffd166'], [1300, 660, 60, 'xorbit', '✨|10']],
+  orchard: [[110, 330, 80, 'xfall', '🍎,🍏|7|420'], [1408, 840, 50, 'xthrow', '🍎|-320|40'], [1104, 100, 100, 'xcloud', 'rain'], [1480, 560, 50, 'xsay', '🐮 Meuh !'], [480, 850, 45, 'xpeek', '🐛|56']],
+  paper: [[60, 860, 40, 'xspin', '📎'], [640, 780, 80, 'xtype', 'Bravo ! 20/20|#d0302b|stylo'], [108, 150, 40, 'xstamp', '⭐'], [1450, 500, 90, 'xsay', '📝 Devoirs : page 42'], [200, 720, 60, 'xgrow', '🌼|4']],
+  polar: [[976, 700, 60, 'xzzz'], [1152, 820, 50, 'xwalk', '🐕|-720|0|3|40'], [768, 840, 60, 'xsplash', '#c8f5ff|🐟'], [90, 620, 50, 'xspin', '❄️'], [1530, 420, 55, 'xfly', '🦉|1']],
+  rainwood: [[560, 800, 40, 'xscurry', '🐞|7'], [800, 240, 140, 'xbolt'], [208, 780, 60, 'xpeek', '🦔|56'], [1176, 822, 40, 'xgrow', '🍄|5'], [1250, 700, 80, 'xwind', '🍂|12']],
+  rentree: [[448, 722, 55, 'xtype', 'Abc… def… ghi !|#f4f1e6|craie'], [1088, 722, 55, 'xstamp', '✅'], [1072, 760, 60, 'xsay', '🔔 C’est l’heure !'], [736, 860, 60, 'xthrow', '🖍️|320|40'], [432, 866, 40, 'xsmoke', '#ffffff']],
+  skating: [[800, 170, 70, 'xorbit', '✨|10'], [1320, 118, 50, 'xwalk', '🦌|-900|60|1|60'], [180, 640, 40, 'xsay', '☕ Chocolat chaud !'], [1536, 780, 60, 'xfall', '❄️|6|100'], [600, 860, 80, 'xwalk', '⛸️|520|0|1|46']],
+  spring: [[384, 110, 110, 'xcloud', 'rain'], [976, 206, 90, 'xcloud', 'arc'], [608, 820, 70, 'xgrow', '🌷|5'], [300, 880, 60, 'xscurry', '🐞|7'], [1200, 820, 60, 'xfly', '🦋|6']],
+  summer: [[1136, 870, 60, 'xzzz'], [888, 870, 35, 'xspin', '⭐|60'], [1000, 700, 90, 'xthrow', '🐬|260|64|back|#e6fbff'], [560, 165, 60, 'xfly', '🪁|1'], [608, 854, 60, 'xthrow', '🏐|480|44']],
+  sunset: [[800, 800, 120, 'xwalk', '🚗|0|-230|1|70|.2|nf'], [800, 160, 110, 'xtype', 'OUTRUN 1986|#ff5ad8'], [400, 700, 70, 'xthrow', '🐬|320|64|back|#ff9ad8'], [1424, 700, 60, 'xsay', '📼 Rewind…'], [1150, 150, 90, 'xbolt']],
+  terminal: [[320, 140, 80, 'xtype', '> sudo cafe --fort|#41ff8a'], [700, 770, 70, 'xscurry', '🐛|7'], [1100, 750, 80, 'xstamp', '💾'], [800, 800, 80, 'xsay', '⚠️ Erreur 404 : récré introuvable'], [200, 560, 70, 'xspin', '⚙️']],
+  trippy: [[600, 780, 90, 'xorbit', '🍄|6'], [500, 200, 80, 'xspin', '🌀'], [1100, 700, 90, 'xballoon', '#ff4d6d,#ff9f1c,#ffd23f,#3ddc97,#4cc9f0,#b388ff|6'], [80, 560, 60, 'xwalk', '🦄|900|-100|1|60'], [1100, 150, 70, 'xstamp', '☮️']],
+  tropical: [[320, 150, 90, 'xfall', '🥥|3|300'], [1408, 260, 70, 'xpeek', '🐒|70'], [560, 790, 50, 'xpeek', '🦈|80'], [608, 100, 90, 'xfly', '🦜|3'], [1450, 430, 45, 'xsay', '🏝️ Aloha !']],
+  valentine: [[1448, 296, 60, 'xballoon', '#ff4d8d,#ff9fb8,#e0115f,#ffffff|5'], [512, 860, 50, 'xgrow', '🌹|4'], [1040, 856, 50, 'xfly', '🦋|5'], [640, 150, 90, 'xwalk', '💘|900|60|1|56'], [176, 860, 45, 'xsay', '💌 Tu es génial(e) !']],
+  vineyard: [[1200, 830, 50, 'xsplash', '#8a2b6a'], [160, 820, 60, 'xfall', '🍇|5|60'], [70, 470, 50, 'xsay', '🔔 Ding ding !'], [1520, 880, 50, 'xscurry', '🐌|5'], [416, 134, 100, 'xcloud', 'rain']],
+  winter: [[1296, 650, 35, 'xsmoke', '#e6eef7'], [960, 830, 60, 'xwalk', '🐇|-620|0|1|42'], [800, 240, 150, 'xsay', '🌌 Waouh, une aurore !'], [480, 700, 60, 'xpeek', '🦊|70'], [70, 420, 50, 'xwalk', '⛷️|320|300|1|46']],
+  xmas: [[230, 610, 40, 'xpeek', '🎅|66|Ho ho ho !'], [1440, 240, 100, 'xwalk', '🦌|-900|40|3|52'], [720, 760, 50, 'xsay', '🎶 Vive le vent !'], [1000, 860, 80, 'xthrow', '⚪|-320|38'], [500, 860, 60, 'xgrow', '🎁|3']],
+  zen: [[250, 845, 45, 'xorbit', '✨|7'], [432, 702, 45, 'xpeek', '🐼|76'], [1420, 690, 45, 'xsay', '🔔 Gonggg…'], [1080, 695, 40, 'xwind', '🍁|10'], [1184, 780, 40, 'xthrow', '🐸|220|44|back|#cfeaff']],
+  grid: [[220, 200, 110, 'xtype', 'Hello, world !|#4ade80'], [1400, 200, 110, 'xorbit', '◆|8'], [800, 720, 140, 'xscurry', '■|12|#4ade80'], [300, 760, 110, 'xbolt'], [1300, 760, 110, 'xspin', '⚙️']],
+};
+Object.entries(DECO_X).forEach(([k, l]) => { DECO_TAP[k] = [...(DECO_TAP[k] || []), ...l]; });
 const TAP_PAL = {
   party: ['#ff4d6d', '#ffd23f', '#3ddc97', '#4cc9f0', '#b388ff', '#ff9f1c'], pinks: ['#ffc2dd', '#ff9ec7', '#ffe0ee', '#f472b6', '#fbcfe8'],
   fall: ['#e8590c', '#f59f00', '#c2410c', '#facc15', '#b91c1c', '#d97706'], greens: ['#2f9e44', '#51cf66', '#2b8a3e', '#8ce99a'],
@@ -1363,7 +1443,204 @@ const TAP_PAL = {
 const TAP_STAR = 'M0 -10 L2.9 -3.1 L9.5 -3.1 L4.2 1.4 L6.2 8.6 L0 4.6 L-6.2 8.6 L-4.2 1.4 L-9.5 -3.1 L-2.9 -3.1Z', TAP_SPARK = 'M0 -10 L2.2 -2.2 L10 0 L2.2 2.2 L0 10 L-2.2 2.2 L-10 0 L-2.2 -2.2Z';
 const TAP_HEART = 'M10 18C2 12 0.5 7 3 4C5.8 0.8 9 2 10 5C11 2 14.2 0.8 17 4C19.5 7 18 12 10 18Z';
 // une réaction = quelques éléments qui ne bougent qu'en transform / opacity, puis disparaissent
+// ---------- interactions du décor, version 2 : des personnages et des objets qui vivent (tapX) ----------
+// zone : [x, y, rayon, 'x…', 'paramètres|séparés|par|des barres'] ; plusieurs emojis possibles, séparés par des virgules
+const EMOJI_FF = '"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
+function tapX(E, tp) {
+  let a = (tp.seed | 0) ^ 0x5bd1e995; const R = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  const rr = (x, y) => x + R() * (y - x), pick = (l) => l[Math.floor(R() * l.length)];
+  const u = tp.u, P = String(tp.c || '').split('|'), out = [], vw = tp.vw || 1600, vh = tp.vh || 900;
+  let n = 0;
+  const lite = (k) => (tp.lite ? Math.max(1, Math.ceil(k / 2)) : k);
+  const choose = (x) => pick(String(x).split(','));
+  const emo = (ch, sz, st) => E('span', { style: { display: 'block', fontSize: sz, lineHeight: 1, fontFamily: EMOJI_FF, textAlign: 'center', ...st } }, ch);
+  const add = (style, ...kids) => out.push(E('div', { key: 'x' + n++, style: { position: 'absolute', ...style } }, ...kids));
+  const div = (style, ...kids) => E('div', { style: { position: 'absolute', ...style } }, ...kids);
+  // un objet de taille z, centré sur (x, y) par rapport au point touché
+  const box = (x, y, z) => ({ left: x - z / 2, top: y - z / 2, width: z, height: z });
+  const num = (v, d) => (v === undefined || v === '' || isNaN(+v) ? d : +v);
+  const anim = (name, dur, dl, extra) => `${name} ${dur.toFixed(2)}s ${(dl || 0).toFixed(2)}s ${extra || 'both'}`;
+  // éclaboussure / petit éclat de points (fin d'un lancer, eau…)
+  const dots = (x, y, k, col, d0, d1, dl) => {
+    for (let i = 0; i < lite(k); i++) {
+      const t = -Math.PI / 2 + rr(-1.3, 1.3), d = rr(d0, d1) * u, z = rr(5, 10) * u;
+      add({ ...box(x, y, 0), '--tx': (Math.cos(t) * d * 0.6).toFixed(1) + 'px', animation: anim('fhx-x', 0.9, dl, 'both cubic-bezier(.2,.6,.4,1)') },
+        div({ left: -z / 2, top: -z / 2, width: z, height: z, borderRadius: '50%', background: col, '--ay': (Math.sin(t) * d).toFixed(1) + 'px', '--gy': (40 * u).toFixed(1) + 'px', animation: `${anim('fhx-arc', 0.9, dl)}, ${anim('fhx-in', 0.9, dl)}` }));
+    }
+  };
+  const fx = tp.fx;
+  if (fx === 'xwalk') {
+    // un personnage traverse (dx, dy en unités du décor), en sautillant ; il se tourne dans le sens de la marche
+    const k = lite(num(P[3], 1)), z = num(P[4], 46) * u, dx = num(P[1], 600) * u, dy = num(P[2], 0) * u, s1 = num(P[5], 1), flip = dx > 0 && P[6] !== 'nf';
+    for (let i = 0; i < k; i++) {
+      const dl = i * 0.22, ox = -Math.sign(dx || 1) * i * z * 0.55, oy = (i % 2 ? 1 : -1) * Math.min(i, 1) * z * 0.15;
+      add({ ...box(ox, oy, z), '--tx': dx.toFixed(1) + 'px', '--ty': dy.toFixed(1) + 'px', '--s1': s1, animation: `${anim('fhx-walk', 3.1, dl, 'both cubic-bezier(.35,0,.65,1)')}, ${anim('fhx-in', 3.1, dl)}` },
+        div({ inset: 0, '--hop': (-z * 0.22).toFixed(1) + 'px', animation: `fhx-hop ${rr(0.26, 0.34).toFixed(2)}s ease-in-out infinite` }, emo(choose(P[0]), z, { transform: flip ? 'scaleX(-1)' : undefined })));
+    }
+  } else if (fx === 'xfly') {
+    // ils s'envolent vers le haut, dans tous les sens, en battant des ailes
+    const k = lite(num(P[1], 1));
+    for (let i = 0; i < k; i++) {
+      const z = (k > 1 ? rr(30, 44) : 56) * u, side = R() < 0.5 ? -1 : 1, tx = side * rr(0.5, 1) * vw, ty = -rr(0.35, 0.8) * vh, dl = i * 0.12;
+      add({ ...box(rr(-20, 20) * u, rr(-10, 10) * u, z), '--ax': (tx * 0.25).toFixed(1) + 'px', '--ay': (ty * 0.45 + rr(-30, 30) * u).toFixed(1) + 'px', '--tx': tx.toFixed(1) + 'px', '--ty': ty.toFixed(1) + 'px', animation: `${anim('fhx-fly', 3, dl, 'both cubic-bezier(.4,0,.6,1)')}` },
+        div({ inset: 0, animation: `fhx-flap ${rr(0.18, 0.26).toFixed(2)}s ease-in-out infinite` }, emo(choose(P[0]), z, { transform: side > 0 ? 'scaleX(-1)' : undefined })));
+    }
+  } else if (fx === 'xfall') {
+    // ils tombent d'un arbre, d'un nuage… rebondissent au sol et roulent un peu
+    const k = lite(num(P[1], 5)), gy = num(P[2], 200) * u;
+    for (let i = 0; i < k; i++) {
+      const z = rr(26, 40) * u, x0 = rr(-1, 1) * tp.r * 0.8, dl = i * rr(0.08, 0.2), dur = rr(2.1, 2.6);
+      add({ ...box(x0, rr(-0.4, 0.4) * tp.r, z), '--tx': (rr(-60, 60) * u).toFixed(1) + 'px', animation: `${anim('fhx-x', dur, dl, 'both cubic-bezier(.3,0,.6,1)')}, ${anim('fhx-in', dur + 0.6, dl)}` },
+        div({ inset: 0, '--gy': (gy + rr(-20, 20) * u).toFixed(1) + 'px', '--b1': (rr(30, 60) * u).toFixed(1) + 'px', animation: anim('fhx-fall', dur, dl) },
+          div({ inset: 0, '--r': rr(-260, 260).toFixed(0) + 'deg', animation: anim('fhx-roll', dur, dl, 'both ease-out') }, emo(choose(P[0]), z))));
+    }
+  } else if (fx === 'xsink') {
+    // il descend tout doucement en se balançant (ancre, araignée au bout de son fil…)
+    const z = 54 * u, gy = num(P[1], 260) * u, thread = P[2] === 'fil';
+    if (thread) add({ left: -1, top: -tp.r, width: 2, height: gy + tp.r, background: 'rgba(255,255,255,.55)', transformOrigin: '50% 0', animation: `${anim('fhx-beam', 3.6, 0)}` });
+    add({ ...box(0, 0, z), '--tx': '0px', '--ty': gy.toFixed(1) + 'px', animation: `${anim('fhx-walk', 3.2, 0, 'both cubic-bezier(.3,0,.5,1)')}, ${anim('fhx-in', 3.6, 0)}` },
+      div({ inset: 0, transformOrigin: '50% 0', animation: 'fhx-sway 1.4s ease-in-out infinite' }, emo(choose(P[0]), z)));
+  } else if (fx === 'xgrow') {
+    // ça pousse autour du point touché, avec un petit rebond, puis ça rentre
+    const k = lite(num(P[1], 4));
+    for (let i = 0; i < k; i++) {
+      const z = (k === 1 ? 64 : rr(30, 44)) * u, x = k === 1 ? 0 : (i - (k - 1) / 2) * 34 * u + rr(-8, 8) * u;
+      add({ left: x - z / 2, top: -z + 10 * u, width: z, height: z, transformOrigin: '50% 100%', animation: anim('fhx-grow', 2.8, i * 0.12) }, emo(choose(P[0]), z));
+    }
+    for (let i = 0; i < lite(6); i++) add({ ...box(rr(-60, 60) * u, rr(-70, -10) * u, 12 * u), animation: `${anim('fhx-spin', 1.6, 0.4 + R() * 0.8)}` }, emo('✨', 12 * u));
+  } else if (fx === 'xpeek') {
+    // une tête sort, regarde à gauche et à droite, puis repart
+    const z = num(P[1], 72) * u;
+    add({ left: -z / 2, top: -z, width: z, height: z, transformOrigin: '50% 100%', animation: anim('fhx-peek', 3, 0) }, emo(choose(P[0]), z));
+    if (P[2]) add({ left: 0, top: -z - 6 * u, width: 0, height: 0 }, E('div', { style: { position: 'absolute', left: z * 0.3, top: -30 * u, padding: `${(5 * u).toFixed(0)}px ${(10 * u).toFixed(0)}px`, borderRadius: 14 * u, background: '#ffffff', color: '#1d1b20', font: `700 ${(15 * u).toFixed(1)}px/1.1 Geist, system-ui, sans-serif`, whiteSpace: 'nowrap', boxShadow: '0 4px 14px rgba(0,0,0,.25)', animation: anim('fhx-say', 2.2, 0.5) } }, P[2]));
+  } else if (fx === 'xsmoke') {
+    // fumée de cheminée (ou poussière, vapeur) qui monte en s'élargissant, poussée par le vent
+    const c = P[0] || '#e8e8e8';
+    for (let i = 0; i < lite(9); i++) {
+      const z = rr(26, 40) * u;
+      add({ ...box(rr(-6, 6) * u, 0, z), borderRadius: '50%', background: `radial-gradient(circle, ${c} 0 40%, ${hexA(c.startsWith('#') ? c : '#ffffff', 0)} 70%)`, '--tx': (rr(30, 110) * u).toFixed(1) + 'px', '--ty': (-rr(150, 240) * u).toFixed(1) + 'px', animation: anim('fhx-smoke', rr(2.2, 2.8), i * 0.22, 'both ease-out') });
+    }
+  } else if (fx === 'xsay') {
+    // une bulle de BD au-dessus de l'objet
+    add({ left: 0, top: -tp.r * 0.6, width: 0, height: 0 },
+      E('div', { style: { position: 'absolute', left: 0, top: 0, transformOrigin: '50% 100%', padding: `${(8 * u).toFixed(0)}px ${(14 * u).toFixed(0)}px`, borderRadius: 16 * u, background: '#ffffff', color: '#1d1b20', font: `700 ${(Math.max(14, 19 * u)).toFixed(1)}px/1.15 Geist, system-ui, sans-serif`, whiteSpace: 'nowrap', boxShadow: '0 6px 20px rgba(0,0,0,.28)', animation: anim('fhx-say', 3, 0) } },
+        E('span', { style: { fontFamily: `Geist, system-ui, ${EMOJI_FF}` } }, P[0]),
+        E('div', { style: { position: 'absolute', left: '50%', bottom: -8 * u, width: 16 * u, height: 16 * u, marginLeft: -8 * u, background: '#ffffff', transform: 'rotate(45deg)', borderRadius: 3 } })));
+  } else if (fx === 'xbolt') {
+    // un éclair tombe sur l'endroit touché, le ciel s'illumine
+    add({ left: -tp.x, top: -tp.y, width: vw, height: vh, background: '#eef4ff', animation: anim('fhx-flash', 1.1, 0) });
+    let x = 0, y = -tp.y - 10, d = `M${x} ${y}`; const steps = 7;
+    for (let i = 1; i <= steps; i++) { x = i === steps ? 0 : rr(-38, 38) * u; y = -tp.y + (tp.y + 10) * i / steps; d += ` L${x.toFixed(0)} ${y.toFixed(0)}`; }
+    add({ left: 0, top: 0, width: 0, height: 0, animation: anim('fhx-bolt', 1.1, 0) },
+      E('svg', { width: 1, height: 1, style: { position: 'absolute', overflow: 'visible' } },
+        E('path', { d, stroke: '#9fc4ff', strokeWidth: 12 * u, strokeOpacity: 0.45, fill: 'none', strokeLinejoin: 'round' }),
+        E('path', { d, stroke: '#ffffff', strokeWidth: 4 * u, fill: 'none', strokeLinejoin: 'round' })));
+    dots(0, 0, 8, '#e6f0ff', 40, 110, 0.05);
+  } else if (fx === 'xzzz') {
+    // quelqu'un dort : des « Z » qui montent en grossissant
+    for (let i = 0; i < lite(4); i++) {
+      const z = (18 + i * 7) * u;
+      add({ ...box(0, -10 * u, z), '--tx': ((40 + i * 22) * u).toFixed(1) + 'px', '--ty': (-(70 + i * 40) * u).toFixed(1) + 'px', animation: anim('fhx-smoke', 2.4, i * 0.45, 'both ease-out') },
+        E('span', { style: { display: 'block', font: `800 ${z.toFixed(1)}px/1 Geist, system-ui, sans-serif`, color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,.45)', textAlign: 'center' } }, 'Z'));
+    }
+  } else if (fx === 'xballoon') {
+    // des ballons qui s'envolent en se balançant (couleurs ou emoji)
+    const k = lite(num(P[1], 5)), cols = P[0].includes('#') ? P[0].split(',') : null;
+    for (let i = 0; i < k; i++) {
+      const z = rr(34, 50) * u, dl = i * 0.18, kid = cols ? E('svg', { viewBox: '0 0 40 70', width: z, height: z * 1.75, style: { display: 'block', overflow: 'visible' } },
+        E('path', { d: 'M20 44 C18 52 23 58 19 70', stroke: 'rgba(255,255,255,.75)', strokeWidth: 1.2, fill: 'none' }),
+        E('ellipse', { cx: 20, cy: 22, rx: 17, ry: 21, fill: cols[i % cols.length] }), E('path', { d: 'M17 43 L23 43 L20 47 Z', fill: cols[i % cols.length] }),
+        E('ellipse', { cx: 13, cy: 14, rx: 4, ry: 7, fill: '#ffffff', opacity: 0.45 })) : emo(choose(P[0]), z);
+      add({ ...box(rr(-40, 40) * u, 0, z), '--tx': (rr(-120, 120) * u).toFixed(1) + 'px', '--ty': (-tp.y - z * 2).toFixed(1) + 'px', animation: `${anim('fhx-walk', rr(3.2, 3.8), dl, 'both cubic-bezier(.4,0,.8,.6)')}` },
+        div({ inset: 0, transformOrigin: '50% 0', animation: `fhx-sway ${rr(1.2, 1.8).toFixed(2)}s ease-in-out infinite` }, kid));
+    }
+  } else if (fx === 'xorbit') {
+    // ils tournent autour du point puis s'éparpillent
+    const k = lite(num(P[1], 6)), rad = Math.max(40 * u, tp.r * 0.7);
+    for (let i = 0; i < k; i++) {
+      const z = rr(22, 34) * u;
+      add({ left: 0, top: 0, width: 0, height: 0, transform: `rotate(${(i * 360 / k).toFixed(0)}deg)` },
+        div({ left: 0, top: 0, width: 0, height: 0, '--turn': (rr(400, 560) * (i % 2 ? 1 : 1)).toFixed(0) + 'deg', animation: anim('fhx-orbit', 2.8, i * 0.04, 'both cubic-bezier(.3,0,.6,1)') },
+          div({ ...box(rad, 0, z) }, emo(choose(P[0]), z))));
+    }
+  } else if (fx === 'xthrow') {
+    // lancé en cloche (boule de neige, ballon…) ou saut (dauphin, poisson) ; petite éclaboussure à l'arrivée
+    const z = num(P[2], 46) * u, dx = num(P[1], 300) * u, high = -Math.max(120 * u, Math.abs(dx) * 0.5), back = P[3] === 'back';
+    add({ ...box(0, 0, z), '--tx': dx.toFixed(1) + 'px', animation: `${anim('fhx-x', 1.5, 0, 'both linear')}, ${anim('fhx-in', 1.7, 0)}` },
+      div({ inset: 0, '--ay': high.toFixed(1) + 'px', '--gy': (back ? 0 : 12 * u).toFixed(1) + 'px', animation: anim('fhx-arc', 1.5, 0) },
+        div({ inset: 0, '--r': (dx > 0 ? 1 : -1) * (back ? 160 : 540) + 'deg', animation: anim('fhx-roll', 1.5, 0, 'both linear') }, emo(choose(P[0]), z, { transform: dx > 0 && back ? 'scaleX(-1) rotate(-50deg)' : back ? 'rotate(50deg)' : undefined }))));
+    dots(0, 0, 6, P[4] || 'rgba(255,255,255,.85)', 30, 70, 0);
+    dots(dx, 12 * u, 8, P[4] || 'rgba(255,255,255,.85)', 40, 100, 1.45);
+  } else if (fx === 'xstamp') {
+    // un tampon (ou un autocollant) qui claque sur le décor
+    const isText = /\p{L}{2,}/u.test(P[0]) || /\d/.test(P[0]), z = 70 * u;
+    add({ left: 0, top: 0, width: 0, height: 0 },
+      isText ? E('div', { style: { position: 'absolute', transform: 'translate(-50%,-50%)', left: 0, top: 0 } }, E('div', { style: { '--r': rr(-12, 12).toFixed(0) + 'deg', padding: `${(6 * u).toFixed(0)}px ${(14 * u).toFixed(0)}px`, border: `${(4 * u).toFixed(1)}px solid ${P[1] || '#e0302b'}`, borderRadius: 10 * u, color: P[1] || '#e0302b', font: `900 ${(30 * u).toFixed(1)}px/1 'Archivo Black', Geist, system-ui, sans-serif`, letterSpacing: '.04em', whiteSpace: 'nowrap', background: 'rgba(255,255,255,.12)', animation: anim('fhx-stamp', 2.8, 0) } }, P[0]))
+        : E('div', { style: { position: 'absolute', ...box(0, 0, z), '--r': rr(-14, 14).toFixed(0) + 'deg', animation: anim('fhx-stamp', 2.8, 0), filter: 'drop-shadow(0 6px 10px rgba(0,0,0,.3))' } }, emo(P[0], z)));
+    dots(0, 0, 8, P[1] || '#ffe9a8', 50, 110, 0.12);
+  } else if (fx === 'xspin') {
+    const z = num(P[1], 80) * u;
+    add({ ...box(0, 0, z), animation: anim('fhx-spin', 2, 0, 'both cubic-bezier(.3,0,.5,1)') }, emo(choose(P[0]), z));
+    for (let i = 0; i < lite(8); i++) add({ ...box(Math.cos(i * 0.785) * 60 * u, Math.sin(i * 0.785) * 60 * u, 14 * u), animation: anim('fhx-spin', 1.2, 0.5 + i * 0.05) }, emo('✨', 14 * u));
+  } else if (fx === 'xbeam') {
+    // une soucoupe (ou un projecteur) éclaire le sol avec un faisceau
+    const z = 64 * u, col = P[1] || '#7cff6b', h = num(P[2], 240) * u;
+    add({ left: -h * 0.35, top: z * 0.2, width: h * 0.7, height: h, transformOrigin: '50% 0', background: `linear-gradient(180deg, ${hexA(col, 0.75)}, ${hexA(col, 0)})`, clipPath: 'polygon(42% 0, 58% 0, 100% 100%, 0 100%)', animation: anim('fhx-beam', 3.2, 0.35) });
+    add({ ...box(0, 0, z), animation: `${anim('fhx-in', 3.6, 0)}` }, div({ inset: 0, animation: 'fhx-hover 1.1s ease-in-out infinite' }, emo(choose(P[0]), z)));
+    for (let i = 0; i < lite(6); i++) add({ ...box(rr(-0.25, 0.25) * h, h * rr(0.5, 0.95), 8 * u), borderRadius: '50%', background: col, boxShadow: `0 0 8px ${col}`, '--tx': '0px', '--ty': (-h * 0.8).toFixed(1) + 'px', animation: anim('fhx-smoke', 1.8, 0.6 + i * 0.25, 'both ease-in') });
+  } else if (fx === 'xtype') {
+    // un texte qui se tape lettre par lettre (terminal, tableau, cahier…)
+    const txt = Array.from(P[0] || ''), col = P[1] || '#41ff8a', sz = Math.max(15, 26 * u), step = Math.min(0.08, 2 / Math.max(1, txt.length));
+    add({ left: 0, top: 0, width: 0, height: 0, animation: anim('fhx-in', 4, 0) },
+      E('div', { style: { position: 'absolute', transform: 'translate(-50%,-50%)', whiteSpace: 'pre', font: `700 ${sz.toFixed(1)}px/1.2 ${P[2] === 'craie' ? "'Caveat', cursive" : P[2] === 'stylo' ? "'Caveat', cursive" : "'VT323','JetBrains Mono',ui-monospace,monospace"}`, color: col, textShadow: P[2] ? 'none' : `0 0 8px ${col}` } },
+        ...txt.map((ch, i) => E('span', { key: i, style: { opacity: 0, animation: anim('fhx-show', 0.01, 0.15 + i * step) } }, ch)),
+        P[2] ? null : E('span', { style: { animation: 'fh-blink .8s steps(1) infinite' } }, '▌')));
+  } else if (fx === 'xcloud') {
+    // un petit nuage se forme et fait pleuvoir (ou neiger, ou tomber des bonbons) ; « arc » : il laisse un arc-en-ciel
+    const w = Math.max(120 * u, tp.r * 1.4), kind = P[0] || 'rain';
+    add({ left: -w / 2, top: -w * 0.42, width: w, height: w * 0.5, animation: anim('fhx-cloud', 3.4, 0) },
+      E('svg', { viewBox: '0 0 170 90', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible' } },
+        E('path', { d: 'M20 70 C0 70 0 44 22 42 C20 22 46 14 58 30 C66 10 100 10 106 34 C126 22 152 34 146 54 C166 56 166 80 146 80 L24 80 C10 80 8 72 20 70 Z', fill: kind === 'rain' ? '#c9d2dc' : '#ffffff', stroke: kind === 'rain' ? '#9aa6b4' : '#dbe6f0', strokeWidth: 2 })));
+    if (kind === 'arc') {
+      add({ left: -w * 0.1, top: -w * 0.2, width: w * 1.6, height: w * 0.8, transformOrigin: '0 100%', animation: anim('fhx-arcin', 3.2, 0.3) },
+        E('svg', { viewBox: '0 0 200 100', width: '100%', height: '100%', style: { display: 'block', overflow: 'visible' } },
+          ...['#ff4d6d', '#ff9f1c', '#ffd23f', '#3ddc97', '#4cc9f0', '#b388ff'].map((c, i) => E('path', { key: i, d: `M${10 + i * 7} 100 A${90 - i * 7} ${90 - i * 7} 0 0 1 ${190 - i * 7} 100`, stroke: c, strokeWidth: 7, fill: 'none', opacity: 0.85 }))));
+    } else {
+      for (let i = 0; i < lite(kind === 'rain' ? 22 : 16); i++) {
+        const x = rr(-0.42, 0.42) * w, dl = 0.35 + R() * 2.4;
+        const kid = kind === 'rain' ? div({ left: -1, top: 0, width: 2 * u, height: 14 * u, borderRadius: 2, background: 'rgba(180,210,255,.9)' })
+          : kind === 'snow' ? div({ left: -4 * u, top: 0, width: 8 * u, height: 8 * u, borderRadius: '50%', background: '#ffffff' })
+          : div({ left: -12 * u, top: 0 }, emo(choose(kind), 24 * u));
+        add({ left: x, top: -w * 0.05, width: 0, height: 0, '--ty': (Math.min(tp.r * 2.4 + 120 * u, vh - tp.y + w * 0.05)).toFixed(1) + 'px', animation: anim('fhx-drop', kind === 'rain' ? 0.7 : 1.5, dl, 'both linear') }, kid);
+      }
+    }
+  } else if (fx === 'xsplash') {
+    // plouf : des gouttes en gerbe et des ronds dans l'eau
+    const c = P[0] || '#cfeaff';
+    for (let i = 0; i < 3; i++) add({ left: -60 * u, top: -16 * u, width: 120 * u, height: 32 * u, borderRadius: '50%', border: `${(2.5 * u).toFixed(1)}px solid ${c}`, boxSizing: 'border-box', animation: anim('fhx-ring', 1.4, i * 0.25, 'both ease-out') });
+    dots(0, 0, 14, c, 70, 170, 0);
+    if (P[1]) { const z = 54 * u; add({ ...box(0, 0, z), '--tx': '0px', animation: `${anim('fhx-in', 1.4, 0.05)}` }, div({ inset: 0, '--ay': (-150 * u).toFixed(1) + 'px', '--gy': '0px', animation: anim('fhx-arc', 1.3, 0.05) }, emo(choose(P[1]), z))); }
+  } else if (fx === 'xscurry') {
+    // des petites bêtes qui s'enfuient des deux côtés
+    const k = lite(num(P[1], 8));
+    for (let i = 0; i < k; i++) {
+      const z = rr(18, 28) * u, dir = i % 2 ? 1 : -1, dx = dir * rr(220, 520) * u, dl = R() * 0.4;
+      add({ ...box(rr(-20, 20) * u, rr(-6, 6) * u, z), '--tx': dx.toFixed(1) + 'px', '--ty': (rr(-30, 30) * u).toFixed(1) + 'px', animation: `${anim('fhx-walk', rr(1.6, 2.4), dl, 'both cubic-bezier(.2,.5,.5,1)')}, ${anim('fhx-in', 2.4, dl)}` },
+        div({ inset: 0, '--hop': (-z * 0.18).toFixed(1) + 'px', animation: `fhx-hop ${rr(0.14, 0.2).toFixed(2)}s linear infinite` }, emo(choose(P[0]), z, { transform: dir > 0 ? 'scaleX(-1)' : undefined, color: P[2] || undefined })));
+    }
+  } else if (fx === 'xwind') {
+    // un coup de vent emporte feuilles, pétales… vers la droite en tourbillonnant
+    const k = lite(num(P[1], 10));
+    for (let i = 0; i < k; i++) {
+      const z = rr(20, 34) * u, dl = R() * 0.6, ty = rr(-160, 80) * u;
+      add({ ...box(rr(-0.5, 0.5) * tp.r, rr(-0.5, 0.5) * tp.r, z), '--ax': (rr(120, 260) * u).toFixed(1) + 'px', '--ay': (ty * 0.4 - rr(20, 60) * u).toFixed(1) + 'px', '--tx': (vw - tp.x + 80 * u).toFixed(1) + 'px', '--ty': ty.toFixed(1) + 'px', animation: anim('fhx-fly', rr(2.2, 3), dl, 'both cubic-bezier(.3,0,.7,1)') },
+        div({ inset: 0, '--r': (rr(360, 900) * (R() < 0.5 ? -1 : 1)).toFixed(0) + 'deg', animation: anim('fhx-roll', 2.8, dl, 'both linear') }, emo(choose(P[0]), z)));
+    }
+  }
+  return out;
+}
 function tapParts(E, tp, booText) {
+  if (tp.fx && tp.fx[0] === 'x') return tapX(E, tp);
   let a = tp.seed | 0; const R = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
   const u = tp.u, out = [], rr = (x, y) => x + R() * (y - x), pick = (l) => l[Math.floor(R() * l.length)], P = TAP_PAL;
   let n = 0;
@@ -1804,6 +2081,36 @@ const batFly = (E, w, dur, color, key) => {
       E('svg', { viewBox: '0 0 20 26', style: { position: 'absolute', left: '43%', top: '18%', width: '14%', height: '70%', overflow: 'visible' } }, E('path', { d: 'M10 25C5 25 3.5 19 4 13L3 3.5L7 8.5Q10 7.4 13 8.5L17 3.5L16 13C16.5 19 15 25 10 25Z', fill: c }))));
 };
 const BAT_D = 'M54 20 L56 11 L59 17 L61 17 L64 11 L66 20 C74 14 90 8 116 16 C106 20 102 26 104 34 C96 28 88 30 84 38 C78 32 72 34 68 40 L60 47 L52 40 C48 34 42 32 36 38 C32 30 24 28 16 34 C18 26 14 20 4 16 C30 8 46 14 54 20 Z';
+// miniature d'Halloween (cartes des thèmes) : le cimetière du décor, la lune, des étoiles et des chauves-souris, en une image fixe
+let SPOOKY_THUMB = null;
+function spookyThumb() {
+  if (SPOOKY_THUMB) return SPOOKY_THUMB;
+  const ink = '#040108';
+  let a = 77; const r = () => { a = (a * 16807) % 2147483647; return a / 2147483647; };
+  const stars = Array.from({ length: 70 }, () => `<circle cx="${(r() * 1600).toFixed(0)}" cy="${(r() * 520).toFixed(0)}" r="${(0.8 + r() * 1.8).toFixed(1)}" fill="#fff8e7" opacity="${(0.4 + r() * 0.6).toFixed(2)}"/>`).join('');
+  const bat = (x, y, k) => `<path transform="translate(${x} ${y}) scale(${k})" d="M0 0 C-6 -8 -16 -10 -26 -4 C-20 -2 -18 4 -20 8 C-12 4 -6 6 0 10 C6 6 12 4 20 8 C18 4 20 -2 26 -4 C16 -10 6 -8 0 0 Z" fill="#0b0412"/>`;
+  const pumpkin = (cx, cy, rr) => `<circle cx="${cx}" cy="${cy}" r="${rr * 2.8}" fill="url(#pg)"/><path d="M${cx - 2} ${cy - rr * 0.82} C${cx - 1} ${cy - rr * 1.15} ${cx + 4} ${cy - rr * 1.25} ${cx + 8} ${cy - rr * 1.3}" stroke="#3f5a1e" stroke-width="${rr * 0.22}" fill="none" stroke-linecap="round"/>` +
+    `<ellipse cx="${cx - rr * 0.42}" cy="${cy}" rx="${rr * 0.62}" ry="${rr * 0.84}" fill="#e8590c" stroke="#9a3412" stroke-width="1.5"/><ellipse cx="${cx + rr * 0.42}" cy="${cy}" rx="${rr * 0.62}" ry="${rr * 0.84}" fill="#e8590c" stroke="#9a3412" stroke-width="1.5"/><ellipse cx="${cx}" cy="${cy}" rx="${rr * 0.6}" ry="${rr * 0.9}" fill="#ff7518" stroke="#9a3412" stroke-width="1.5"/>` +
+    `<g fill="#ffd36e"><path d="M${cx - rr * 0.55} ${cy - rr * 0.1} L${cx - rr * 0.3} ${cy - rr * 0.45} L${cx - rr * 0.12} ${cy - rr * 0.1} Z"/><path d="M${cx + rr * 0.55} ${cy - rr * 0.1} L${cx + rr * 0.3} ${cy - rr * 0.45} L${cx + rr * 0.12} ${cy - rr * 0.1} Z"/><path d="M${cx - rr * 0.6} ${cy + rr * 0.18} L${cx - rr * 0.4} ${cy + rr * 0.32} L${cx - rr * 0.25} ${cy + rr * 0.2} L${cx - rr * 0.08} ${cy + rr * 0.38} L${cx + rr * 0.08} ${cy + rr * 0.2} L${cx + rr * 0.25} ${cy + rr * 0.38} L${cx + rr * 0.4} ${cy + rr * 0.2} L${cx + rr * 0.6} ${cy + rr * 0.18} C${cx + rr * 0.4} ${cy + rr * 0.6} ${cx - rr * 0.4} ${cy + rr * 0.6} ${cx - rr * 0.6} ${cy + rr * 0.18} Z"/></g>`;
+  const stone = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${w / 2}" fill="${ink}"/>`;
+  const cross = (x, y, h) => `<g fill="${ink}"><rect x="${x}" y="${y}" width="10" height="${h}"/><rect x="${x - 13}" y="${y + h * 0.22}" width="36" height="9"/></g>`;
+  let fence = ''; for (let x = 860; x <= 1060; x += 22) fence += `<path d="M${x} 252 V214 L${x + 3} 205 L${x + 6} 214 V252 Z"/>`;
+  const yard = `<path d="M0 320 L0 214 C220 180 420 206 640 196 C860 186 1100 170 1320 186 C1460 196 1540 188 1600 182 L1600 320 Z" fill="#13081f"/>` +
+    `<g stroke="${ink}" fill="none" stroke-linecap="round"><path d="M1212 246 C1208 200 1206 170 1198 140" stroke-width="16"/><path d="M1200 150 C1188 130 1172 118 1150 112" stroke-width="9"/><path d="M1202 146 C1214 120 1230 104 1250 96" stroke-width="9"/><path d="M1150 112 C1140 108 1132 98 1128 86" stroke-width="5"/><path d="M1250 96 C1264 90 1272 80 1278 66" stroke-width="5"/><path d="M1224 112 C1238 112 1252 118 1264 126" stroke-width="5"/><path d="M1172 120 C1170 106 1172 96 1178 86" stroke-width="4"/><path d="M1199 142 C1196 120 1198 104 1204 90" stroke-width="6"/></g>` +
+    `<g fill="${ink}">${fence}<rect x="860" y="222" width="206" height="4"/><rect x="860" y="238" width="206" height="4"/></g>` +
+    stone(520, 214, 40, 64) + stone(598, 226, 32, 50) + stone(676, 210, 44, 70) + stone(1390, 214, 38, 60) + cross(770, 196, 60) + cross(1490, 204, 54) +
+    `<path d="M0 320 L0 262 C140 240 260 246 420 258 C560 268 700 236 860 232 C1020 228 1120 244 1260 238 C1400 232 1500 250 1600 244 L1600 320 Z" fill="${ink}"/>` +
+    pumpkin(300, 266, 26) + pumpkin(378, 276, 18) + pumpkin(1320, 258, 22);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice"><defs><radialGradient id="pg"><stop offset="0" stop-color="#ff9a3c" stop-opacity=".55"/><stop offset="1" stop-color="#ff6a00" stop-opacity="0"/></radialGradient>` +
+    `<radialGradient id="mg" cx=".4" cy=".4"><stop offset="0" stop-color="#fffbe6"/><stop offset=".8" stop-color="#f6e7b8"/><stop offset="1" stop-color="#e9d49a"/></radialGradient><radialGradient id="mh"><stop offset=".45" stop-color="#ffe9b0" stop-opacity=".35"/><stop offset="1" stop-color="#ffe9b0" stop-opacity="0"/></radialGradient>` +
+    `<linearGradient id="fog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bda8ff" stop-opacity="0"/><stop offset="1" stop-color="#bda8ff" stop-opacity=".16"/></linearGradient></defs>` +
+    stars + `<circle cx="1290" cy="180" r="190" fill="url(#mh)"/><circle cx="1290" cy="180" r="82" fill="url(#mg)"/><circle cx="1262" cy="160" r="12" fill="#b08034" opacity=".28"/><circle cx="1310" cy="205" r="16" fill="#b08034" opacity=".22"/><circle cx="1320" cy="150" r="7" fill="#b08034" opacity=".25"/>` +
+    bat(1180, 210, 1.6) + bat(1380, 120, 1.1) + bat(980, 300, 0.9) + bat(300, 220, 1.2) + bat(520, 140, 0.8) +
+    `<g transform="translate(560 370)" opacity=".55"><path d="M10 66 V30 A20 20 0 0 1 50 30 V66 L43 59 L37 66 L30 59 L23 66 L17 59 Z" fill="#f4f0ff"/><ellipse cx="23" cy="31" rx="3.6" ry="5.2" fill="#1a0b2e"/><ellipse cx="37" cy="31" rx="3.6" ry="5.2" fill="#1a0b2e"/><ellipse cx="30" cy="44" rx="3" ry="4.2" fill="#1a0b2e"/></g>` +
+    `<rect y="520" width="1600" height="380" fill="url(#fog)"/><g transform="translate(0 580)">${yard}</g></svg>`;
+  SPOOKY_THUMB = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+  return SPOOKY_THUMB;
+}
 function spookyScene(E) {
   const ink = '#040108', svg = (p, ...k) => E('svg', p, ...k);
   // citrouille : le corps est dans le décor fixe, la lueur et le visage dans un calque à part qui scintille
@@ -4320,7 +4627,7 @@ class Component extends DCLogic {
   // ---------- décor qui réagit au toucher ----------
   decoSpots = () => {
     const st = this.state, s = st.s, vw = st.vw, vh = st.vh;
-    const id = s.bgType === 'spooky' ? 'spooky' : s.bgType === 'scene' ? s.scene : '', list = DECO_TAP[id];
+    const id = s.bgType === 'spooky' ? 'spooky' : s.bgType === 'scene' ? s.scene : s.bgType === 'grid' ? 'grid' : '', list = DECO_TAP[id];
     if (!list || s.decoTap === false || st.tour != null || st.moveMode) return [];
     // le soleil qui bouge : son point « toucher » le suit (la nuit, c'est la lune, à sa place habituelle)
     const sp = sunAt(s, new Date(), s.tz === 'local' ? undefined : s.tz), key = id + '|' + vw + '|' + vh + '|' + (sp ? sp.x + ',' + sp.y + ',' + sp.on : '');
@@ -4335,12 +4642,14 @@ class Component extends DCLogic {
     return this.spots;
   };
   // le clic tombe sur le fond lui-même (ou sur un vide du bloc de l'heure), pas sur l'heure, la date ou un bouton
-  onBg = (e) => e.target === e.currentTarget || e.target === this.blockRef.current;
-  decoHit = (x, y) => this.decoSpots().find(h => (x - h.x) ** 2 + (y - h.y) ** 2 <= (h.r * 1.1) ** 2) || null;
+  // (avec certaines polices, un chiffre de l'heure « attrape » les clics bien au-dessus de son cadre : hors du cadre réel de l'heure, c'est le fond)
+  onBg = (e) => e.target === e.currentTarget || e.target === this.blockRef.current || (!!e.target.closest && !!e.target.closest('[data-tour="clock"]') && !this.clockHit(e.clientX, e.clientY));
+  // zones qui se chevauchent : c'est la plus proche du doigt (par rapport à sa taille) qui réagit
+  decoHit = (x, y) => { let best = null, bd = Infinity; this.decoSpots().forEach(h => { const d = Math.hypot(x - h.x, y - h.y) / (h.r * 1.1); if (d <= 1 && d < bd) { bd = d; best = h; } }); return best; };
   decoTap = (h) => {
     const st = this.state, id = (this.tapN = (this.tapN || 0) + 1), tz = st.s.tz === 'local' ? undefined : st.s.tz, sk = skyLight(st.s, new Date(), tz);
     const fx = h.fx === 'sun' && sk && sk.night > 0.55 ? 'moon' : h.fx, u = Math.max(0.55, Math.min(1.6, Math.max(st.vw, st.vh * 16 / 9) / 1600));
-    this.setState(s0 => ({ taps: [...s0.taps.slice(-5), { id, fx, x: h.x, y: h.y, r: h.r, c: h.c, u, lite: st.s.quality === 'low', seed: (Date.now() * 7919 + id * 104729) | 0 }] }));
+    this.setState(s0 => ({ taps: [...s0.taps.slice(-5), { id, fx, x: h.x, y: h.y, r: h.r, c: h.c, u, vw: st.vw, vh: st.vh, lite: st.s.quality === 'low', seed: (Date.now() * 7919 + id * 104729) | 0 }] }));
     setTimeout(() => this.setState(s0 => ({ taps: s0.taps.filter(x => x.id !== id) })), 4200);
   };
   // ---------- objets animés du décor qu'on peut toucher (taxi qui s'arrête, oiseaux qui filent, grande roue qui s'emballe…) ----------
@@ -4792,7 +5101,7 @@ class Component extends DCLogic {
       else if (ps.bgType === 'gradient') b = grad(ps);
       else if (ps.bgType === 'aurora') b = `radial-gradient(60% 80% at 25% 30%, ${ps.bg1}, transparent), radial-gradient(60% 80% at 80% 70%, ${ps.bg3}, transparent), ${ps.bg2}`;
       else if (ps.bgType === 'grid') b = `radial-gradient(38% 46% at 30% 64%, ${hexA(ps.gridLit, 0.38)}, transparent 70%), repeating-linear-gradient(0deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), repeating-linear-gradient(90deg, ${hexA(ps.gridLine, 0.15)} 0 1px, transparent 1px 15px), ${ps.bgColor}`;
-      else if (ps.bgType === 'spooky') b = `radial-gradient(circle at 80% 24%, #fff6d5 0 8%, rgba(255,214,140,.35) 9%, transparent 19%), ${spookyBase(ps)}`;
+      else if (ps.bgType === 'spooky') b = `${spookyThumb()} center bottom / cover no-repeat, ${spookyBase(ps)}`;
       // vignette déjà prête (petite image) ; sinon la couleur du décor en attendant qu'elle soit faite en tâche de fond
       else if (ps.bgType === 'scene') { const th = newScene(ps.scene) && this.thumbs.get(this.thumbKey(ps)); if (newScene(ps.scene) && !th) this.warmThumbs([ps], true); b = th ? `${th} center bottom / cover no-repeat, ${sceneBase(ps)}` : sceneBase(ps); }
       else { const m = st.media.find(x => x.id === ps.bgImage) || st.media[0]; b = m && m.type === 'image' ? `center / cover no-repeat url("${m.url}"), #111` : '#111'; }
@@ -5450,7 +5759,7 @@ class Component extends DCLogic {
       // voile doux derrière l'heure sur les décors : les chiffres restent lisibles même devant un dessin chargé
       sky: { on: !!skyL, el: skyEl },
       q: { level: s.quality || 'medium', on: !!qEl, el: qEl, farRef: this.farRef, skyRef: this.skyRef },
-      taps: { on: st.taps.length > 0, el: st.taps.map(tp => E('div', { key: tp.id, style: { position: 'absolute', left: tp.x, top: tp.y, width: 0, height: 0 } }, tapParts(E, tp, L.boo))) }, onStageMove: this.onStageMove,
+      taps: { on: st.taps.length > 0, el: st.taps.map(tp => E('div', { key: tp.id, 'data-fhx': '', style: { position: 'absolute', left: tp.x, top: tp.y, width: 0, height: 0 } }, tapParts(E, tp, L.boo))) }, onStageMove: this.onStageMove,
       halo: { on: s.bgType === 'scene' && mode !== 'show' && mode !== 'mind' && mode !== 'games', bg: (() => { const darkBg = bgL < 0.4, c = darkBg ? (lum(s.bg2) < 0.2 ? s.bg2 : '#0a1020') : (lum(s.bg1) > 0.5 ? s.bg1 : '#ffffff'), a = darkBg ? 0.5 : 0.6; return `radial-gradient(closest-side, ${hexA(c, a)} 0%, ${hexA(c, a * 0.75)} 45%, ${hexA(c, 0)} 100%)`; })() },
       clock: { el: clockEl, cursor: st.idle && s.hideCursor && !st.tab ? 'none' : st.moveMode === 'drag' ? 'grabbing' : 'pointer', gap: Math.round(fontPx * 0.035 * s.gap / 100) + 'px' },
       msg: { show: !!msgText, text: msgText, style: { ...dateStyle, order: -1, fontSize: Math.round(dPx * 1.2) + 'px', color: s.dateColor, opacity: Math.min(1, dateOp + 0.15), animation: mode === 'timer' && tm.done ? 'fh-pulse 1s ease-in-out infinite' : undefined } },
